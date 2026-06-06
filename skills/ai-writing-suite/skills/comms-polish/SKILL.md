@@ -9,11 +9,19 @@ Remove AI-shaped prose without turning the text into generic rewriting.
 
 The job is narrow: preserve meaning, remove slop, keep the author's voice.
 
-This is the migrated base of the suite's polish capability (formerly the
-standalone humanizer). It does not carry its own pattern list — it reads the
-consolidated catalog under `../../_shared/patterns/`, which is the single source
-of truth for AI tells. Enrichment (scenario presets, a final-pass checklist,
-voice-profile matching) lands in a later layer; this file is the base only.
+This is the suite's polish capability (formerly the standalone humanizer). It
+does not carry its own pattern list — it reads the consolidated catalog under
+`../../_shared/patterns/`, which is the single source of truth for AI tells.
+
+Three enrichments sit alongside the catalog:
+
+- `references/scenario-presets.md` — per-genre weighting (tweet / LinkedIn /
+  README / memo): which tells matter most here, target tone/length, what to leave
+  alone.
+- `references/final-pass-checklist.md` — the pre-ship sweep run before returning
+  any rewrite.
+- `../../_shared/voice-profile.md` — the user's learned voice, read when present
+  so rewrites bias toward how *they* write (see Voice Matching).
 
 ## Pattern catalog
 
@@ -31,6 +39,11 @@ to see what's where, then the category files relevant to the draft:
 
 Always apply the guardrails in `rhythm-stylometric.md`: look for clusters, not
 isolated tells. These are signals, not proof.
+
+The catalog is the rule source. The local references decide *how* to apply it:
+
+- `references/scenario-presets.md` — weights catalog categories per genre.
+- `references/final-pass-checklist.md` — the pre-ship sweep.
 
 ## Boundary
 
@@ -54,9 +67,27 @@ Pick the mode from the user's request. If unclear, use `rewrite`.
 
 ## Voice Matching
 
-Infer voice from the text unless the user provides a writing sample.
+Voice has three sources, in priority order:
 
-When a sample exists, match:
+1. **A learned voice profile** at `../../_shared/voice-profile.md` (canonical path:
+   `_shared/voice-profile.md`). This is produced by the `voice-onboard` sub-skill.
+   **Before any rewrite, check whether this file exists and read it if it does.**
+   It is loose coupling: comms-polish does not create or own that file — it reads
+   whatever fields are present and biases edits toward them. Sections to use when
+   present: Tone, Sentence Length, Vocabulary Do / Vocabulary Don't, Signature
+   Moves, Punctuation & Formatting, Openings & Closings, Uncertainty Style, Things
+   To Avoid, and Scope & Calibration (which says where the profile applies). Read
+   what's there; ignore what isn't — never fail on a missing section.
+2. **A writing sample the user pastes** in this request — match it directly.
+3. **Inferred voice** from the draft itself, when neither of the above exists.
+
+**Graceful degradation:** if `_shared/voice-profile.md` is absent, do not error
+and do not block. Note briefly that no profile was found, then polish normally
+using a pasted sample or inferred voice. The profile is a bias signal, never a
+hard dependency. A hard genre constraint (e.g. a tweet's 280-char limit) still
+wins over a profile preference.
+
+When a profile or sample exists, match:
 
 - sentence length and rhythm
 - plainness or formality
@@ -65,7 +96,7 @@ When a sample exists, match:
 - tolerance for humor, warmth, bluntness, or personality
 - preferred terms and phrases
 
-When no sample exists, use the lightest voice that fits the context:
+When neither exists, use the lightest voice that fits the context:
 
 - `technical`: precise, compact, no hype
 - `professional`: clear, measured, low-drama
@@ -76,8 +107,16 @@ When no sample exists, use the lightest voice that fits the context:
 ## Rewrite Workflow
 
 1. Identify the audience, purpose, and required structure.
-2. Mark the factual anchors that must survive unchanged.
-3. Scan against the pattern catalog and remove the tells you find:
+2. **Pick the genre preset.** Match the draft to a preset in
+   `references/scenario-presets.md` (tweet / LinkedIn / README / memo). It tells
+   you which catalog categories to weight harder and what to leave alone in this
+   genre. If no preset fits, scan the catalog evenly.
+3. **Load the voice profile if present.** Check for `../../_shared/voice-profile.md`
+   and read it if it exists; otherwise use a pasted sample or inferred voice
+   (see Voice Matching). Degrade gracefully when absent.
+4. Mark the factual anchors that must survive unchanged.
+5. Scan against the pattern catalog, weighted by the preset, and remove the tells
+   you find:
    - throat-clearing and filler
    - inflated significance
    - vague attribution
@@ -86,9 +125,11 @@ When no sample exists, use the lightest voice that fits the context:
    - "not X but Y" theatrics
    - uniform sentence length
    - chatbot artifacts
-4. Replace vague abstractions with concrete actors, actions, examples, or consequences.
-5. Vary rhythm without adding fake personality.
-6. Return the requested output and mention any claim that still needs evidence.
+6. Replace vague abstractions with concrete actors, actions, examples, or consequences.
+7. Vary rhythm without adding fake personality. Bias word choice and cadence
+   toward the voice profile when one was loaded.
+8. **Run `references/final-pass-checklist.md`** before returning anything.
+9. Return the requested output and mention any claim that still needs evidence.
 
 ## Safety Rules
 
