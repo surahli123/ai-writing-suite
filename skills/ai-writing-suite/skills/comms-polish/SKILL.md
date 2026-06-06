@@ -209,6 +209,23 @@ For `edit` mode:
 4. Re-read the file and confirm the flagged patterns are resolved.
 5. Run `git diff --check` or the repo's docs lint command when available.
 
+## Self-improvement (human-gated)
+
+This skill participates in the suite's human-gated self-improvement loop. The
+full protocol is in `../../_shared/self-improvement.md`; follow it, do not restate
+it. In short:
+
+- **On start:** read `../../_shared/learned-rules.md` (alongside the voice profile)
+  and apply any entry whose `status: active` and whose scope is `comms-polish` or
+  `all`. Degrade gracefully if the file is absent.
+- **On end:** if a repeatable polish correction surfaced this session, **propose**
+  one candidate rule (rule + session-grounded rationale + scope) and **wait for
+  explicit approval** before appending it to `learned-rules.md`. Propose nothing
+  if nothing repeatable surfaced.
+- **Never** auto-edit this SKILL.md or the pattern catalog — approved rules live
+  only in `learned-rules.md` (append-only). Each rule is eval-measured in Layer 3
+  before it is trusted.
+
 ## Output
 
 - For `rewrite`: return the polished text only unless the user asks for notes.

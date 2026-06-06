@@ -131,10 +131,26 @@ A profile is a living file, not a one-shot. Tell the user:
 - **Stay in your lane.** This skill profiles; it does not rewrite. Rewriting is
   `comms-polish`. (And note: this suite is separate from the personal
   writing-vault "never ghostwrite" pipeline — see the project plan, R1.)
-- **Self-improvement is human-gated (suite-wide).** If you spot a candidate
-  extraction-rule improvement during a session, *propose* it for the suite's
-  `learned-rules.md` and let the user approve — never auto-edit this SKILL.md.
-  (The `learned-rules.md` log itself is wired in a later layer.)
+- **Self-improvement is human-gated (suite-wide).** See "Self-improvement" below;
+  never auto-edit this SKILL.md.
+
+## Self-improvement (human-gated)
+
+This skill participates in the suite's human-gated self-improvement loop. The
+full protocol is in `../../_shared/self-improvement.md`; follow it, do not restate
+it. In short:
+
+- **On start:** read `../../_shared/learned-rules.md` and apply any entry whose
+  `status: active` and whose scope is `voice-onboard` or `all` (e.g. an approved
+  extraction-judgment rule). Degrade gracefully if the file is absent.
+- **On end:** if a repeatable extraction correction surfaced this session (a voice
+  judgment the user overrode that would recur), **propose** one candidate rule
+  (rule + session-grounded rationale + scope) and **wait for explicit approval**
+  before appending it to `learned-rules.md`. Propose nothing if nothing repeatable
+  surfaced.
+- **Never** auto-edit this SKILL.md — approved rules live only in
+  `learned-rules.md` (append-only). Each rule is eval-measured in Layer 3 before
+  it is trusted.
 
 ## Deferred to v2 (note, don't build)
 

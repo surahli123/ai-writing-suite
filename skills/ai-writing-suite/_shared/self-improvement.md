@@ -1,0 +1,123 @@
+<!--
+================================================================================
+  self-improvement.md  —  HUMAN-GATED SELF-IMPROVEMENT PROTOCOL (Layer 2)
+================================================================================
+
+  WHAT THIS IS
+  ------------
+  The suite-wide lifecycle hook that lets the skills get *better over time*
+  WITHOUT silently rewriting themselves. It is referenced (not copied) by every
+  sub-skill that opts in — in v1 that is `comms-polish` and `voice-onboard`.
+
+  THE ONE RULE (read this before anything else)
+  ---------------------------------------------
+  This hook may only ever do TWO things autonomously:
+    1. READ side files at the start of a session (voice-profile + learned-rules).
+    2. PROPOSE candidate rules at the end of a session.
+  It MUST NOT write anything until the user explicitly approves. Approved rules
+  go to ONE place: `learned-rules.md` (append-only). Core SKILL.md logic is NEVER
+  auto-edited. This is the anti-drift guarantee — see plan §6 (D6) and risk R3.
+
+  WHY (product-owner framing)
+  ---------------------------
+  Treat learned rules like a feature flag rollout, not a model that retrains
+  itself on its own outputs. An ungated self-improving system feeds on its own
+  predictions and drifts — the writing equivalent of a recommender that keeps
+  recommending what it already recommended. The human gate is the holdout check:
+  no rule ships to the "production" rule set until a person signs off, and (in
+  Layer 3) until an eval measures it.
+================================================================================
+-->
+
+# Self-Improvement Protocol (human-gated, append-only)
+
+This is the shared spec for the suite's self-improvement hook. Sub-skills point
+here instead of restating it, so the gate behaves identically everywhere.
+
+## The contract in one line
+
+Read learned rules on start. Propose new ones on end. Append only what the
+user explicitly approves. Never auto-edit core skill logic.
+
+## Lifecycle
+
+### ON START — read the side files (no writes)
+
+Before doing the sub-skill's actual work, read these two files if they exist:
+
+1. `_shared/voice-profile.md` — the learned voice (owned by `voice-onboard`).
+2. `_shared/learned-rules.md` — approved, human-gated improvements (this file's
+   sibling). Apply any rule whose `status: active` and whose scope matches the
+   current task (e.g. a rule scoped to `comms-polish` is ignored by
+   `voice-onboard`).
+
+Degrade gracefully: if either file is missing, do not error and do not block.
+Note briefly that it was absent and continue with defaults. These are bias
+signals, never hard dependencies (same posture as comms-polish voice matching).
+
+### ON END — propose candidate rule(s), then STOP
+
+After completing the session's work, look back at what happened and ask: *did a
+repeatable correction surface that the catalog / profile / checklist does not
+already cover?* Good candidates come from:
+
+- A correction the user made that would recur ("I always cut that opener").
+- A pattern the existing catalog missed or over-flagged.
+- A voice-extraction judgment the user overrode.
+
+If nothing repeatable surfaced, say so and propose nothing. Do not manufacture a
+rule to look productive — a noisy rule log is worse than a short one.
+
+If a candidate exists, **present it to the user** in the proposed-rule shape
+(see `learned-rules.md` for the field schema) with:
+
+- the proposed rule text,
+- a one-line rationale grounded in *this* session (cite what happened),
+- the scope it would apply to (`comms-polish`, `voice-onboard`, or `all`),
+- a note that in Layer 3 this rule will be eval-measured before it counts as
+  trusted (do not build or run that eval here — just reference it).
+
+Then **stop and wait.** This is the gate.
+
+### ON APPROVAL — append, nothing else
+
+Only on an explicit "yes" / "approve" / "add it" from the user:
+
+- Append ONE entry to `_shared/learned-rules.md` using the documented format
+  (id, rule, rationale, scope, date, status, source).
+- Set `status: proposed` until Layer 3's eval has measured it; the user may say
+  "make it active" to promote a rule they trust without waiting.
+- Stamp the date and a short source-session note so the log stays auditable.
+- Do NOT touch any SKILL.md, the pattern catalog, or the voice profile schema.
+  Approved rules live ONLY in `learned-rules.md`.
+
+If the user says no, or edits the wording, follow their version exactly. Never
+append a rule they did not approve. Never append more than they approved.
+
+## What this hook must NEVER do
+
+- Auto-edit core logic (any `SKILL.md`, `_shared/patterns/`, the voice-profile
+  schema headers). Out of bounds, always.
+- Append a rule without explicit approval.
+- Silently overwrite or rewrite existing learned rules — the log is append-only.
+  Superseding a rule = append a new entry that references the old id and set the
+  old one's `status: retired` (a status edit on its own line, not a rewrite of
+  its rule text).
+
+## Degradation on RovoDev (and other constrained hosts) — R2
+
+RovoDev has no skill auto-triggering and a reduced toolset (Read/Write/Edit/
+Bash/Grep, no Skill tool). This protocol is built to survive that:
+
+- **No auto-trigger needed.** The hook is plain instructions inside a SKILL.md,
+  not an event listener. ON START / ON END run whenever the sub-skill runs,
+  however the sub-skill was invoked (explicit invocation on RovoDev).
+- **File-read only on start.** Reading `voice-profile.md` + `learned-rules.md`
+  uses Read/Grep — available everywhere. No MCP, no special tooling.
+- **Append uses Edit/Write.** Adding one entry to `learned-rules.md` needs only
+  Edit (or Write) — both present on RovoDev.
+- **The gate is conversational, not tool-based.** "Propose → user says yes →
+  append" works in any chat loop and needs no Skill/Task/Agent machinery.
+- If even file writes are unavailable, degrade to: print the proposed rule entry
+  and ask the user to paste it into `learned-rules.md` themselves. The gate and
+  the append-only discipline still hold.
