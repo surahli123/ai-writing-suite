@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "ai-writing-suite",
+  "description": "Writing-assistant skill suite — polish/de-AI prose, learn an author's voice, and (later) answer questions from a knowledge base and draft from it.",
+  "owner": {
+    "name": "surahli"
+  },
+  "plugins": [
+    {
+      "name": "ai-writing-suite",
+      "source": "./",
+      "description": "Suite of writing-assistant skills for professional and product communication. Polish and de-AI prose, learn an author's voice, answer KB questions, and draft from a knowledge base.",
+      "category": "productivity",
+      "keywords": ["writing", "editing", "humanize", "voice", "comms", "polish"]
+    }
+  ]
+}

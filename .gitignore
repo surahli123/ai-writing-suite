@@ -3,3 +3,10 @@ __pycache__/
 
 # OMC runtime state
 .omc/
+
+# Generated suite packages — regenerate with: bash skills/ai-writing-suite/packaging/sync.sh
+# (manifest dirs are kept as source; only the copied/generated content is ignored)
+skills/ai-writing-suite/packaging/claude/*
+skills/ai-writing-suite/packaging/codex/*
+!skills/ai-writing-suite/packaging/claude/.claude-plugin
+!skills/ai-writing-suite/packaging/codex/.codex-plugin

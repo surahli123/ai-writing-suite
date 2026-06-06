@@ -1,0 +1,136 @@
+{
+  "_doc": "Before/after LLM-judge fixtures across 4 genres (tweet/linkedin/readme/memo). Each fixture: an AI-shaped `before`, a good human `after`, and what we expect. `before_band_min`/`before_band_max`/`after_band_max` are detector score-band expectations (mechanical, deterministic regression guards bracketing the observed score). `rubric_focus` lists which rubric dimensions the LLM judge should weigh. Difficulty is calibrated so a NAIVE baseline (flag-if-detector-score >= baseline_threshold) misses ~30-40% of the `before` items: the `subtle` ones are AI-written but score LOW because they avoid vocabulary tells and lean on structural/rhythm tells a flat threshold underweights. See README calibration section.",
+  "baseline_threshold": 14,
+  "fixtures": [
+    {
+      "id": "tweet-01-obvious",
+      "genre": "tweet",
+      "difficulty": "obvious",
+      "before": "In today's ever-evolving landscape, we're thrilled to delve into a game-changing paradigm. This seamless, robust solution will revolutionize how you work. The future looks bright! 🚀 #innovation #growth #tech #startup #ai #future #buildinpublic",
+      "after": "Shipped the new import flow today. Cut setup from 11 steps to 3. Early users went from 40% drop-off to 12%.",
+      "before_band_min": 45,
+      "after_band_max": 20,
+      "rubric_focus": [
+        "meaning_preserved",
+        "tells_removed",
+        "voice_kept",
+        "no_fabrication"
+      ],
+      "expect_baseline": "catch"
+    },
+    {
+      "id": "tweet-02-subtle",
+      "genre": "tweet",
+      "difficulty": "subtle",
+      "before": "Spent the week thinking about retrieval. Keyword search is underrated. Vector search is overhyped. Most teams reach for embeddings when an index would do. Worth sitting with that.",
+      "after": "Spent the week on retrieval. Keyword search beat our embedding setup on the eval — cheaper, and recall was 4 points higher. We were reaching for vectors out of habit.",
+      "before_band_max": 20,
+      "after_band_max": 20,
+      "rubric_focus": [
+        "specificity_added",
+        "negative_parallelism_removed",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "subtle_tell": "negative parallelism (X is underrated / Y is overhyped), vague 'worth sitting with that' closer, zero specifics — all AI structural tells that carry NO vocabulary words, so a flat detector threshold scores it low and misses it."
+    },
+    {
+      "id": "linkedin-01-obvious",
+      "genre": "linkedin",
+      "difficulty": "obvious",
+      "before": "I recently had the pleasure of attending a pivotal conference. It was truly a transformative experience that underscored the importance of fostering meaningful connections. Moreover, the keynote was a testament to the power of innovation. As we navigate this dynamic ecosystem, let's embrace the journey. What's next? Only time will tell.",
+      "after": "Went to the data conf last week. One talk stuck with me: a team at Stripe cut their feature pipeline from 6 hours to 40 minutes by dropping a caching layer nobody had questioned in two years. Sometimes the win is deleting code.",
+      "before_band_min": 28,
+      "after_band_max": 20,
+      "rubric_focus": [
+        "meaning_preserved",
+        "tells_removed",
+        "specificity_added",
+        "no_fabrication"
+      ],
+      "expect_baseline": "catch"
+    },
+    {
+      "id": "linkedin-02-subtle",
+      "genre": "linkedin",
+      "difficulty": "subtle",
+      "before": "Three things I learned shipping our first ML model.\n\nFirst, data quality matters more than model choice.\n\nSecond, stakeholders care about latency, not accuracy.\n\nThird, the simplest baseline is often hard to beat.\n\nWhat would you add?",
+      "after": "We shipped our first ranking model last month and I was wrong about almost everything going in. I thought the model would be the hard part. It wasn't — a week of cleaning label noise moved offline NDCG more than any architecture change. And the thing the PM actually cared about was p99 latency, which I'd barely measured.",
+      "before_band_max": 20,
+      "after_band_max": 20,
+      "rubric_focus": [
+        "rule_of_three_removed",
+        "specificity_added",
+        "engagement_hook_removed",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "subtle_tell": "rule-of-three list scaffolding + 'What would you add?' engagement-bait closer. Reads clean to a vocabulary detector (no tier-1 words) so a flat threshold misses it; an LLM judge keyed to STRUCTURE catches it."
+    },
+    {
+      "id": "readme-01-obvious",
+      "genre": "readme",
+      "difficulty": "obvious",
+      "before": "## Overview\n\nThis comprehensive, cutting-edge library leverages a robust architecture to seamlessly streamline your workflow. It empowers developers to harness the full potential of modern tooling. Whether you're a beginner or an expert, this powerful solution has you covered.",
+      "after": "## What this does\n\nParses CSV files up to 2GB without loading them into memory. Streams rows, so it works on machines with 512MB of RAM. No dependencies outside the standard library.",
+      "before_band_min": 20,
+      "after_band_max": 20,
+      "rubric_focus": [
+        "meaning_preserved",
+        "tells_removed",
+        "specificity_added"
+      ],
+      "expect_baseline": "catch"
+    },
+    {
+      "id": "readme-02-subtle",
+      "genre": "readme",
+      "difficulty": "subtle",
+      "before": "## Installation\n\nTo get started, simply install the package. Once installed, you can begin using it right away. The setup process is designed to be straightforward and intuitive, ensuring a smooth onboarding experience for users of all skill levels.",
+      "after": "## Installation\n\n```\npip install fastcsv\n```\n\nPython 3.9+. No other dependencies.",
+      "before_band_max": 20,
+      "after_band_max": 20,
+      "rubric_focus": [
+        "filler_removed",
+        "specificity_added",
+        "meaning_preserved"
+      ],
+      "expect_baseline": "miss",
+      "subtle_tell": "all filler, zero content ('simply', 'right away', 'smooth onboarding experience') but no flagged vocabulary — it's empty calories that a word-list detector rates clean. An LLM judge measuring information density catches it."
+    },
+    {
+      "id": "memo-01-obvious",
+      "genre": "memo",
+      "difficulty": "obvious",
+      "before": "It is important to note that, as we move forward, we must delve into the intricacies of our strategy. Experts believe that fostering a culture of innovation is paramount. Furthermore, this pivotal initiative will undoubtedly elevate our position. Let's break this down step by step to ensure a holistic approach.",
+      "after": "We're behind on Q3 targets by 14%. Two causes: the API migration slipped three weeks, and we lost two engineers. Proposed fix: pause the redesign, put everyone on migration, revisit the redesign in October.",
+      "before_band_min": 36,
+      "after_band_max": 20,
+      "rubric_focus": [
+        "meaning_preserved",
+        "tells_removed",
+        "vague_attribution_removed",
+        "specificity_added"
+      ],
+      "expect_baseline": "catch"
+    },
+    {
+      "id": "memo-02-subtle",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "While our current approach has served us well, there is room for improvement. It is important to note that research suggests engagement is trending in a positive direction. That said, we should remain mindful of potential headwinds, and a measured strategy could potentially position us well. Ultimately, this balanced approach will help us capture emerging opportunities going forward.",
+      "after": "Sign-ups are up 9% since the March redesign, but week-2 retention dropped from 31% to 24%. We're acquiring people the product doesn't keep. Before we spend more on acquisition, I want a week to dig into the retention cliff.",
+      "before_band_min": 12,
+      "before_band_max": 25,
+      "after_band_max": 20,
+      "rubric_focus": [
+        "false_concession_removed",
+        "hedge_stack_removed",
+        "specificity_added",
+        "no_fabrication"
+      ],
+      "expect_baseline": "catch",
+      "subtle_tell": "false concession ('served us well, but...'), hedge-stacking ('could potentially position us'), vague-attribution ('research suggests') with NO numbers. This is the BORDERLINE fixture: it scores ~15, just above the naive threshold, so the mechanical detector catches it but only barely — an LLM judge is still needed to confirm the rewrite added real specifics rather than just swapping words."
+    }
+  ]
+}
