@@ -1,14 +1,15 @@
-# Personal Productivity Skills — Project Instructions
+# AI Writing Suite — Project Instructions
 
-Public, MIT-licensed agent skills. Each skill is a self-contained package under `skills/`.
+Public, MIT-licensed agent skill suite for writing assistance, packaged under `skills/`.
 
 ## Repo Layout
 
-- `skills/agent-goal-contracts/` — turn a messy coding-agent request into a verifiable `/goal` contract.
 - `skills/ai-writing-suite/` — AI writing-assistant suite (currently ships the polish/humanize capability; growing into a full suite — see plan below).
-- `docs/` — design docs, handovers, session closeouts (some untracked, working artifacts).
+- `docs/` — design docs, handovers, migration notes, session closeouts.
 
-This is an **umbrella repo**. Do NOT rename the GitHub repo to match any single skill.
+**Dedicated repo.** This was extracted (local-only) from the `personal-productivity-skills`
+umbrella repo on 2026-06-06; `agent-goal-contracts` stays in the umbrella. GitHub migration
+is deferred — there is no remote yet. Do not push or create a remote without explicit owner approval.
 
 ## AI Writing Suite (active work)
 

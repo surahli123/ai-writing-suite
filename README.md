@@ -1,93 +1,46 @@
-# Personal Productivity Skills
+# AI Writing Suite
 
-Small public skills for making agent work easier to start, easier to verify, and harder to let drift.
+An open-source, MIT-licensed agent skill suite for **writing assistance** — the public
+version of a writing-assistant skillset for a company Data Science team. It polishes,
+drafts, and reviews prose against a **pluggable knowledge base** (a "DS Comms Playbook"
+in the company fork; a generic best-practices KB in this OSS build).
 
-This repo begins with two skills:
+> **Engine vs fuel:** this repo is the *engine*. The knowledge base is *fuel* — swappable.
+> The OSS build ships a generic KB; a company fork drops its real playbook into the same
+> slot. The proprietary playbook never enters this public repo.
 
-- [`agent-goal-contracts`](skills/agent-goal-contracts/README.md): turn a messy coding-agent request into a compact, verifiable `/goal` contract.
-- [`ai-writing-suite`](skills/ai-writing-suite/README.md): polish AI-shaped prose while preserving meaning and author voice.
+## What it does (target)
 
-## Why This Exists
+1. **Polish / review** — de-AI and tighten prose while preserving meaning and author voice.
+2. **Voice learning** — interview + distill a writer's historical style into a reusable profile.
+3. **Knowledge QA (mini-RAG)** — answer questions over the playbook + best practices *(v2)*.
+4. **Guided drafting** — draft a page using the playbook *(v2)*.
 
-Coding agents often fail for boring reasons:
+Plus a **human-gated self-improvement** loop: each session can *propose* new rules; you
+approve before anything is written. Core skill logic is never auto-edited.
 
-- the goal is too vague
-- the scope keeps expanding
-- "done" depends on vibes
-- the agent changes files it should not touch
-- verification is skipped or remembered instead of rerun
+## Status
 
-These skills are meant to package the opposite habit: one clear outcome, real context, hard constraints, proof, and stop rules.
+**v1 in progress.** Today the suite ships the polish/humanize capability; the v1 build adds
+a suite skeleton + router, an enriched `comms-polish`, `voice-onboard`, a generic KB seed
+with an end-to-end retrieval smoke path, an eval harness, and the self-improvement hook.
 
-## Start Here
-
-Use `agent-goal-contracts` when you have a rough task like:
-
-```text
-The billing settings page is half-done. The upgrade button works, but loading and error states are rough, and mobile may be broken. Make it usable without touching Stripe webhook logic.
-```
-
-The skill turns that into a contract with:
-
-```text
-GOAL:
-CONTEXT:
-CONSTRAINTS:
-ORACLE:
-DONE WHEN:
-VERIFY:
-ITERATION POLICY:
-STOP RULES:
-OUTPUT:
-```
-
-The important field is `ORACLE`: the evidence source that proves the work is complete, such as tests, a screenshot, a generated artifact, a benchmark, or a review gate.
+- **Plan (read first):** [`docs/design-ai-writing-suite-v1-2026-06-06.md`](docs/design-ai-writing-suite-v1-2026-06-06.md)
+  — decision log D1–D12, v1 scope, risks, eng+ceo review report.
 
 ## Repo Layout
 
 ```text
 skills/
-  agent-goal-contracts/
+  ai-writing-suite/        # the suite (router + sub-skills as the build progresses)
     SKILL.md
     README.md
     NOTICE.md
     LICENSE
-    references/
-    scripts/
-    tests/
-  ai-writing-suite/
-    SKILL.md
-    README.md
-    NOTICE.md
-    LICENSE
-```
-
-## Validate
-
-Run the current tests:
-
-```bash
-cd skills/agent-goal-contracts
-python3 -m unittest discover -s tests
-```
-
-Validate a contract:
-
-```bash
-python3 scripts/validate_contract.py path/to/GOAL.md
-```
-
-Validate paste-ready `/goal` text against the stricter runtime target:
-
-```bash
-python3 scripts/validate_contract.py --strict-runtime-target path/to/GOAL.md
+docs/                      # design docs, handovers, migration notes
 ```
 
 ## Attribution
 
-Each skill carries its own attribution boundary. Start with:
-
-- [`agent-goal-contracts/NOTICE.md`](skills/agent-goal-contracts/NOTICE.md)
-- [`agent-goal-contracts/README.md`](skills/agent-goal-contracts/README.md)
-- [`ai-writing-suite/NOTICE.md`](skills/ai-writing-suite/NOTICE.md)
-- [`ai-writing-suite/README.md`](skills/ai-writing-suite/README.md)
+Absorbed material from other repos is MIT-licensed; each source's copyright + license is
+preserved and credited in [`skills/ai-writing-suite/NOTICE.md`](skills/ai-writing-suite/NOTICE.md).
