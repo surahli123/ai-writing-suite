@@ -1,4 +1,4 @@
-# AI Writing Humanizer
+# AI Writing Suite
 
 Polish prose that sounds AI-written without changing what the author meant.
 
@@ -12,7 +12,7 @@ Use it when a draft has the usual model tells: filler, vague claims, inflated im
 
 ## What It Does
 
-`ai-writing-humanizer` helps an agent:
+`ai-writing-suite` helps an agent:
 
 1. identify the audience and purpose
 2. preserve facts, citations, numbers, commands, and claims
@@ -106,7 +106,7 @@ Thank you for sticking with me through this. It helped more than you probably kn
 Clone or copy this repo, then symlink the skill into your Codex skills directory:
 
 ```bash
-ln -s "$(pwd)/skills/ai-writing-humanizer" ~/.codex/skills/ai-writing-humanizer
+ln -s "$(pwd)/skills/ai-writing-suite" ~/.codex/skills/ai-writing-suite
 ```
 
 Restart Codex so the skill list refreshes.

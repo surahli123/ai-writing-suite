@@ -1,9 +1,9 @@
 ---
-name: ai-writing-humanizer
+name: ai-writing-suite
 description: Polish prose that sounds AI-written while preserving meaning, facts, and author voice. Use for docs, emails, posts, reports, and user-facing copy; do not use for code cleanup.
 ---
 
-# AI Writing Humanizer
+# AI Writing Suite
 
 Use this skill to remove AI-shaped prose without turning the text into generic rewriting.
 
