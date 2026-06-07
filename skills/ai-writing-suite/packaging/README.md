@@ -108,18 +108,39 @@ codex/
 └── CHANGELOG.md           # generated
 ```
 
-**Manifest status (Codex): PARTIALLY VERIFIED 2026-06-06.** Evidence from the
-locally-installed Codex skills (`~/.codex/skills/ai-slop-cleaner`,
-`ai-writing-humanizer`) shows the real consumed format is a **bare skill
-directory: `SKILL.md` (+ optional `references/`) with NO manifest at all** —
-Codex reads the `name`/`description` frontmatter directly. So the deliverable
-for a manual Codex install is the skill *tree* (`SKILL.md` + `skills/` +
-`_shared/`); the `.codex-plugin/plugin.json` here is **speculative** (modeled on
-the `nature-skills` repo convention) and Codex may ignore it. It is kept as a
-harmless metadata scaffold + the redundant `skills` field was removed for
-parity with Claude. **Before publishing to any Codex marketplace, confirm
-whether a manifest is required** — there is no stable public Codex plugin spec
-as of 2026-06-06; bare-directory install is the only format verified to work.
+**Manifest status (Codex): VERIFIED 2026-06-06 — current layout is NON-CONFORMANT.**
+The `codex` CLI (codex-cli 0.137.0) uses a **marketplace** model:
+`codex plugin marketplace add <local|owner/repo|git-url>` → `codex plugin add <plugin>`.
+A live test (`codex plugin marketplace add ./packaging/codex`) was **rejected**:
+
+    Error: invalid marketplace file .../packaging/codex: marketplace root does not
+    contain a supported manifest
+
+Ground truth, from a working marketplace (`~/.codex/.tmp/marketplaces/claude-plugin-codex`)
+and the `nature-skills` repo, the required structure is:
+
+    <marketplace-root>/
+    ├── .agents/plugins/marketplace.json   # MARKETPLACE manifest (REQUIRED)
+    └── plugins/<plugin-name>/
+        ├── .codex-plugin/plugin.json      # plugin manifest
+        ├── skills/  _shared/  ...         # plugin content
+        └── SKILL.md  NOTICE.md  ...
+
+`.agents/plugins/marketplace.json` shape (from nature-skills):
+
+    { "name": "<marketplace>", "interface": {"displayName": "..."},
+      "plugins": [ { "name": "<plugin>",
+                     "source": {"source": "local", "path": "./plugins/<plugin>"},
+                     "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+                     "category": "..." } ] }
+
+Our current `packaging/codex/` (bare `.codex-plugin/plugin.json` at root, content
+alongside) does NOT match — it lacks `.agents/plugins/marketplace.json` and the
+`plugins/<name>/` nesting. **TODO before Codex publish:** either (a) restructure
+the codex target to the layout above, or (b) use a Claude→Codex bridge (there is a
+`claude-plugin-codex` marketplace that converts Claude plugins to Codex — our Claude
+plugin already validates, so the bridge may be the lower-effort path). The plugin.json
+itself (`name`/`description`/`version`/...) is fine; only the *packaging shape* is wrong.
 
 ---
 
