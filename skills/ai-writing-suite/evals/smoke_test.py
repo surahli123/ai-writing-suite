@@ -103,6 +103,11 @@ def retrieve(query, entries):
         score = (len(q & all_terms), len(q & e["summary_kw"]))
         if score > best_score:
             best, best_score = e, score
+    # Overlap guard (review m2): a query with ZERO term overlap must NOT resolve
+    # to the first table row by stable-order fallback — that would let an empty
+    # or garbage query vacuously satisfy a case. Zero overlap = no match.
+    if best_score[0] == 0:
+        return None, best_score
     return (best["file"] if best else None), best_score
 
 

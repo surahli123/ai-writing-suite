@@ -97,6 +97,25 @@ This case exists to confirm the index discriminates between near-neighbors.
 
 ---
 
+## A third case (genuine near-neighbor — both entries score > 0)
+
+Case 2 above discriminates on a single token ("who"), so the tie-break is never
+truly exercised (review finding m1). This case fixes that: the query hits BOTH
+`audience.md` and `tone.md` on keywords, and `audience.md` must win on total overlap.
+
+**Query:**
+> "Who is the reader for this? It sounds too technical and a bit corporate."
+
+**Expected entry:** `audience.md`
+**Expected passage:**
+> State the reader and their job before drafting. "An on-call engineer who needs
+> to decide whether to roll back." That sentence fixes tone, length, and jargon level.
+
+**Why this is the real disambiguation test:** `tone.md` genuinely scores here —
+"sounds" and "corporate" are tone keywords (overlap 2) — but `audience.md` wins on
+total term overlap ("who" + "reader" + "technical" = 3). Unlike Case 2 there is a
+competing signal to beat, so a PASS proves the keyword/intent tie-break actually works.
+
 ## How Layer 3 will automate this
 
 The eval harness reads each TEST CASE block, sends the **Query** to the agent

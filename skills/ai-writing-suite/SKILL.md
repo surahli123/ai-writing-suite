@@ -58,5 +58,6 @@ refactoring, use a code-cleanup skill instead.
 
 The suite is the *engine*; the knowledge base under `_shared/knowledge/` is the
 *fuel*. The open-source build ships a generic KB; a company fork drops its own
-playbook into the same slot. The playbook never enters this public repo. (KB seed
-and retrieval are later layers — the slot is present but empty in this build.)
+playbook into the same slot. The playbook never enters this public repo. (This
+build ships a generic 5-entry KB seed + `INDEX.md` + a working retrieval smoke
+path; the full `comms-qa` question-answering sub-skill is v2.)

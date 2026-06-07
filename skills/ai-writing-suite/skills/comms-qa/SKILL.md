@@ -9,5 +9,6 @@ This sub-skill will answer questions from the knowledge base under
 `_shared/knowledge/` -- a zero-dependency mini-RAG that navigates a markdown KB
 through its `INDEX.md` and returns the relevant passage. In the open-source build
 the KB is generic best practices; a company fork drops its own playbook into the
-same slot. **Coming in v2.** The KB slot exists in this build but is empty
-(retrieval is a later layer).
+same slot. The KB slot is already seeded in this build (5 generic entries +
+`INDEX.md` + a verified retrieval smoke path); the full question-answering
+sub-skill that wraps it is **coming in v2.**

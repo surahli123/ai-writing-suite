@@ -26,7 +26,7 @@ AI Writing Suite is a consolidated writing-assistant skill that absorbs and exte
 
 **Contribution:** Programmatic JavaScript detector with test suite, tiered AI-vocabulary taxonomy (Tier 1/2/3 classification), CATEGORIES taxonomy for AI-writing patterns, multi-surface packaging patterns (Claude plugin, Cursor `.mdc` format), and sync tooling scaffold.
 
-**Used in:** AI-tell pattern catalog (lexical tells, significance attribution, structural patterns), detector foundation (v2), packaging and sync conventions.
+**Used in:** AI-tell pattern catalog (lexical tells, significance attribution, structural patterns), the Python detector port shipped in v1 (`evals/detector/`), packaging and sync conventions.
 
 ---
 
