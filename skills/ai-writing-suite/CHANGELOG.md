@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Fixed
+- **Publishable installs across hosts** — the published repo was not actually
+  installable: the plugin body was gitignored (only manifests reached the remote)
+  and the Claude marketplace manifest was not at a resolvable location. Both Claude
+  and Codex now install **directly from the single source tree** via repo-root
+  marketplace manifests (`.claude-plugin/marketplace.json` and
+  `.agents/plugins/marketplace.json`), each backed by an in-source `plugin.json`.
+
+### Added
+- **Cursor support** — Cursor reads Anthropic-format `SKILL.md` Agent Skills from
+  `.cursor/skills/`; install = copy `skills/ai-writing-suite/` into a Cursor skills
+  directory. (Corrects the earlier plan that targeted `.cursor/rules/*.mdc`, the wrong
+  primitive for callable skills.)
+- **Per-host install Quickstart** in the README (Claude, Codex, Cursor) and a
+  maintainer packaging note at `docs/packaging.md`.
+
+### Removed
+- **Generate-and-sync packaging** (`packaging/` + `sync.sh`) — obsolete now that every
+  host reads the source tree directly. This eliminates the gitignored-body trap that
+  made v1 uninstallable and removes the per-host sync-drift surface entirely.
+
+---
+
 ## [1.0.0] — 2026-06-06
 
 ### Added
