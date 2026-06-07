@@ -14,8 +14,9 @@ skills/ai-writing-suite/   ← SOURCE (edit here)
     NOTICE.md  LICENSE  README.md  CHANGELOG.md
     packaging/
         sync.sh            ← assembler
-        claude/            ← GENERATED (Claude target)
-        codex/             ← GENERATED (Codex target)
+        claude/            ← Claude target (generated content + manual manifests)
+        codex/             ← Codex marketplace (manual manifests; generated
+                             content under plugins/ai-writing-suite/)
 ```
 
 > **WARNING: Do NOT hand-edit files inside `packaging/claude/` or
@@ -35,20 +36,33 @@ bash packaging/sync.sh            # from repo root or from packaging/
 bash packaging/sync.sh --dry-run  # preview what would be copied, nothing written
 ```
 
-For each target (`claude`, `codex`) the script:
+For each target the script copies generated content into a per-target
+**content root**:
 
-1. **Wipes** the previously-generated `skills/` and `_shared/` dirs inside the
-   target so deletions in the source propagate cleanly.
+- Claude content root → `packaging/claude/` (content sits at the marketplace root).
+- Codex content root → `packaging/codex/plugins/ai-writing-suite/` (content sits
+  inside the plugin; `packaging/codex/` itself is the *marketplace* root, not the
+  plugin — see §Codex layout).
+
+Into that content root the script:
+
+1. **Wipes** the previously-generated `skills/` and `_shared/` dirs so deletions
+   in the source propagate cleanly.
 2. **Copies** top-level files (`SKILL.md`, `NOTICE.md`, `LICENSE`, `README.md`,
-   `CHANGELOG.md`) from source → target.
-3. **Copies** `skills/` and `_shared/` trees recursively from source → target.
+   `CHANGELOG.md`) from source → content root.
+3. **Copies** `skills/` and `_shared/` trees recursively from source → content root.
 4. **Version-checks** the target's plugin manifest (`plugin.json`) against the
    `version:` field in the source `SKILL.md` frontmatter and warns if they
    disagree.
 
-The manifest directories (`.claude-plugin/`, `.codex-plugin/`) are **not**
-wiped — they contain the host-specific manifests that are maintained manually
-(see §Manifest files below).
+The manifest files/dirs are **not** wiped — they are maintained manually
+(see §Manifest files below):
+
+- Claude: `packaging/claude/.claude-plugin/`.
+- Codex: `packaging/codex/.agents/plugins/marketplace.json` (marketplace manifest)
+  and `packaging/codex/plugins/ai-writing-suite/.codex-plugin/plugin.json` (plugin
+  manifest). The wipe only touches `plugins/ai-writing-suite/{skills,_shared}`, so
+  both manifests survive every sync.
 
 Idempotent: running sync.sh twice produces the same result.
 No external dependencies: pure bash + cp + mkdir + python3 (stdlib only, for
@@ -91,33 +105,38 @@ ignored at load). Validate before publishing with: `claude plugin validate .`
 
 ### Codex (`packaging/codex/`)
 
+`packaging/codex/` is a **marketplace** that contains one **plugin**. The
+marketplace manifest lives at the root; the plugin (manifest + all generated
+content) lives under `plugins/ai-writing-suite/`.
+
 ```
-codex/
-├── .codex-plugin/
-│   └── plugin.json        # Codex plugin manifest (maintained manually)
-├── SKILL.md               # generated — router
-├── skills/                # generated — sub-skills
-│   ├── comms-polish/
-│   ├── voice-onboard/
-│   ├── comms-qa/          (stub, v2)
-│   └── comms-draft/       (stub, v2)
-├── _shared/               # generated — patterns, KB, voice-profile
-├── NOTICE.md              # generated
-├── LICENSE                # generated
-├── README.md              # generated
-└── CHANGELOG.md           # generated
+codex/                                       # marketplace root
+├── .agents/plugins/marketplace.json         # marketplace manifest (maintained manually)
+└── plugins/ai-writing-suite/                # the plugin
+    ├── .codex-plugin/plugin.json            # plugin manifest (maintained manually)
+    ├── SKILL.md                             # generated — router
+    ├── skills/                              # generated — sub-skills
+    │   ├── comms-polish/
+    │   ├── voice-onboard/
+    │   ├── comms-qa/          (stub, v2)
+    │   └── comms-draft/       (stub, v2)
+    ├── _shared/                             # generated — patterns, KB, voice-profile
+    ├── NOTICE.md                            # generated
+    ├── LICENSE                              # generated
+    ├── README.md                            # generated
+    └── CHANGELOG.md                         # generated
 ```
 
-**Manifest status (Codex): VERIFIED 2026-06-06 — current layout is NON-CONFORMANT.**
+**Manifest status (Codex): CONFORMANT — restructured 2026-06-06.**
 The `codex` CLI (codex-cli 0.137.0) uses a **marketplace** model:
 `codex plugin marketplace add <local|owner/repo|git-url>` → `codex plugin add <plugin>`.
-A live test (`codex plugin marketplace add ./packaging/codex`) was **rejected**:
+The earlier bare-`.codex-plugin/plugin.json`-at-root layout was rejected with:
 
     Error: invalid marketplace file .../packaging/codex: marketplace root does not
     contain a supported manifest
 
-Ground truth, from a working marketplace (`~/.codex/.tmp/marketplaces/claude-plugin-codex`)
-and the `nature-skills` repo, the required structure is:
+The layout above is the verified-conformant shape, matching a working marketplace
+(`~/.codex/.tmp/marketplaces/claude-plugin-codex`) and the `nature-skills` repo:
 
     <marketplace-root>/
     ├── .agents/plugins/marketplace.json   # MARKETPLACE manifest (REQUIRED)
@@ -126,21 +145,23 @@ and the `nature-skills` repo, the required structure is:
         ├── skills/  _shared/  ...         # plugin content
         └── SKILL.md  NOTICE.md  ...
 
-`.agents/plugins/marketplace.json` shape (from nature-skills):
+Two manifests are maintained by hand (sync.sh never touches them):
 
-    { "name": "<marketplace>", "interface": {"displayName": "..."},
-      "plugins": [ { "name": "<plugin>",
-                     "source": {"source": "local", "path": "./plugins/<plugin>"},
-                     "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
-                     "category": "..." } ] }
+- `codex/.agents/plugins/marketplace.json` — marketplace manifest. Shape:
+  `{ "name", "interface": {"displayName"}, "plugins": [ { "name",
+  "source": {"source":"local","path":"./plugins/ai-writing-suite"},
+  "policy": {"installation":"AVAILABLE","authentication":"ON_INSTALL"},
+  "category" } ] }`.
+- `codex/plugins/ai-writing-suite/.codex-plugin/plugin.json` — plugin manifest.
+  Same identity fields as Claude, but it **keeps** `"skills": "./skills/"` (Codex
+  uses it; Claude does not) and adds an `interface` block (`displayName`,
+  `shortDescription`, `longDescription`, `developerName`, `category`,
+  `capabilities`).
 
-Our current `packaging/codex/` (bare `.codex-plugin/plugin.json` at root, content
-alongside) does NOT match — it lacks `.agents/plugins/marketplace.json` and the
-`plugins/<name>/` nesting. **TODO before Codex publish:** either (a) restructure
-the codex target to the layout above, or (b) use a Claude→Codex bridge (there is a
-`claude-plugin-codex` marketplace that converts Claude plugins to Codex — our Claude
-plugin already validates, so the bridge may be the lower-effort path). The plugin.json
-itself (`name`/`description`/`version`/...) is fine; only the *packaging shape* is wrong.
+Generated content (`SKILL.md`, `skills/`, `_shared/`, `NOTICE.md`, `LICENSE`,
+`README.md`, `CHANGELOG.md`) lands under `plugins/ai-writing-suite/` via sync.sh.
+Add to a local marketplace with:
+`codex plugin marketplace add ./skills/ai-writing-suite/packaging/codex`.
 
 ---
 
@@ -152,11 +173,13 @@ These files live in the manifest dirs and are NOT overwritten by sync:
 |---|---|---|
 | `claude/.claude-plugin/plugin.json` | Claude plugin identity | version bump, metadata change |
 | `claude/.claude-plugin/marketplace.json` | Claude marketplace listing | name/description/category change |
-| `codex/.codex-plugin/plugin.json` | Codex plugin identity | version bump, metadata change |
+| `codex/.agents/plugins/marketplace.json` | Codex marketplace listing | name/category/plugin-path change |
+| `codex/plugins/ai-writing-suite/.codex-plugin/plugin.json` | Codex plugin identity | version bump, metadata change |
 
 When bumping the skill version:
 1. Update `version:` in source `SKILL.md` frontmatter.
-2. Update `"version"` in all three manifest files above.
+2. Update `"version"` in the two `plugin.json` files above (the marketplace
+   manifests carry no version field).
 3. Run `bash packaging/sync.sh` — it will confirm version parity.
 
 ---

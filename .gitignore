@@ -7,6 +7,12 @@ __pycache__/
 # Generated suite packages — regenerate with: bash skills/ai-writing-suite/packaging/sync.sh
 # (manifest dirs are kept as source; only the copied/generated content is ignored)
 skills/ai-writing-suite/packaging/claude/*
-skills/ai-writing-suite/packaging/codex/*
 !skills/ai-writing-suite/packaging/claude/.claude-plugin
-!skills/ai-writing-suite/packaging/codex/.codex-plugin
+# Codex marketplace: keep hand-maintained manifests, ignore generated content
+skills/ai-writing-suite/packaging/codex/*
+!skills/ai-writing-suite/packaging/codex/.agents
+!skills/ai-writing-suite/packaging/codex/plugins
+skills/ai-writing-suite/packaging/codex/plugins/*
+!skills/ai-writing-suite/packaging/codex/plugins/ai-writing-suite
+skills/ai-writing-suite/packaging/codex/plugins/ai-writing-suite/*
+!skills/ai-writing-suite/packaging/codex/plugins/ai-writing-suite/.codex-plugin

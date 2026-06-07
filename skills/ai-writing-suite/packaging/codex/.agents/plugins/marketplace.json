@@ -1,0 +1,20 @@
+{
+  "name": "ai-writing-suite",
+  "interface": {
+    "displayName": "AI Writing Suite"
+  },
+  "plugins": [
+    {
+      "name": "ai-writing-suite",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ai-writing-suite"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -23,8 +23,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PACKAGING="$SCRIPT_DIR"                        # packaging/
 SOURCE="$SCRIPT_DIR/.."                        # skills/ai-writing-suite/
 
+# Generated content destinations differ per target:
+#   Claude → packaging/claude/                       (content at marketplace root)
+#   Codex  → packaging/codex/plugins/ai-writing-suite/ (content inside the plugin;
+#            codex/ itself is the MARKETPLACE root, not the plugin)
 CLAUDE_TARGET="$PACKAGING/claude"
-CODEX_TARGET="$PACKAGING/codex"
+CODEX_TARGET="$PACKAGING/codex/plugins/ai-writing-suite"
 
 DRY_RUN=false
 if [[ "${1:-}" == "--dry-run" ]]; then
@@ -148,6 +152,8 @@ print(data.get('version', ''))
 if ! $DRY_RUN; then
   check_manifest_version "$CLAUDE_TARGET/.claude-plugin/plugin.json" "claude"
   check_manifest_version "$CODEX_TARGET/.codex-plugin/plugin.json"   "codex"
+  # Note: $CODEX_TARGET now points at packaging/codex/plugins/ai-writing-suite/,
+  # so this resolves to the plugin manifest in its new conformant location.
 fi
 
 log "sync complete."
