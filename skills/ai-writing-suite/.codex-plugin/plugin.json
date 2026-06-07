@@ -2,7 +2,7 @@
   "name": "ai-writing-suite",
   "version": "1.0.0",
   "description": "Suite of writing-assistant skills for professional and product communication. Polish and de-AI prose, learn an author's voice, answer KB questions, and draft from a knowledge base.",
-  "author": { "name": "surahli" },
+  "author": { "name": "surahli123" },
   "homepage": "https://github.com/surahli123/ai-writing-suite",
   "repository": "https://github.com/surahli123/ai-writing-suite",
   "license": "MIT",
@@ -12,7 +12,7 @@
     "displayName": "AI Writing Suite",
     "shortDescription": "Polish/de-AI prose, learn an author's voice, KB-guided writing.",
     "longDescription": "A suite of writing-assistant skills: polish and de-AI prose while preserving meaning and voice, learn an author's historical voice into a reusable profile, and (in v2) answer questions from and draft against a pluggable knowledge base.",
-    "developerName": "surahli",
+    "developerName": "surahli123",
     "category": "Productivity",
     "capabilities": ["Read", "Write"]
   }

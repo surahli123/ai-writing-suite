@@ -7,9 +7,10 @@ Public, MIT-licensed agent skill suite for writing assistance, packaged under `s
 - `skills/ai-writing-suite/` — AI writing-assistant suite (currently ships the polish/humanize capability; growing into a full suite — see plan below).
 - `docs/` — design docs, handovers, migration notes, session closeouts.
 
-**Dedicated repo.** This was extracted (local-only) from the `personal-productivity-skills`
-umbrella repo on 2026-06-06; `agent-goal-contracts` stays in the umbrella. GitHub migration
-is deferred — there is no remote yet. Do not push or create a remote without explicit owner approval.
+**Dedicated repo.** Extracted from the `personal-productivity-skills` umbrella on 2026-06-06
+(`agent-goal-contracts` stays in the umbrella) and published to
+**github.com/surahli123/ai-writing-suite** (public, default branch `main`). Never commit to
+`main` directly — feature branch → PR; confirm before pushing.
 
 ## AI Writing Suite (active work)
 
@@ -21,8 +22,10 @@ proprietary **DS Comms Playbook** through a **pluggable knowledge base**.
 - **Engine vs fuel:** OSS ships the engine + a generic KB (distilled from 4 MIT repos).
   The company forks and drops the real playbook into `_shared/knowledge/` via a Confluence
   page. The playbook never enters this public repo.
-- **Target surfaces:** Claude + Codex (v1), Cursor + RovoDev (v2). Single source of truth
-  SKILL.md synced to each; do not hand-edit generated packages.
+- **Target surfaces:** Claude + Codex + Cursor (v1); RovoDev (v2). All hosts read the single
+  source tree directly — Claude/Codex via repo-root marketplace manifests, Cursor by copying
+  `skills/ai-writing-suite/`. There is no generated package body (the old generate/sync model
+  was removed); see `docs/packaging.md`.
 - **Keep separate** from the personal `writing-vault` pipeline. That project's "AI scaffolds,
   never ghostwrites" rule does NOT apply here — this suite may draft and rewrite.
 

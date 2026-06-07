@@ -8,7 +8,7 @@
       "name": "ai-writing-suite",
       "source": {
         "source": "local",
-        "path": "./plugins/ai-writing-suite"
+        "path": "./skills/ai-writing-suite"
       },
       "policy": {
         "installation": "AVAILABLE",

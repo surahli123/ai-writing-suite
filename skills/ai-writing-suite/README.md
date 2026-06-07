@@ -136,29 +136,35 @@ The knowledge base lives in `_shared/knowledge/`:
 
 ## Install
 
-Clone or copy this repo, then symlink the skill into your target environment.
+Published as a plugin for Claude and Codex (install from the marketplace) and as Agent Skills
+for Cursor (copy the tree).
 
-### Claude
+### Claude Code
 
 ```bash
-# Copy to your Claude Code skills directory
-cp -r skills/ai-writing-suite ~/.claude/skills/ai-writing-suite
+claude plugin marketplace add surahli123/ai-writing-suite
+claude plugin install ai-writing-suite@ai-writing-suite
 ```
-
-Restart Claude Code so the skill list refreshes.
 
 ### Codex
 
 ```bash
-# Copy to your Codex skills directory
-cp -r skills/ai-writing-suite ~/.codex/skills/ai-writing-suite
+codex plugin marketplace add surahli123/ai-writing-suite
+codex plugin add ai-writing-suite@ai-writing-suite
 ```
 
-Restart Codex so the skill list refreshes.
+### Cursor
 
-### Cursor / RovoDev (v2)
+Cursor reads Anthropic-format Agent Skills from `.cursor/skills/` — copy the suite in:
 
-See `packaging/` for surface-specific installation instructions (coming in v2).
+```bash
+git clone https://github.com/surahli123/ai-writing-suite
+cp -R ai-writing-suite/skills/ai-writing-suite ~/.cursor/skills/ai-writing-suite
+```
+
+### RovoDev
+
+Deferred to v2.
 
 ## How to Use
 
