@@ -8,6 +8,5 @@
   "homepage": "https://github.com/surahli/ai-writing-suite",
   "repository": "https://github.com/surahli/ai-writing-suite",
   "license": "MIT",
-  "keywords": ["writing", "editing", "humanize", "voice", "comms", "polish"],
-  "skills": "./skills/"
+  "keywords": ["writing", "editing", "humanize", "voice", "comms", "polish"]
 }

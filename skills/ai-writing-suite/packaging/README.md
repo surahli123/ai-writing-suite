@@ -78,14 +78,16 @@ claude/
 └── CHANGELOG.md           # generated
 ```
 
-**Manifest assumption (Claude):** The `.claude-plugin/plugin.json` format
-follows the `avoid-ai-writing` and `nature-skills` conventions: flat JSON with
-`name`, `description`, `version`, `author`, `homepage`, `repository`,
-`license`, `keywords`, and `skills` (path to skills dir). The
-`.claude-plugin/marketplace.json` uses the
-`https://json.schemastore.org/claude-code-marketplace.json` schema with a
-`plugins[]` array listing source paths. **Confirm with Claude Code plugin
-documentation before publishing** — this format may change.
+**Manifest status (Claude): VERIFIED 2026-06-06** against
+`code.claude.com/docs/en/plugins-reference.md` + `/plugin-marketplaces.md`.
+`.claude-plugin/plugin.json` — only `name` is required; `description`, `version`,
+`author` (object `{name, email?, url?}`), `homepage`, `repository`, `license`,
+`keywords` are valid optionals. The earlier `"skills": "./skills/"` field was
+**removed** — Claude auto-discovers the `skills/` directory, so that field was
+redundant (the `skills` field is only for *custom* paths in addition to the
+default). `.claude-plugin/marketplace.json` is correct as-is (`name` + `owner` +
+`plugins[]` required; `source` must start with `./`; `$schema` is editor-only,
+ignored at load). Validate before publishing with: `claude plugin validate .`
 
 ### Codex (`packaging/codex/`)
 
@@ -106,12 +108,18 @@ codex/
 └── CHANGELOG.md           # generated
 ```
 
-**Manifest assumption (Codex):** The `.codex-plugin/plugin.json` format mirrors
-the `.claude-plugin/plugin.json` structure (same fields), following the
-`nature-skills` Codex plugin convention. **Confirm with OpenAI Codex / codex
-CLI plugin documentation before publishing** — the Codex plugin spec is not
-publicly stable as of the writing date (2026-06-06). The `skills` field points
-to `./skills/` as the sub-skill directory.
+**Manifest status (Codex): PARTIALLY VERIFIED 2026-06-06.** Evidence from the
+locally-installed Codex skills (`~/.codex/skills/ai-slop-cleaner`,
+`ai-writing-humanizer`) shows the real consumed format is a **bare skill
+directory: `SKILL.md` (+ optional `references/`) with NO manifest at all** —
+Codex reads the `name`/`description` frontmatter directly. So the deliverable
+for a manual Codex install is the skill *tree* (`SKILL.md` + `skills/` +
+`_shared/`); the `.codex-plugin/plugin.json` here is **speculative** (modeled on
+the `nature-skills` repo convention) and Codex may ignore it. It is kept as a
+harmless metadata scaffold + the redundant `skills` field was removed for
+parity with Claude. **Before publishing to any Codex marketplace, confirm
+whether a manifest is required** — there is no stable public Codex plugin spec
+as of 2026-06-06; bare-directory install is the only format verified to work.
 
 ---
 
