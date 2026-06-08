@@ -50,7 +50,7 @@ You are evaluating a prose rewrite. The "before" is AI-shaped writing; the
 "after" is a human rewrite of it. Judge ONLY the "after".
 
 GENRE: {genre}
-WHAT THE AI TELL WAS: {subtle_tell or "obvious AI vocabulary and formatting"}
+WHAT THE AI TELL WAS: {subtle_tell}
 DIMENSIONS TO WEIGH: {rubric_focus}
 
 BEFORE:

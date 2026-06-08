@@ -92,12 +92,21 @@ def run_deterministic(data):
 
 
 def build_judge_prompt(fixture, rubric_template):
-    """Fill the rubric.md judge template for one fixture."""
+    """Fill the rubric.md judge template for one fixture.
+
+    no_fabrication is appended to the focus list when the fixture omits it, so the
+    judge is ALWAYS told to score it. rubric.md requires no_fabrication for every
+    verdict, but 3/8 fixtures don't list it in rubric_focus — without this the
+    highest-stakes dimension would go unscored on those fixtures.
+    """
+    focus = list(fixture["rubric_focus"])
+    if "no_fabrication" not in focus:
+        focus.append("no_fabrication")
     return (rubric_template
             .replace("{genre}", fixture["genre"])
             .replace("{subtle_tell}", fixture.get("subtle_tell",
                      "obvious AI vocabulary and formatting"))
-            .replace("{rubric_focus}", ", ".join(fixture["rubric_focus"]))
+            .replace("{rubric_focus}", ", ".join(focus))
             .replace("{before}", fixture["before"])
             .replace("{after}", fixture["after"]))
 
@@ -112,38 +121,107 @@ def _extract_judge_template():
 
 
 def run_judge(data):
-    """Emit the filled judge prompts and mark them SKIPPED (no model wired in).
+    """Score fixtures with the optional LLM judge, or SKIP when unconfigured.
 
-    A host integration would replace the `verdict = None` line with a real model
-    call and aggregate per rubric.md. We never fabricate a verdict offline."""
+    Honesty stance: when no judge is configured (no key, or not opted in via
+    AIWS_JUDGE_RUN=1) we print the filled prompt heads and mark every fixture
+    SKIPPED — we never fabricate a verdict offline. When a judge IS configured we
+    POST each prompt, parse the per-dimension PASS/FAIL lines, and RE-COMPUTE the
+    verdict in Python (no_fabrication-overrides-FAIL, per rubric.md) instead of
+    trusting the model's self-reported VERDICT line. A transport/auth error raises
+    loudly (caller exits nonzero) — never a silent SKIP.
+
+    Returns (passes, fails, skipped, live_error). The judge is ADVISORY in v1:
+    its PASS/FAIL counts do NOT drive the process exit code. The ONE judge
+    condition that does is `live_error` — configured but 0/N scored, meaning the
+    provider response envelope likely changed (a broken harness, surfaced loudly).
+    """
+    from fixtures import judge  # lazy: never imported on the deterministic path
     template = _extract_judge_template()
+    configured = judge.is_configured()
+
     print("\n=== LLM-judge check ===")
-    print("No model is configured in this offline harness — emitting the prompts "
-          "that WOULD be sent, marked SKIPPED.\n")
+    if not configured:
+        print("No judge configured (set AIWS_JUDGE_URL/MODEL/KEY + AIWS_JUDGE_RUN=1) "
+              "— emitting the prompts that WOULD be sent, marked SKIPPED.\n")
+    else:
+        print("Judge configured — scoring each fixture against the rubric.\n")
+
+    passes = fails = skipped = 0
+    agree = gold_total = 0
     for f in data["fixtures"]:
         prompt = build_judge_prompt(f, template)
-        verdict = None  # offline: never invent a verdict
-        print(f"[SKIP] {f['id']} (focus: {', '.join(f['rubric_focus'])})")
-        # Show the first 2 lines of the filled prompt as proof it built.
-        head = "\n".join(prompt.splitlines()[:2])
-        print(f"        prompt[0:2]: {head[:90]}...")
-    print("\nLLM-judge: 0 scored, all SKIPPED (wire a model to run).")
+
+        if not configured:
+            skipped += 1
+            print(f"[SKIP] {f['id']} (focus: {', '.join(f['rubric_focus'])})")
+            # Show the first 2 lines of the filled prompt as proof it built.
+            head = "\n".join(prompt.splitlines()[:2])
+            print(f"        prompt[0:2]: {head[:90]}...")
+            continue
+
+        raw = judge.score(prompt)  # raises JudgeError on transport/auth (loud)
+        verdict = (judge.aggregate([judge.parse_dimension_lines(raw)],
+                                   f["rubric_focus"]) if raw is not None else None)
+        if verdict is None:
+            skipped += 1
+            print(f"[SKIP] {f['id']} — no parseable verdict returned")
+            continue
+
+        if verdict == "PASS":
+            passes += 1
+        else:
+            fails += 1
+        gold = f.get("expected_verdict")
+        if gold is not None:
+            gold_total += 1
+            agree += int(gold == verdict)
+        print(f"[{verdict}] {f['id']}" + (f"  (gold={gold})" if gold else ""))
+
+    scored = passes + fails
+    if not configured:
+        print(f"\nLLM-judge: 0 scored, all {skipped} SKIPPED "
+              f"(configure a judge to run).")
+        return passes, fails, skipped, False
+
+    print(f"\nLLM-judge: {scored} scored ({passes} PASS / {fails} FAIL), "
+          f"{skipped} skipped.")
+    if gold_total:
+        print(f"Judge-vs-gold agreement: {agree}/{gold_total} "
+              f"(advisory — directional only at this n; NOT kappa).")
+
+    # Liveness: configured but nothing scored => provider envelope likely changed.
+    # This is the one judge condition that fails the run (a broken harness, loud),
+    # distinct from the keyless all-SKIP path above which exits 0.
+    live_error = scored == 0
+    if live_error:
+        print(f"ERROR: judge configured but scored 0/{len(data['fixtures'])} — "
+              f"provider response envelope likely changed "
+              f"(check AIWS_JUDGE_URL/MODEL).")
+    return passes, fails, skipped, live_error
 
 
 def main(argv=None):
     argv = argv if argv is not None else sys.argv[1:]
     ap = argparse.ArgumentParser(description="Run before/after eval fixtures.")
     ap.add_argument("--judge", action="store_true",
-                    help="also emit LLM-judge prompts (skipped offline)")
+                    help="also run the LLM-judge half (SKIPPED unless a judge is "
+                         "configured via AIWS_JUDGE_* env vars)")
     args = ap.parse_args(argv)
 
     data = load_fixtures()
     passes, fails = run_deterministic(data)
+
+    # The judge is ADVISORY: its PASS/FAIL counts do NOT change the exit code, so
+    # CI (which never passes --judge and sets no key) stays deterministic and
+    # key-free. The only judge condition that fails the run is a configured-but-
+    # broken judge (live_error: scored 0/N) — a harness error, surfaced loudly.
+    judge_live_error = False
     if args.judge:
-        run_judge(data)
+        _jp, _jf, _js, judge_live_error = run_judge(data)
 
     print(f"\nDeterministic: {passes} passed, {fails} failed.")
-    return 1 if fails else 0
+    return 1 if (fails or judge_live_error) else 0
 
 
 if __name__ == "__main__":

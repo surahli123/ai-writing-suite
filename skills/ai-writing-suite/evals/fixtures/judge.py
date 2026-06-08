@@ -1,0 +1,209 @@
+"""Optional LLM-judge for the before/after fixtures (Phase 2a wire-in).
+
+DEV-ONLY + OPT-IN. This module is the ONLY place the eval can talk to a model.
+It is never imported at module load and never reached by the deterministic CI
+path: `run_all.sh` runs `python3 -m fixtures.run_fixtures` (no `--judge`) with no
+key, so CI stays Python-3-stdlib-only and green. This module uses only the stdlib
+(`urllib` + `json` + `os`) — wiring a judge adds NO pip line to CI.
+
+Honesty stance (inherited from run_fixtures.run_judge): we NEVER fabricate a
+verdict. If the judge is not configured, the caller SKIPs.
+
+Three-state gate (`score()`):
+  1. NOT configured (any of URL/MODEL/KEY missing, or AIWS_JUDGE_RUN != "1")
+     -> return None  ->  caller SKIPs (process exits 0; the offline honesty path).
+  2. configured + opted in
+     -> ONE HTTP POST; return the model's raw text.
+  3. configured but the call fails (transport / auth / HTTP 4xx-5xx)
+     -> raise JudgeError (LOUD; the caller exits nonzero). An auth failure must
+        NOT be laundered into a SKIP (CLAUDE.md: "FAIL LOUDLY if config and
+        runtime disagree").
+
+Provider is PURELY env-driven — NO baked-in vendor — to keep the
+host-provides-the-model philosophy and avoid a second-vendor dependency:
+
+  AIWS_JUDGE_URL    full chat/completions endpoint URL (e.g. an OpenAI-compatible
+                    .../v1/chat/completions)
+  AIWS_JUDGE_MODEL  model id to send
+  AIWS_JUDGE_KEY    the API key (read once, sent as a Bearer header, never logged)
+  AIWS_JUDGE_RUN    must be "1" to actually spend — a stray key in the env alone
+                    will NOT trigger a billed call.
+
+Cross-family note: if your rewrites come from Claude, point AIWS_JUDGE_MODEL at a
+different model family to avoid judge self-preference (~10-25% PASS inflation).
+For v1 the fixtures' `after` strings are hand-written (not model output), so this
+is a recommendation, not a hard requirement — see evals/README.md.
+"""
+
+import json
+import os
+import re
+import urllib.error
+import urllib.request
+
+# no_fabrication is ALWAYS required for an overall PASS, even when a fixture's
+# rubric_focus does not list it (rubric.md: "Verdict aggregation"). This is the
+# single load-bearing asymmetry the judge exists to enforce.
+ALWAYS_REQUIRED = "no_fabrication"
+
+# One attempt, generous timeout. No retry/backoff in v1 — retry logic is the part
+# a minimal-debugger owner can't maintain, and a clean loud failure is better than
+# silent flakiness (the liveness check in run_judge surfaces a dead provider).
+_TIMEOUT_S = 60
+
+# Matches a NORMALIZED rubric line: "<snake_case_dim>: PASS|FAIL [— reason]".
+# Leading list markers / **bold** are stripped before matching (see parse below),
+# so common model formatting ("- **meaning_preserved**: PASS") still parses.
+_DIM_LINE = re.compile(r"^([a-z][a-z_]+)\s*:\s*(PASS|FAIL)\b", re.IGNORECASE)
+
+
+class JudgeError(RuntimeError):
+    """Transport/auth/HTTP failure — must reach the user loudly, never a SKIP."""
+
+
+def is_configured():
+    """True only when fully configured AND explicitly opted in to spend.
+
+    Requiring AIWS_JUDGE_RUN=="1" on top of the credentials means a stray
+    API key already in the environment cannot, by itself, trigger a billed call.
+    """
+    return bool(os.environ.get("AIWS_JUDGE_URL")
+                and os.environ.get("AIWS_JUDGE_MODEL")
+                and os.environ.get("AIWS_JUDGE_KEY")
+                and os.environ.get("AIWS_JUDGE_RUN") == "1")
+
+
+def score(prompt):
+    """Return the model's raw text for `prompt`, or None if not configured.
+
+    State 1 (not configured) -> None (caller SKIPs).
+    State 2 (configured)     -> one POST, return raw text (or None if the 200
+                               response carries no extractable text — the caller
+                               treats that as unparseable and the liveness check
+                               in run_judge turns a whole-suite failure loud).
+    State 3 (call fails)     -> raise JudgeError.
+    """
+    if not is_configured():
+        return None  # honesty stance: no fabrication, caller SKIPs
+
+    url = os.environ["AIWS_JUDGE_URL"]
+    model = os.environ["AIWS_JUDGE_MODEL"]
+    key = os.environ["AIWS_JUDGE_KEY"]
+
+    body = json.dumps({
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0,
+    }).encode("utf-8")
+
+    req = urllib.request.Request(url, data=body, method="POST")
+    req.add_header("Content-Type", "application/json")
+    req.add_header("Authorization", f"Bearer {key}")  # never logged/printed
+
+    try:
+        with urllib.request.urlopen(req, timeout=_TIMEOUT_S) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        # 401/403/429/5xx etc. Surface the status, never the key. Loud, not SKIP.
+        raise JudgeError(
+            f"judge HTTP {e.code} from provider — check "
+            f"AIWS_JUDGE_URL / AIWS_JUDGE_KEY / AIWS_JUDGE_MODEL") from None
+    except (urllib.error.URLError, TimeoutError, OSError) as e:
+        raise JudgeError(f"judge transport error: {e}") from None
+
+    return _extract_text(payload)
+
+
+def _extract_text(payload):
+    """Pull assistant text out of a provider response envelope, tolerantly.
+
+    Handles the two common shapes (OpenAI chat-completions, Anthropic messages)
+    plus a couple of fallbacks. Returns None if no text is found — run_judge's
+    liveness check turns an all-None run (with a key present) into a loud nonzero
+    exit ("provider envelope likely changed"), so a silent shape drift can't
+    masquerade as 'all SKIPPED'.
+    """
+    if not isinstance(payload, dict):
+        return None
+    # OpenAI-style: choices[0].message.content
+    choices = payload.get("choices")
+    if isinstance(choices, list) and choices:
+        msg = choices[0].get("message") if isinstance(choices[0], dict) else None
+        if isinstance(msg, dict) and isinstance(msg.get("content"), str):
+            return msg["content"]
+        # some completion APIs put text directly on the choice
+        if isinstance(choices[0], dict) and isinstance(choices[0].get("text"), str):
+            return choices[0]["text"]
+    # Anthropic-style: content[0].text
+    content = payload.get("content")
+    if isinstance(content, list) and content and isinstance(content[0], dict):
+        if isinstance(content[0].get("text"), str):
+            return content[0]["text"]
+    # Last-ditch flat fields.
+    for k in ("output_text", "text", "completion"):
+        if isinstance(payload.get(k), str):
+            return payload[k]
+    return None
+
+
+def parse_dimension_lines(model_text):
+    """Parse a model verdict into {dimension: 'PASS'|'FAIL'}.
+
+    Tolerates common model formatting: leading list markers ("- ", "* ", "1. ")
+    and **bold** around the dimension name are stripped before matching, so
+    "- **meaning_preserved**: PASS" parses the same as "meaning_preserved: PASS".
+    IGNORES the model's self-reported final 'VERDICT:' line — we recompute the
+    verdict ourselves in aggregate(). Returns {} when nothing parses.
+    """
+    out = {}
+    if not isinstance(model_text, str):
+        return out
+    for raw in model_text.splitlines():
+        # Strip leading bullets/numbering and any ** bold markers, then match.
+        line = raw.strip().lstrip("-*0123456789. \t").replace("*", "")
+        m = _DIM_LINE.match(line)
+        if not m:
+            continue
+        dim = m.group(1).lower()
+        if dim == "verdict":  # never trust the model's self-reported overall line
+            continue
+        out[dim] = m.group(2).upper()
+    return out
+
+
+def majority_vote(per_rep_results):
+    """Merge N per-rep dimension dicts into one by majority vote per dimension.
+
+    For v1 reps=1 this just returns a copy. Ties (or a 50/50 split) resolve to
+    FAIL — the conservative choice for a judge whose job is to catch problems.
+    """
+    if not per_rep_results:
+        return {}
+    if len(per_rep_results) == 1:
+        return dict(per_rep_results[0])
+    dims = set().union(*(d.keys() for d in per_rep_results))
+    merged = {}
+    for d in dims:
+        passes = sum(1 for r in per_rep_results if r.get(d) == "PASS")
+        fails = sum(1 for r in per_rep_results if r.get(d) == "FAIL")
+        merged[d] = "PASS" if passes > fails else "FAIL"
+    return merged
+
+
+def aggregate(per_rep_results, rubric_focus):
+    """Recompute the overall verdict in Python from per-dimension results.
+
+    A verdict counts only from reps that scored EVERY required dimension, where
+    required = the fixture's rubric_focus PLUS no_fabrication (always). Reps
+    missing a required dimension are INCOMPLETE and discarded — never silently
+    treated as a PASS for the dimension they skipped. Returns None (-> SKIP, never
+    a fake PASS) when no complete rep exists, so a missing load-bearing call can
+    never produce a fabricated PASS. overall PASS iff every required dimension,
+    majority-voted across the complete reps, is PASS.
+    """
+    required = set(rubric_focus) | {ALWAYS_REQUIRED}
+    complete = [r for r in per_rep_results if required <= set(r)]
+    if not complete:
+        return None  # no complete verdict — SKIP, do not fabricate
+    merged = majority_vote(complete)
+    return "PASS" if all(merged[dim] == "PASS" for dim in required) else "FAIL"
