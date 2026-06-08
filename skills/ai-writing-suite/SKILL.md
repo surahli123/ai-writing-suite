@@ -49,6 +49,19 @@ and route explicitly:
 If intent is ambiguous, default to `comms-polish` (the most common job) and say
 which sub-skill you chose.
 
+**Then load the sub-skill yourself — this router is not enough on its own.** RovoDev
+registers only this top-level router, not the nested sub-skills, so the polishing/drafting
+logic does **not** arrive just by loading this file. Once you have chosen a sub-skill, you
+must read it explicitly before doing any work:
+
+1. Open `skills/<name>/SKILL.md` (e.g. `skills/comms-polish/SKILL.md`), relative to this
+   suite's root.
+2. Read every file that sub-skill references — its AI-tell pattern catalog and any other
+   shared assets under this suite's `_shared/` directory (e.g. `_shared/patterns/`, and the
+   voice profile / learned-rules log if present).
+3. Follow that sub-skill's instructions to perform the task. Do not attempt the work from
+   this router's summary alone — the actual logic lives in the sub-skill, not here.
+
 ## Boundary
 
 This suite edits and produces prose, not code. For source-code cleanup or

@@ -25,6 +25,7 @@ under `skills/ai-writing-suite/skills/`; the root `SKILL.md` is a documentation 
 - **Claude:** `claude plugin marketplace add surahli123/ai-writing-suite` → `claude plugin install ai-writing-suite@ai-writing-suite`
 - **Codex:** `codex plugin marketplace add surahli123/ai-writing-suite` → `codex plugin add ai-writing-suite@ai-writing-suite`
 - **Cursor:** copy `skills/ai-writing-suite/` into `~/.cursor/skills/ai-writing-suite/` (or a project's `.cursor/skills/`). Cursor reads Anthropic-format `SKILL.md` Agent Skills natively; no manifest needed. (Not `.cursor/rules/*.mdc` — that is passive context injection, the wrong primitive for callable skills.)
+- **RovoDev (experimental):** manual folder copy + **explicit** invocation (RovoDev does not auto-trigger). See "RovoDev — experimental manual install" below. On-device verification is required before relying on it; the nested sub-skill layout may need a flat repackage on builds that do not crawl nested skill dirs.
 
 ## Versioning / updates
 
@@ -52,7 +53,50 @@ version source per host and nothing to keep in lockstep with the body.
 is the *fuel* — the generic OSS KB; a company fork drops its real playbook into the same slot
 (never committed to this public repo).
 
+## RovoDev — experimental manual install (pending on-device verification)
+
+RovoDev is not yet a first-class target. There is no marketplace manifest for it; install is a
+manual folder copy, the same primitive as Cursor. Two RovoDev facts shape this:
+
+- **It does not auto-trigger skills** by description — you invoke explicitly (name the skill in
+  your prompt). The router's "RovoDev — explicit intent routing" section is written for this.
+- **It may not discover *nested* sub-skills.** RovoDev documents flat per-skill discovery
+  (`skills/<name>/SKILL.md`); our sub-skills live one level deeper, under
+  `skills/ai-writing-suite/skills/<name>/`. So it likely registers only the top-level router. The
+  router is patched to be self-sufficient (it tells the agent to read the chosen sub-skill file on
+  demand), which makes the nested layout work *if* the agent follows that step.
+
+### Steps
+
+1. Get the repo on the machine: `git clone https://github.com/surahli123/ai-writing-suite`
+   (or copy the folder if cloning is blocked by corp policy).
+2. Copy the suite into RovoDev's skills discovery directory (confirm the real path via `/skills`;
+   common candidates are `~/.rovodev/skills/`, `~/.agents/skills/`, or a project `.rovodev/skills/`):
+
+   ```
+   cp -R ai-writing-suite/skills/ai-writing-suite ~/.rovodev/skills/ai-writing-suite
+   ```
+
+   The directory name **must** equal the frontmatter `name:` → `ai-writing-suite`.
+3. Start a fresh RovoDev session, run `/skills`, and confirm `ai-writing-suite` is registered.
+   (Expect only the router to appear, not the four sub-skills.)
+4. Invoke explicitly, e.g.:
+
+   > Use the ai-writing-suite skill. Rewrite this so it sounds less AI-generated; keep the facts
+   > and my voice. Mode: rewrite. [paste draft]
+
+### "Done" on RovoDev (verify, per the project's verify rule)
+
+- `ai-writing-suite` shows up in `/skills`.
+- An explicit `comms-polish` invocation produces a real **before/after** rewrite on a sample
+  draft (loads + behavioural evidence, not "no error thrown").
+- If the agent reads only the router and stops, prompt it to read
+  `skills/ai-writing-suite/skills/comms-polish/SKILL.md` and its `_shared/patterns/` references,
+  then re-run. Needing that by hand means the router self-sufficiency step is being skipped.
+
 ## Deferred (v2)
 
-RovoDev packaging. It will follow the same source-pointing model (explicit intent routing via the
-suite router, since RovoDev does not auto-trigger skills).
+A flat RovoDev repackage (each sub-skill as its own top-level `skills/<name>/` dir with the needed
+`_shared/` assets copied alongside) — **only** if on-device testing shows the self-sufficient
+router is unreliable and RovoDev does not crawl the nested tree. Keep it RovoDev-specific; do not
+disturb the nested Claude/Cursor layout that already works.
