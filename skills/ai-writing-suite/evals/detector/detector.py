@@ -16,7 +16,7 @@ WHY FN-biased: a false "this is AI" on real human writing destroys trust worse
 than a missed AI passage. Ambiguity routes to MIXED, never AI_ONLY.
 
 LIMITATION (review m4): word counting assumes whitespace-delimited scripts
-(`\S+`). CJK / non-space-delimited text (Chinese, Japanese) collapses to a tiny
+(`\\S+`). CJK / non-space-delimited text (Chinese, Japanese) collapses to a tiny
 word count and returns UNSCORED ("Too short") rather than a real score. That is
 NOT a clean-text signal — it means "unsupported script." Bilingual/CJK scoring
 is v2 (see voice-onboard + scenario-presets, which scope bilingual to v2).

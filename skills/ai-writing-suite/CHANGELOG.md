@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and Codex now install **directly from the single source tree** via repo-root
   marketplace manifests (`.claude-plugin/marketplace.json` and
   `.agents/plugins/marketplace.json`), each backed by an in-source `plugin.json`.
+- **`detector.py` SyntaxWarning** — `\S+` in the module docstring was an invalid
+  escape sequence; escaped it. The evals tree now compiles clean under
+  `python3 -W error::SyntaxWarning`.
 
 ### Added
 - **Cursor support** — Cursor reads Anthropic-format `SKILL.md` Agent Skills from
@@ -24,6 +27,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   primitive for callable skills.)
 - **Per-host install Quickstart** in the README (Claude, Codex, Cursor) and a
   maintainer packaging note at `docs/packaging.md`.
+- **Regression runner + CI** (`evals/run_all.sh` + `.github/workflows/ci.yml`) — one
+  stdlib-only command (unit tests + KB smoke + fixture calibration) gating every push
+  and PR. (Phase 1)
+- **Opt-in advisory LLM judge** for the before/after fixtures (`evals/fixtures/judge.py`)
+  — env-driven, key-gated, stdlib-only; parses per-dimension verdicts and re-computes the
+  result in Python (`no_fabrication`-overrides-FAIL); SKIPPED offline, advisory (never
+  gates CI), loud on auth/transport failure. Adds `expected_verdict` gold labels for
+  judge-vs-gold agreement. (Phase 2a)
+- **Engine-polish from cross-skill distillation** — `comms-polish` now re-scans its output
+  against the catalog before returning; negative-routing hand-offs in sub-skill frontmatter;
+  a deterministic Tier-1 word→swap table in `lexical-tells.md`; a human-gated graduation step
+  in the self-improvement loop; a layered final-pass checklist with a hard facts-floor.
+- **Expanded test suite** (51 stdlib-only tests) — judge parse/aggregate + fabrication-trap,
+  voice-profile header contract, catalog↔detector sync, and SKILL.md frontmatter contract.
 
 ### Removed
 - **Generate-and-sync packaging** (`packaging/` + `sync.sh`) — obsolete now that every
