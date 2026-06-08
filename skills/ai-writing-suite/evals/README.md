@@ -7,7 +7,7 @@ parts):
 | Piece | What it does | Needs a model? |
 | --- | --- | --- |
 | `detector/` | Mechanical AI-tell scanner — cheap deterministic regression gate | No |
-| `fixtures/` | Before/after pairs across 4 genres, score bands + LLM-judge rubric | Judge half only |
+| `fixtures/` | Before/after pairs across 4 genres, score bands + LLM-judge rubric | Judge half only (opt-in) |
 | `smoke_test.py` | Automates the KB ingestion+retrieval smoke chain (design D12) | No |
 
 > Design lineage: D10 (eval harness + Autorefine-style self-improvement) and D12
@@ -28,7 +28,7 @@ cat draft.md | python3 -m detector.cli -
 
 # 2. Fixtures — deterministic score-band check + calibration report
 python3 -m fixtures.run_fixtures
-python3 -m fixtures.run_fixtures --judge      # also emits the LLM-judge prompts (SKIPPED offline)
+python3 -m fixtures.run_fixtures --judge      # LLM-judge half: SKIPPED unless AIWS_JUDGE_* is set (see "The LLM judge" below)
 python3 -m unittest fixtures.test_fixtures    # asserts the suite stays calibrated
 
 # 3. KB smoke test — ingestion+retrieval chain
@@ -70,14 +70,49 @@ memo). Each has an AI-shaped `before`, a good human `after`, detector score
 bands, and `rubric_focus` (which rubric dimensions matter here).
 
 - `run_fixtures.py` — runs the **deterministic** half (assert score bands +
-  report naive-baseline miss rate). With `--judge` it fills the rubric prompt
-  per fixture and marks them **SKIPPED** (no model wired in — it never fabricates
-  a verdict offline).
+  report naive-baseline miss rate). With `--judge` it runs the LLM-judge half:
+  **SKIPPED** unless a judge is configured (see "The LLM judge" below); when
+  configured it scores each fixture, re-computes the verdict in Python, and
+  reports judge-vs-gold agreement. It never fabricates a verdict offline.
+- `judge.py` — the opt-in, stdlib-only judge client (env-driven provider; parses
+  per-dimension PASS/FAIL; re-computes the verdict, enforcing
+  `no_fabrication`-overrides-FAIL in code). Dev-only; never reached by CI.
 - `rubric.md` — the LLM-judge scoring contract (dimensions, verdict aggregation,
   a model-agnostic zero-shot prompt template). `no_fabrication` is always
   required: a fluent rewrite that invents a number FAILS.
 - `test_fixtures.py` — asserts the suite stays well-formed, in-band, and
-  calibrated.
+  calibrated, and that the judge parse/aggregate logic + the CI-stays-key-free
+  invariant hold (canned responses, no network).
+
+**The LLM judge (opt-in, advisory).** The judge is OFF by default — CI never runs
+it and needs no key. To run it locally, set all four env vars (the run flag is a
+deliberate spend guard, so a stray key alone cannot trigger a billed call):
+
+```bash
+export AIWS_JUDGE_URL=...      # an OpenAI-compatible chat/completions endpoint
+export AIWS_JUDGE_MODEL=...    # the judge model id
+export AIWS_JUDGE_KEY=...      # API key (sent as a Bearer header, never logged)
+export AIWS_JUDGE_RUN=1        # opt in to actually spend
+python3 -m fixtures.run_fixtures --judge
+```
+
+- **Advisory in v1.** The judge's PASS/FAIL counts do NOT change the exit code;
+  only the deterministic checks gate CI (which keeps CI key-free). The one judge
+  condition that fails the run is a configured-but-broken judge (scored 0/N —
+  likely a changed provider response envelope), surfaced loudly; an auth/transport
+  error also fails loudly and is never laundered into a SKIP.
+- **Cross-family recommended.** Point `AIWS_JUDGE_MODEL` at a different model
+  family than the one that wrote the text, to avoid judge self-preference
+  (~10-25% PASS inflation). For the current static `after` fixtures (hand-written,
+  not model output) this is a recommendation, not a hard requirement.
+- **What a green judge means.** It proves the judge *wiring* works (parse +
+  re-aggregate + `no_fabrication` enforcement), measured against the
+  `expected_verdict` gold labels as a directional agreement count. It does NOT yet
+  prove `comms-polish` writes well end to end (it scores curated rewrites, not live
+  skill output), and the agreement count is NOT a Cohen's kappa — at n=8 a kappa
+  would be statistical noise. Real two-class gold, kappa, a frozen holdout,
+  replication, and a live end-to-end eval are **Phase 2b** (see
+  `docs/test-plan-v1-2026-06-07.md`).
 
 ### 3. `smoke_test.py` — KB retrieval chain
 
@@ -115,8 +150,11 @@ what the LLM judge exists to cover — and why the suite needs both halves.
 
 1. Add an object to `fixtures.json > fixtures` with: `id`, `genre`,
    `difficulty` (`obvious`|`subtle`), `before`, `after`, `after_band_max`,
-   `rubric_focus`, `expect_baseline` (`catch`|`miss`), and — for subtle ones —
-   a `subtle_tell` explaining the non-vocabulary tell.
+   `rubric_focus`, `expect_baseline` (`catch`|`miss`), `expected_verdict`
+   (`PASS`|`FAIL`, the gold label for judge-vs-gold agreement), and — for subtle
+   ones — a `subtle_tell` explaining the non-vocabulary tell. Note: adding a
+   fixture changes the calibration denominator (step 4) — at small n the 30-40%
+   band is a knife-edge, so design each addition to keep the miss count in band.
 2. Run `python3 -m fixtures.run_fixtures` to read the actual detector scores.
 3. Set `before_band_min`/`before_band_max` to bracket the observed score (a
    regression guard, not an aspiration). Set `expect_baseline` to match what the

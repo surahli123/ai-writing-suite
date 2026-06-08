@@ -1,9 +1,10 @@
 {
-  "_doc": "Before/after LLM-judge fixtures across 4 genres (tweet/linkedin/readme/memo). Each fixture: an AI-shaped `before`, a good human `after`, and what we expect. `before_band_min`/`before_band_max`/`after_band_max` are detector score-band expectations (mechanical, deterministic regression guards bracketing the observed score). `rubric_focus` lists which rubric dimensions the LLM judge should weigh. Difficulty is calibrated so a NAIVE baseline (flag-if-detector-score >= baseline_threshold) misses ~30-40% of the `before` items: the `subtle` ones are AI-written but score LOW because they avoid vocabulary tells and lean on structural/rhythm tells a flat threshold underweights. See README calibration section.",
+  "_doc": "Before/after LLM-judge fixtures across 4 genres (tweet/linkedin/readme/memo). Each fixture: an AI-shaped `before`, a good human `after`, and what we expect. `before_band_min`/`before_band_max`/`after_band_max` are detector score-band expectations (mechanical, deterministic regression guards bracketing the observed score). `rubric_focus` lists which rubric dimensions the LLM judge should weigh. Difficulty is calibrated so a NAIVE baseline (flag-if-detector-score >= baseline_threshold) misses ~30-40% of the `before` items: the `subtle` ones are AI-written but score LOW because they avoid vocabulary tells and lean on structural/rhythm tells a flat threshold underweights. See README calibration section. `expected_verdict` (PASS|FAIL) is the owner's gold label for advisory judge-vs-gold agreement: all current fixtures are good rewrites (PASS); FAIL exemplars live in the unit tests (test_fixtures.py), not here, to preserve the 30-40% calibration band.",
   "baseline_threshold": 14,
   "fixtures": [
     {
       "id": "tweet-01-obvious",
+      "expected_verdict": "PASS",
       "genre": "tweet",
       "difficulty": "obvious",
       "before": "In today's ever-evolving landscape, we're thrilled to delve into a game-changing paradigm. This seamless, robust solution will revolutionize how you work. The future looks bright! 🚀 #innovation #growth #tech #startup #ai #future #buildinpublic",
@@ -20,6 +21,7 @@
     },
     {
       "id": "tweet-02-subtle",
+      "expected_verdict": "PASS",
       "genre": "tweet",
       "difficulty": "subtle",
       "before": "Spent the week thinking about retrieval. Keyword search is underrated. Vector search is overhyped. Most teams reach for embeddings when an index would do. Worth sitting with that.",
@@ -36,6 +38,7 @@
     },
     {
       "id": "linkedin-01-obvious",
+      "expected_verdict": "PASS",
       "genre": "linkedin",
       "difficulty": "obvious",
       "before": "I recently had the pleasure of attending a pivotal conference. It was truly a transformative experience that underscored the importance of fostering meaningful connections. Moreover, the keynote was a testament to the power of innovation. As we navigate this dynamic ecosystem, let's embrace the journey. What's next? Only time will tell.",
@@ -52,6 +55,7 @@
     },
     {
       "id": "linkedin-02-subtle",
+      "expected_verdict": "PASS",
       "genre": "linkedin",
       "difficulty": "subtle",
       "before": "Three things I learned shipping our first ML model.\n\nFirst, data quality matters more than model choice.\n\nSecond, stakeholders care about latency, not accuracy.\n\nThird, the simplest baseline is often hard to beat.\n\nWhat would you add?",
@@ -69,6 +73,7 @@
     },
     {
       "id": "readme-01-obvious",
+      "expected_verdict": "PASS",
       "genre": "readme",
       "difficulty": "obvious",
       "before": "## Overview\n\nThis comprehensive, cutting-edge library leverages a robust architecture to seamlessly streamline your workflow. It empowers developers to harness the full potential of modern tooling. Whether you're a beginner or an expert, this powerful solution has you covered.",
@@ -84,6 +89,7 @@
     },
     {
       "id": "readme-02-subtle",
+      "expected_verdict": "PASS",
       "genre": "readme",
       "difficulty": "subtle",
       "before": "## Installation\n\nTo get started, simply install the package. Once installed, you can begin using it right away. The setup process is designed to be straightforward and intuitive, ensuring a smooth onboarding experience for users of all skill levels.",
@@ -100,6 +106,7 @@
     },
     {
       "id": "memo-01-obvious",
+      "expected_verdict": "PASS",
       "genre": "memo",
       "difficulty": "obvious",
       "before": "It is important to note that, as we move forward, we must delve into the intricacies of our strategy. Experts believe that fostering a culture of innovation is paramount. Furthermore, this pivotal initiative will undoubtedly elevate our position. Let's break this down step by step to ensure a holistic approach.",
@@ -116,6 +123,7 @@
     },
     {
       "id": "memo-02-subtle",
+      "expected_verdict": "PASS",
       "genre": "memo",
       "difficulty": "subtle",
       "before": "While our current approach has served us well, there is room for improvement. It is important to note that research suggests engagement is trending in a positive direction. That said, we should remain mindful of potential headwinds, and a measured strategy could potentially position us well. Ultimately, this balanced approach will help us capture emerging opportunities going forward.",
