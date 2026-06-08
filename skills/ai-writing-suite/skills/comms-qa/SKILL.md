@@ -1,6 +1,6 @@
 ---
 name: comms-qa
-description: Answer questions from the knowledge base via a markdown mini-RAG over the pluggable KB. Not yet built - coming in v2.
+description: Answer questions from the knowledge base via a markdown mini-RAG over the pluggable KB. Not yet built - coming in v2. For polishing existing text use comms-polish; for drafting a new page use comms-draft.
 ---
 
 # comms-qa (placeholder)

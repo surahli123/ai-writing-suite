@@ -37,6 +37,60 @@ significant(ly), innovative / innovation, effective(ly), dynamic, scalable,
 compelling, unprecedented, exceptional, remarkable, sophisticated, instrumental,
 world-class / state-of-the-art / best-in-class.
 
+**Replace-on-sight table (Tier 1 → plain swap).** Deterministic suggestions, not guesses —
+reach for these instead of inventing a substitution. This table mirrors
+`evals/detector/patterns.py` `TIER1`; a dev sync-test (`evals/test_catalog_sync.py`) fails
+if the two drift (regenerate from `patterns.py` in v2).
+
+| AI word | Plain swap |
+| --- | --- |
+| delve | explore, dig into, look at |
+| tapestry | describe the actual complexity |
+| paradigm | model, approach, framework |
+| embark | start, begin |
+| beacon | rewrite entirely |
+| robust | strong, reliable, solid |
+| comprehensive | thorough, complete, full |
+| cutting-edge | latest, newest, advanced |
+| pivotal | important, key, critical |
+| underscores | highlights, shows |
+| meticulous | careful, detailed, precise |
+| meticulously | carefully, precisely |
+| seamless | smooth, easy, without friction |
+| seamlessly | smoothly, easily |
+| game-changer | describe what changed |
+| game-changing | describe what changed |
+| utilize | use |
+| nestled | is located, sits |
+| vibrant | describe what makes it active |
+| thriving | growing, active |
+| showcasing | showing, demonstrating |
+| bustling | busy, active |
+| intricate | complex, detailed |
+| intricacies | complexities, details |
+| ever-evolving | changing, growing |
+| enduring | lasting, long-running |
+| daunting | hard, difficult |
+| holistic | complete, full, whole |
+| holistically | completely, fully |
+| actionable | practical, useful, concrete |
+| impactful | effective, significant |
+| learnings | lessons, findings, takeaways |
+| synergy | describe the combined effect |
+| synergies | describe the combined effect |
+| interplay | relationship, connection |
+| commence | start, begin |
+| ascertain | find out, determine |
+| endeavor | effort, attempt, try |
+| symphony | describe the coordination |
+| embrace | adopt, accept, use |
+
+Common Tier-1 phrases: `delve into` → explore / dig into · `landscape` → field / space ·
+`realm` → area / field · `testament to` → shows / proves · `leverage` → use · `deep dive`
+/ `dive into` → look at / examine · `unpack` → explain / break down · `best practices` →
+what works · `in order to` → to · `due to the fact that` → because · `serves as` → is ·
+`boasts` → has.
+
 > The tier idea comes from avoid-ai (adapted from brandonwise/humanizer vocab
 > research). Tiering is what keeps this rule from flattening legitimate prose.
 

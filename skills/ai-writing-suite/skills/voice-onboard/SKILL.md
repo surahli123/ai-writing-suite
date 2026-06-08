@@ -1,6 +1,6 @@
 ---
 name: voice-onboard
-description: Interview an author and distill their historical writing into a reusable voice profile that comms-polish reads for voice matching. Ingests local files or pasted samples, extracts a 10-dimension style fingerprint with sample evidence, and writes _shared/voice-profile.md. Use when the user says "learn my voice", "match how I write", or before a series of posts that must stay on-voice.
+description: Interview an author and distill their historical writing into a reusable voice profile that comms-polish reads for voice matching. Ingests local files or pasted samples, extracts a 10-dimension style fingerprint with sample evidence, and writes _shared/voice-profile.md. Use when the user says "learn my voice", "match how I write", or before a series of posts that must stay on-voice. Not for rewriting or polishing text - that is comms-polish; this skill only profiles.
 ---
 
 # voice-onboard

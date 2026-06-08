@@ -1,6 +1,6 @@
 ---
 name: comms-polish
-description: Polish prose that sounds AI-written while preserving meaning, facts, and author voice. Modes - detect, review, rewrite, edit - plus a 0-100 AI-tell score on demand. Use for docs, emails, posts, reports, and user-facing copy; do not use for code cleanup.
+description: Polish prose that sounds AI-written while preserving meaning, facts, and author voice. Modes - detect, review, rewrite, edit - plus a 0-100 AI-tell score on demand. Use for docs, emails, posts, reports, and user-facing copy. Not for code cleanup, and not for learning or extracting an author's voice - that is voice-onboard.
 ---
 
 # comms-polish
@@ -128,8 +128,11 @@ When neither exists, use the lightest voice that fits the context:
 6. Replace vague abstractions with concrete actors, actions, examples, or consequences.
 7. Vary rhythm without adding fake personality. Bias word choice and cadence
    toward the voice profile when one was loaded.
-8. **Run `references/final-pass-checklist.md`** before returning anything.
-9. Return the requested output and mention any claim that still needs evidence.
+8. **Re-scan your rewrite against the pattern catalog** (repeat step 5 on the *output*).
+   Rewriting reintroduces tells — fixing one often plants another. Treat the rewrite as a
+   fresh draft, scan it, and remove any tell you find before the final pass.
+9. **Run `references/final-pass-checklist.md`** before returning anything.
+10. Return the requested output and mention any claim that still needs evidence.
 
 ## Safety Rules
 

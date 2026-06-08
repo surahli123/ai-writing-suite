@@ -1,6 +1,6 @@
 ---
 name: comms-draft
-description: Draft a new page guided by the knowledge base / playbook. Not yet built - coming in v2.
+description: Draft a new page guided by the knowledge base / playbook. Not yet built - coming in v2. For polishing existing text use comms-polish; for KB Q&A use comms-qa.
 ---
 
 # comms-draft (placeholder)
