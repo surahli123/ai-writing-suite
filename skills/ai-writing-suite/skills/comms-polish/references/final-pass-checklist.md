@@ -6,7 +6,14 @@ quick read-through that catches the tell you reintroduced while fixing another o
 Adapted from `weijt606/anti-vibe-writing` (`final-pass-checklist.md`, MIT); the
 optional scoring pass is adapted from the `stop-slop` rubric (MIT).
 
-## The checklist
+## The checklist (layered — clear each layer in order)
+
+**L1 — Mechanical floor (non-negotiable).** A single failure here blocks the return, no
+matter how good the prose reads. This layer is never traded off against style.
+
+- **Facts, numbers, technical claims, code, commands, and quotes are unchanged.**
+
+**L2 — Slop removal (style).**
 
 - The opening reaches the point quickly — no runway.
 - The main point appears early.
@@ -22,9 +29,13 @@ optional scoring pass is adapted from the `stop-slop` rubric (MIT).
 - The tone has a point of view instead of manufactured balance.
 - Warmth comes from specificity and cadence, not filler friendliness.
 - The prose sounds written, not assembled.
-- **Facts, numbers, technical claims, code, commands, and quotes are unchanged.**
 - Necessary nuance is carried in the sentence, not bolted on as a hedge.
 - The result is shorter or sharper, not just different.
+
+**L3 — Genre + voice fit.** Run the cross-checks in the next section.
+
+**L4 — Acceptance (one honest question).** *Would a specific, informed human have written
+this?* If no, make another pass before returning.
 
 ## Genre + voice cross-checks
 

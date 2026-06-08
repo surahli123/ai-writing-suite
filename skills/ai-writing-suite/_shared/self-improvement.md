@@ -94,6 +94,24 @@ Only on an explicit "yes" / "approve" / "add it" from the user:
 If the user says no, or edits the wording, follow their version exactly. Never
 append a rule they did not approve. Never append more than they approved.
 
+### GRADUATION — fold stable rules into the catalog (human-gated, maintainer-run)
+
+`learned-rules.md` is append-only, so its on-start read cost grows with every approved
+rule. Graduation keeps the log small WITHOUT weakening the anti-drift gate:
+
+- **Who:** the maintainer (a human), never this hook autonomously. The hook proposes and
+  appends; it does NOT graduate.
+- **When:** a rule is `status: active`, has proven stable across sessions, and (Layer 3) has
+  passed its eval.
+- **What:** the maintainer folds the rule's substance into the right catalog file
+  (`_shared/patterns/...`) or sub-skill reference by hand — the same way any catalog edit is
+  made — then sets the `learned-rules.md` entry to `status: graduated` (a status edit on its
+  own line, noting where it landed). The rule now lives in the catalog; the log entry is a
+  tombstone, not an active rule the hook re-applies on start.
+- **Why it's safe:** the "never auto-edit the catalog" rule (below) is untouched. Graduation
+  is a deliberate human edit, identical in trust to writing the catalog in the first place.
+  The hook gains no new power — it still only reads on start and proposes on end.
+
 ## What this hook must NEVER do
 
 - Auto-edit core logic (any `SKILL.md`, `_shared/patterns/`, the voice-profile
