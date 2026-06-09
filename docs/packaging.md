@@ -25,7 +25,7 @@ under `skills/ai-writing-suite/skills/`; the root `SKILL.md` is a documentation 
 - **Claude:** `claude plugin marketplace add surahli123/ai-writing-suite` → `claude plugin install ai-writing-suite@ai-writing-suite`
 - **Codex:** `codex plugin marketplace add surahli123/ai-writing-suite` → `codex plugin add ai-writing-suite@ai-writing-suite`
 - **Cursor:** copy `skills/ai-writing-suite/` into `~/.cursor/skills/ai-writing-suite/` (or a project's `.cursor/skills/`). Cursor reads Anthropic-format `SKILL.md` Agent Skills natively; no manifest needed. (Not `.cursor/rules/*.mdc` — that is passive context injection, the wrong primitive for callable skills.)
-- **RovoDev (experimental):** manual folder copy + **explicit** invocation (RovoDev does not auto-trigger). See "RovoDev — experimental manual install" below. On-device verification is required before relying on it; the nested sub-skill layout may need a flat repackage on builds that do not crawl nested skill dirs.
+- **RovoDev:** manual folder copy + **explicit** invocation (RovoDev does not auto-trigger). See "RovoDev — manual install" below. Smoke-tested working on the maintainer's in-house RovoDev (2026-06-08): `/skills` registered the router and the four sub-skills, and `comms-polish` produced a before/after.
 
 ## Versioning / updates
 
@@ -53,18 +53,19 @@ version source per host and nothing to keep in lockstep with the body.
 is the *fuel* — the generic OSS KB; a company fork drops its real playbook into the same slot
 (never committed to this public repo).
 
-## RovoDev — experimental manual install (pending on-device verification)
+## RovoDev — manual install (smoke-tested 2026-06-08)
 
-RovoDev is not yet a first-class target. There is no marketplace manifest for it; install is a
-manual folder copy, the same primitive as Cursor. Two RovoDev facts shape this:
+RovoDev is not a marketplace target — there is no manifest for it; install is a manual folder
+copy, the same primitive as Cursor. Verified working on the maintainer's in-house RovoDev on
+2026-06-08 (see the verify checklist below). Two RovoDev facts shape the workflow:
 
 - **It does not auto-trigger skills** by description — you invoke explicitly (name the skill in
   your prompt). The router's "RovoDev — explicit intent routing" section is written for this.
-- **It may not discover *nested* sub-skills.** RovoDev documents flat per-skill discovery
-  (`skills/<name>/SKILL.md`); our sub-skills live one level deeper, under
-  `skills/ai-writing-suite/skills/<name>/`. So it likely registers only the top-level router. The
-  router is patched to be self-sufficient (it tells the agent to read the chosen sub-skill file on
-  demand), which makes the nested layout work *if* the agent follows that step.
+- **It discovers the nested sub-skills.** `/skills` registered both the top-level router *and*
+  the four sub-skills — so RovoDev does crawl the nested tree
+  (`skills/ai-writing-suite/skills/<name>/`), contrary to the earlier flat-discovery worry. The
+  router is also patched to be self-sufficient (it tells the agent to read the chosen sub-skill on
+  demand) — a forward-compatible belt-and-suspenders that does no harm.
 
 ### Steps
 
@@ -79,7 +80,7 @@ manual folder copy, the same primitive as Cursor. Two RovoDev facts shape this:
 
    The directory name **must** equal the frontmatter `name:` → `ai-writing-suite`.
 3. Start a fresh RovoDev session, run `/skills`, and confirm `ai-writing-suite` is registered.
-   (Expect only the router to appear, not the four sub-skills.)
+   (Observed 2026-06-08: both the router and the four sub-skills appear.)
 4. Invoke explicitly, e.g.:
 
    > Use the ai-writing-suite skill. Rewrite this so it sounds less AI-generated; keep the facts
@@ -96,7 +97,7 @@ manual folder copy, the same primitive as Cursor. Two RovoDev facts shape this:
 
 ## Deferred (v2)
 
-A flat RovoDev repackage (each sub-skill as its own top-level `skills/<name>/` dir with the needed
-`_shared/` assets copied alongside) — **only** if on-device testing shows the self-sufficient
-router is unreliable and RovoDev does not crawl the nested tree. Keep it RovoDev-specific; do not
-disturb the nested Claude/Cursor layout that already works.
+A flat RovoDev repackage (each sub-skill as its own top-level `skills/<name>/` dir) was the
+contingency for a RovoDev build that could not see the nested sub-skills. The 2026-06-08 smoke
+test showed this build *does* discover them, so the repackage is **not expected to be needed** —
+kept here only as a fallback if a different RovoDev build behaves differently.

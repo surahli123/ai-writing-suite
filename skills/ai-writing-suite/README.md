@@ -164,7 +164,16 @@ cp -R ai-writing-suite/skills/ai-writing-suite ~/.cursor/skills/ai-writing-suite
 
 ### RovoDev
 
-Deferred to v2.
+Manual install, same primitive as Cursor — copy the folder into RovoDev's skills directory, then
+invoke explicitly (RovoDev does not auto-trigger). Smoke-tested working 2026-06-08: `/skills`
+registered the router and the sub-skills, and `comms-polish` produced a before/after rewrite.
+
+```bash
+git clone https://github.com/surahli123/ai-writing-suite
+cp -R ai-writing-suite/skills/ai-writing-suite ~/.rovodev/skills/ai-writing-suite
+```
+
+See `docs/packaging.md` for the discovery-dir candidates and the verify checklist.
 
 ## How to Use
 
