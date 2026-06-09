@@ -49,10 +49,9 @@ and route explicitly:
 If intent is ambiguous, default to `comms-polish` (the most common job) and say
 which sub-skill you chose.
 
-**Then load the sub-skill yourself — this router is not enough on its own.** RovoDev
-registers only this top-level router, not the nested sub-skills, so the polishing/drafting
-logic does **not** arrive just by loading this file. Once you have chosen a sub-skill, you
-must read it explicitly before doing any work:
+**Then load the sub-skill yourself.** Even when RovoDev registers the nested sub-skills, the
+polishing/drafting logic does not arrive just by loading *this* router file — so once you have
+chosen a sub-skill, read it explicitly before doing any work:
 
 1. Open `skills/<name>/SKILL.md` (e.g. `skills/comms-polish/SKILL.md`), relative to this
    suite's root.

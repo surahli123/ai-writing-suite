@@ -21,6 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `python3 -W error::SyntaxWarning`.
 
 ### Added
+- **RovoDev support (manual install)** — the router's RovoDev section now tells the agent to read
+  the chosen sub-skill on demand (self-sufficient routing), and `docs/packaging.md` + the README
+  document the manual copy + explicit-invocation path. Smoke-tested working on an in-house RovoDev
+  (2026-06-08): `/skills` registered the router and all four sub-skills, and `comms-polish` produced
+  a before/after rewrite. Supersedes the earlier "deferred to v2" status.
 - **Cursor support** — Cursor reads Anthropic-format `SKILL.md` Agent Skills from
   `.cursor/skills/`; install = copy `skills/ai-writing-suite/` into a Cursor skills
   directory. (Corrects the earlier plan that targeted `.cursor/rules/*.mdc`, the wrong
