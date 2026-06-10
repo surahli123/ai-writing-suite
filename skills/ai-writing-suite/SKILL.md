@@ -16,7 +16,7 @@ dispatch layer in front of four specialized writers.
 | `comms-polish` | Polish, review, detect, or edit prose to remove AI tells while preserving meaning and voice. 0-100 AI-tell score on demand. | **available (v1)** |
 | `voice-onboard` | Interview the author and distill their historical writing into a reusable voice profile that `comms-polish` reads. | built in Layer 1 |
 | `comms-qa` | Answer questions from the knowledge base (mini-RAG over the pluggable KB). | coming in v2 |
-| `comms-draft` | Draft a new page guided by the knowledge base / playbook. | coming in v2 |
+| `comms-draft` | Draft a new page from a brief, guided by the KB/playbook — bakes anti-AI discipline (concreteness, varied rhythm, self-scan) into the first draft; never fabricates, marks gaps with `[NEEDS: …]`. | **available (v1.1)** |
 
 The sub-skills live under `skills/<name>/SKILL.md`. Shared assets (the AI-tell
 pattern catalog, and later the voice profile and learned-rules log) live under
@@ -44,7 +44,7 @@ and route explicitly:
 | clean up / de-AI / polish / review / score a draft | `comms-polish` |
 | teach the tool their writing style, build a voice profile | `voice-onboard` (Layer 1; until then, fall back to `comms-polish` voice matching) |
 | ask a question answered by the knowledge base | `comms-qa` (v2; until then, say it's not built yet) |
-| draft a new page from the playbook | `comms-draft` (v2; until then, say it's not built yet) |
+| draft a new page from the playbook | `comms-draft` |
 
 If intent is ambiguous, default to `comms-polish` (the most common job) and say
 which sub-skill you chose.

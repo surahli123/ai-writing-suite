@@ -17,7 +17,7 @@ Use it when a draft has the usual model tells: filler, vague claims, inflated im
 1. **comms-polish** (v1) — identify tells, preserve meaning, remove AI-shaped prose patterns, match author voice or register.
 2. **voice-onboard** (v1) — interview, collect writing samples, distill your voice signature.
 3. **comms-qa** (v2) — knowledge QA over a pluggable writing playbook.
-4. **comms-draft** (v2) — guided drafting workflow using playbook best practices.
+4. **comms-draft** (v1.1) — draft a new page from a brief, guided by the playbook; bakes anti-AI discipline into the first draft instead of relying on a later polish.
 
 An agent using the suite can:
 
@@ -103,14 +103,16 @@ Knowledge QA over a pluggable playbook.
 - Pluggable slot: OSS ships generic KB; company forks and drops a Confluence-sourced playbook.
 - End-to-end smoke test in v1 proves the company step is "drop in a page", not "build a RAG engine".
 
-### comms-draft (v2)
+### comms-draft (Ships in v1.1)
 
-Guided drafting workflow using playbook best practices.
+Draft a new page from a brief, guided by the playbook — so the first draft already reads human.
 
 **Features:**
-- Playbook-driven interview flow.
-- Real-time feedback on audience, structure, clarity.
-- Cite-as-you-go pattern matching against the KB.
+- Per-task acceptance criteria (style / format / length / content integration / depth) derived from the brief before drafting.
+- Draft-time anti-AI constraints: concrete actors and examples from the brief/KB, varied sentence rhythm (burstiness), the AI-tell catalog used as a negative checklist while writing.
+- A deliberate vary/roughen pass, then a post-draft self-scan against the pattern catalog (mirrors comms-polish's re-scan step).
+- Never fabricates: facts come only from the brief and KB; gaps are marked with `[NEEDS: …]` and listed for the user.
+- Hands off to comms-polish for the optional final pass.
 
 ## Self-Improvement (Human-Gated)
 

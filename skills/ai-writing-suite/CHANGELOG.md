@@ -25,6 +25,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   manual installs, where the agent resolves relative paths against the session cwd.
 
 ### Added
+- **`comms-draft` v1.1** — the placeholder is now a working drafting sub-skill that produces
+  playbook-guided first drafts which read human, instead of generating generic text and leaning
+  on a later polish. Research-grounded design: per-task acceptance criteria derived from the brief
+  before drafting (dynamic per-query criteria track human judgment better than a fixed rubric);
+  draft-time KB/voice injection and concreteness plus varied sentence rhythm (burstiness) as
+  write-time constraints, with the AI-tell catalog as a negative checklist; a deliberate
+  vary/roughen pass (uniform output is itself a tell); and a post-draft self-scan against the
+  catalog (mirrors comms-polish's re-scan). Never fabricates — gaps are marked `[NEEDS: …]`;
+  degrades gracefully on a missing voice profile or empty KB; hands off to comms-polish for the
+  final pass.
 - **RovoDev support (manual install)** — the router's RovoDev section now tells the agent to read
   the chosen sub-skill on demand (self-sufficient routing), and `docs/packaging.md` + the README
   document the manual copy + explicit-invocation path. Smoke-tested working on an in-house RovoDev

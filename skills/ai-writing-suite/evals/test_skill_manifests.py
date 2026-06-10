@@ -77,5 +77,36 @@ class SharedPathReferences(unittest.TestCase):
                         f"(use root-relative '_shared/...'): {line.strip()}")
 
 
+class ReferencedSharedFilesExist(unittest.TestCase):
+    # Catches broken suite-root-relative references at CI time: a SKILL.md can
+    # name a `_shared/...` or `skills/.../references/...` file that does not exist
+    # and nothing errors until an agent tries to load it on a real host.
+    def test_referenced_shared_files_exist(self):
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        paths = [os.path.join(root, "SKILL.md")]
+        paths += glob.glob(os.path.join(root, "skills", "*", "SKILL.md"))
+        self.assertGreaterEqual(len(paths), 5,
+                                "expected router SKILL.md + >=4 sub-skill docs")
+        # Only references inside inline-code spans (`...`) count, so prose like
+        # "_shared/ holds shared assets" is not mistaken for a file reference.
+        shared_re = re.compile(r"`(_shared/[A-Za-z0-9_/.-]+\.md)`")
+        ref_re = re.compile(
+            r"`(skills/[a-z-]+/references/[A-Za-z0-9_.-]+\.md)`")
+        found = set()
+        for path in sorted(paths):
+            with open(path, encoding="utf-8") as fh:
+                text = fh.read()
+            for rel in shared_re.findall(text) + ref_re.findall(text):
+                found.add(rel)
+                target = os.path.join(root, rel)
+                self.assertTrue(
+                    os.path.isfile(target),
+                    f"{path}: referenced file does not exist: {rel}")
+        # Non-vacuous floor: the regex must actually be matching real references,
+        # not passing because it found nothing to check.
+        self.assertGreaterEqual(len(found), 6,
+                                f"expected >=6 distinct references, found {sorted(found)}")
+
+
 if __name__ == "__main__":
     unittest.main()
