@@ -41,3 +41,8 @@ front-loaded — spend the first sentence on the answer.
 - `nature` (`nature-writing` section-moves: argument-first drafting)
 - `blader` / `aboudjem` (rule-of-three, formulaic-challenges, over-structure tells)
 - `anti-vibe` (scenario-presets: shape per channel)
+
+## Related entries
+
+- `audience.md` — "match shape to channel" and "write for one reader" are two halves of the same call: the reader's role decides the channel and the order.
+- `revision.md` — the BLUF and one-idea-per-paragraph fixes usually happen on the second pass, once you know what the piece is actually about.

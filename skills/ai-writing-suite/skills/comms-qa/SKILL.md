@@ -73,6 +73,12 @@ relevant passage; the answer must trace to it. Cite the entry filename inline
 (e.g. "lead with the point, per `structure.md`"). Never add playbook guidance the
 entry does not contain.
 
+- **One-hop follow before declaring a gap.** If part of the question is still
+  unanswered after the matched entry, check that entry's `## Related entries`
+  footer and open one obviously relevant neighbor — cite it too. One hop, not a
+  crawl: if the neighbor does not cover it either, treat that part as uncovered
+  (step 5) rather than chaining further.
+
 If the user's question needs knowledge that is genuinely outside the KB and you
 choose to add it, put it **only** in a clearly separated, labeled section headed
 **"Outside the playbook:"** — never blended into the KB answer. The reader must

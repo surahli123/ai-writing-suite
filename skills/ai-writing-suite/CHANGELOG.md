@@ -25,6 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   manual installs, where the agent resolves relative paths against the session cwd.
 
 ### Added
+- **KB wiki cross-links + `kb_lint` validation** — each KB entry now ends with a
+  `## Related entries` footer (2-3 bidirectional wiki links to adjacent entries), giving
+  `comms-qa` one-hop multi-hop retrieval when a question spans two topics. A new stdlib-only
+  `evals/kb_lint.py` enforces the pluggable-KB add-an-entry contract for company forks
+  (INDEX↔directory sync, link validity / no rot / no self-links / ≥2 per entry,
+  bidirectionality, non-empty Keywords); `evals/test_kb_wiki.py` runs it against the shipped
+  KB under `run_all.sh`. `comms-qa` step 4 gains a one-hop follow: if part of a question is
+  still unanswered, check the entry's `## Related entries` footer and open one obvious
+  neighbor before declaring that part uncovered. INDEX.md retrieval semantics unchanged.
 - **`comms-qa` v1.1** — the placeholder is now a working question-answering sub-skill: a
   mini-RAG over the pluggable KB that wraps `INDEX.md`'s retrieval protocol exactly (match
   Keywords then Summary intent → open the single best entry; synthesize both on a tie; say the

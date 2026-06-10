@@ -42,3 +42,9 @@ writing. Tone is what makes a reader trust — or distrust — the content.
 - `rhythm-stylometric` patterns (burstiness, register shift)
 - `anti-vibe` (`host-profile`: the user's actual voice)
 - `stop-slop` (no-hype rules)
+
+## Related entries
+
+- `clarity.md` — a robotic register and a wordy one share a root; plain, concrete words are the first fix for a stiff tone.
+- `audience.md` — the reader's role sets the formality target: a Slack update and a board memo need different registers for the same content.
+- `revision.md` — the sycophancy, hype, and hedging tells listed here are exactly what the final tell-sweep scans for before sending.

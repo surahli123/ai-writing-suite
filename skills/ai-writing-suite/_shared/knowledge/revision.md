@@ -42,3 +42,9 @@ mostly the willingness to do a second and third pass.
 - `anti-vibe` (`final-pass-checklist`, `human-passes`)
 - `nature` (`nature-polishing` writing-strategy: revise in passes)
 - `_shared/patterns/` (the full AI-tell catalog used in the final sweep)
+
+## Related entries
+
+- `clarity.md` — the "cut 10%" pass is where clarity's wordiness and filler moves actually land; revision is the editing pass that applies them.
+- `structure.md` — "check the opening last" is a structure fix: once the body is solid you rewrite the lead to put the point up front (BLUF).
+- `tone.md` — the final tell-sweep targets the tone tells (forced triads, hype, sycophancy) one last time before the piece goes out.
