@@ -47,3 +47,22 @@ building an engine** (decisions D11 + D12). The steps:
 
 That's the whole integration. Because the index and entries are plain markdown,
 the company never touches retrieval code — they edit a table and drop in pages.
+
+## Wiki conventions (Related entries)
+
+Each entry ends with a `## Related entries` footer — 2-3 wiki-style links to
+adjacent entries. They let `comms-qa` follow one hop when a question spans two
+topics (e.g. clarity → revision) instead of stopping at the first entry. Links
+are **bidirectional**: if `clarity.md` links `revision.md`, `revision.md` links
+back to `clarity.md`.
+
+Adding an entry to the KB (the full contract — keep it valid for forks):
+
+1. **One file.** Drop the `*.md` entry into this directory.
+2. **One `INDEX.md` row.** `entry file | one-line summary | keywords/aliases`
+   (the ingestion step above). Keywords must be non-empty.
+3. **One `## Related entries` footer** in the new entry with ≥2 links to existing
+   entries, and a matching link added to each of those entries (bidirectional).
+4. **Validate:** `python3 evals/kb_lint.py`. It checks INDEX↔directory sync,
+   link validity (no rot, no self-links, ≥2 per entry), bidirectionality, and
+   non-empty keywords. Exit 0 = the add-an-entry contract holds.

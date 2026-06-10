@@ -42,3 +42,8 @@ land.
 - `anti-vibe` (`host-profile` + scenario-presets: reader-shaped voice)
 - `ai-vibe` (`style-extractor` / reviewer prompts: audience modeling)
 - `nature` (`nature-writing`: audience-aware framing per journal)
+
+## Related entries
+
+- `structure.md` — once you've named the reader, their role decides the order and channel: exec gets the decision first, engineer gets the repro steps.
+- `tone.md` — naming the reader settles most register questions automatically; the right formality is the reader's, not the writer's.

@@ -43,3 +43,8 @@ Clarity is the first thing to check and the cheapest to fix.
 - `anti-vibe` (consultant-speak removal, "数据放具体数字")
 - `stop-slop` (plain-word rules)
 - `avoid-ai` (vague-attribution / vocabulary tiers)
+
+## Related entries
+
+- `revision.md` — most wordiness is cut in the editing pass, not the first draft; that's where these moves actually get applied.
+- `tone.md` — plain language and a human register are the same goal from two angles: clarity fixes the words, tone fixes the voice.
