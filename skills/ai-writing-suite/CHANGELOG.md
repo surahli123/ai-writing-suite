@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`detector.py` SyntaxWarning** — `\S+` in the module docstring was an invalid
   escape sequence; escaped it. The evals tree now compiles clean under
   `python3 -W error::SyntaxWarning`.
+- **Suite-root path protocol** — replaced parent-relative `../../_shared/...` references
+  in `comms-polish` and `voice-onboard` with a stated suite-root location protocol plus
+  root-relative `_shared/...` paths. Fixes silent shared-asset loading failure on RovoDev
+  manual installs, where the agent resolves relative paths against the session cwd.
 
 ### Added
 - **RovoDev support (manual install)** — the router's RovoDev section now tells the agent to read
