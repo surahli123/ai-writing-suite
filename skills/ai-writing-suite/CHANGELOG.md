@@ -46,6 +46,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in the self-improvement loop; a layered final-pass checklist with a hard facts-floor.
 - **Expanded test suite** (51 stdlib-only tests) — judge parse/aggregate + fabrication-trap,
   voice-profile header contract, catalog↔detector sync, and SKILL.md frontmatter contract.
+- **Miss-target calibration table** (`evals/fixtures/calibration.py` + test) — a stdlib-only
+  helper that, per eval-set size n, returns the naive-baseline miss count(s) that keep the fail
+  rate in the 30-40% band (and flags uncalibratable sizes like n=4, n=7). Turns the calibration
+  knife-edge into a lookup before adding or removing fixtures; cross-checked against the live
+  `fixtures.json` so it can't drift from the `run_fixtures` assert. (Phase 2b prep)
 
 ### Removed
 - **Generate-and-sync packaging** (`packaging/` + `sync.sh`) — obsolete now that every
