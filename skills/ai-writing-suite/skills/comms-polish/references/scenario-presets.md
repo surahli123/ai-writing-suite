@@ -5,7 +5,8 @@ whether emoji belong, the scale of reader attention. This file pins down those
 constraints for the four genres comms-polish targets in v1: **tweet / X, LinkedIn,
 README, memo**.
 
-> Why presets exist: the AI-tell catalog under `../../../_shared/patterns/` says
+> Why presets exist: the AI-tell catalog under `_shared/patterns/` (suite-root-relative;
+> resolved per the comms-polish "Locating shared assets" protocol) says
 > *what* reads as machine-written. A preset says *which of those tells matter most
 > here* and *what to leave alone*, so a README isn't edited like a tweet. Presets
 > shape **form**; a voice profile (when one exists) shapes **voice**. They stack

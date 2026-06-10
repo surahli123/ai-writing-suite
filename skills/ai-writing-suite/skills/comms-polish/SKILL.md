@@ -11,7 +11,7 @@ The job is narrow: preserve meaning, remove slop, keep the author's voice.
 
 This is the suite's polish capability (formerly the standalone humanizer). It
 does not carry its own pattern list — it reads the consolidated catalog under
-`../../_shared/patterns/`, which is the single source of truth for AI tells.
+`_shared/patterns/`, which is the single source of truth for AI tells.
 
 Three enrichments sit alongside the catalog:
 
@@ -20,15 +20,24 @@ Three enrichments sit alongside the catalog:
   alone.
 - `references/final-pass-checklist.md` — the pre-ship sweep run before returning
   any rewrite.
-- `../../_shared/voice-profile.md` — the user's learned voice, read when present
+- `_shared/voice-profile.md` — the user's learned voice, read when present
   so rewrites bias toward how *they* write (see Voice Matching).
+
+## Locating shared assets (suite root)
+
+All `_shared/...` paths in this file are **suite-root-relative**. The suite root is the
+installed directory that directly contains `_shared/` and the suite's router `SKILL.md`
+(e.g. `.../ai-writing-suite/`). Do not resolve these paths against your session's working
+directory. To find the root: start from this SKILL.md's own location and walk up until a
+directory contains `_shared/`. If you cannot find it, say so and ask for the suite's
+install path — do not guess or silently skip the shared assets.
 
 ## Pattern catalog
 
 Before scanning or rewriting, load the consolidated catalog. Read the index first
 to see what's where, then the category files relevant to the draft:
 
-- `../../_shared/patterns/00-index.md` — index + how to read entries
+- `_shared/patterns/00-index.md` — index + how to read entries
 - `lexical-tells.md` — AI vocabulary (tiered), copula avoidance, synonym cycling, false ranges, hyphen pairs, hollow intensifiers
 - `significance-attribution.md` — significance/novelty inflation, vague attribution, name-dropping, promotional language, superficial -ing, speculative gap-filling, consultant-speak
 - `structural-tells.md` — rule of three, negative parallelism, formulaic challenges, over-structure, inline-header lists, reshuffle immunity, treadmill effect
@@ -69,8 +78,8 @@ Pick the mode from the user's request. If unclear, use `rewrite`.
 
 Voice has three sources, in priority order:
 
-1. **A learned voice profile** at `../../_shared/voice-profile.md` (canonical path:
-   `_shared/voice-profile.md`). This is produced by the `voice-onboard` sub-skill.
+1. **A learned voice profile** at `_shared/voice-profile.md`. This is produced
+   by the `voice-onboard` sub-skill.
    **Before any rewrite, check whether this file exists and read it if it does.**
    It is loose coupling: comms-polish does not create or own that file — it reads
    whatever fields are present and biases edits toward them. Sections to use when
@@ -111,7 +120,7 @@ When neither exists, use the lightest voice that fits the context:
    `references/scenario-presets.md` (tweet / LinkedIn / README / memo). It tells
    you which catalog categories to weight harder and what to leave alone in this
    genre. If no preset fits, scan the catalog evenly.
-3. **Load the voice profile if present.** Check for `../../_shared/voice-profile.md`
+3. **Load the voice profile if present.** Check for `_shared/voice-profile.md`
    and read it if it exists; otherwise use a pasted sample or inferred voice
    (see Voice Matching). Degrade gracefully when absent.
 4. Mark the factual anchors that must survive unchanged.
@@ -215,10 +224,10 @@ For `edit` mode:
 ## Self-improvement (human-gated)
 
 This skill participates in the suite's human-gated self-improvement loop. The
-full protocol is in `../../_shared/self-improvement.md`; follow it, do not restate
+full protocol is in `_shared/self-improvement.md`; follow it, do not restate
 it. In short:
 
-- **On start:** read `../../_shared/learned-rules.md` (alongside the voice profile)
+- **On start:** read `_shared/learned-rules.md` (alongside the voice profile)
   and apply any entry whose `status: active` and whose scope is `comms-polish` or
   `all`. Degrade gracefully if the file is absent.
 - **On end:** if a repeatable polish correction surfaced this session, **propose**

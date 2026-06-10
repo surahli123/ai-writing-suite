@@ -12,6 +12,15 @@ The job is narrow: read your real writing, distill a **voice profile**, and writ
 it to a file the polish skill reads on every run. This skill does NOT draft or
 rewrite anything — it only listens and profiles.
 
+## Locating shared assets (suite root)
+
+All `_shared/...` paths in this file are **suite-root-relative**. The suite root is the
+installed directory that directly contains `_shared/` and the suite's router `SKILL.md`
+(e.g. `.../ai-writing-suite/`). Do not resolve these paths against your session's working
+directory. To find the root: start from this SKILL.md's own location and walk up until a
+directory contains `_shared/`. If you cannot find it, say so and ask for the suite's
+install path — do not guess or silently skip the shared assets.
+
 ## The mental model (for a product-owner learner)
 
 Think of it like building a feature table for a ranking model:
@@ -29,8 +38,8 @@ So the whole point of this skill is: produce an honest, evidence-backed table.
 - **Reads (your samples):** local markdown/text files you point to, or text you
   paste inline. (A Confluence-page link as a voice source is **v2** — note it to
   the user, do not attempt to fetch it. No programmatic ingestion in v1.)
-- **Fills in:** `../../_shared/host-profile-template.md` (the blank form).
-- **Writes:** `../../_shared/voice-profile.md` (the contract file). The field
+- **Fills in:** `_shared/host-profile-template.md` (the blank form).
+- **Writes:** `_shared/voice-profile.md` (the contract file). The field
   names there are stable — keep every `## H2` header, because `comms-polish`
   reads by header. Renaming a header silently breaks voice matching.
 
@@ -107,7 +116,7 @@ the draft profile and name the 3 most distinctive features you found, e.g.:
 ### Step 4 — Confirm, then write the contract file
 
 Only after the user confirms, write the profile to
-`../../_shared/voice-profile.md`, preserving every `## H2` header. If a profile
+`_shared/voice-profile.md`, preserving every `## H2` header. If a profile
 already exists, show what changed before overwriting — don't silently replace
 their previous one.
 
@@ -137,10 +146,10 @@ A profile is a living file, not a one-shot. Tell the user:
 ## Self-improvement (human-gated)
 
 This skill participates in the suite's human-gated self-improvement loop. The
-full protocol is in `../../_shared/self-improvement.md`; follow it, do not restate
+full protocol is in `_shared/self-improvement.md`; follow it, do not restate
 it. In short:
 
-- **On start:** read `../../_shared/learned-rules.md` and apply any entry whose
+- **On start:** read `_shared/learned-rules.md` and apply any entry whose
   `status: active` and whose scope is `voice-onboard` or `all` (e.g. an approved
   extraction-judgment rule). Degrade gracefully if the file is absent.
 - **On end:** if a repeatable extraction correction surfaced this session (a voice

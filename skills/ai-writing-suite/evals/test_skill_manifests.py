@@ -12,6 +12,7 @@ no network. Runs under `run_all.sh` via `unittest discover`.
 
 import glob
 import os
+import re
 import unittest
 
 # evals/ -> <skill-root> -> skills/*/SKILL.md
@@ -53,6 +54,27 @@ class SkillManifests(unittest.TestCase):
             desc = _field(fm, "description")
             self.assertTrue(name, f"{path}: missing/empty 'name:'")
             self.assertTrue(desc, f"{path}: missing/empty 'description:'")
+
+
+class SharedPathReferences(unittest.TestCase):
+    # Parent-relative `../_shared` paths silently break on RovoDev manual installs
+    # (the agent resolves them against the session cwd) — only suite-root-relative
+    # `_shared/...` is allowed; the SKILL.md suite-root protocol defines resolution.
+    def test_no_parent_relative_shared_paths(self):
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        paths = [os.path.join(root, "SKILL.md")]
+        paths += glob.glob(os.path.join(root, "skills", "*", "SKILL.md"))
+        paths += glob.glob(os.path.join(root, "skills", "*", "references", "*.md"))
+        self.assertGreaterEqual(len(paths), 5,
+                                "expected router SKILL.md + >=4 sub-skill docs")
+        banned = re.compile(r"\.\./.*_shared")
+        for path in sorted(paths):
+            with open(path, encoding="utf-8") as fh:
+                for lineno, line in enumerate(fh.read().splitlines(), 1):
+                    self.assertIsNone(
+                        banned.search(line),
+                        f"{path}:{lineno}: parent-relative _shared reference "
+                        f"(use root-relative '_shared/...'): {line.strip()}")
 
 
 if __name__ == "__main__":
