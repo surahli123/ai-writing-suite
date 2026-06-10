@@ -116,6 +116,49 @@ truly exercised (review finding m1). This case fixes that: the query hits BOTH
 total term overlap ("who" + "reader" + "technical" = 3). Unlike Case 2 there is a
 competing signal to beat, so a PASS proves the keyword/intent tie-break actually works.
 
+---
+
+## A fourth case (comms-qa question-path — "how do I open an exec update?")
+
+The three cases above are problem-statement queries ("my sentences are too long").
+The `comms-qa` sub-skill answers *question-shaped* traffic instead ("how should I
+open X?"). This case represents that path: a real question a user would ask the KB.
+
+**Query:**
+> "How should I open a status update for an exec — where do I put the main point?"
+
+**Expected entry:** `structure.md`
+**Expected passage:**
+> BLUF — bottom line up front. Open with the decision, result, or ask.
+
+**Why `structure.md`:** the question is about *ordering* — where the main point
+goes — which is exactly `structure.md`'s domain. Its Keywords match "where" (from
+"where to start") and its Summary matches "point" (from "Lead with the point").
+`audience.md` scores only on "exec" (one keyword, "exec vs engineer") and loses on
+total overlap, so the question-path query still resolves to the ordering entry.
+
+---
+
+## A fifth case (comms-qa question-path — "who is this for?")
+
+A second question-shaped `comms-qa` case: the user asks *who the reader is*, the
+question `audience.md` exists to answer.
+
+**Query:**
+> "Who is the target reader I should be writing this for — a stakeholder or an engineer?"
+
+**Expected entry:** `audience.md`
+**Expected passage:**
+> State the reader and their job before drafting. "An on-call engineer who needs
+> to decide whether to roll back." That sentence fixes tone, length, and jargon level.
+
+**Why `audience.md`:** the question's content terms — "target," "reader,"
+"writing," "stakeholder," "engineer" — all sit in `audience.md`'s Keywords/aliases
+column ("target reader," "stakeholder," "exec vs engineer"), so it dominates total
+overlap. No other entry carries reader/stakeholder vocabulary, so there is no
+near-neighbor to beat here — this case confirms a plain who-is-this-for question
+resolves cleanly on the question path.
+
 ## How Layer 3 will automate this
 
 The eval harness reads each TEST CASE block, sends the **Query** to the agent

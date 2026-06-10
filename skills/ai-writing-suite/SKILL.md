@@ -15,7 +15,7 @@ dispatch layer in front of four specialized writers.
 | --- | --- | --- |
 | `comms-polish` | Polish, review, detect, or edit prose to remove AI tells while preserving meaning and voice. 0-100 AI-tell score on demand. | **available (v1)** |
 | `voice-onboard` | Interview the author and distill their historical writing into a reusable voice profile that `comms-polish` reads. | built in Layer 1 |
-| `comms-qa` | Answer questions from the knowledge base (mini-RAG over the pluggable KB). | coming in v2 |
+| `comms-qa` | Answer a question from the pluggable KB/playbook, citing the entry the answer came from; says so when the KB does not cover it. Never invents playbook guidance. | **available (v1.1)** |
 | `comms-draft` | Draft a new page from a brief, guided by the KB/playbook — bakes anti-AI discipline (concreteness, varied rhythm, self-scan) into the first draft; never fabricates, marks gaps with `[NEEDS: …]`. | **available (v1.1)** |
 
 The sub-skills live under `skills/<name>/SKILL.md`. Shared assets (the AI-tell
@@ -43,7 +43,7 @@ and route explicitly:
 | --- | --- |
 | clean up / de-AI / polish / review / score a draft | `comms-polish` |
 | teach the tool their writing style, build a voice profile | `voice-onboard` (Layer 1; until then, fall back to `comms-polish` voice matching) |
-| ask a question answered by the knowledge base | `comms-qa` (v2; until then, say it's not built yet) |
+| ask a question answered by the knowledge base | `comms-qa` |
 | draft a new page from the playbook | `comms-draft` |
 
 If intent is ambiguous, default to `comms-polish` (the most common job) and say
@@ -72,4 +72,4 @@ The suite is the *engine*; the knowledge base under `_shared/knowledge/` is the
 *fuel*. The open-source build ships a generic KB; a company fork drops its own
 playbook into the same slot. The playbook never enters this public repo. (This
 build ships a generic 5-entry KB seed + `INDEX.md` + a working retrieval smoke
-path; the full `comms-qa` question-answering sub-skill is v2.)
+path; the `comms-qa` sub-skill that answers questions over that KB now ships.)

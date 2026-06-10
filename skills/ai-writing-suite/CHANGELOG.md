@@ -25,6 +25,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   manual installs, where the agent resolves relative paths against the session cwd.
 
 ### Added
+- **`comms-qa` v1.1** — the placeholder is now a working question-answering sub-skill: a
+  mini-RAG over the pluggable KB that wraps `INDEX.md`'s retrieval protocol exactly (match
+  Keywords then Summary intent → open the single best entry; synthesize both on a tie; say the
+  KB does not cover it on zero match). Answers are KB-only and cited to the entry file they came
+  from; knowledge from outside the KB is allowed only in a clearly separated, labeled "Outside
+  the playbook:" section, never blended into the playbook answer — because in a company fork the
+  KB is policy and a fabricated "the playbook says…" is the worst failure. Multi-part questions
+  are decomposed and answered per part with per-part citations; a missing or empty KB makes it
+  say so and stop rather than answer from general knowledge. Added two question-path smoke cases
+  (3 → 5) to the existing deterministic runner.
 - **`comms-draft` v1.1** — the placeholder is now a working drafting sub-skill that produces
   playbook-guided first drafts which read human, instead of generating generic text and leaning
   on a later polish. Research-grounded design: per-task acceptance criteria derived from the brief

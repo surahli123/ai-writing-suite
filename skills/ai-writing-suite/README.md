@@ -16,7 +16,7 @@ Use it when a draft has the usual model tells: filler, vague claims, inflated im
 
 1. **comms-polish** (v1) — identify tells, preserve meaning, remove AI-shaped prose patterns, match author voice or register.
 2. **voice-onboard** (v1) — interview, collect writing samples, distill your voice signature.
-3. **comms-qa** (v2) — knowledge QA over a pluggable writing playbook.
+3. **comms-qa** (v1.1) — answer a question from the pluggable playbook, citing the entry the answer came from; never invents playbook guidance.
 4. **comms-draft** (v1.1) — draft a new page from a brief, guided by the playbook; bakes anti-AI discipline into the first draft instead of relying on a later polish.
 
 An agent using the suite can:
@@ -93,15 +93,18 @@ Interview and distill your writing voice.
 - Writes `_shared/voice-profile.md` for reuse across sessions.
 - Structured host-profile template for consistent capture.
 
-### comms-qa (v2)
+### comms-qa (Ships in v1.1)
 
-Knowledge QA over a pluggable playbook.
+Answer a question from the pluggable playbook, citing the KB entry the answer came from.
 
 **Features:**
 - Wiki-style markdown KB (zero external dependencies, portable across Claude / Codex / Cursor / RovoDev).
 - Pure markdown + `INDEX.md` navigation; no host-specific MCP tools.
+- Wraps the `INDEX.md` retrieval protocol exactly: match Keywords then Summary intent, open the single best entry, synthesize both on a tie, say so on zero match.
+- KB-only answers, each cited to its entry file; outside-the-KB knowledge is allowed only in a clearly separated "Outside the playbook:" section.
+- Multi-part questions decomposed and answered per part; missing/empty KB → says so and stops rather than guessing.
 - Pluggable slot: OSS ships generic KB; company forks and drops a Confluence-sourced playbook.
-- End-to-end smoke test in v1 proves the company step is "drop in a page", not "build a RAG engine".
+- End-to-end smoke test proves the company step is "drop in a page", not "build a RAG engine".
 
 ### comms-draft (Ships in v1.1)
 
