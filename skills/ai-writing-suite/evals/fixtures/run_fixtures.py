@@ -70,14 +70,20 @@ def run_deterministic(data):
 
         # Naive-baseline accounting: a flat threshold flags `before` as AI iff
         # score >= threshold. A "miss" is an AI draft that scores below it.
-        total += 1
+        # `detector_blind` fixtures (judge-only over-stepping cases) are MISSES
+        # by construction — the tell is in stance, not vocabulary — so they are
+        # excluded from the calibration denominator. Their score bands above are
+        # still checked; only the 30-40% rate measures the detector-targeted set.
         caught = before >= threshold
-        if not caught:
-            miss += 1
+        if not f.get("detector_blind"):
+            total += 1
+            if not caught:
+                miss += 1
 
         mark = "PASS" if ok else "FAIL"
         print(f"[{mark}] {f['id']:22} before={before:3} after={after:3} "
-              f"baseline={'CATCH' if caught else 'MISS '}")
+              f"baseline={'CATCH' if caught else 'MISS '}"
+              + ("  (judge-only)" if f.get("detector_blind") else ""))
         for r in reasons:
             print(f"        {r}")
 

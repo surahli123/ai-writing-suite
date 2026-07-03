@@ -80,3 +80,21 @@ start by the sub-skills; appended to only on explicit user approval. See
      REAL ENTRIES START BELOW. The hook appends new `### LR-NNN` blocks here,
      one per approved rule, newest at the bottom.
 ─────────────────────────────────────────────────────────────────────────── -->
+
+### LR-001
+
+- **rule:** When polishing a structured analysis or diagnosis report, delete any opening
+  paragraph that describes the section or asserts it is checkable, deterministic, or
+  reproducible before the first finding. Open on the first substantive step, not on a
+  description of what the section is about to do.
+- **rationale:** 2026-06-14, SMA diagnosis-report narrative. The owner flagged a
+  methodology-section preamble ("How an analyst reaches this read, with each step checkable
+  against the data. The path is deterministic, so the same question lands the same way") as
+  throat-clearing meta-commentary. Cutting it raised directness with zero information loss.
+  Auto-generated reports recurringly prepend this kind of "here is how to read me" runway, so
+  the correction repeats across cases.
+- **scope:** comms-polish
+- **date:** 2026-06-14
+- **status:** proposed
+- **source:** SMA_v2 report-narrative de-slop session; owner override of a section preamble,
+  cross-checked against stop-slop ("meta-joiners / throat-clearing — delete").

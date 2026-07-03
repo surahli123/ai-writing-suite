@@ -25,6 +25,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   manual installs, where the agent resolves relative paths against the session cwd.
 
 ### Added
+- **Over-stepping (反代入式越位感) judge dimension** — a new advisory LLM-judge
+  dimension `overstepping_removed` for the before/after fixtures, catching prose
+  that thinks *for* the reader (presumed cognition, strawman misconception,
+  projected mental image, self-Q&A-as-judge). The load-bearing **validity
+  condition** — a presumption is over-stepping ONLY when the prior is a
+  manufactured strawman; a real widespread belief makes the contrast legitimate —
+  pairs it with `meaning_preserved` so stripping a legitimate contrast (e.g. "love
+  isn't a feeling, it is behavior") fails as over-correction. Judge-only by
+  design: the mechanical detector is blind to it (the tell is in stance, not
+  vocabulary), it never gates CI, and it stays advisory/opt-in consistent with
+  `judge.py`. Ships: the `overstepping_removed` rubric row + validity-condition +
+  judge-prompt addition in `evals/fixtures/rubric.md`; 4 PASS minimal-pair
+  fixtures (en/zh, readme/linkedin) embedded in genre-realistic paragraphs whose
+  context is word-for-word identical before/after so the signal isolates stance,
+  not verbosity (marked `detector_blind: true` and excluded from the naive-baseline
+  calibration denominator — they are misses by construction, not calibration
+  failures); 3 real-mined FAIL hard-negative exemplars (over-correction of a
+  legitimate contrast) as unit tests; and a new catalog file
+  `_shared/patterns/overstepping-presumption.md` (4 sub-types, 4 self-test
+  questions, validity condition, 少写/多写 substitution guidance) registered in the
+  pattern index, with self-scan items added to `comms-polish` and `comms-draft`.
 - **KB wiki cross-links + `kb_lint` validation** — each KB entry now ends with a
   `## Related entries` footer (2-3 bidirectional wiki links to adjacent entries), giving
   `comms-qa` one-hop multi-hop retrieval when a question spans two topics. A new stdlib-only

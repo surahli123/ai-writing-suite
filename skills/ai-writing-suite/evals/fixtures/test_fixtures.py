@@ -46,14 +46,28 @@ class ScoreBands(unittest.TestCase):
 
 class Calibration(unittest.TestCase):
     def test_naive_baseline_misses_30_to_40_percent(self):
+        # The 30-40% band measures the DETECTOR-TARGETED set only. `detector_blind`
+        # fixtures (judge-only over-stepping cases) are misses by construction and
+        # are excluded from the denominator — mirrors run_fixtures.run_deterministic.
         data = load_fixtures()
         thr = data["baseline_threshold"]
-        miss = sum(1 for f in data["fixtures"]
+        targeted = [f for f in data["fixtures"] if not f.get("detector_blind")]
+        miss = sum(1 for f in targeted
                    if analyze(f["before"])["score"] < thr)
-        total = len(data["fixtures"])
+        total = len(targeted)
         pct = 100 * miss / total
         self.assertTrue(30 <= pct <= 40,
                         f"miss rate {pct:.0f}% outside 30-40% target")
+
+    def test_detector_blind_fixtures_are_declared_miss(self):
+        # Invariant: every judge-only (detector_blind) fixture must also declare
+        # expect_baseline='miss'. Guards the calibration exclusion — a future
+        # judge-only fixture that forgets the marker (or mislabels its baseline)
+        # would silently re-pollute the denominator.
+        for f in load_fixtures()["fixtures"]:
+            if f.get("detector_blind"):
+                self.assertEqual(f.get("expect_baseline"), "miss",
+                                 f"{f['id']} is detector_blind but not expect_baseline='miss'")
 
     def test_expect_baseline_matches_actual(self):
         # The declared expect_baseline must match what the detector actually does.
@@ -214,6 +228,63 @@ class JudgeParsing(unittest.TestCase):
         self.assertEqual(judge.aggregate(reps, ["meaning_preserved"]), "PASS")
 
 
+class OversteppingHardNegatives(unittest.TestCase):
+    """The over-correction trap for the `overstepping_removed` dimension.
+
+    These are real-mined FAIL exemplars: the `before` is NOT over-stepping — it
+    flips a GENUINELY common prior ('love = a feeling', 'transformation = how
+    much you spend') or uses a concrete teaching device ('imagine you...'). The
+    'rewrite' stripped that legitimate contrast/pedagogy, losing real information.
+    A naive judge that rewards removing ANY 'you assume / 不是X而是Y / imagine you'
+    would wrongly PASS these; the validity condition (over-stepping is real ONLY
+    when the prior is a manufactured strawman) must drive `meaning_preserved` to
+    FAIL, forcing the overall verdict FAIL. Same canned-reply shape as JudgeParsing:
+    feed the per-dimension verdict a correct judge WOULD emit and assert FAIL.
+    Live before/after strings + provenance: docs/overstepping-fixtures-DRAFT-2026-06-24.json
+    (_fail_exemplars_for_test_fixtures). FAIL is driven by meaning_preserved in every case.
+    """
+
+    def test_hardneg_apple_en_legit_pedagogy(self):
+        # before: "Imagine that you are holding an apple ... cut it in half with a knife."
+        # after:  "Consider an apple that is cut in half with a knife."
+        # 'imagine you' is a concrete teaching device, not a judgment about the
+        # reader's thoughts; stripping it is colder with no gain.
+        text = ("overstepping_removed: PASS — dropped an 'imagine you' frame\n"
+                "meaning_preserved: FAIL — removed a legitimate teaching device "
+                "for no gain (the prior was not a manufactured strawman)\n"
+                "voice_kept: FAIL — traded a concrete image for a colder register\n"
+                "no_fabrication: PASS")
+        verdict = judge.aggregate([judge.parse_dimension_lines(text)],
+                                  ["overstepping_removed", "meaning_preserved",
+                                   "voice_kept"])
+        self.assertEqual(verdict, "FAIL")
+
+    def test_hardneg_love_zh_valid_flip(self):
+        # before: 爱并不是一种感觉，而是一种行为。   after: 爱是一种行为。
+        # 「爱=感觉」是真实普遍旧认知 -> 「不是感觉，而是行为」是有信息量的合法对比；
+        # 改写删掉对比丢了真实信息 -> meaning_preserved FAIL.
+        text = ("overstepping_removed: PASS — a 不是X而是Y contrast was removed\n"
+                "meaning_preserved: FAIL — '爱=感觉' is a real widespread prior, so "
+                "the flip carried information; removing it loses meaning\n"
+                "no_fabrication: PASS")
+        verdict = judge.aggregate([judge.parse_dimension_lines(text)],
+                                  ["overstepping_removed", "meaning_preserved"])
+        self.assertEqual(verdict, "FAIL")
+
+    def test_hardneg_transform_zh_earned_contrast(self):
+        # before: 真正的转型不是看投入绝对值，而是看投入是否匹配到能产生实际改变的最小单元。
+        # after:  真正的转型要看投入是否匹配到能产生实际改变的最小单元。
+        # 「转型=砸钱（投入绝对值）」是真实常见认知 -> 对比是 earned；改写丢了「不是砸钱」
+        # 这层纠正 -> meaning_preserved FAIL.
+        text = ("overstepping_removed: PASS — a 不是X而是Y contrast was removed\n"
+                "meaning_preserved: FAIL — '转型=砸钱' is a real common prior; the "
+                "contrast was earned, so dropping it loses information\n"
+                "no_fabrication: PASS")
+        verdict = judge.aggregate([judge.parse_dimension_lines(text)],
+                                  ["overstepping_removed", "meaning_preserved"])
+        self.assertEqual(verdict, "FAIL")
+
+
 class JudgeGate(unittest.TestCase):
     """The 3-state gate, exercised with NO network."""
 
@@ -316,9 +387,10 @@ class JudgeIntegration(unittest.TestCase):
         for f in load_fixtures()["fixtures"]:
             all_dims |= set(f["rubric_focus"])
         reply = "\n".join(f"{d}: PASS" for d in all_dims)
+        n = len(load_fixtures()["fixtures"])  # all gold=PASS, judge=PASS
         (p, f, s, live), out = self._run(lambda prompt: reply)
-        self.assertEqual((p, f, s, live), (8, 0, 0, False))
-        self.assertIn("agreement: 8/8", out)  # all gold=PASS, judge=PASS
+        self.assertEqual((p, f, s, live), (n, 0, 0, False))
+        self.assertIn(f"agreement: {n}/{n}", out)
 
     def test_all_unparseable_triggers_live_error(self):
         (p, f, s, live), out = self._run(lambda prompt: "no verdict here")
@@ -328,16 +400,17 @@ class JudgeIntegration(unittest.TestCase):
 
     def test_fabrication_makes_a_fixture_fail(self):
         # Same all-PASS reply but no_fabrication FAIL -> every fixture FAILs
-        # overall (no_fabrication is always required), agreement drops to 0/8.
+        # overall (no_fabrication is always required), agreement drops to 0/N.
         all_dims = {"meaning_preserved", "tells_removed", "voice_kept",
                     "specificity_added", "genre_fit"}
         for f in load_fixtures()["fixtures"]:
             all_dims |= set(f["rubric_focus"])
         all_dims.discard("no_fabrication")
         reply = "\n".join(f"{d}: PASS" for d in all_dims) + "\nno_fabrication: FAIL"
+        n = len(load_fixtures()["fixtures"])  # all gold=PASS, judge=FAIL
         (p, f, s, live), out = self._run(lambda prompt: reply)
-        self.assertEqual((p, f, s, live), (0, 8, 0, False))
-        self.assertIn("agreement: 0/8", out)
+        self.assertEqual((p, f, s, live), (0, n, 0, False))
+        self.assertIn(f"agreement: 0/{n}", out)
 
 
 if __name__ == "__main__":

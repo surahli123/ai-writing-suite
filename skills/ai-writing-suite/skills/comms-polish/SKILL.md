@@ -45,6 +45,7 @@ to see what's where, then the category files relevant to the draft:
 - `punctuation-formatting.md` — em dashes, bold overuse, emoji headers, curly quotes, title case, hashtag stuffing, placeholders, citation/UTM fingerprints
 - `communication-artifacts.md` — chatbot tics, sycophancy, acknowledgment loops, cutoff disclaimers, reasoning-chain leaks, engagement hooks, emotional flatline
 - `rhythm-stylometric.md` — sentence/paragraph uniformity (burstiness), low TTR, perplexity, register shift, **and the what-NOT-to-flag guardrails**
+- `overstepping-presumption.md` — over-stepping (反代入式越位感): presumed cognition, strawman misconception, projected mental image, self-Q&A-as-judge. Self-scan: does the draft think *for* the reader ("you assume X / 你以为 X / Can you…? Yes —")? Flag only when the presumed prior is a **manufactured** strawman; keep it when X is a real, widespread belief (the validity condition). Judge-only — preserve legitimate contrasts.
 
 Always apply the guardrails in `rhythm-stylometric.md`: look for clusters, not
 isolated tells. These are signals, not proof.

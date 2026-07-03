@@ -1,5 +1,5 @@
 {
-  "_doc": "Before/after LLM-judge fixtures across 4 genres (tweet/linkedin/readme/memo). Each fixture: an AI-shaped `before`, a good human `after`, and what we expect. `before_band_min`/`before_band_max`/`after_band_max` are detector score-band expectations (mechanical, deterministic regression guards bracketing the observed score). `rubric_focus` lists which rubric dimensions the LLM judge should weigh. Difficulty is calibrated so a NAIVE baseline (flag-if-detector-score >= baseline_threshold) misses ~30-40% of the `before` items: the `subtle` ones are AI-written but score LOW because they avoid vocabulary tells and lean on structural/rhythm tells a flat threshold underweights. See README calibration section. `expected_verdict` (PASS|FAIL) is the owner's gold label for advisory judge-vs-gold agreement: all current fixtures are good rewrites (PASS); FAIL exemplars live in the unit tests (test_fixtures.py), not here, to preserve the 30-40% calibration band.",
+  "_doc": "Before/after LLM-judge fixtures across 4 genres (tweet/linkedin/readme/memo). Each fixture: an AI-shaped `before`, a good human `after`, and what we expect. `before_band_min`/`before_band_max`/`after_band_max` are detector score-band expectations (mechanical, deterministic regression guards bracketing the observed score). `rubric_focus` lists which rubric dimensions the LLM judge should weigh. Difficulty is calibrated so a NAIVE baseline (flag-if-detector-score >= baseline_threshold) misses ~30-40% of the DETECTOR-TARGETED `before` items: the `subtle` ones are AI-written but score LOW because they avoid vocabulary tells and lean on structural/rhythm tells a flat threshold underweights. See README calibration section. `expected_verdict` (PASS|FAIL) is the owner's gold label for advisory judge-vs-gold agreement: all current fixtures are good rewrites (PASS); FAIL exemplars live in the unit tests (test_fixtures.py), not here, to preserve the 30-40% calibration band. `detector_blind: true` marks JUDGE-ONLY fixtures (the over-stepping / 反代入式越位感 dimension): the tell is in STANCE, not vocabulary, so the mechanical detector is blind to it by design (scores ~0). Such a `before` is a MISS by construction, not a calibration failure, so detector_blind fixtures are EXCLUDED from the naive-baseline miss-rate denominator (the 30-40% band still measures only the detector-targeted set); their score BANDS are still checked. Every detector_blind fixture also carries expect_baseline='miss'. Do NOT 'fix' the calibration band by deleting that exclusion filter.",
   "baseline_threshold": 14,
   "fixtures": [
     {
@@ -139,6 +139,78 @@
       ],
       "expect_baseline": "catch",
       "subtle_tell": "false concession ('served us well, but...'), hedge-stacking ('could potentially position us'), vague-attribution ('research suggests') with NO numbers. This is the BORDERLINE fixture: it scores ~15, just above the naive threshold, so the mechanical detector catches it but only barely — an LLM judge is still needed to confirm the rewrite added real specifics rather than just swapping words."
+    },
+    {
+      "id": "overstep-01-selfqa-en",
+      "expected_verdict": "PASS",
+      "genre": "readme",
+      "difficulty": "subtle",
+      "before": "## Setup\n\nThe installer writes a config file to `~/.toolrc` and adds the binary to your PATH. Can you set this up yourself? Yes — and it's simpler than you might think. Run `tool init` and follow the two prompts.",
+      "after": "## Setup\n\nThe installer writes a config file to `~/.toolrc` and adds the binary to your PATH. You can set this up yourself; it's fairly simple. Run `tool init` and follow the two prompts.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "overstepping_removed",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Over-stepping (反代入式越位感): self-Q&A theater ('Can you...? Yes —') + 'simpler than you might think' presumes the reader's doubt and answers it for them. The surrounding setup sentences are identical in before/after; only the over-stepping sentence differs. Zero vocabulary tells -> detector scores ~4 -> a flat threshold misses it; only a judge keyed to STANCE catches it."
+    },
+    {
+      "id": "overstep-02-presumed-cognition-en",
+      "expected_verdict": "PASS",
+      "genre": "linkedin",
+      "difficulty": "subtle",
+      "before": "We retrained the ranker last quarter and the result surprised the team. You probably assume more data always means a better model, but data quality matters more than quantity. Cleaning 5% of mislabeled rows moved NDCG more than doubling the training set did.",
+      "after": "We retrained the ranker last quarter and the result surprised the team. Data quality matters more than quantity for model performance. Cleaning 5% of mislabeled rows moved NDCG more than doubling the training set did.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "overstepping_removed",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Over-stepping: presumed-cognition with a MANUFACTURED prior ('You probably assume more data = better model, but'). The reader may not hold that belief; the frame corrects from above. The two surrounding sentences are identical in before/after; the core claim (quality > quantity) survives in `after` without presuming the reader was wrong."
+    },
+    {
+      "id": "overstep-03-mental-image-en",
+      "expected_verdict": "PASS",
+      "genre": "readme",
+      "difficulty": "subtle",
+      "before": "## How caching works\n\nThe library keeps a fixed-size LRU map in front of the database. When you hear \"caching,\" you picture some magic speed boost. In reality, it's just a smaller, faster store of recent results. Entries expire after 60 seconds by default.",
+      "after": "## How caching works\n\nThe library keeps a fixed-size LRU map in front of the database. A cache is just a smaller, faster store of recent results. Entries expire after 60 seconds by default.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "overstepping_removed",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Over-stepping: presumed mental image ('When you hear X, you picture Y') paints a thought into the reader's head, then corrects it. The surrounding sentences are identical in before/after; the definition itself is preserved in `after`; only the projected mental image is dropped."
+    },
+    {
+      "id": "overstep-04-selfqa-zh",
+      "expected_verdict": "PASS",
+      "genre": "linkedin",
+      "difficulty": "subtle",
+      "before": "上周想从某站抓一批公开数据做分析。要不要自己写个爬虫？要，而且比你想象的简单。用 requests 加 BeautifulSoup，三十行就跑通了第一版。",
+      "after": "上周想从某站抓一批公开数据做分析。自己写个爬虫是可行的，也不复杂。用 requests 加 BeautifulSoup，三十行就跑通了第一版。",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "overstepping_removed",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Over-stepping (反代入式越位感): 自问自答式裁判（要不要…？要，…）+「比你想象的简单」预设读者的疑虑。前后两句在 before/after 中逐字相同，只有越位句不同。检测器 0 分；纯站位 tell，须判官识别。"
     }
   ]
 }
