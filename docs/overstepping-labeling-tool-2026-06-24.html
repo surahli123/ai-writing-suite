@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>越位感 fixture · 交互标注工具</title>
+<style>
+  :root{
+    --ink:#1f2430; --muted:#5b6472; --soft:#828b99;
+    --accent:#4f46e5; --accentbg:#eef0ff;
+    --over:#dc2626; --overbg:#fbeaea; --clean:#16a34a; --cleanbg:#e9f7ef; --amb:#d97706; --ambbg:#fdf3e3;
+    --bg:#f6f7f9; --card:#ffffff; --line:#e6e8ec; --line2:#f0f1f4;
+    --radius:14px; --shadow:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7; font-size:16px; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 20px 120px}
+  .hero{background:linear-gradient(135deg,#4f46e5,#6366f1 50%,#0ea5e9); color:#fff; padding:34px 20px 30px; margin-bottom:22px}
+  .hero .inner{max-width:920px; margin:0 auto}
+  .hero h1{font-size:24px; margin:0 0 8px; font-weight:800}
+  .hero p{margin:0; opacity:.95; font-size:15px; max-width:720px}
+  .how{background:var(--card); border:1px solid var(--line); border-left:5px solid var(--accent); border-radius:var(--radius); padding:16px 20px; margin-bottom:18px; box-shadow:var(--shadow)}
+  .how b{color:var(--accent)} .how ul{margin:8px 0 0; padding-left:20px} .how li{margin:3px 0; font-size:14.5px}
+  .how code{background:var(--line2); padding:1px 6px; border-radius:5px; font-size:13px}
+  /* sticky progress */
+  .bar{position:sticky; top:0; z-index:20; background:rgba(255,255,255,.94); backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:12px 16px; margin-bottom:18px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .track{flex:1; min-width:160px; height:9px; background:var(--line2); border-radius:99px; overflow:hidden}
+  .fill{height:100%; width:0; background:linear-gradient(90deg,var(--accent),#0ea5e9); transition:width .3s}
+  .stat{font-size:13.5px; font-weight:700; color:var(--muted)} .stat b{color:var(--ink)}
+  .btn{border:1px solid var(--accent); background:var(--accent); color:#fff; font-weight:700; font-size:13.5px; padding:8px 14px; border-radius:9px; cursor:pointer}
+  .btn.ghost{background:#fff; color:var(--accent)}
+  .btn.warn{background:#fff; color:var(--over); border-color:var(--over)}
+  .btn:active{transform:translateY(1px)}
+  /* card */
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px 20px; margin-bottom:16px}
+  .card.done{border-color:#bfe6cd}
+  .card.disagree{border-color:#f3c89a; box-shadow:0 0 0 2px var(--ambbg), var(--shadow)}
+  .chead{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px}
+  .fid{font-weight:800; font-size:15px} .fid .lang{font-size:11px; font-weight:700; color:var(--soft); border:1px solid var(--line); border-radius:6px; padding:1px 6px; margin-left:6px}
+  .meta-chips{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
+  .chip{font-size:11.5px; font-weight:700; padding:3px 8px; border-radius:999px; background:var(--line2); color:var(--muted); white-space:nowrap}
+  .chip.prop-over{background:var(--overbg); color:var(--over)} .chip.prop-clean{background:var(--cleanbg); color:var(--clean)} .chip.prop-fixed{background:var(--cleanbg); color:var(--clean)}
+  .text{background:#fbfbfc; border:1px solid var(--line2); border-radius:10px; padding:12px 14px; font-size:15px; line-height:1.7}
+  .text.zh{font-size:15.5px}
+  mark{background:#fff1a8; padding:0 2px; border-radius:3px}
+  .ba{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .ba .lbl{font-size:11px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; margin-bottom:4px}
+  .ba .before .lbl{color:var(--over)} .ba .after .lbl{color:var(--clean)}
+  .why{font-size:13.5px; color:var(--muted); margin:10px 0 12px}
+  .why .src{color:var(--soft); font-size:12.5px}
+  /* options */
+  .opts{display:flex; gap:8px; flex-wrap:wrap}
+  .opt{flex:1; min-width:120px; border:1.5px solid var(--line); border-radius:10px; padding:9px 12px; cursor:pointer; font-weight:700; font-size:14px; text-align:center; user-select:none; transition:.12s}
+  .opt:hover{border-color:var(--soft)}
+  .opt input{display:none}
+  .opt.sel-over{background:var(--overbg); border-color:var(--over); color:var(--over)}
+  .opt.sel-clean{background:var(--cleanbg); border-color:var(--clean); color:var(--clean)}
+  .opt.sel-fixed{background:var(--cleanbg); border-color:var(--clean); color:var(--clean)}
+  .opt.sel-amb,.opt.sel-notfixed,.opt.sel-overfixed{background:var(--ambbg); border-color:var(--amb); color:var(--amb)}
+  .agree{margin-top:10px; font-size:13px; font-weight:700; min-height:18px}
+  .agree.ok{color:var(--clean)} .agree.no{color:var(--over)}
+  .note{width:100%; margin-top:10px; border:1px solid var(--line); border-radius:9px; padding:8px 11px; font-size:14px; font-family:inherit; resize:vertical; min-height:38px}
+  .done-summary{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); margin-top:8px}
+  .done-summary h3{margin:0 0 8px}
+  .toast{position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(80px); background:#1f2430; color:#fff; padding:11px 20px; border-radius:10px; font-size:14px; font-weight:600; opacity:0; transition:.25s; z-index:50}
+  .toast.show{transform:translateX(-50%) translateY(0); opacity:1}
+  @media(max-width:680px){ .ba{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="hero"><div class="inner">
+  <h1>越位感 (Over-stepping) fixture · 交互标注工具</h1>
+  <p>给每条文字打标签 → 你的判断就是 gold label。重点：<b>质疑我的初判，尤其 F4–F6 的 hard-negative</b>。全部例子摘自公开 AI 文本（HC3 真实 ChatGPT + 公开 humanizer 仓库）。</p>
+</div></div>
+
+<div class="wrap">
+  <div class="how">
+    <b>怎么标（约 10 分钟）：</b>
+    <ul>
+      <li><b>判断类 F1–F6：</b>这段是不是「越位」（替读者想 / 先造靶子再纠正）？→ <code>过界</code> / <code>合法</code> / <code>说不清</code></li>
+      <li><b>改写类 F7–F8：</b>改后那版是否真的修掉了越位、且没改坏？→ <code>已修好</code> / <code>未修好</code> / <code>改过头</code> / <code>说不清</code></li>
+      <li>拿不准就选 <code>说不清</code> → 这条会被剔除（拿不准的 fixture 是坏 fixture）。</li>
+      <li>左下角实时显示你和我是否一致；<b>不一致才是有价值的信号</b>。进度会自动存到浏览器，刷新不丢。</li>
+      <li>标完点 <b>导出 JSON</b>（下载文件发我）或 <b>复制结果</b>（粘贴回对话给我）。</li>
+    </ul>
+  </div>
+
+  <div class="bar">
+    <span class="stat"><b id="cnt">0</b> / <b id="tot">8</b> 已标</span>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <span class="stat">不同意 <b id="dis">0</b> · 说不清 <b id="ambn">0</b></span>
+    <button class="btn ghost" onclick="copyOut()">复制结果</button>
+    <button class="btn" onclick="download()">导出 JSON</button>
+    <button class="btn warn" onclick="reset()">清空</button>
+  </div>
+
+  <div id="cards"></div>
+
+  <div class="done-summary" id="summary" style="display:none">
+    <h3>✅ 全部标完</h3>
+    <p id="summary-text"></p>
+    <button class="btn" onclick="download()">导出 JSON</button>
+    <button class="btn ghost" onclick="copyOut()">复制结果</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const FIXTURES = [
+  { id:"F1", lang:"EN", type:"judge", subpattern:"P2 不是X而是Y + 意义膨胀", proposed:"over", confidence:"高",
+    text:`At its core, the value proposition is clear: streamlining processes, enhancing collaboration, and fostering alignment. It's not just about autocomplete; it's about unlocking creativity at scale... The tool serves as a catalyst. The assistant functions as a partner. The system stands as a foundation for innovation.`,
+    marks:["It's not just about autocomplete; it's about"],
+    why:"\"not just X; it's Y\" 的戏剧化铺陈 + 一连串空泛拔高，典型 AI slop。", source:"blader/humanizer SKILL.md（收录的真实 AI 例子）" },
+  { id:"F2", lang:"EN", type:"judge", subpattern:"P1 预设读者认知 + 先立靶后破", proposed:"over", confidence:"中",
+    text:`Many people believe that the color of your eyes can reveal certain things about your personality or your health, but these beliefs are not supported by scientific evidence.`,
+    marks:["Many people believe","but these beliefs are not supported by"],
+    why:"先替读者设定一个认知再推翻；也可看作正常辟谣 → 信心中等。", source:"HC3 reddit_eli5（真实 ChatGPT）" },
+  { id:"F3", lang:"ZH", type:"judge", subpattern:"P2 不是X而是Y + 替读者预设担忧", proposed:"over", confidence:"中",
+    text:`这不是你的男友不爱你，而是他可能认为你是成年人，应该自己处理自己的健康问题。`,
+    marks:["这不是","而是"],
+    why:"替读者预设一个「他不爱我」的担忧当靶子再否定。", source:"HC3-Chinese psychology（真实 ChatGPT）" },
+  { id:"F4", lang:"EN", type:"judge", subpattern:"P3 预设心理画面（hard-negative）", proposed:"clean", confidence:"高",
+    text:`Imagine that you are holding an apple in your hand and you want to cut it in half with a knife.`,
+    marks:["Imagine that you are"],
+    why:"具体的教学设想，不是替读者判断他想错了 → 应判 clean。", source:"HC3 reddit_eli5（真实 ChatGPT）" },
+  { id:"F5", lang:"ZH", type:"judge", subpattern:"P2 不是X而是Y（hard-negative · 判断点）", proposed:"clean", confidence:"中",
+    text:`爱并不是一种感觉，而是一种行为。`,
+    marks:["并不是","而是"],
+    why:"「爱=感觉」是真实普遍的旧认知 → 有效认知翻转，不是造靶子 → 应判 clean。", source:"HC3-Chinese open_qa（真实 ChatGPT）" },
+  { id:"F6", lang:"ZH", type:"judge", subpattern:"P2 不是X而是Y（hard-negative）", proposed:"clean", confidence:"中",
+    text:`真正的转型不是看投入绝对值，而是看投入是否匹配到能产生实际改变的最小单元。`,
+    marks:["不是","而是"],
+    why:"「转型=砸钱」是真实常见认知，对比是 earned → 应判 clean。", source:"dongbeixiaohuo/writing-agent（人工改过的 demo 正文）" },
+  { id:"F7", lang:"EN", type:"ba", subpattern:"去越位改写", proposed:"fixed",
+    before:`Many people believe that the color of your eyes can reveal certain things about your personality or your health, but these beliefs are not supported by scientific evidence.`,
+    after:`Eye color doesn't reliably indicate personality or health — there's no scientific evidence for the link.`,
+    why:"去掉「many people believe…but」的立靶，直接陈述事实。", source:"BEFORE = F2（真实 ChatGPT）" },
+  { id:"F8", lang:"ZH", type:"ba", subpattern:"去越位改写", proposed:"fixed",
+    before:`这不是你的男友不爱你，而是他可能认为你是成年人，应该自己处理自己的健康问题。`,
+    after:`他可能认为你是成年人，应该自己处理健康问题。`,
+    why:"去掉「不是你男友不爱你」的预设担忧靶子，直接说判断。", source:"BEFORE = F3（真实 ChatGPT）" },
+];
+const JUDGE_OPTS = [["over","过界 Over-steps"],["clean","合法 Clean"],["ambiguous","说不清"]];
+const BA_OPTS = [["fixed","已修好 Fixed"],["not-fixed","未修好"],["over-fixed","改过头"],["ambiguous","说不清"]];
+const KEY = "overstepping-labels-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ state = {}; }
+
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function hl(text, marks){
+  let h = esc(text);
+  (marks||[]).forEach(m=>{ const e=esc(m); h = h.replace(e, "<mark>"+e+"</mark>"); });
+  return h;
+}
+function selClass(v){ return v==="over"?"sel-over": v==="clean"?"sel-clean": v==="fixed"?"sel-fixed":
+  v==="not-fixed"?"sel-notfixed": v==="over-fixed"?"sel-overfixed": "sel-amb"; }
+
+function render(){
+  const root = document.getElementById("cards");
+  root.innerHTML = "";
+  FIXTURES.forEach(f=>{
+    const st = state[f.id] || {};
+    const opts = f.type==="ba" ? BA_OPTS : JUDGE_OPTS;
+    const card = document.createElement("div");
+    card.className = "card" + (st.verdict ? " done" : "");
+    // agreement (only meaningful for judge fixtures vs my proposed)
+    let agreeHtml = "";
+    if (st.verdict){
+      if (st.verdict==="ambiguous"){ agreeHtml = `<div class="agree no">⊘ 标为说不清 → 该条会被剔除</div>`; }
+      else if (st.verdict===f.proposed){ agreeHtml = `<div class="agree ok">✓ 和我的初判一致</div>`; }
+      else { agreeHtml = `<div class="agree no">✗ 和我的初判不同（我判 ${f.proposed}）— 这正是有价值的信号</div>`; card.className += " disagree"; }
+    }
+    const body = f.type==="ba"
+      ? `<div class="ba"><div class="before"><div class="lbl">BEFORE（越位）</div><div class="text ${f.lang==='ZH'?'zh':''}">${hl(f.before,f.marks)}</div></div>
+         <div class="after"><div class="lbl">AFTER（改写）</div><div class="text ${f.lang==='ZH'?'zh':''}">${esc(f.after)}</div></div></div>`
+      : `<div class="text ${f.lang==='ZH'?'zh':''}">${hl(f.text,f.marks)}</div>`;
+    const optHtml = opts.map(([v,label])=>{
+      const sel = st.verdict===v ? selClass(v) : "";
+      return `<label class="opt ${sel}"><input type="radio" name="${f.id}" value="${v}" ${st.verdict===v?"checked":""} onchange="setV('${f.id}','${v}')">${label}</label>`;
+    }).join("");
+    card.innerHTML = `
+      <div class="chead">
+        <div class="fid">${f.id}<span class="lang">${f.lang}</span></div>
+        <div class="meta-chips">
+          <span class="chip">${esc(f.subpattern)}</span>
+          <span class="chip prop-${f.proposed}">我的初判: ${f.proposed}${f.confidence?(" · 信心"+f.confidence):""}</span>
+        </div>
+      </div>
+      ${body}
+      <div class="why">${esc(f.why)} <span class="src">— 来源: ${esc(f.source)}</span></div>
+      <div class="opts">${optHtml}</div>
+      ${agreeHtml}
+      <textarea class="note" placeholder="可选：你的理由 / 备注" oninput="setN('${f.id}',this.value)">${esc(st.note||"")}</textarea>
+    `;
+    root.appendChild(card);
+  });
+  updateBar();
+}
+function setV(id,v){ state[id]=state[id]||{}; state[id].verdict=v; save(); render(); }
+function setN(id,v){ state[id]=state[id]||{}; state[id].note=v; save(); updateBar(); }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+function updateBar(){
+  const tot = FIXTURES.length;
+  let n=0, dis=0, amb=0;
+  FIXTURES.forEach(f=>{ const st=state[f.id]||{}; if(st.verdict){ n++; if(st.verdict==="ambiguous")amb++; else if(st.verdict!==f.proposed)dis++; }});
+  document.getElementById("cnt").textContent=n;
+  document.getElementById("tot").textContent=tot;
+  document.getElementById("dis").textContent=dis;
+  document.getElementById("ambn").textContent=amb;
+  document.getElementById("fill").style.width=(100*n/tot)+"%";
+  const sum=document.getElementById("summary");
+  if(n===tot){ sum.style.display="block"; document.getElementById("summary-text").textContent=`${tot} 条全部标完：和我一致 ${tot-dis-amb} 条，不同意 ${dis} 条，说不清 ${amb} 条（会剔除）。点下方导出/复制把结果发我。`; }
+  else { sum.style.display="none"; }
+}
+function buildOut(){
+  return FIXTURES.map(f=>{ const st=state[f.id]||{}; return {
+    id:f.id, lang:f.lang, type:f.type, subpattern:f.subpattern, proposed:f.proposed,
+    your_verdict:st.verdict||null,
+    agree: (st.verdict&&st.verdict!=="ambiguous")?(st.verdict===f.proposed):null,
+    note:st.note||"", source:f.source,
+    text: f.type==="ba" ? {before:f.before, after:f.after} : f.text
+  };});
+}
+function download(){
+  const out={tool:"overstepping-labeling", saved_at: new Date().toISOString(), fixtures:buildOut()};
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="overstepping-labels.json"; document.body.appendChild(a); a.click(); a.remove();
+  toast("已下载 overstepping-labels.json");
+}
+function copyOut(){
+  const out=buildOut();
+  const lines=out.map(o=>`${o.id} [${o.lang}] your=${o.your_verdict||"-"} (mine=${o.proposed}${o.agree===false?" ✗disagree":o.agree===true?" ✓":""})${o.note?(" | "+o.note):""}`);
+  const txt="越位感标注结果:\n"+lines.join("\n")+"\n\nJSON:\n"+JSON.stringify(out);
+  const done=()=>toast("已复制，粘贴回对话发我即可");
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done,()=>fallbackCopy(txt,done)); }
+  else fallbackCopy(txt,done);
+}
+function fallbackCopy(txt,done){ const t=document.createElement("textarea"); t.value=txt; document.body.appendChild(t); t.select(); try{document.execCommand("copy");done();}catch(e){alert("复制失败，请手动选择");} t.remove(); }
+function reset(){ if(confirm("清空所有标注？不可撤销。")){ state={}; save(); render(); toast("已清空"); } }
+let tmr; function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(tmr); tmr=setTimeout(()=>t.classList.remove("show"),2200); }
+render();
+</script>
+</body>
+</html>

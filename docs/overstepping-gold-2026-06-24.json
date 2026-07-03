@@ -1,0 +1,24 @@
+{
+  "name": "overstepping-gold",
+  "date": "2026-06-24",
+  "status": "validated starter gold (directional smoke-test, NOT kappa)",
+  "provenance": "positives = purpose-built minimal pairs (stance is the only variable); hard-negatives = real-mined (HC3 + public humanizer repo)",
+  "rounds": {
+    "round1": "6 fixtures; positives confounded by verbosity (agreed for wrong reason); 3 hard-negatives clean. Positives discarded.",
+    "round2": "8 fixtures (5 built positives + 3 real hard-negatives); 7/8 agreed; N5 ambiguous -> dropped."
+  },
+  "discrimination": "kept set splits cleanly: 4 positives -> 'over' (rewrite better), 3 hard-negatives -> 'clean' (don't change). 100% owner-agreement on kept items.",
+  "key_insight": "Over-stepping is real ONLY when the presumed prior X is a manufactured strawman. When X is a genuinely common belief, the same 'you assume X / not-X-but-Y' framing is a LEGITIMATE correction (or ambiguous). This validity-condition is the judge's core test and applies across ALL sub-types (it is why N5 '推荐=猜喜好' was ambiguous but N2 'more data=better model' was clear over-stepping). Therefore the judge must stay advisory, never a CI gate.",
+  "gold": [
+    {"id":"N1","lang":"EN","label":"over","subpattern":"self-Q&A theater","prov":"built","original":"Can you set this up yourself? Yes — and it's simpler than you might think.","clean":"You can set this up yourself; it's fairly simple."},
+    {"id":"N2","lang":"EN","label":"over","subpattern":"presumed-cognition (manufactured prior)","prov":"built","original":"You probably assume more data always means a better model, but data quality matters more than quantity.","clean":"Data quality matters more than quantity for model performance."},
+    {"id":"N3","lang":"EN","label":"over","subpattern":"presumed mental image","prov":"built","original":"When you hear \"caching,\" you picture some magic speed boost. In reality, it's just a smaller, faster store of recent results.","clean":"A cache is just a smaller, faster store of recent results."},
+    {"id":"N4","lang":"ZH","label":"over","subpattern":"self-Q&A theater","prov":"built","original":"要不要自己写个爬虫？要，而且比你想象的简单。","clean":"自己写个爬虫是可行的，也不复杂。"},
+    {"id":"H1","lang":"EN","label":"clean","subpattern":"presumed mental image (legit pedagogy)","prov":"real","original":"Imagine that you are holding an apple in your hand and you want to cut it in half with a knife.","source":"HC3 reddit_eli5"},
+    {"id":"H2","lang":"ZH","label":"clean","subpattern":"not-X-but-Y (valid flip)","prov":"real","original":"爱并不是一种感觉，而是一种行为。","source":"HC3-Chinese open_qa"},
+    {"id":"H3","lang":"ZH","label":"clean","subpattern":"not-X-but-Y (earned contrast)","prov":"real","original":"真正的转型不是看投入绝对值，而是看投入是否匹配到能产生实际改变的最小单元。","source":"dongbeixiaohuo demo"}
+  ],
+  "dropped": [
+    {"id":"N5","lang":"ZH","reason":"owner=ambiguous: '推荐系统=猜你喜欢什么' is a semi-real common belief, so the correction may be legitimate. Boundary case — dropped per 'ambiguous fixtures are bad fixtures'.","original":"你可能以为推荐系统就是猜你喜欢什么，其实它更多是在做排序和过滤。"}
+  ]
+}

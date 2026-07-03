@@ -1,0 +1,15 @@
+{
+  "tool": "overstepping-labeling-v2",
+  "round": 1,
+  "labeled_by": "owner",
+  "date": "2026-06-24",
+  "summary": { "total": 6, "agree": 4, "disagree": 0, "ambiguous": 1, "note_reveals_confound": ["F1", "F2"] },
+  "fixtures": [
+    {"id":"F1","lang":"EN","subpattern":"P2 不是X而是Y + 意义膨胀","proposed":"over","your_verdict":"over","agree":true,"note":"it is way too much wordy and right version did not change the meaning","original":"At its core, the value proposition is clear... It's not just about autocomplete; it's about unlocking creativity at scale. The tool serves as a catalyst. The assistant functions as a partner. The system stands as a foundation for innovation.","rewrite":"The tool autocompletes code, and it helps teams write more ambitious code faster.","source":"blader/humanizer"},
+    {"id":"F2","lang":"EN","subpattern":"P1 预设读者认知 + 先立靶后破","proposed":"over","your_verdict":"over","agree":true,"note":"just too much words","original":"Many people believe that the color of your eyes can reveal certain things about your personality or your health, but these beliefs are not supported by scientific evidence.","rewrite":"Eye color doesn't reliably indicate personality or health — there's no scientific evidence for the link.","source":"HC3 reddit_eli5"},
+    {"id":"F3","lang":"ZH","subpattern":"P2 不是X而是Y + 替读者预设担忧","proposed":"over","your_verdict":"ambiguous","agree":null,"note":"it really depends on what is users' intent.","original":"这不是你的男友不爱你，而是他可能认为你是成年人，应该自己处理自己的健康问题。","rewrite":"他可能认为你是成年人，应该自己处理健康问题。","source":"HC3-Chinese psychology"},
+    {"id":"F4","lang":"EN","subpattern":"P3 预设心理画面（hard-negative）","proposed":"clean","your_verdict":"clean","agree":true,"note":"","original":"Imagine that you are holding an apple in your hand and you want to cut it in half with a knife.","rewrite":"Consider an apple that is cut in half with a knife.","source":"HC3 reddit_eli5"},
+    {"id":"F5","lang":"ZH","subpattern":"P2 不是X而是Y（hard-negative · 关键判断点）","proposed":"clean","your_verdict":"clean","agree":true,"note":"","original":"爱并不是一种感觉，而是一种行为。","rewrite":"爱是一种行为。","source":"HC3-Chinese open_qa"},
+    {"id":"F6","lang":"ZH","subpattern":"P2 不是X而是Y（hard-negative）","proposed":"clean","your_verdict":"clean","agree":true,"note":"","original":"真正的转型不是看投入绝对值，而是看投入是否匹配到能产生实际改变的最小单元。","rewrite":"真正的转型要看投入是否匹配到能产生实际改变的最小单元。","source":"dongbeixiaohuo/writing-agent"}
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "_doc": "DRAFT — plan-only, lives in docs/, NOT wired into the skill. Proposed extension of evals/fixtures/fixtures.json for the over-stepping (反代入式越位感) judge dimension. POSITIVES are PASS fixtures (before over-steps, after removes it) and are purpose-built MINIMAL PAIRS: original and rewrite differ ONLY in the reader-presumption layer, content/length held as fixed as possible — so the signal isolates over-stepping, not verbosity (the round-1 confound). DETECTOR EVIDENCE (ran evals/detector on every string, 2026-06-24): all `before` score 0-4/100 vs baseline_threshold=14 -> the mechanical detector is BLIND to over-stepping (no vocabulary/density tells) -> expect_baseline='miss' for all -> these are maximally 'subtle', judge-only fixtures. The FAIL hard-negatives (over-correction of a LEGITIMATE contrast) are kept separate under _fail_exemplars_for_test_fixtures, per repo convention that fixtures.json holds only PASS items (FAIL exemplars live in test_fixtures.py to protect the 30-40% calibration band). Owner-validated gold: docs/overstepping-gold-2026-06-24.json (round 2). LENGTH CAVEAT: these minimal pairs are single sentences (shorter than the genre paragraph fixtures); at wire-in, decide whether to embed each in a genre-realistic paragraph or add a short-form genre tag.",
+  "new_rubric_dimension": "overstepping_removed",
+  "fixtures": [
+    {
+      "id": "overstep-01-selfqa-en",
+      "expected_verdict": "PASS",
+      "genre": "readme",
+      "difficulty": "subtle",
+      "provenance": "built (minimal pair)",
+      "before": "Can you set this up yourself? Yes — and it's simpler than you might think.",
+      "after": "You can set this up yourself; it's fairly simple.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": ["overstepping_removed", "meaning_preserved", "no_fabrication"],
+      "expect_baseline": "miss",
+      "detector_observed": "before=4, after=0",
+      "subtle_tell": "Self-Q&A theater ('Can you...? Yes —') + 'simpler than you might think' presumes the reader's doubt and answers it for them. Zero vocabulary tells -> detector scores ~4 -> a flat threshold misses it; only a judge keyed to STANCE catches it."
+    },
+    {
+      "id": "overstep-02-presumed-cognition-en",
+      "expected_verdict": "PASS",
+      "genre": "linkedin",
+      "difficulty": "subtle",
+      "provenance": "built (minimal pair)",
+      "before": "You probably assume more data always means a better model, but data quality matters more than quantity.",
+      "after": "Data quality matters more than quantity for model performance.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": ["overstepping_removed", "meaning_preserved", "no_fabrication"],
+      "expect_baseline": "miss",
+      "detector_observed": "before=0, after=0",
+      "subtle_tell": "Presumed-cognition with a MANUFACTURED prior ('You probably assume more data = better model, but'). The reader may not hold that belief; the frame corrects from above. The core claim (quality > quantity) survives in `after` without presuming the reader was wrong."
+    },
+    {
+      "id": "overstep-03-mental-image-en",
+      "expected_verdict": "PASS",
+      "genre": "readme",
+      "difficulty": "subtle",
+      "provenance": "built (minimal pair)",
+      "before": "When you hear \"caching,\" you picture some magic speed boost. In reality, it's just a smaller, faster store of recent results.",
+      "after": "A cache is just a smaller, faster store of recent results.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": ["overstepping_removed", "meaning_preserved", "no_fabrication"],
+      "expect_baseline": "miss",
+      "detector_observed": "before=0, after=0",
+      "subtle_tell": "Presumed mental image ('When you hear X, you picture Y') paints a thought into the reader's head, then corrects it. The definition itself is preserved in `after`; only the projected mental image is dropped."
+    },
+    {
+      "id": "overstep-04-selfqa-zh",
+      "expected_verdict": "PASS",
+      "genre": "linkedin",
+      "difficulty": "subtle",
+      "provenance": "built (minimal pair)",
+      "before": "要不要自己写个爬虫？要，而且比你想象的简单。",
+      "after": "自己写个爬虫是可行的，也不复杂。",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": ["overstepping_removed", "meaning_preserved", "no_fabrication"],
+      "expect_baseline": "miss",
+      "detector_observed": "before=0, after=0",
+      "subtle_tell": "自问自答式裁判（要不要…？要，…）+ 「比你想象的简单」预设读者的疑虑。检测器 0 分；纯站位 tell，须判官识别。"
+    }
+  ],
+  "_fail_exemplars_for_test_fixtures": [
+    {
+      "id": "overstep-hardneg-apple-en",
+      "expected_verdict": "FAIL",
+      "fails_dimension": "meaning_preserved (and voice_kept)",
+      "provenance": "real (HC3 reddit_eli5)",
+      "before": "Imagine that you are holding an apple in your hand and you want to cut it in half with a knife.",
+      "after": "Consider an apple that is cut in half with a knife.",
+      "why_fail": "The original is NOT over-stepping — 'imagine you' is a concrete teaching device, not a judgment about the reader's thoughts. The 'rewrite' stripped it for no gain (colder, no clearer). A judge that rewards removing ANY 'imagine you' would wrongly PASS this. Tests that the judge applies the validity condition and does not over-correct legitimate pedagogy."
+    },
+    {
+      "id": "overstep-hardneg-love-zh",
+      "expected_verdict": "FAIL",
+      "fails_dimension": "meaning_preserved",
+      "provenance": "real (HC3-Chinese open_qa)",
+      "before": "爱并不是一种感觉，而是一种行为。",
+      "after": "爱是一种行为。",
+      "why_fail": "「爱=感觉」是真实普遍的旧认知 → 「不是感觉，而是行为」是有效认知翻转，对比有信息量。改写删掉对比 → 丢了真实信息 → meaning_preserved FAIL。测试判官不把合法对比误判为 tell。"
+    },
+    {
+      "id": "overstep-hardneg-transform-zh",
+      "expected_verdict": "FAIL",
+      "fails_dimension": "meaning_preserved",
+      "provenance": "real (dongbeixiaohuo demo)",
+      "before": "真正的转型不是看投入绝对值，而是看投入是否匹配到能产生实际改变的最小单元。",
+      "after": "真正的转型要看投入是否匹配到能产生实际改变的最小单元。",
+      "why_fail": "「转型=砸钱（投入绝对值）」是真实常见认知 → 对比是 earned。改写丢了「不是砸钱」这层纠正 → meaning_preserved FAIL。"
+    }
+  ]
+}
