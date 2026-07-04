@@ -47,11 +47,14 @@ class AgreesWithLiveFixtures(unittest.TestCase):
         # Compute (miss, total) EXACTLY as run_fixtures.run_deterministic does,
         # then assert the table calls that miss count valid. Fails if the live
         # fixtures drift out of band, OR if BAND_LO/HI here stop matching the
-        # live 30-40 assert — catching drift from either side.
+        # live 30-40 assert — catching drift from either side. `detector_blind`
+        # (judge-only) fixtures are excluded from the denominator here too, to
+        # match run_deterministic and the Calibration unit test.
         data = load_fixtures()
         thr = data["baseline_threshold"]
-        total = len(data["fixtures"])
-        miss = sum(1 for f in data["fixtures"]
+        targeted = [f for f in data["fixtures"] if not f.get("detector_blind")]
+        total = len(targeted)
+        miss = sum(1 for f in targeted
                    if analyze(f["before"])["score"] < thr)
         self.assertIn(miss, valid_miss_counts(total),
                       f"live suite {miss}/{total} not in band per table")

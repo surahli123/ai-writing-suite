@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>越位感 fixture · 并排标注 (Round 2 · 最小对照对)</title>
+<style>
+  :root{
+    --ink:#1f2430; --muted:#5b6472; --soft:#828b99;
+    --accent:#4f46e5; --accentbg:#eef0ff;
+    --over:#dc2626; --overbg:#fbeaea; --clean:#16a34a; --cleanbg:#e9f7ef; --amb:#d97706; --ambbg:#fdf3e3;
+    --bg:#f6f7f9; --card:#ffffff; --line:#e6e8ec; --line2:#f0f1f4;
+    --radius:14px; --shadow:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.7; font-size:16px; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px; margin:0 auto; padding:0 20px 120px}
+  .hero{background:linear-gradient(135deg,#4f46e5,#6366f1 50%,#0ea5e9); color:#fff; padding:34px 20px 30px; margin-bottom:20px}
+  .hero .inner{max-width:980px; margin:0 auto}
+  .hero h1{font-size:24px; margin:0 0 8px; font-weight:800}
+  .hero p{margin:0; opacity:.96; font-size:15px; max-width:760px}
+  .explain{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 22px; margin-bottom:16px; box-shadow:var(--shadow)}
+  .explain h2{margin:0 0 6px; font-size:18px}
+  .explain p{margin:6px 0; font-size:14.5px}
+  .test{background:var(--accentbg); border-radius:10px; padding:12px 15px; margin-top:10px; font-size:14.5px}
+  .test b{color:var(--accent)}
+  .qbox{background:#fffbe9; border:1px solid #f3dca8; border-radius:10px; padding:12px 15px; margin-top:12px; font-size:15px}
+  .qbox b{color:#b45309}
+  .r2{background:var(--cleanbg); border:1px solid #bfe6cd; border-radius:10px; padding:10px 14px; margin-top:12px; font-size:14px}
+  .r2 b{color:var(--clean)}
+  .demo-wrap{margin-bottom:18px}
+  .demo-lead{font-weight:800; font-size:15px; margin:14px 0 8px; display:flex; align-items:center; gap:8px}
+  .demo-lead .tg{font-size:11px; font-weight:800; padding:2px 9px; border-radius:999px; background:var(--accentbg); color:var(--accent)}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px 18px; margin-bottom:14px}
+  .card.demo{border-style:dashed; background:#fcfcff}
+  .card.done{border-color:#bfe6cd}
+  .card.disagree{border-color:#f3c89a; box-shadow:0 0 0 2px var(--ambbg), var(--shadow)}
+  .chead{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:12px}
+  .fid{font-weight:800; font-size:15px} .fid .lang{font-size:11px; font-weight:700; color:var(--soft); border:1px solid var(--line); border-radius:6px; padding:1px 6px; margin-left:6px}
+  .fid .prov{font-size:11px; font-weight:700; padding:1px 7px; border-radius:6px; margin-left:6px}
+  .prov.built{background:#ede9fe; color:#6d28d9} .prov.real{background:#e0f2fe; color:#0369a1}
+  .chip{font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--line2); color:var(--muted); white-space:nowrap}
+  .chip.prop-over{background:var(--cleanbg); color:var(--clean)} .chip.prop-clean{background:var(--overbg); color:var(--over)}
+  .sbs{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  .pane{border:1px solid var(--line2); border-radius:10px; padding:12px 14px; background:#fbfbfc}
+  .pane.orig{border-left:4px solid var(--soft)} .pane.rw{border-left:4px solid var(--accent)}
+  .ph{font-size:11.5px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; margin-bottom:6px}
+  .pane.orig .ph{color:var(--muted)} .pane.rw .ph{color:var(--accent)}
+  .ptext{font-size:15px; line-height:1.7} .ptext.zh{font-size:15.5px}
+  mark{background:#fff1a8; padding:0 2px; border-radius:3px}
+  .why{font-size:13.5px; color:var(--muted); margin:12px 0 12px}
+  .why .src{color:var(--soft); font-size:12.5px}
+  .ans{font-size:14px; font-weight:700; margin-top:8px}
+  .ans.over{color:var(--clean)} .ans.clean{color:var(--over)}
+  .qline{font-weight:700; font-size:14.5px; margin:4px 0 8px}
+  .opts{display:flex; gap:8px; flex-wrap:wrap}
+  .opt{flex:1; min-width:170px; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px; cursor:pointer; font-weight:700; font-size:14px; text-align:center; user-select:none; transition:.12s}
+  .opt:hover{border-color:var(--soft)} .opt input{display:none}
+  .opt.sel-over{background:var(--cleanbg); border-color:var(--clean); color:var(--clean)}
+  .opt.sel-clean{background:var(--overbg); border-color:var(--over); color:var(--over)}
+  .opt.sel-amb{background:var(--ambbg); border-color:var(--amb); color:var(--amb)}
+  .agree{margin-top:10px; font-size:13px; font-weight:700; min-height:18px}
+  .agree.ok{color:var(--clean)} .agree.no{color:var(--over)}
+  .note{width:100%; margin-top:10px; border:1px solid var(--line); border-radius:9px; padding:8px 11px; font-size:14px; font-family:inherit; resize:vertical; min-height:36px}
+  .bar{position:sticky; top:0; z-index:20; background:rgba(255,255,255,.94); backdrop-filter:blur(8px); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:11px 16px; margin-bottom:16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .track{flex:1; min-width:150px; height:9px; background:var(--line2); border-radius:99px; overflow:hidden}
+  .fill{height:100%; width:0; background:linear-gradient(90deg,var(--accent),#0ea5e9); transition:width .3s}
+  .stat{font-size:13.5px; font-weight:700; color:var(--muted)} .stat b{color:var(--ink)}
+  .btn{border:1px solid var(--accent); background:var(--accent); color:#fff; font-weight:700; font-size:13.5px; padding:8px 14px; border-radius:9px; cursor:pointer}
+  .btn.ghost{background:#fff; color:var(--accent)} .btn.warn{background:#fff; color:var(--over); border-color:var(--over)} .btn:active{transform:translateY(1px)}
+  .done-summary{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); margin-top:8px}
+  .toast{position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(80px); background:#1f2430; color:#fff; padding:11px 20px; border-radius:10px; font-size:14px; font-weight:600; opacity:0; transition:.25s; z-index:50}
+  .toast.show{transform:translateX(-50%) translateY(0); opacity:1}
+  @media(max-width:680px){ .sbs{grid-template-columns:1fr} .opt{min-width:120px} }
+</style>
+</head>
+<body>
+<div class="hero"><div class="inner">
+  <h1>越位感 fixture · 并排标注（第二轮 · 最小对照对）</h1>
+  <p>修过的版本。每条仍是 <b>原版 | 去越位改写版</b>，你只回答：<b>这个改写是真的更好，还是帮倒忙？</b></p>
+</div></div>
+
+<div class="wrap">
+  <div class="explain">
+    <h2>这轮改了什么（基于你上轮的反馈）</h2>
+    <div class="r2"><b>第一轮发现：</b>我的「正例」把「越位」和「啰嗦」捆在一起了，你是冲字数判的。<b>这轮的正例改成「最小对照对」：原版和改写版只差「替读者设定」那一层，其他内容/长度尽量不动 ——</b> 这样你的判断就只反映「越位」本身。</div>
+    <div class="test"><b>判据不变：</b>把「你以为 / 很多人觉得 / 你脑子里浮现 / 自问自答」那层去掉后，意思还完整成立吗？<br>
+      · <b>成立</b> → 那层是替读者设定（越位）→ <b>改写更好</b><br>
+      · <b>不成立</b>（去掉就丢了真实信息，因为 X 是真普遍的旧看法）→ 对比有效 → <b>不该改</b></div>
+    <div class="qbox"><b>每张卡一个问题：</b>右边「去越位改写版」是 <b>真的更好</b>，还是 <b>帮倒忙 / 没必要</b>？拿不准选「说不清」（剔除）。<br>
+      <span style="font-size:13px">标签说明：<span class="prov built" style="padding:1px 6px;border-radius:5px">构造</span> = 我按最小对照对造的正例； <span class="prov real" style="padding:1px 6px;border-radius:5px">真实</span> = 上轮挖到的真实例子（hard-negative）。</span></div>
+  </div>
+
+  <div class="demo-wrap">
+    <div class="demo-lead"><span class="tg">示范</span>两个带答案的例子（不用标）</div>
+    <div class="card demo">
+      <div class="chead"><div class="fid">示范 A<span class="lang">越位</span></div></div>
+      <div class="sbs">
+        <div class="pane orig"><div class="ph">原版</div><div class="ptext zh"><mark>你可能会觉得</mark>搜索排序很玄，<mark>其实</mark>它就是给候选项打分、排个序。</div></div>
+        <div class="pane rw"><div class="ph">去越位改写版</div><div class="ptext zh">搜索排序就是给候选项打分、排个序。</div></div>
+      </div>
+      <div class="ans over">✓ 改写更好：去掉「你可能会觉得…其实」后意思完全成立 → 那层是替读者设定（越位）。</div>
+    </div>
+    <div class="card demo">
+      <div class="chead"><div class="fid">示范 B<span class="lang">合法</span></div></div>
+      <div class="sbs">
+        <div class="pane orig"><div class="ph">原版</div><div class="ptext zh">重要的<mark>不是</mark>模型多大，<mark>而是</mark>评测集对不对。</div></div>
+        <div class="pane rw"><div class="ph">去越位改写版</div><div class="ptext zh">评测集对不对很重要。</div></div>
+      </div>
+      <div class="ans clean">✗ 不该改：「模型越大越好」是真实普遍的旧看法，对比有信息量；改写丢了重点 → 更差。</div>
+    </div>
+  </div>
+
+  <div class="bar">
+    <span class="stat"><b id="cnt">0</b> / <b id="tot">8</b> 已标</span>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <span class="stat">不同意 <b id="dis">0</b> · 说不清 <b id="ambn">0</b></span>
+    <button class="btn ghost" onclick="copyOut()">复制结果</button>
+    <button class="btn" onclick="download()">导出 JSON</button>
+    <button class="btn warn" onclick="reset()">清空</button>
+  </div>
+
+  <div id="cards"></div>
+
+  <div class="done-summary" id="summary" style="display:none">
+    <h3>✅ 全部标完</h3>
+    <p id="summary-text"></p>
+    <button class="btn" onclick="download()">导出 JSON</button>
+    <button class="btn ghost" onclick="copyOut()">复制结果</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// proposed: "over" = 改写更好(原版越位) ; "clean" = 不该改(原版没问题)
+// prov: "built" = 构造的最小对照对(正例) ; "real" = 真实挖掘(hard-negative)
+const FIXTURES = [
+  { id:"N1", lang:"EN", proposed:"over", prov:"built", subpattern:"自问自答式裁判",
+    original:`Can you set this up yourself? Yes — and it's simpler than you might think.`,
+    omarks:["Can you set this up yourself? Yes","simpler than you might think"],
+    rewrite:`You can set this up yourself; it's fairly simple.`,
+    why:"唯一多出来的是自问自答 + 「比你想的简单」的预设；去掉后载荷不变。", source:"构造（最小对照对）" },
+  { id:"N2", lang:"EN", proposed:"over", prov:"built", subpattern:"预设读者认知（人造旧认知）",
+    original:`You probably assume more data always means a better model, but data quality matters more than quantity.`,
+    omarks:["You probably assume"],
+    rewrite:`Data quality matters more than quantity for model performance.`,
+    why:"唯一多出来的是「You probably assume …, but」的替读者设定；核心论点(质>量)保留。", source:"构造（最小对照对）" },
+  { id:"N3", lang:"EN", proposed:"over", prov:"built", subpattern:"预设心理画面",
+    original:`When you hear "caching," you picture some magic speed boost. In reality, it's just a smaller, faster store of recent results.`,
+    omarks:["When you hear \"caching,\" you picture"],
+    rewrite:`A cache is just a smaller, faster store of recent results.`,
+    why:"唯一多出来的是「When you hear X, you picture Y」的预设心理画面；定义本身保留。", source:"构造（最小对照对）" },
+  { id:"N4", lang:"ZH", proposed:"over", prov:"built", subpattern:"自问自答式裁判",
+    original:`要不要自己写个爬虫？要，而且比你想象的简单。`,
+    omarks:["要不要自己写个爬虫？要","比你想象的简单"],
+    rewrite:`自己写个爬虫是可行的，也不复杂。`,
+    why:"唯一多出来的是自问自答 + 「比你想象的简单」的预设。", source:"构造（最小对照对）" },
+  { id:"N5", lang:"ZH", proposed:"over", prov:"built", subpattern:"预设读者认知（人造旧认知）",
+    original:`你可能以为推荐系统就是猜你喜欢什么，其实它更多是在做排序和过滤。`,
+    omarks:["你可能以为","其实"],
+    rewrite:`推荐系统更多是在做排序和过滤。`,
+    why:"唯一多出来的是「你可能以为X，其实」的替读者设定；核心论点保留。", source:"构造（最小对照对）" },
+  { id:"H1", lang:"EN", proposed:"clean", prov:"real", subpattern:"P3 预设心理画面（hard-negative）",
+    original:`Imagine that you are holding an apple in your hand and you want to cut it in half with a knife.`,
+    omarks:["Imagine that you are"],
+    rewrite:`Consider an apple that is cut in half with a knife.`,
+    why:"「imagine you」是具体的教学设想，不是判定读者想错；改写更冷、更差。", source:"真实 · HC3 reddit_eli5" },
+  { id:"H2", lang:"ZH", proposed:"clean", prov:"real", subpattern:"P2 不是X而是Y（hard-negative · 关键判断点）",
+    original:`爱并不是一种感觉，而是一种行为。`,
+    omarks:["并不是","而是"],
+    rewrite:`爱是一种行为。`,
+    why:"「爱=感觉」是真实普遍的旧认知，对比有信息量；改写丢了对比 → 更差。", source:"真实 · HC3-Chinese open_qa" },
+  { id:"H3", lang:"ZH", proposed:"clean", prov:"real", subpattern:"P2 不是X而是Y（hard-negative）",
+    original:`真正的转型不是看投入绝对值，而是看投入是否匹配到能产生实际改变的最小单元。`,
+    omarks:["不是","而是"],
+    rewrite:`真正的转型要看投入是否匹配到能产生实际改变的最小单元。`,
+    why:"「转型=砸钱」是真实常见认知，对比是 earned；改写丢了「不是砸钱」这层。", source:"真实 · dongbeixiaohuo demo" },
+];
+const OPTS = [["over","✓ 改写更好（原版在越位）"],["clean","✗ 帮倒忙 / 没必要（原版没问题）"],["ambiguous","说不清"]];
+const KEY = "overstepping-labels-r2";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ state = {}; }
+
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function hl(text, marks){ let h=esc(text); (marks||[]).forEach(m=>{ const e=esc(m); h=h.replace(e,"<mark>"+e+"</mark>"); }); return h; }
+function selClass(v){ return v==="over"?"sel-over": v==="clean"?"sel-clean":"sel-amb"; }
+
+function render(){
+  const root=document.getElementById("cards"); root.innerHTML="";
+  FIXTURES.forEach(f=>{
+    const st=state[f.id]||{};
+    const card=document.createElement("div");
+    card.className="card"+(st.verdict?" done":"");
+    let agreeHtml="";
+    if(st.verdict){
+      if(st.verdict==="ambiguous"){ agreeHtml=`<div class="agree no">⊘ 标为说不清 → 该条会被剔除</div>`; }
+      else if(st.verdict===f.proposed){ agreeHtml=`<div class="agree ok">✓ 和我的初判一致</div>`; }
+      else { agreeHtml=`<div class="agree no">✗ 和我的初判不同（我判「${f.proposed==="over"?"改写更好":"不该改"}」）— 这正是有价值的信号</div>`; card.className+=" disagree"; }
+    }
+    const zh=f.lang==="ZH"?"zh":"";
+    const provLabel=f.prov==="built"?"构造":"真实";
+    const optHtml=OPTS.map(([v,label])=>{
+      const sel=st.verdict===v?selClass(v):"";
+      return `<label class="opt ${sel}"><input type="radio" name="${f.id}" value="${v}" ${st.verdict===v?"checked":""} onchange="setV('${f.id}','${v}')">${label}</label>`;
+    }).join("");
+    card.innerHTML=`
+      <div class="chead">
+        <div class="fid">${f.id}<span class="lang">${f.lang}</span><span class="prov ${f.prov}">${provLabel}</span></div>
+        <span class="chip prop-${f.proposed}">我的初判: ${f.proposed==="over"?"改写更好":"不该改"}</span>
+      </div>
+      <div class="sbs">
+        <div class="pane orig"><div class="ph">原版</div><div class="ptext ${zh}">${hl(f.original,f.omarks)}</div></div>
+        <div class="pane rw"><div class="ph">去越位改写版</div><div class="ptext ${zh}">${esc(f.rewrite)}</div></div>
+      </div>
+      <div class="why">${esc(f.why)} <span class="src">— 子型: ${esc(f.subpattern)} · 来源: ${esc(f.source)}</span></div>
+      <div class="qline">右边的改写，是真的更好，还是帮倒忙？</div>
+      <div class="opts">${optHtml}</div>
+      ${agreeHtml}
+      <textarea class="note" placeholder="可选：你的理由 / 备注" oninput="setN('${f.id}',this.value)">${esc(st.note||"")}</textarea>
+    `;
+    root.appendChild(card);
+  });
+  updateBar();
+}
+function setV(id,v){ state[id]=state[id]||{}; state[id].verdict=v; save(); render(); }
+function setN(id,v){ state[id]=state[id]||{}; state[id].note=v; save(); updateBar(); }
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
+function updateBar(){
+  const tot=FIXTURES.length; let n=0,dis=0,amb=0;
+  FIXTURES.forEach(f=>{ const st=state[f.id]||{}; if(st.verdict){ n++; if(st.verdict==="ambiguous")amb++; else if(st.verdict!==f.proposed)dis++; }});
+  document.getElementById("cnt").textContent=n;
+  document.getElementById("tot").textContent=tot;
+  document.getElementById("dis").textContent=dis;
+  document.getElementById("ambn").textContent=amb;
+  document.getElementById("fill").style.width=(100*n/tot)+"%";
+  const sum=document.getElementById("summary");
+  if(n===tot){ sum.style.display="block"; document.getElementById("summary-text").textContent=`${tot} 条全部标完：和我一致 ${tot-dis-amb} 条，不同意 ${dis} 条，说不清 ${amb} 条（会剔除）。点下方导出/复制把结果发我。`; }
+  else { sum.style.display="none"; }
+}
+function buildOut(){
+  return FIXTURES.map(f=>{ const st=state[f.id]||{}; return {
+    id:f.id, lang:f.lang, prov:f.prov, subpattern:f.subpattern, proposed:f.proposed,
+    your_verdict:st.verdict||null,
+    agree:(st.verdict&&st.verdict!=="ambiguous")?(st.verdict===f.proposed):null,
+    note:st.note||"", original:f.original, rewrite:f.rewrite, source:f.source
+  };});
+}
+function download(){
+  const out={tool:"overstepping-labeling-r2", saved_at:new Date().toISOString(), fixtures:buildOut()};
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="overstepping-labels-round2.json"; document.body.appendChild(a); a.click(); a.remove();
+  toast("已下载 overstepping-labels-round2.json");
+}
+function copyOut(){
+  const out=buildOut();
+  const lines=out.map(o=>`${o.id} [${o.lang}/${o.prov}] your=${o.your_verdict||"-"} (mine=${o.proposed}${o.agree===false?" ✗disagree":o.agree===true?" ✓":""})${o.note?(" | "+o.note):""}`);
+  const txt="越位感标注结果(round2):\n"+lines.join("\n")+"\n\nJSON:\n"+JSON.stringify(out);
+  const done=()=>toast("已复制，粘贴回对话发我即可");
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done,()=>fallbackCopy(txt,done)); }
+  else fallbackCopy(txt,done);
+}
+function fallbackCopy(txt,done){ const t=document.createElement("textarea"); t.value=txt; document.body.appendChild(t); t.select(); try{document.execCommand("copy");done();}catch(e){alert("复制失败，请手动选择");} t.remove(); }
+function reset(){ if(confirm("清空所有标注？不可撤销。")){ state={}; save(); render(); toast("已清空"); } }
+let tmr; function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(tmr); tmr=setTimeout(()=>t.classList.remove("show"),2200); }
+render();
+</script>
+</body>
+</html>

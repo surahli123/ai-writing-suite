@@ -96,7 +96,9 @@ in the words as they go down.
 - **The catalog as a negative checklist.** As you write, avoid the tells the
   genre preset weights — filler openers, inflated significance, forced
   rule-of-three, "not X but Y" theatrics, vague attribution, promotional
-  adjectives, chatbot tics.
+  adjectives, chatbot tics, and over-stepping presumptions (don't think *for* the
+  reader with a manufactured "you assume X / 你以为 X / Can you…? Yes —"; see
+  `_shared/patterns/overstepping-presumption.md`).
 - **Lead with the point** (BLUF) and shape to the channel, per the KB's
   `structure.md` and the genre preset.
 

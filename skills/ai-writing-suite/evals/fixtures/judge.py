@@ -51,10 +51,12 @@ ALWAYS_REQUIRED = "no_fabrication"
 # silent flakiness (the liveness check in run_judge surfaces a dead provider).
 _TIMEOUT_S = 60
 
-# Matches a NORMALIZED rubric line: "<snake_case_dim>: PASS|FAIL [— reason]".
+# Matches a NORMALIZED rubric line: "<snake_case_dim>: PASS|FAIL|N/A [— reason]".
 # Leading list markers / **bold** are stripped before matching (see parse below),
-# so common model formatting ("- **meaning_preserved**: PASS") still parses.
-_DIM_LINE = re.compile(r"^([a-z][a-z_]+)\s*:\s*(PASS|FAIL)\b", re.IGNORECASE)
+# so common model formatting ("- **meaning_preserved**: PASS") still parses. N/A is
+# a third state for conditional dims (e.g. payoff_clear when no removal happened);
+# aggregate() treats it as vacuously satisfied. "N/A" is tried before "NA".
+_DIM_LINE = re.compile(r"^([a-z][a-z_]+)\s*:\s*(PASS|FAIL|N/A|NA)\b", re.IGNORECASE)
 
 
 class JudgeError(RuntimeError):
@@ -147,13 +149,15 @@ def _extract_text(payload):
 
 
 def parse_dimension_lines(model_text):
-    """Parse a model verdict into {dimension: 'PASS'|'FAIL'}.
+    """Parse a model verdict into {dimension: 'PASS'|'FAIL'|'N/A'}.
 
     Tolerates common model formatting: leading list markers ("- ", "* ", "1. ")
     and **bold** around the dimension name are stripped before matching, so
     "- **meaning_preserved**: PASS" parses the same as "meaning_preserved: PASS".
-    IGNORES the model's self-reported final 'VERDICT:' line — we recompute the
-    verdict ourselves in aggregate(). Returns {} when nothing parses.
+    Both "N/A" and "NA" normalize to 'N/A' (a conditional dim the judge marks
+    not-applicable, e.g. payoff_clear when nothing was removed). IGNORES the model's
+    self-reported final 'VERDICT:' line — we recompute the verdict ourselves in
+    aggregate(). Returns {} when nothing parses.
     """
     out = {}
     if not isinstance(model_text, str):
@@ -167,7 +171,8 @@ def parse_dimension_lines(model_text):
         dim = m.group(1).lower()
         if dim == "verdict":  # never trust the model's self-reported overall line
             continue
-        out[dim] = m.group(2).upper()
+        val = m.group(2).upper()
+        out[dim] = "N/A" if val in ("N/A", "NA") else val
     return out
 
 
@@ -186,8 +191,25 @@ def majority_vote(per_rep_results):
     for d in dims:
         passes = sum(1 for r in per_rep_results if r.get(d) == "PASS")
         fails = sum(1 for r in per_rep_results if r.get(d) == "FAIL")
-        merged[d] = "PASS" if passes > fails else "FAIL"
+        if passes == 0 and fails == 0:
+            merged[d] = "N/A"  # only N/A (or absent) votes -> not applicable
+        else:
+            merged[d] = "PASS" if passes > fails else "FAIL"
     return merged
+
+
+def _rep_complete(rep, required):
+    """A rep is complete iff every required dimension is PRESENT. A conditional dim
+    may be 'N/A' (not applicable) and still counts as present/satisfied — EXCEPT
+    no_fabrication, the load-bearing dim, which must be a genuine PASS/FAIL: an N/A
+    there is treated as missing, so it can never launder into a verdict.
+    """
+    for dim in required:
+        if dim not in rep:
+            return False
+        if dim == ALWAYS_REQUIRED and rep[dim] == "N/A":
+            return False
+    return True
 
 
 def aggregate(per_rep_results, rubric_focus):
@@ -198,12 +220,19 @@ def aggregate(per_rep_results, rubric_focus):
     missing a required dimension are INCOMPLETE and discarded — never silently
     treated as a PASS for the dimension they skipped. Returns None (-> SKIP, never
     a fake PASS) when no complete rep exists, so a missing load-bearing call can
-    never produce a fabricated PASS. overall PASS iff every required dimension,
-    majority-voted across the complete reps, is PASS.
+    never produce a fabricated PASS.
+
+    N/A handling: a conditional dimension the judge marks 'N/A' (e.g. payoff_clear
+    when nothing was removed) is VACUOUSLY SATISFIED — it counts as present for
+    completeness but is DROPPED from the verdict, so it neither fabricates a PASS
+    nor swallows a real FAIL from the other dimensions into a silent SKIP. overall
+    PASS iff every graded (PASS/FAIL) required dimension, majority-voted across the
+    complete reps, is PASS.
     """
     required = set(rubric_focus) | {ALWAYS_REQUIRED}
-    complete = [r for r in per_rep_results if required <= set(r)]
+    complete = [r for r in per_rep_results if _rep_complete(r, required)]
     if not complete:
         return None  # no complete verdict — SKIP, do not fabricate
     merged = majority_vote(complete)
-    return "PASS" if all(merged[dim] == "PASS" for dim in required) else "FAIL"
+    graded = [dim for dim in required if merged.get(dim) in ("PASS", "FAIL")]
+    return "PASS" if all(merged[dim] == "PASS" for dim in graded) else "FAIL"
