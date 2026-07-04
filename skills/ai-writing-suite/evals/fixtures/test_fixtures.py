@@ -285,6 +285,124 @@ class OversteppingHardNegatives(unittest.TestCase):
         self.assertEqual(verdict, "FAIL")
 
 
+class PayoffClearAggregateSemantics(unittest.TestCase):
+    """payoff_clear exercised through aggregate() with canned judge replies.
+
+    HONESTY NOTE: aggregate() has NO per-dimension hard/advisory distinction —
+    every dim in rubric_focus is always-required. So these assert the GENERIC
+    aggregate contract using payoff_clear as the focus dim (the FAIL + PASS halves
+    of the overstep-05 minimal pair). They do NOT, by themselves, guard the diff —
+    the payoff_clear-SPECIFIC guards live in PayoffClearGuards, and the N/A contract
+    this feature ships is guarded by NaAwareAggregate below.
+    """
+
+    def test_stub_after_fails_when_payoff_clear_fails(self):
+        text = ("overstepping_removed: PASS\n"
+                "payoff_clear: FAIL — 'It reduces them' lost its subject\n"
+                "meaning_preserved: PASS\n"
+                "no_fabrication: PASS")
+        verdict = judge.aggregate([judge.parse_dimension_lines(text)],
+                                  ["overstepping_removed", "payoff_clear",
+                                   "meaning_preserved"])
+        self.assertEqual(verdict, "FAIL")
+
+    def test_clean_after_passes(self):
+        text = ("overstepping_removed: PASS\n"
+                "payoff_clear: PASS — 'Merging reduces outages' names the subject\n"
+                "meaning_preserved: PASS\n"
+                "no_fabrication: PASS")
+        verdict = judge.aggregate([judge.parse_dimension_lines(text)],
+                                  ["overstepping_removed", "payoff_clear",
+                                   "meaning_preserved"])
+        self.assertEqual(verdict, "PASS")
+
+
+class NaAwareAggregate(unittest.TestCase):
+    """The N/A contract, enforced end-to-end. rubric.md tells the judge to output
+    `payoff_clear: N/A` when no presumption was removed. aggregate() must treat an
+    explicit N/A as VACUOUSLY SATISFIED (dropped from the verdict), not as an
+    incomplete rep — so a genuine FAIL is never silently swallowed as a SKIP when
+    payoff_clear is N/A (the review's reproduced landmine)."""
+
+    def test_parse_recognizes_na(self):
+        self.assertEqual(judge.parse_dimension_lines("payoff_clear: N/A"),
+                         {"payoff_clear": "N/A"})
+        self.assertEqual(judge.parse_dimension_lines("- **payoff_clear**: NA"),
+                         {"payoff_clear": "N/A"})
+
+    def test_na_dim_vacuously_satisfied_real_fail_surfaces(self):
+        # The reviewer's repro: a genuine defect (overstepping_removed +
+        # meaning_preserved FAIL) with payoff_clear correctly N/A must FAIL —
+        # NOT return None (silent SKIP that swallows the real FAIL).
+        text = ("overstepping_removed: FAIL\n"
+                "meaning_preserved: FAIL\n"
+                "payoff_clear: N/A\n"
+                "no_fabrication: PASS")
+        verdict = judge.aggregate([judge.parse_dimension_lines(text)],
+                                  ["overstepping_removed", "payoff_clear",
+                                   "meaning_preserved"])
+        self.assertEqual(verdict, "FAIL")
+
+    def test_na_dim_dropped_all_else_pass_is_pass(self):
+        text = ("overstepping_removed: PASS\n"
+                "meaning_preserved: PASS\n"
+                "payoff_clear: N/A\n"
+                "no_fabrication: PASS")
+        verdict = judge.aggregate([judge.parse_dimension_lines(text)],
+                                  ["overstepping_removed", "payoff_clear",
+                                   "meaning_preserved"])
+        self.assertEqual(verdict, "PASS")
+
+    def test_no_fabrication_na_is_incomplete_never_pass(self):
+        # no_fabrication is the load-bearing dim; it can never be N/A. An N/A there
+        # -> incomplete rep -> None (SKIP), never a fabricated PASS.
+        text = ("meaning_preserved: PASS\n"
+                "no_fabrication: N/A")
+        self.assertIsNone(
+            judge.aggregate([judge.parse_dimension_lines(text)],
+                            ["meaning_preserved"]))
+
+
+class PayoffClearGuards(unittest.TestCase):
+    """Guards that actually go RED if the payoff_clear diff is reverted (unlike the
+    generic aggregate tests above, which pass with any dimension label)."""
+
+    # The over-stripped FAIL half of the overstep-05 minimal pair — materialized
+    # from docstring prose into an executable check.
+    FAIL_PARTNER = ("It actually reduces them: one config to keep in sync instead "
+                    "of two, and we traced 3 of the last 5 incidents to drift "
+                    "between them.")
+
+    def test_judge_template_documents_payoff_clear(self):
+        # The fenced prompt block a LIVE judge actually reads must define the
+        # dimension. Goes RED if the PAYOFF-CLEAR CHECK block is removed from
+        # rubric.md while payoff_clear stays in fixtures' rubric_focus.
+        template = _extract_judge_template()
+        self.assertIn("PAYOFF-CLEAR CHECK", template)
+        self.assertIn("payoff_clear", template)
+        self.assertIn("N/A", template)
+
+    def test_payoff_clear_only_paired_with_overstepping_removed(self):
+        # Invariant lock (rubric.md): payoff_clear is scored ONLY alongside a
+        # removal, so it must never appear in rubric_focus without
+        # overstepping_removed. Prevents a future fixture from tripping the N/A path.
+        for f in load_fixtures()["fixtures"]:
+            if "payoff_clear" in f["rubric_focus"]:
+                self.assertIn("overstepping_removed", f["rubric_focus"],
+                              f"{f['id']}: payoff_clear without overstepping_removed")
+
+    def test_overstep05_failpartner_detector_blind_and_isolated(self):
+        # Tie the minimal-pair claim to executable checks: the FAIL partner must be
+        # detector-blind (score 0, matching overstep-05's declared judge-only band)
+        # and must have DROPPED the presumption — isolating payoff_clear as the sole
+        # differentiator vs the live PASS `after`. Goes RED if overstep-05 is reverted.
+        fixture = next(f for f in load_fixtures()["fixtures"]
+                       if f["id"] == "overstep-05-payoff-en")
+        self.assertEqual(analyze(self.FAIL_PARTNER)["score"], 0)
+        self.assertNotIn("you might think", self.FAIL_PARTNER.lower())
+        self.assertNotIn("you might think", fixture["after"].lower())
+
+
 class JudgeGate(unittest.TestCase):
     """The 3-state gate, exercised with NO network."""
 

@@ -25,6 +25,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   manual installs, where the agent resolves relative paths against the session cwd.
 
 ### Added
+- **`payoff_clear` judge leg (Ogilvy rule 9 — "make the ask clear")** — pairs with
+  `overstepping_removed`: after a manufactured presumption is deleted via 少写, it
+  checks the surviving claim still stands on its own instead of a stub that lost the
+  antecedent the deleted frame supplied ("It reduces them" → "Merging reduces
+  outages"). Judge-only/advisory, never gates CI; scored only when a removal happened.
+  Adds the `overstep-05-payoff-en` minimal-pair anchor + revert-guarded tests
+  (`PayoffClearGuards`: the fenced judge prompt documents the dimension; the fixture
+  exists; the FAIL partner is detector-blind and drops the presumption).
+- **`aggregate()` N/A handling** — the LLM-judge aggregator now recognizes an explicit
+  `N/A` dimension state and treats it as *vacuously satisfied* (dropped from the verdict)
+  rather than an incomplete rep. A conditional dimension like `payoff_clear` can thus be
+  marked N/A when it doesn't apply without silently voiding the fixture's whole verdict;
+  `no_fabrication` can never be N/A (still forces a genuine PASS/FAIL). Covered by
+  `NaAwareAggregate`.
 - **Over-stepping (反代入式越位感) judge dimension** — a new advisory LLM-judge
   dimension `overstepping_removed` for the before/after fixtures, catching prose
   that thinks *for* the reader (presumed cognition, strawman misconception,

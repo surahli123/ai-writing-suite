@@ -122,6 +122,12 @@ The fix is almost always **write less**, not rephrase:
 The discriminator between the two is the validity condition: manufactured prior →
 少写; real prior → 多写 (or leave the legitimate contrast intact).
 
+**Leave the payload crystal-clear.** After 少写 deletes the presumption layer, the
+surviving claim must still read as a complete, self-standing statement — not a stub
+whose pronouns lost the antecedent the deleted frame supplied ("It reduces them" →
+name the subject: "Merging reduces outages"). The eval checks this as `payoff_clear`,
+paired with `overstepping_removed` (see `evals/fixtures/rubric.md`).
+
 ## Scope
 
 - Targets only the **clearly manufactured** sub-types above (O1–O4).

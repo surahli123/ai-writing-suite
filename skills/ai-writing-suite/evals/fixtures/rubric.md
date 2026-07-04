@@ -32,6 +32,7 @@ expected outcome, and scores the rewrite on the dimensions below.
 | `specificity_added` | Where `before` was vague, `after` is concrete (only scored when in `rubric_focus`). | `after` is still vague / empty calories. |
 | `genre_fit` | Length and tone fit the genre (tweet ≤ 280 chars, readme is scannable, memo leads with the decision). | Wrong shape for the channel. |
 | `overstepping_removed` | `after` removes a **manufactured** reader-presumption — "you assume/think X", "很多人以为 X", a self-Q&A ("Can you…? Yes —"), or a projected mental image ("you picture…") — whose presumed prior X is **not** a real, widespread belief, **and** the underlying claim survives. | The presumption still reads in `after`; **or** `after` stripped a contrast whose X **was** a real widespread belief (that loses information → also fails `meaning_preserved`). |
+| `payoff_clear` | **(Pairs with `overstepping_removed`; score ONLY when a presumption was removed — N/A otherwise.)** After the manufactured presumption is deleted, the surviving claim reads as a complete, self-standing statement. | The leftover is a stub that lost the antecedent the deleted frame supplied — e.g. "It reduces them" after "you think X causes more outages, but" was cut, so "it"/"them" no longer resolve. |
 
 Structural-tell dimensions appear in `rubric_focus` by name for fixtures that
 target them: `negative_parallelism_removed`, `rule_of_three_removed`,
@@ -62,6 +63,25 @@ The judge's test: does the point still stand after deleting "you think / 你以�
 This dimension is **judge-only and advisory** — the mechanical detector is blind
 to it (the tell is in stance, not vocabulary), and whether a line over-steps is
 partly intent-dependent, so it never gates CI.
+
+### `payoff_clear` — the leftover must stand on its own
+
+`payoff_clear` **pairs with** `overstepping_removed`. When the manufactured
+presumption is deleted via 少写 (write-less), check the **surviving** claim: does
+it read as a complete, unambiguous statement, or a **stub** that lost the
+antecedent the deleted frame supplied?
+
+- "You think merging causes more outages, **but it reduces them**" → over-stripped
+  to "**It reduces them**" strands "it"/"them" → `payoff_clear` **FAIL**.
+- The clear fix names the subject: "**Merging reduces outages**" → `payoff_clear`
+  **PASS**.
+
+Score `payoff_clear` **ONLY when a removal happened**; when no presumption was removed,
+emit an explicit `payoff_clear: N/A` (never silently omit the line — `aggregate()` treats
+an explicit N/A as vacuously satisfied and drops it from the verdict, whereas an omitted
+required line would void the whole fixture's verdict). This is a *repair-quality* check (is
+the fix complete), not a general "is this sentence clear" check — it stays scoped to the
+少写 leftover. Judge-only/advisory; never gates CI.
 
 ## Verdict aggregation
 
@@ -99,6 +119,14 @@ reward its removal; deleting it loses information (fail meaning_preserved).
 Test: does the point still stand after deleting "you think / 你以为 / 很多人以为"?
   - stands → the frame was over-stepping → overstepping_removed: PASS if `after` dropped it
   - collapses (X was a real prior) → contrast was legitimate → meaning_preserved: FAIL if `after` dropped it
+
+PAYOFF-CLEAR CHECK (dimension: payoff_clear) — score ONLY when a presumption was removed
+After deleting a manufactured presumption, does the surviving claim stand on its own as a
+complete, unambiguous statement? FAIL if the leftover is a stub whose pronouns/references
+lost the antecedent the deleted frame supplied (e.g. "It reduces them" with no named
+subject). PASS if the fix names the subject ("Merging reduces outages"). If nothing was
+removed, output `payoff_clear: N/A` (do NOT drop the line — the aggregator treats an
+explicit N/A as vacuously satisfied; a silently omitted line would void the whole verdict).
 ```
 
 ## What the judge must NOT do
