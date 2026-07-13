@@ -5,7 +5,7 @@
 # its own directory). Used both by humans pre-commit and by CI (.github/workflows/ci.yml).
 #
 # Checks, in order (any nonzero aborts the run):
-#   1. unit tests      — detector logic + fixture well-formedness (~23 tests)
+#   1. unit tests      — detector logic + fixture/judge/false-positive suites
 #   2. KB smoke        — end-to-end ingestion/retrieval over the seed KB (3 cases)
 #   3. fixtures        — deterministic detector bands + 30-40% baseline calibration assert
 #   4. false positives — clean human-style prose must NOT flag (+ planted-positive control)

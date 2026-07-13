@@ -69,6 +69,28 @@ class Calibration(unittest.TestCase):
                 self.assertEqual(f.get("expect_baseline"), "miss",
                                  f"{f['id']} is detector_blind but not expect_baseline='miss'")
 
+    def test_calibration_denominator_is_targeted_fixture_count(self):
+        # The naive-baseline miss-rate denominator must equal exactly the count of
+        # non-detector_blind fixtures in fixtures.json (currently 8). If a future
+        # refactor folds the gold-FAIL fixtures (fixtures_fail.json) into the
+        # runtime denominator, the printed total jumps above this count and the
+        # test fails loudly — the calibration band must never be diluted at runtime.
+        import io
+        import re
+        import contextlib
+        from fixtures.run_fixtures import run_deterministic
+        data = load_fixtures()
+        expected_total = sum(1 for f in data["fixtures"]
+                             if not f.get("detector_blind"))
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            run_deterministic(data)
+        m = re.search(r"miss rate:\s*\d+/(\d+)\s*=", buf.getvalue())
+        self.assertIsNotNone(m, "miss-rate line not found in run_deterministic output")
+        self.assertEqual(int(m.group(1)), expected_total,
+                         f"calibration denominator {m.group(1)} != "
+                         f"{expected_total} non-detector_blind fixtures")
+
     def test_expect_baseline_matches_actual(self):
         # The declared expect_baseline must match what the detector actually does.
         data = load_fixtures()
@@ -382,6 +404,15 @@ class PayoffClearGuards(unittest.TestCase):
         self.assertIn("payoff_clear", template)
         self.assertIn("N/A", template)
 
+    def test_judge_template_demands_verbatim_evidence(self):
+        # The fenced prompt a LIVE judge reads must instruct it to cite a verbatim
+        # EVIDENCE quote. Goes RED if the EVIDENCE instruction is dropped from
+        # rubric.md while judge.parse_dimensions still expects/audits it. Mirrors
+        # test_judge_template_documents_payoff_clear.
+        template = _extract_judge_template()
+        self.assertIn("EVIDENCE", template)
+        self.assertIn("verbatim", template.lower())
+
     def test_payoff_clear_only_paired_with_overstepping_removed(self):
         # Invariant lock (rubric.md): payoff_clear is scored ONLY alongside a
         # removal, so it must never appear in rubric_focus without
@@ -657,14 +688,37 @@ class GoldFailJudgeIntegration(unittest.TestCase):
 
     def test_judge_that_fails_everything_discriminates_all(self):
         n = len(load_fail_fixtures()["fixtures"])
-        # no_fabrication FAIL forces every fixture's verdict FAIL == gold -> all caught.
+        # A TRUE all-FAIL judge fails every dimension, so it also fails each
+        # fixture's declared DRIVER dim -> discrimination, not wrong-reason.
+        reply = "\n".join(f"{d}: FAIL" for d in
+                          ("overstepping_removed", "payoff_clear", "meaning_preserved",
+                           "specificity_added", "no_fabrication"))
+        (d, m, w, s, live), out = self._run(lambda p: reply)
+        self.assertEqual((d, m, w, s, live), (n, 0, 0, 0, False))
+        self.assertIn(f"{n}/{n} caught", out)
+
+    def test_overall_fail_wrong_driver_is_wrong_reason_not_discrimination(self):
+        # The FIX-2 refinement: a judge that FAILs only no_fabrication marks every
+        # fixture overall-FAIL, but only the ONE no_fabrication-driven fixture is
+        # truly discriminated. The other three fail for the WRONG reason (their
+        # driver dim passed) -> wrong_reason, not discrimination. The pre-fix code
+        # would have counted all four as caught.
+        n = len(load_fail_fixtures()["fixtures"])
+        drivers = {f["fail_dimension"] for f in load_fail_fixtures()["fixtures"]}
+        n_nofab = sum(1 for f in load_fail_fixtures()["fixtures"]
+                      if f["fail_dimension"] == "no_fabrication")
         reply = "\n".join(f"{d}: PASS" for d in
                           ("overstepping_removed", "payoff_clear",
                            "meaning_preserved", "specificity_added")
                           ) + "\nno_fabrication: FAIL"
-        (d, m, s, live), out = self._run(lambda p: reply)
-        self.assertEqual((d, m, s, live), (n, 0, 0, False))
-        self.assertIn(f"{n}/{n} caught", out)
+        (d, m, w, s, live), out = self._run(lambda p: reply)
+        self.assertEqual(d, n_nofab)          # only the no_fabrication-driven one
+        self.assertEqual(w, n - n_nofab)      # rest are right-verdict/wrong-reason
+        self.assertEqual((m, s, live), (0, 0, False))
+        self.assertIn("right verdict, wrong reason", out)
+        # Guard the premise: the suite really does mix driver dims (else this test
+        # would be vacuous).
+        self.assertGreater(len(drivers), 1)
 
     def test_judge_that_passes_everything_misses_all(self):
         n = len(load_fail_fixtures()["fixtures"])
@@ -673,13 +727,13 @@ class GoldFailJudgeIntegration(unittest.TestCase):
         reply = "\n".join(f"{d}: PASS" for d in
                           ("overstepping_removed", "payoff_clear", "meaning_preserved",
                            "specificity_added", "no_fabrication"))
-        (d, m, s, live), out = self._run(lambda p: reply)
-        self.assertEqual((d, m, s, live), (0, n, 0, False))
+        (d, m, w, s, live), out = self._run(lambda p: reply)
+        self.assertEqual((d, m, w, s, live), (0, n, 0, 0, False))
         self.assertIn("DISAGREEMENT", out)
 
     def test_unparseable_triggers_live_error(self):
-        (d, m, s, live), out = self._run(lambda p: "no verdict here")
-        self.assertEqual((d, m), (0, 0))
+        (d, m, w, s, live), out = self._run(lambda p: "no verdict here")
+        self.assertEqual((d, m, w), (0, 0, 0))
         self.assertTrue(live)
         self.assertIn("envelope likely changed", out)
 
@@ -695,8 +749,8 @@ class GoldFailJudgeIntegration(unittest.TestCase):
         buf = io.StringIO()
         with mock.patch.dict(os.environ, {"AIWS_JUDGE_RUN": "0"}, clear=False), \
                 contextlib.redirect_stdout(buf):
-            d, m, s, live = run_fail_judge(load_fail_fixtures())
-        self.assertEqual((d, m, s, live), (0, 0, n, False))
+            d, m, w, s, live = run_fail_judge(load_fail_fixtures())
+        self.assertEqual((d, m, w, s, live), (0, 0, 0, n, False))
 
 
 if __name__ == "__main__":

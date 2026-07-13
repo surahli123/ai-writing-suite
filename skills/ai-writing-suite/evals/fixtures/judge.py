@@ -36,7 +36,8 @@ host-provides-the-model philosophy and avoid a second-vendor dependency:
                     never a required var — leaving it unset just skips the check.
 
 Cross-family note: if your rewrites come from Claude, point AIWS_JUDGE_MODEL at a
-different model family to avoid judge self-preference (~10-25% PASS inflation).
+different model family to avoid judge self-preference — a known bias where a model
+scores its own family's output higher, which can inflate PASS rates.
 For v1 the fixtures' `after` strings are hand-written (not model output), so this
 is a recommendation, not a hard requirement — see evals/README.md. When the host
 DOES wire a rewriter model, set AIWS_REWRITER_MODEL and the same-family check
@@ -69,11 +70,55 @@ _DIM_LINE = re.compile(r"^([a-z][a-z_]+)\s*:\s*(PASS|FAIL|N/A|NA)\b", re.IGNOREC
 
 # The quoted-evidence segment the rubric now asks each verdict to carry:
 #   "<dim>: PASS|FAIL — <reason> | EVIDENCE: \"<verbatim quote>\"".
-# Tolerant of straight and smart quotes. Non-greedy to the first closing quote —
-# good enough for an advisory surface (an embedded quote just truncates the shown
-# snippet, it never changes a verdict). Matched against the RAW line, not the
-# bullet-cleaned one, so evidence text keeps its own punctuation/asterisks.
-_EVIDENCE_RE = re.compile(r"""EVIDENCE\s*:\s*["“'‘](.+?)["”'’]""", re.IGNORECASE)
+# Parsed by _extract_evidence (paired-quote, NOT a single non-greedy regex): the
+# old regex closed on the FIRST quote-ish char, so `EVIDENCE: "We're behind"`
+# truncated to `We` (the apostrophe read as a closing quote). Matched against the
+# RAW line, not the bullet-cleaned one, so evidence text keeps its own punctuation.
+_EVIDENCE_TAG = re.compile(r"EVIDENCE\s*:\s*", re.IGNORECASE)
+
+# Opening quote = a straight " or a smart “ ; closing = a straight " or a smart ”.
+# Apostrophes/single quotes are deliberately NOT delimiters, so contractions
+# ("We're", "don't") inside the quote survive intact.
+_EVIDENCE_OPEN = ('"', "“")   # "  “
+_EVIDENCE_CLOSE = ('"', "”")  # "  ”
+
+# Collapse any whitespace run to a single space for verbatim substring checks, so
+# a quote that wraps/re-indents across the model's formatting still matches source.
+_WS_RE = re.compile(r"\s+")
+
+
+def _normalize_ws(text):
+    """Whitespace-normalize for a tolerant substring compare (not for display)."""
+    return _WS_RE.sub(" ", text).strip() if isinstance(text, str) else ""
+
+
+def _extract_evidence(raw_line):
+    """Paired-quote evidence parse. Returns (evidence_or_None, status).
+
+    status:
+      'ok'        a non-empty paired quote was found;
+      'missing'   no EVIDENCE segment on the line at all;
+      'malformed' an EVIDENCE tag is present but the quote is unpaired (one lone
+                  opening quote, no close) or empty ("").
+
+    The close is the LAST closing quote AFTER the opening one on the line (greedy),
+    so an embedded apostrophe never truncates the snippet.
+    """
+    tag = _EVIDENCE_TAG.search(raw_line)
+    if not tag:
+        return None, "missing"
+    rest = raw_line[tag.end():]
+    open_i = next((i for i, c in enumerate(rest) if c in _EVIDENCE_OPEN), -1)
+    if open_i == -1:
+        return None, "malformed"  # EVIDENCE: present but no opening quote
+    close_i = max((i for i in range(open_i + 1, len(rest))
+                   if rest[i] in _EVIDENCE_CLOSE), default=-1)
+    if close_i == -1:
+        return None, "malformed"  # unpaired opening quote
+    evidence = rest[open_i + 1:close_i].strip()
+    if not evidence:
+        return None, "malformed"  # empty quote ""
+    return evidence, "ok"
 
 # Coarse model_id -> vendor "family" map for the judge self-preference check.
 # Longest/most-specific prefixes are fine here because none overlap. o-series
@@ -196,7 +241,15 @@ def parse_dimensions(model_text):
 
     Returns {dimension: {"verdict": 'PASS'|'FAIL'|'N/A',
                          "evidence": <str or None>,
+                         "evidence_status": 'ok'|'missing'|'malformed',
                          "evidence_missing": <bool>}}.
+
+    evidence_status is the finer read: 'ok' (a non-empty paired quote), 'missing'
+    (a graded verdict with no EVIDENCE segment), 'malformed' (an EVIDENCE tag whose
+    quote is unpaired or empty). evidence_missing stays as the back-compat coarse
+    flag — True whenever a graded (PASS/FAIL) dim's status is 'missing' OR
+    'malformed', so existing callers keep their one-bit warning. An N/A dim has
+    nothing to quote: evidence None, status 'ok', evidence_missing False.
 
     Same line grammar as parse_dimension_lines (leading bullets/numbering and
     **bold** stripped, "N/A"/"NA" normalized, the model's self-reported 'VERDICT:'
@@ -229,12 +282,16 @@ def parse_dimensions(model_text):
             continue
         val = m.group(2).upper()
         verdict = "N/A" if val in ("N/A", "NA") else val
-        ev_m = _EVIDENCE_RE.search(stripped)
-        evidence = ev_m.group(1).strip() if ev_m else None
-        if not evidence:
-            evidence = None
-        evidence_missing = verdict in ("PASS", "FAIL") and evidence is None
+        raw_evidence, raw_status = _extract_evidence(stripped)
+        if verdict == "N/A":
+            # Nothing to cite on a not-applicable dim — never flagged.
+            evidence, evidence_status, evidence_missing = None, "ok", False
+        elif raw_status == "ok":
+            evidence, evidence_status, evidence_missing = raw_evidence, "ok", False
+        else:  # graded but missing/malformed -> advisory flag, never fatal
+            evidence, evidence_status, evidence_missing = None, raw_status, True
         out[dim] = {"verdict": verdict, "evidence": evidence,
+                    "evidence_status": evidence_status,
                     "evidence_missing": evidence_missing}
     return out
 
@@ -265,6 +322,31 @@ def evidence_warnings(model_text):
             if rec["evidence_missing"]]
 
 
+def verify_evidence(parsed, before, after):
+    """Verbatim-check each usable evidence quote against the fixture's own text.
+
+    For every dim whose evidence_status is 'ok', assert the quote is a
+    whitespace-normalized substring of `before` OR `after` (the only two texts the
+    judge was shown). Returns {dim: 'ok'|'not_verbatim'} for THOSE dims only —
+    dims with no usable quote (missing/malformed/N/A) are omitted, since there is
+    nothing to verify. Pure: no env, no I/O.
+
+    This is the check that catches a fabricated quote the paired-quote parser
+    happily accepts: a well-formed `EVIDENCE: "..."` that appears nowhere in the
+    source. Advisory, like every evidence signal — the caller prints a warning.
+    """
+    nb, na = _normalize_ws(before), _normalize_ws(after)
+    out = {}
+    if not isinstance(parsed, dict):
+        return out
+    for dim, rec in parsed.items():
+        if rec.get("evidence_status") != "ok" or not rec.get("evidence"):
+            continue
+        needle = _normalize_ws(rec["evidence"])
+        out[dim] = "ok" if (needle in nb or needle in na) else "not_verbatim"
+    return out
+
+
 def model_family(model_id):
     """Map a model id to a coarse vendor family for the self-preference check.
 
@@ -293,9 +375,9 @@ def same_family_warning(judge_model, rewriter_model):
     if jf == "unknown" or jf != rf:
         return None
     return (f"WARNING: judge model '{judge_model}' and rewriter model "
-            f"'{rewriter_model}' are the same family ({jf}) — judge self-preference "
-            f"can inflate PASS ~10-25%. Point AIWS_JUDGE_MODEL at a different family "
-            f"for an independent verdict.")
+            f"'{rewriter_model}' are the same family ({jf}) — known judge "
+            f"self-preference bias can inflate PASS rates. Point AIWS_JUDGE_MODEL "
+            f"at a different family for an independent verdict.")
 
 
 def _maybe_warn_same_family():

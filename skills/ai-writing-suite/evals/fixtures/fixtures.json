@@ -240,8 +240,9 @@
       "expected_verdict": "PASS",
       "genre": "memo",
       "difficulty": "subtle",
-      "before": "You might think a bigger context window always means better answers, but longer prompts often bury the key instruction and accuracy drops. We cap retrieved context at 8 chunks and rerank before sending.",
+      "before": "You might think that stuffing every document you have into the prompt can never hurt and is always the optimal move, but longer prompts often bury the key instruction and accuracy drops. We cap retrieved context at 8 chunks and rerank before sending.",
       "after": "Longer prompts often bury the key instruction, so accuracy can drop as context grows. We cap retrieved context at 8 chunks and rerank before sending.",
+      "_note": "REVIEW FLAG (2026-07-13 adversarial): the manufactured-ness of the presumed prior was contested — a reviewer argued the earlier 'a bigger context window always means better answers' phrasing is plausibly a real widespread belief, not a strawman, which would make the contrast legitimate (an over-correction if removed). Re-worded to an unambiguous overclaim ('stuffing everything is ALWAYS optimal / can NEVER hurt') that no practitioner actually holds, to keep it a clear O2 manufactured-misconception. Whether even this is 'manufactured enough' is owner-adjudication, a follow-up (blinded multi-reviewer labels).",
       "before_band_max": 10,
       "after_band_max": 10,
       "rubric_focus": [
@@ -252,7 +253,7 @@
       ],
       "expect_baseline": "miss",
       "detector_blind": true,
-      "subtle_tell": "Over-stepping (反代入式越位感), presumed-MISCONCEPTION strawman sub-type (O2) — the one over-stepping variant with no dedicated fixture until now. The `before` manufactures a specific wrong belief and pins it on the reader ('You might think a bigger context window always means better answers, but…') then corrects it from above. Distinct from overstep-02/05 presumed-COGNITION (which presume an expectation/assumption): here the invented prior is framed as a factual misconception the audience never voiced. The reader may never have held it, so the frame over-steps. The surviving claim (long prompts bury the instruction → accuracy drops; cap at 8 chunks + rerank) is preserved intact in `after` without presuming the reader was wrong; the leftover stands on its own (payoff_clear PASS). Zero vocabulary tells -> detector scores 0 -> a flat threshold misses it -> detector_blind (excluded from the 30-40% denominator; band stays 38%). Judge keyed to STANCE catches it."
+      "subtle_tell": "Over-stepping (反代入式越位感), presumed-MISCONCEPTION strawman sub-type (O2) — the one over-stepping variant with no dedicated fixture until now. The `before` manufactures a specific wrong belief and pins it on the reader ('You might think that stuffing every document into the prompt can never hurt and is always optimal, but…') then corrects it from above. Distinct from overstep-02/05 presumed-COGNITION (which presume an expectation/assumption): here the invented prior is framed as a factual misconception the audience never voiced. The reader may never have held it, so the frame over-steps. The surviving claim (long prompts bury the instruction → accuracy drops; cap at 8 chunks + rerank) is preserved intact in `after` without presuming the reader was wrong; the leftover stands on its own (payoff_clear PASS). Zero vocabulary tells -> detector scores 0 -> a flat threshold misses it -> detector_blind (excluded from the 30-40% denominator; band stays 38%). Judge keyed to STANCE catches it."
     }
   ]
 }

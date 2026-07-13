@@ -11,10 +11,15 @@ A guard that can never go red proves nothing.
 import copy
 import io
 import contextlib
+import json
+import os
+import tempfile
 import unittest
+from unittest import mock
 
 from detector.detector import analyze
-from fixtures.run_false_positives import load_false_positives, run
+from fixtures.run_false_positives import load_false_positives, run, main
+import fixtures.run_false_positives as rfp
 from fixtures.run_fixtures import load_fixtures
 
 REQUIRED = {"id", "role", "genre", "text"}
@@ -159,6 +164,47 @@ class CheckerCanFail(unittest.TestCase):
             _passes, fails = run(data)
         self.assertGreaterEqual(fails, 1,
                                 "run() did not fail when a control stopped tripping")
+
+
+class MainExitCodes(unittest.TestCase):
+    """FIX-5: main() must exit 0 on real data, and nonzero on a gutted dataset —
+    a poisoned clean sample OR an empty cohort. Exercises the actual on-disk load
+    path (patched FP_PATH) so a future edit that swallows these can't slip by."""
+
+    def _run_main_on(self, data):
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False,
+                                         encoding="utf-8") as fh:
+            json.dump(data, fh)
+            path = fh.name
+        try:
+            buf = io.StringIO()
+            with mock.patch.object(rfp, "FP_PATH", path), \
+                    contextlib.redirect_stdout(buf):
+                return rfp.main([])
+        finally:
+            os.unlink(path)
+
+    def test_real_data_exits_zero(self):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            rc = main([])
+        self.assertEqual(rc, 0)
+
+    def test_poisoned_clean_sample_exits_nonzero(self):
+        data = copy.deepcopy(load_false_positives())
+        clean = next(s for s in data["samples"] if s["role"] == "clean")
+        clean["text"] = clean["text"] + CheckerCanFail.SLOP
+        self.assertEqual(self._run_main_on(data), 1)
+
+    def test_empty_clean_cohort_exits_nonzero(self):
+        data = copy.deepcopy(load_false_positives())
+        data["samples"] = [s for s in data["samples"] if s["role"] != "clean"]
+        self.assertEqual(self._run_main_on(data), 1)
+
+    def test_empty_control_cohort_exits_nonzero(self):
+        data = copy.deepcopy(load_false_positives())
+        data["samples"] = [s for s in data["samples"] if s["role"] != "control"]
+        self.assertEqual(self._run_main_on(data), 1)
 
 
 if __name__ == "__main__":

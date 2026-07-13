@@ -174,12 +174,20 @@ def run_fail_deterministic(data):
 def run_fail_judge(data):
     """Judge-DISCRIMINATION over the gold-FAIL fixtures (opt-in judge path).
 
-    For each bad rewrite a correct judge returns FAIL: judge-says-FAIL == agreement
-    (the judge discriminated); judge-says-PASS == DISAGREEMENT (the judge missed a
-    bad rewrite — the failure signal this suite exists to surface). Advisory, like
-    run_judge: the discrimination counts do NOT drive the exit code; only a
-    configured-but-broken judge (scored 0/N => provider envelope changed) does.
-    Returns (discriminated, missed, skipped, live_error).
+    For each bad rewrite a correct judge returns FAIL *driven by the declared
+    fail_dimension*: overall FAIL AND fail_dimension==FAIL == discrimination.
+    Overall FAIL but the driver dim PASSED is "right verdict, wrong reason"
+    (wrong_reason) — counted and warned separately, NOT as discrimination, so a
+    constant always-FAIL-on-one-dim judge can't score full recall by accident.
+    judge-says-PASS overall == DISAGREEMENT (missed a bad rewrite). Advisory, like
+    run_judge: the counts do NOT drive the exit code; only a configured-but-broken
+    judge (scored 0/N => provider envelope changed) does.
+
+    Note this lane cannot, by itself, prove SPECIFICITY (a judge that FAILs the
+    driver dim on everything scores full discrimination here); specificity against a
+    constant-FAIL judge comes from the PASS-fixture agreement lane in run_judge,
+    where such a judge would wrongly FAIL the good rewrites and its agreement drop.
+    Returns (discriminated, missed, wrong_reason, skipped, live_error).
     """
     from fixtures import judge  # lazy: keep the deterministic path network-free
     template = _extract_judge_template()
@@ -190,39 +198,79 @@ def run_fail_judge(data):
         print("No judge configured — SKIPPING discrimination (needs a model).\n")
         for f in data["fixtures"]:
             print(f"[SKIP] {f['id']} (gold=FAIL via {f['fail_dimension']})")
-        return 0, 0, len(data["fixtures"]), False
+        return 0, 0, 0, len(data["fixtures"]), False
 
-    print("Judge configured — a correct judge marks every one FAIL.\n")
-    discriminated = missed = skipped = 0
+    print("Judge configured — a correct judge marks every one FAIL on its "
+          "declared driver dimension.\n")
+    discriminated = missed = wrong_reason = skipped = 0
     for f in data["fixtures"]:
         prompt = build_judge_prompt(f, template)
         raw = judge.score(prompt)  # raises JudgeError on transport/auth (loud)
+        parsed = judge.parse_dimensions(raw) if raw is not None else {}
         if raw is not None:
-            for dim in judge.evidence_warnings(raw):
-                print(f"  [warn] {f['id']}/{dim}: verdict missing EVIDENCE quote")
+            _report_evidence(f, raw, judge)
         verdict = (judge.aggregate([judge.parse_dimension_lines(raw)],
                                    f["rubric_focus"]) if raw is not None else None)
         if verdict is None:
             skipped += 1
             print(f"[SKIP] {f['id']} — no parseable verdict returned")
             continue
-        if verdict == "FAIL":
-            discriminated += 1
-            print(f"[OK  ] {f['id']} — judge FAIL == gold (discriminated)")
-        else:
+        if verdict != "FAIL":
             missed += 1
             print(f"[MISS] {f['id']} — judge PASS but gold=FAIL (DISAGREEMENT)")
+            continue
+        # Overall FAIL — but only counts as discrimination if it FAILED the RIGHT
+        # dimension (the declared driver). A FAIL driven by an unrelated dim is
+        # right-verdict/wrong-reason, not proof the judge saw the planted defect.
+        driver = f["fail_dimension"]
+        driver_verdict = parsed.get(driver, {}).get("verdict")
+        if driver_verdict == "FAIL":
+            discriminated += 1
+            print(f"[OK  ] {f['id']} — judge FAIL on {driver} == gold (discriminated)")
+        else:
+            wrong_reason += 1
+            print(f"[WARN] {f['id']} — right verdict, wrong reason "
+                  f"({driver} was {driver_verdict or 'absent'})")
 
-    scored = discriminated + missed
-    print(f"\nGold-FAIL discrimination: {discriminated}/{scored} caught "
-          f"({missed} missed, {skipped} skipped) — advisory.")
+    scored = discriminated + wrong_reason + missed
+    print(f"\nGold-FAIL discrimination: {discriminated}/{scored} caught for the "
+          f"right reason ({wrong_reason} right-verdict/wrong-reason, {missed} "
+          f"missed, {skipped} skipped) — advisory.")
     # Liveness mirror of run_judge: configured but nothing scored => envelope changed.
     live_error = scored == 0
     if live_error:
         print(f"ERROR: judge configured but scored 0/{len(data['fixtures'])} "
               f"FAIL fixtures — provider response envelope likely changed "
               f"(check AIWS_JUDGE_URL/MODEL).")
-    return discriminated, missed, skipped, live_error
+    return discriminated, missed, wrong_reason, skipped, live_error
+
+
+def _report_evidence(fixture, raw, judge):
+    """Advisory per-dimension evidence audit for one scored fixture.
+
+    Prints the accepted EVIDENCE quote for every graded dim (so an operator can
+    read what the judge cited), plus a [warn] line when a quote is missing,
+    malformed, or well-formed-but-not-verbatim (appears nowhere in before/after —
+    a fabricated quote the parser alone can't catch). Purely advisory: it never
+    changes the verdict or the exit code. Mirrors judge.evidence_warnings() for the
+    missing case and adds the verbatim check on top.
+    """
+    parsed = judge.parse_dimensions(raw)
+    verified = judge.verify_evidence(parsed, fixture["before"], fixture["after"])
+    fid = fixture["id"]
+    for dim, rec in parsed.items():
+        ev = rec.get("evidence")
+        if rec.get("evidence_missing"):
+            why = ("malformed EVIDENCE quote (unpaired/empty)"
+                   if rec.get("evidence_status") == "malformed"
+                   else "verdict missing EVIDENCE quote")
+            print(f"  [warn] {fid}/{dim}: {why}")
+        elif ev and rec.get("evidence_status") == "ok":
+            if verified.get(dim) == "not_verbatim":
+                print(f'  [warn] {fid}/{dim}: EVIDENCE not verbatim in '
+                      f'before/after — "{ev}"')
+            else:
+                print(f'  evidence[{dim}]: "{ev}"')
 
 
 def build_judge_prompt(fixture, rubric_template):
@@ -296,8 +344,7 @@ def run_judge(data):
 
         raw = judge.score(prompt)  # raises JudgeError on transport/auth (loud)
         if raw is not None:
-            for dim in judge.evidence_warnings(raw):
-                print(f"  [warn] {f['id']}/{dim}: verdict missing EVIDENCE quote")
+            _report_evidence(f, raw, judge)
         verdict = (judge.aggregate([judge.parse_dimension_lines(raw)],
                                    f["rubric_focus"]) if raw is not None else None)
         if verdict is None:
@@ -365,7 +412,7 @@ def main(argv=None):
     judge_live_error = False
     if args.judge:
         _jp, _jf, _js, judge_live_error = run_judge(data)
-        _d, _m, _s, fail_live_error = run_fail_judge(fail_data)
+        _d, _m, _w, _s, fail_live_error = run_fail_judge(fail_data)
         judge_live_error = judge_live_error or fail_live_error
 
     print(f"\nDeterministic: {passes} passed, {fails} failed.")

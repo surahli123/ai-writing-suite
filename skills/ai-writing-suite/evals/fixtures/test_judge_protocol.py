@@ -77,6 +77,113 @@ class EvidenceMissingIsAdvisory(unittest.TestCase):
         self.assertTrue(rec["genre_fit"]["evidence_missing"])
 
 
+class PairedQuoteParsing(unittest.TestCase):
+    """The FIX-1 paired-quote parser: a contraction inside the quote must survive
+    (the old non-greedy regex closed on the apostrophe, truncating 'We're' to 'We'),
+    and status distinguishes ok / missing / malformed."""
+
+    def test_contraction_inside_quote_parses_whole(self):
+        line = ('meaning_preserved: FAIL — dropped the number | '
+                'EVIDENCE: "We\'re behind by 14%"')
+        rec = judge.parse_dimensions(line)["meaning_preserved"]
+        self.assertEqual(rec["evidence"], "We're behind by 14%")
+        self.assertEqual(rec["evidence_status"], "ok")
+        self.assertFalse(rec["evidence_missing"])
+
+    def test_smart_quotes_with_apostrophe_inside(self):
+        line = 'voice_kept: PASS — human | EVIDENCE: “don’t ship on a Friday”'
+        rec = judge.parse_dimensions(line)["voice_kept"]
+        self.assertEqual(rec["evidence"], "don’t ship on a Friday")
+        self.assertEqual(rec["evidence_status"], "ok")
+
+    def test_unpaired_quote_is_malformed(self):
+        rec = judge.parse_dimensions('genre_fit: PASS — fits | EVIDENCE: "unclosed')
+        rec = rec["genre_fit"]
+        self.assertIsNone(rec["evidence"])
+        self.assertEqual(rec["evidence_status"], "malformed")
+        self.assertTrue(rec["evidence_missing"])
+
+    def test_empty_quote_is_malformed(self):
+        rec = judge.parse_dimensions('genre_fit: PASS — fits | EVIDENCE: ""')["genre_fit"]
+        self.assertEqual(rec["evidence_status"], "malformed")
+        self.assertTrue(rec["evidence_missing"])
+
+    def test_graded_line_without_evidence_is_missing(self):
+        rec = judge.parse_dimensions("tells_removed: FAIL — still robotic")["tells_removed"]
+        self.assertEqual(rec["evidence_status"], "missing")
+        self.assertTrue(rec["evidence_missing"])
+
+    def test_na_line_status_ok_never_flagged(self):
+        rec = judge.parse_dimensions("payoff_clear: N/A — nothing removed")["payoff_clear"]
+        self.assertEqual(rec["evidence_status"], "ok")
+        self.assertFalse(rec["evidence_missing"])
+
+    def test_multiline_model_text_parses_each_line(self):
+        text = ('meaning_preserved: PASS — kept | EVIDENCE: "shipped 3 fixes"\n'
+                'no_fabrication: FAIL — invented | EVIDENCE: "cut load by 37%"\n'
+                'VERDICT: FAIL')
+        dims = judge.parse_dimensions(text)
+        self.assertEqual(dims["meaning_preserved"]["evidence"], "shipped 3 fixes")
+        self.assertEqual(dims["no_fabrication"]["evidence"], "cut load by 37%")
+        self.assertNotIn("verdict", dims)  # self-reported line ignored
+
+
+class VerifyEvidence(unittest.TestCase):
+    """judge.verify_evidence: a well-formed quote that appears nowhere in the
+    before/after is 'not_verbatim' — the fabrication the parser alone can't catch."""
+
+    BEFORE = "We're behind on Q3 by 14% because the API migration slipped."
+    AFTER = "We're behind on Q3; the API migration slipped three weeks."
+
+    def test_verbatim_quote_from_before_is_ok(self):
+        line = 'meaning_preserved: PASS — kept | EVIDENCE: "the API migration slipped"'
+        parsed = judge.parse_dimensions(line)
+        self.assertEqual(judge.verify_evidence(parsed, self.BEFORE, self.AFTER),
+                         {"meaning_preserved": "ok"})
+
+    def test_hallucinated_quote_is_not_verbatim(self):
+        line = 'no_fabrication: PASS — clean | EVIDENCE: "cut latency by 37%"'
+        parsed = judge.parse_dimensions(line)
+        self.assertEqual(judge.verify_evidence(parsed, self.BEFORE, self.AFTER),
+                         {"no_fabrication": "not_verbatim"})
+
+    def test_whitespace_normalized_match(self):
+        # A quote whose internal whitespace differs from the source (newline/extra
+        # spaces) still matches — the check is whitespace-normalized, not byte-exact.
+        before = "We shipped   three\n   fixes on Tuesday."
+        line = 'x_dim: PASS — kept | EVIDENCE: "We shipped three fixes on Tuesday"'
+        parsed = judge.parse_dimensions(line)
+        self.assertEqual(judge.verify_evidence(parsed, before, ""),
+                         {"x_dim": "ok"})
+
+    def test_missing_and_na_dims_omitted(self):
+        # Only dims with a usable (status ok) quote are verified; missing/malformed/
+        # N/A dims are absent from the result (nothing to check).
+        text = ("tells_removed: FAIL — robotic\n"           # missing quote
+                "payoff_clear: N/A — nothing removed\n"       # N/A
+                'meaning_preserved: PASS — kept | EVIDENCE: "the API migration slipped"')
+        parsed = judge.parse_dimensions(text)
+        self.assertEqual(judge.verify_evidence(parsed, self.BEFORE, self.AFTER),
+                         {"meaning_preserved": "ok"})
+
+
+class EvidenceWarningsEdgeCases(unittest.TestCase):
+    """FIX-8: evidence_warnings must not crash on degenerate model_text and must
+    stay silent when there is nothing gradeable to warn about."""
+
+    def test_empty_string_warns_nothing(self):
+        self.assertEqual(judge.evidence_warnings(""), [])
+
+    def test_none_ish_input_warns_nothing(self):
+        self.assertEqual(judge.evidence_warnings(None), [])
+        self.assertEqual(judge.evidence_warnings(12345), [])
+
+    def test_all_na_text_warns_nothing(self):
+        text = ("overstepping_removed: N/A — nothing removed\n"
+                "payoff_clear: N/A — nothing removed")
+        self.assertEqual(judge.evidence_warnings(text), [])
+
+
 class BackwardCompatibleProjection(unittest.TestCase):
     """parse_dimension_lines must keep returning the plain {dim: verdict} shape
     test_fixtures.py depends on — for both old (no-evidence) and new lines."""

@@ -52,6 +52,19 @@ def run(data):
     passes = fails = 0
     print(f"=== False-positive suite (flag_threshold={threshold}) ===\n")
 
+    # Self-guard against a gutted dataset: a suite with no clean samples proves no
+    # false-positive protection, and one with no control proves the detector can
+    # still fire. Either empty cohort is a hard failure (nonzero exit), not a
+    # vacuous green run.
+    if not clean or not control:
+        if not clean:
+            print("ERROR: no clean samples in the dataset — the false-positive "
+                  "guard is vacuous.")
+        if not control:
+            print("ERROR: no control samples in the dataset — nothing proves the "
+                  "detector can fire.")
+        return 0, 1
+
     print("-- clean (must score < threshold: a flag here is a false positive) --")
     for s in clean:
         score = analyze(s["text"])["score"]
