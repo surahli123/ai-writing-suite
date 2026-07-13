@@ -29,15 +29,24 @@ host-provides-the-model philosophy and avoid a second-vendor dependency:
   AIWS_JUDGE_RUN    must be "1" to actually spend — a stray key in the env alone
                     will NOT trigger a billed call.
 
+  AIWS_REWRITER_MODEL  OPTIONAL. The model id that produced the `after` rewrites.
+                    Purely advisory: when set AND it shares a model family with
+                    AIWS_JUDGE_MODEL, score() prints a ONE-LINE self-preference
+                    warning to stderr (once per run). Never gates, never blocks,
+                    never a required var — leaving it unset just skips the check.
+
 Cross-family note: if your rewrites come from Claude, point AIWS_JUDGE_MODEL at a
 different model family to avoid judge self-preference (~10-25% PASS inflation).
 For v1 the fixtures' `after` strings are hand-written (not model output), so this
-is a recommendation, not a hard requirement — see evals/README.md.
+is a recommendation, not a hard requirement — see evals/README.md. When the host
+DOES wire a rewriter model, set AIWS_REWRITER_MODEL and the same-family check
+(model_family / same_family_warning below) surfaces the risk automatically.
 """
 
 import json
 import os
 import re
+import sys
 import urllib.error
 import urllib.request
 
@@ -57,6 +66,38 @@ _TIMEOUT_S = 60
 # a third state for conditional dims (e.g. payoff_clear when no removal happened);
 # aggregate() treats it as vacuously satisfied. "N/A" is tried before "NA".
 _DIM_LINE = re.compile(r"^([a-z][a-z_]+)\s*:\s*(PASS|FAIL|N/A|NA)\b", re.IGNORECASE)
+
+# The quoted-evidence segment the rubric now asks each verdict to carry:
+#   "<dim>: PASS|FAIL — <reason> | EVIDENCE: \"<verbatim quote>\"".
+# Tolerant of straight and smart quotes. Non-greedy to the first closing quote —
+# good enough for an advisory surface (an embedded quote just truncates the shown
+# snippet, it never changes a verdict). Matched against the RAW line, not the
+# bullet-cleaned one, so evidence text keeps its own punctuation/asterisks.
+_EVIDENCE_RE = re.compile(r"""EVIDENCE\s*:\s*["“'‘](.+?)["”'’]""", re.IGNORECASE)
+
+# Coarse model_id -> vendor "family" map for the judge self-preference check.
+# Longest/most-specific prefixes are fine here because none overlap. o-series
+# reasoning models (o1/o3/o4) fold into openai — self-preference is a vendor-level
+# concern, not a per-model one. Anything unrecognized -> "unknown" (never warned
+# on, so a new provider degrades to silence, not a false alarm).
+_FAMILY_PREFIXES = (
+    ("claude", "anthropic"),
+    ("gpt", "openai"),
+    ("o1", "openai"),
+    ("o3", "openai"),
+    ("o4", "openai"),
+    ("gemini", "google"),
+    ("gemma", "google"),
+    ("llama", "meta"),
+    ("mixtral", "mistral"),
+    ("mistral", "mistral"),
+    ("deepseek", "deepseek"),
+    ("qwen", "qwen"),
+    ("grok", "xai"),
+)
+
+# Fire the same-family warning at most once per process (score() runs per fixture).
+_FAMILY_WARNING_EMITTED = False
 
 
 class JudgeError(RuntimeError):
@@ -87,6 +128,8 @@ def score(prompt):
     """
     if not is_configured():
         return None  # honesty stance: no fabrication, caller SKIPs
+
+    _maybe_warn_same_family()  # advisory stderr note; never blocks the call
 
     url = os.environ["AIWS_JUDGE_URL"]
     model = os.environ["AIWS_JUDGE_MODEL"]
@@ -148,23 +191,36 @@ def _extract_text(payload):
     return None
 
 
-def parse_dimension_lines(model_text):
-    """Parse a model verdict into {dimension: 'PASS'|'FAIL'|'N/A'}.
+def parse_dimensions(model_text):
+    """Rich parse of a model verdict into per-dimension records.
 
-    Tolerates common model formatting: leading list markers ("- ", "* ", "1. ")
-    and **bold** around the dimension name are stripped before matching, so
-    "- **meaning_preserved**: PASS" parses the same as "meaning_preserved: PASS".
-    Both "N/A" and "NA" normalize to 'N/A' (a conditional dim the judge marks
-    not-applicable, e.g. payoff_clear when nothing was removed). IGNORES the model's
-    self-reported final 'VERDICT:' line — we recompute the verdict ourselves in
-    aggregate(). Returns {} when nothing parses.
+    Returns {dimension: {"verdict": 'PASS'|'FAIL'|'N/A',
+                         "evidence": <str or None>,
+                         "evidence_missing": <bool>}}.
+
+    Same line grammar as parse_dimension_lines (leading bullets/numbering and
+    **bold** stripped, "N/A"/"NA" normalized, the model's self-reported 'VERDICT:'
+    line ignored) PLUS the optional quoted-evidence segment the rubric now asks
+    for:
+
+        <dim>: PASS|FAIL — <one-line reason> | EVIDENCE: "<verbatim quote>"
+
+    A graded (PASS/FAIL) line carrying no parseable quote is still VALID but sets
+    evidence_missing=True — the judge is ADVISORY, so a quote-less verdict degrades
+    to a warning (see evidence_warnings), never a crash and never an auto-FAIL. N/A
+    lines describe a not-applicable dimension with nothing to quote, so they are
+    never flagged. Backward compatible: an old-format line with no EVIDENCE segment
+    parses exactly as before, just with evidence=None (evidence_missing True only if
+    it was graded). Evidence is read from the RAW line so its own punctuation
+    survives the bullet/bold cleaning applied to the verdict half.
     """
     out = {}
     if not isinstance(model_text, str):
         return out
     for raw in model_text.splitlines():
+        stripped = raw.strip()
         # Strip leading bullets/numbering and any ** bold markers, then match.
-        line = raw.strip().lstrip("-*0123456789. \t").replace("*", "")
+        line = stripped.lstrip("-*0123456789. \t").replace("*", "")
         m = _DIM_LINE.match(line)
         if not m:
             continue
@@ -172,8 +228,88 @@ def parse_dimension_lines(model_text):
         if dim == "verdict":  # never trust the model's self-reported overall line
             continue
         val = m.group(2).upper()
-        out[dim] = "N/A" if val in ("N/A", "NA") else val
+        verdict = "N/A" if val in ("N/A", "NA") else val
+        ev_m = _EVIDENCE_RE.search(stripped)
+        evidence = ev_m.group(1).strip() if ev_m else None
+        if not evidence:
+            evidence = None
+        evidence_missing = verdict in ("PASS", "FAIL") and evidence is None
+        out[dim] = {"verdict": verdict, "evidence": evidence,
+                    "evidence_missing": evidence_missing}
     return out
+
+
+def parse_dimension_lines(model_text):
+    """Parse a model verdict into {dimension: 'PASS'|'FAIL'|'N/A'}.
+
+    Verdict-only projection of parse_dimensions() — this is the shape aggregate()
+    consumes, kept byte-for-byte compatible with the pre-evidence format (any
+    trailing '— reason | EVIDENCE: "..."' is ignored here; use parse_dimensions to
+    read the quote). Tolerates common model formatting: leading list markers
+    ("- ", "* ", "1. ") and **bold** around the dimension name. Both "N/A" and "NA"
+    normalize to 'N/A'. IGNORES the model's self-reported final 'VERDICT:' line.
+    Returns {} when nothing parses.
+    """
+    return {dim: rec["verdict"] for dim, rec in parse_dimensions(model_text).items()}
+
+
+def evidence_warnings(model_text):
+    """List dimensions whose graded (PASS/FAIL) verdict shipped no quoted evidence.
+
+    Advisory only: the rubric asks every PASS/FAIL to cite a verbatim snippet, but
+    a missing quote never changes a verdict or the exit code — it is surfaced so a
+    caller (e.g. run_fixtures.run_judge) can print a one-line warning. Returns [] on
+    a fully-cited verdict.
+    """
+    return [dim for dim, rec in parse_dimensions(model_text).items()
+            if rec["evidence_missing"]]
+
+
+def model_family(model_id):
+    """Map a model id to a coarse vendor family for the self-preference check.
+
+    Tolerates a leading "provider/" segment (OpenRouter-style "anthropic/claude-…")
+    by matching the last path segment. Unrecognized -> "unknown" (never warned on).
+    Pure: no env, no I/O.
+    """
+    if not isinstance(model_id, str) or not model_id.strip():
+        return "unknown"
+    name = model_id.strip().lower().rsplit("/", 1)[-1]
+    for prefix, family in _FAMILY_PREFIXES:
+        if name.startswith(prefix):
+            return family
+    return "unknown"
+
+
+def same_family_warning(judge_model, rewriter_model):
+    """Return a one-line self-preference warning iff judge & rewriter share a KNOWN
+    family, else None. Pure (no env, no I/O). A missing/empty rewriter model or an
+    "unknown" family on either side -> None (check disabled, no false alarm).
+    """
+    if not judge_model or not rewriter_model:
+        return None
+    jf = model_family(judge_model)
+    rf = model_family(rewriter_model)
+    if jf == "unknown" or jf != rf:
+        return None
+    return (f"WARNING: judge model '{judge_model}' and rewriter model "
+            f"'{rewriter_model}' are the same family ({jf}) — judge self-preference "
+            f"can inflate PASS ~10-25%. Point AIWS_JUDGE_MODEL at a different family "
+            f"for an independent verdict.")
+
+
+def _maybe_warn_same_family():
+    """Print the same-family warning to stderr at most once per process. Reads
+    AIWS_JUDGE_MODEL vs the optional AIWS_REWRITER_MODEL; advisory, never blocks.
+    """
+    global _FAMILY_WARNING_EMITTED
+    if _FAMILY_WARNING_EMITTED:
+        return
+    _FAMILY_WARNING_EMITTED = True  # mark before printing: warn once, even on retry
+    msg = same_family_warning(os.environ.get("AIWS_JUDGE_MODEL"),
+                              os.environ.get("AIWS_REWRITER_MODEL"))
+    if msg:
+        print(msg, file=sys.stderr)
 
 
 def majority_vote(per_rep_results):

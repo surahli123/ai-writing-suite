@@ -105,7 +105,12 @@ BEFORE:
 AFTER:
 {after}
 
-For each dimension, output: <dimension>: PASS|FAIL — <one-line reason>.
+For each dimension, output ONE line in this exact shape:
+  <dimension>: PASS|FAIL — <one-line reason> | EVIDENCE: "<verbatim quote from the
+  before or after that proves the verdict>".
+The EVIDENCE quote must be copied verbatim (word-for-word) from the before or after
+text — never paraphrased and never invented. A dimension you mark N/A has nothing to
+quote, so emit it as `<dimension>: N/A — <reason>` with no EVIDENCE segment.
 Then output: VERDICT: PASS|FAIL.
 Rule: no_fabrication must PASS or the whole verdict is FAIL, regardless of how
 good the prose reads.
@@ -135,3 +140,6 @@ explicit N/A as vacuously satisfied; a silently omitted line would void the whol
   rewrite beats a specific-but-fabricated one.
 - Do not penalize the `after` for being shorter — concision is the goal.
 - Do not re-flag tells the fixture did not ask about (scope to `rubric_focus`).
+- Do not emit a PASS/FAIL verdict without a verbatim EVIDENCE quote copied from the
+  before or after. A verdict with no quote is unaudited and treated as a warning
+  (an N/A dimension is the only line exempt — it has nothing to quote).
