@@ -25,11 +25,23 @@ from detector.detector import analyze  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_PATH = os.path.join(HERE, "fixtures.json")
+FIXTURES_FAIL_PATH = os.path.join(HERE, "fixtures_fail.json")
 RUBRIC_PATH = os.path.join(HERE, "rubric.md")
+
+# Required fields for a gold-FAIL fixture (see fixtures_fail.json::_doc). Distinct
+# from the PASS-suite shape: no expect_baseline (these are NOT calibration items),
+# but a mandatory expected_verdict='FAIL' + a fail_dimension naming the driver.
+FAIL_REQUIRED = {"id", "genre", "difficulty", "before", "after",
+                 "rubric_focus", "expected_verdict", "fail_dimension"}
 
 
 def load_fixtures():
     with open(FIXTURES_PATH, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def load_fail_fixtures():
+    with open(FIXTURES_FAIL_PATH, encoding="utf-8") as fh:
         return json.load(fh)
 
 
@@ -95,6 +107,122 @@ def run_deterministic(data):
     if not calib_ok:
         fails += 1  # treat out-of-band calibration as a suite failure
     return passes, fails
+
+
+def run_fail_deterministic(data):
+    """Validate the gold-FAIL fixtures: well-formedness + loose detector bands.
+
+    These are JUDGE-DISCRIMINATION fixtures (every `after` is a bad rewrite the
+    judge must reject), NOT calibration items. They are NEVER added to the
+    naive-baseline miss-rate denominator — that computation lives entirely in
+    run_deterministic over fixtures.json and is untouched here. The deterministic
+    path cannot compute a FAIL verdict without a judge, so all it asserts is that
+    each fixture is shaped correctly and its declared score bands still hold.
+    Returns (passes, fails).
+    """
+    passes = fails = 0
+    print("\n=== Gold-FAIL fixtures (well-formedness + bands; judge-discrimination set) ===\n")
+    for f in data["fixtures"]:
+        ok = True
+        reasons = []
+
+        missing = FAIL_REQUIRED - set(f)
+        if missing:
+            ok = False
+            reasons.append(f"missing fields {sorted(missing)}")
+        if f.get("expected_verdict") != "FAIL":
+            ok = False
+            reasons.append(f"expected_verdict={f.get('expected_verdict')!r} (must be 'FAIL')")
+        fd = f.get("fail_dimension")
+        focus = f.get("rubric_focus", [])
+        # The FAIL driver must be a dimension the judge is actually told to weigh,
+        # i.e. present in rubric_focus — except no_fabrication, which the rubric
+        # requires on every verdict even when unlisted.
+        if fd is not None and fd not in focus and fd != "no_fabrication":
+            ok = False
+            reasons.append(f"fail_dimension {fd!r} not in rubric_focus and != no_fabrication")
+
+        before = analyze(f["before"])["score"] if "before" in f else None
+        after = analyze(f["after"])["score"] if "after" in f else None
+        if before is not None and not _in_band(
+                before, f.get("before_band_min"), f.get("before_band_max")):
+            ok = False
+            reasons.append(
+                f"before={before} outside "
+                f"[{f.get('before_band_min', '-')}, {f.get('before_band_max', '-')}]")
+        if after is not None and not _in_band(after, hi=f.get("after_band_max")):
+            ok = False
+            reasons.append(f"after={after} > {f.get('after_band_max')}")
+
+        if ok:
+            passes += 1
+        else:
+            fails += 1
+        mark = "PASS" if ok else "FAIL"
+        loc = (f"before={before:3} after={after:3}"
+               if before is not None and after is not None else "")
+        print(f"[{mark}] {f.get('id', '?'):28} gold=FAIL via "
+              f"{f.get('fail_dimension', '?'):20} {loc}")
+        for r in reasons:
+            print(f"        {r}")
+
+    print(f"\nGold-FAIL well-formedness: {passes} ok, {fails} malformed "
+          f"(judge-discrimination set — excluded from calibration denominator).")
+    return passes, fails
+
+
+def run_fail_judge(data):
+    """Judge-DISCRIMINATION over the gold-FAIL fixtures (opt-in judge path).
+
+    For each bad rewrite a correct judge returns FAIL: judge-says-FAIL == agreement
+    (the judge discriminated); judge-says-PASS == DISAGREEMENT (the judge missed a
+    bad rewrite — the failure signal this suite exists to surface). Advisory, like
+    run_judge: the discrimination counts do NOT drive the exit code; only a
+    configured-but-broken judge (scored 0/N => provider envelope changed) does.
+    Returns (discriminated, missed, skipped, live_error).
+    """
+    from fixtures import judge  # lazy: keep the deterministic path network-free
+    template = _extract_judge_template()
+    configured = judge.is_configured()
+
+    print("\n=== Gold-FAIL judge discrimination ===")
+    if not configured:
+        print("No judge configured — SKIPPING discrimination (needs a model).\n")
+        for f in data["fixtures"]:
+            print(f"[SKIP] {f['id']} (gold=FAIL via {f['fail_dimension']})")
+        return 0, 0, len(data["fixtures"]), False
+
+    print("Judge configured — a correct judge marks every one FAIL.\n")
+    discriminated = missed = skipped = 0
+    for f in data["fixtures"]:
+        prompt = build_judge_prompt(f, template)
+        raw = judge.score(prompt)  # raises JudgeError on transport/auth (loud)
+        if raw is not None:
+            for dim in judge.evidence_warnings(raw):
+                print(f"  [warn] {f['id']}/{dim}: verdict missing EVIDENCE quote")
+        verdict = (judge.aggregate([judge.parse_dimension_lines(raw)],
+                                   f["rubric_focus"]) if raw is not None else None)
+        if verdict is None:
+            skipped += 1
+            print(f"[SKIP] {f['id']} — no parseable verdict returned")
+            continue
+        if verdict == "FAIL":
+            discriminated += 1
+            print(f"[OK  ] {f['id']} — judge FAIL == gold (discriminated)")
+        else:
+            missed += 1
+            print(f"[MISS] {f['id']} — judge PASS but gold=FAIL (DISAGREEMENT)")
+
+    scored = discriminated + missed
+    print(f"\nGold-FAIL discrimination: {discriminated}/{scored} caught "
+          f"({missed} missed, {skipped} skipped) — advisory.")
+    # Liveness mirror of run_judge: configured but nothing scored => envelope changed.
+    live_error = scored == 0
+    if live_error:
+        print(f"ERROR: judge configured but scored 0/{len(data['fixtures'])} "
+              f"FAIL fixtures — provider response envelope likely changed "
+              f"(check AIWS_JUDGE_URL/MODEL).")
+    return discriminated, missed, skipped, live_error
 
 
 def build_judge_prompt(fixture, rubric_template):
@@ -167,6 +295,9 @@ def run_judge(data):
             continue
 
         raw = judge.score(prompt)  # raises JudgeError on transport/auth (loud)
+        if raw is not None:
+            for dim in judge.evidence_warnings(raw):
+                print(f"  [warn] {f['id']}/{dim}: verdict missing EVIDENCE quote")
         verdict = (judge.aggregate([judge.parse_dimension_lines(raw)],
                                    f["rubric_focus"]) if raw is not None else None)
         if verdict is None:
@@ -218,6 +349,15 @@ def main(argv=None):
     data = load_fixtures()
     passes, fails = run_deterministic(data)
 
+    # Gold-FAIL suite (separate file, judge-discrimination). Its deterministic half
+    # only validates well-formedness + bands and is NOT part of the calibration
+    # denominator; its malformed-count DOES gate the run (a rotted FAIL fixture is
+    # a real regression). See fixtures_fail.json::_doc.
+    fail_data = load_fail_fixtures()
+    fp, ff = run_fail_deterministic(fail_data)
+    passes += fp
+    fails += ff
+
     # The judge is ADVISORY: its PASS/FAIL counts do NOT change the exit code, so
     # CI (which never passes --judge and sets no key) stays deterministic and
     # key-free. The only judge condition that fails the run is a configured-but-
@@ -225,6 +365,8 @@ def main(argv=None):
     judge_live_error = False
     if args.judge:
         _jp, _jf, _js, judge_live_error = run_judge(data)
+        _d, _m, _s, fail_live_error = run_fail_judge(fail_data)
+        judge_live_error = judge_live_error or fail_live_error
 
     print(f"\nDeterministic: {passes} passed, {fails} failed.")
     return 1 if (fails or judge_live_error) else 0

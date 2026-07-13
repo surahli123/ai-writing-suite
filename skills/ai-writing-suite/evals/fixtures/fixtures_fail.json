@@ -1,0 +1,75 @@
+{
+  "_doc": "GOLD-FAIL before/after fixtures: every `after` here is a BAD rewrite that a correct LLM judge must reject (expected_verdict='FAIL'). WHY A SEPARATE FILE (not appended to fixtures.json): the 13 fixtures in fixtures.json are all good rewrites (expected_verdict='PASS'); their `before` items feed the naive-baseline miss-rate calibration (the 30-40% band). These FAIL fixtures test the ORTHOGONAL question — judge DISCRIMINATION: when handed a bad rewrite, does the judge say FAIL? They are NOT calibration items and MUST NOT enter the naive-baseline denominator, so they live in their own file and are loaded by their own runner path (run_fixtures.run_fail_deterministic / run_fail_judge). Keeping them out of fixtures.json is what preserves the 3/8 = 38% band untouched — do NOT move them in to 'unify' the suites. Fields: `expected_verdict` is always 'FAIL' (the gold label). `fail_dimension` names the rubric dimension a correct judge drives the FAIL through — it must appear in `rubric_focus` (so the judge is actually told to weigh it) unless it is `no_fabrication`, which the rubric requires on every verdict even when unlisted. `why` explains the defect in one line. Optional `before_band_max`/`after_band_max` are LOOSE detector regression guards (these strings are not detector-targeted — most score ~0 — the band just stops them silently rotting into vocabulary tells). HOW THE TWO PATHS USE THESE: the DETERMINISTIC path (CI, key-free) only validates well-formedness + score bands here — it cannot compute a FAIL verdict without a judge. The JUDGE path (AIWS_JUDGE_RUN=1, opt-in) scores each `after`, aggregates the verdict, and compares to the gold: judge-says-FAIL == agreement (correct discrimination); judge-says-PASS == DISAGREEMENT (the judge failed to catch a bad rewrite — the signal this suite exists to surface). Coverage includes at minimum the three archetypes from the hardening plan: fabricated fact (after invents a stat absent from before), over-corrected over-stepping (removal guts a legitimate contrast whose prior was a real belief), and a payoff_clear stub (over-stripping strands a pronoun with no antecedent).",
+  "baseline_threshold": 14,
+  "fixtures": [
+    {
+      "id": "fail-fabricated-number-en",
+      "expected_verdict": "FAIL",
+      "genre": "readme",
+      "difficulty": "obvious",
+      "before": "Our new caching layer makes the dashboard load faster and improves the experience for everyone.",
+      "after": "Our new caching layer cut dashboard load time by 37%, from 2.1s to 1.3s.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "specificity_added",
+        "no_fabrication"
+      ],
+      "fail_dimension": "no_fabrication",
+      "why": "`before` contains no numbers; `after` invents 37% and the 2.1s -> 1.3s figures and presents them as measured fact. Fluent and specific, but fabricated -> no_fabrication FAIL (the highest-stakes dimension) forces the overall verdict FAIL regardless of how good the prose reads. A judge that rewards the added specificity would wrongly PASS this."
+    },
+    {
+      "id": "fail-overcorrected-overstep-en",
+      "expected_verdict": "FAIL",
+      "genre": "linkedin",
+      "difficulty": "subtle",
+      "before": "Love isn't just a feeling, it's a daily choice you keep making.",
+      "after": "Love is a daily choice you keep making.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "overstepping_removed",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "meaning_preserved",
+      "why": "The over-correction trap. 'Love = a feeling' is a REAL, widespread prior, so 'isn't just a feeling, it's a choice' is a LEGITIMATE contrast carrying information — not a manufactured strawman. `after` stripped the contrast, losing that information. A naive judge that rewards removing ANY 'X isn't Y' frame would wrongly PASS; the validity condition (over-stepping is real ONLY when the prior is manufactured) must drive meaning_preserved FAIL."
+    },
+    {
+      "id": "fail-payoff-stub-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "You might think merging the two staging environments causes more outages, but it actually reduces them: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
+      "after": "It actually reduces them: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "overstepping_removed",
+        "payoff_clear",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "payoff_clear",
+      "why": "The live payoff_clear stub — the minimal-pair FAIL partner of fixtures.json::overstep-05. Deleting the presumption was right, but the over-stripped leftover 'It actually reduces them' strands 'it'/'them': the antecedent (merging the two staging environments) lived only in the deleted frame. overstepping_removed reads PASS, but payoff_clear FAIL forces the overall verdict FAIL. The clean fix names the subject ('Merging reduces outages: ...')."
+    },
+    {
+      "id": "fail-dropped-claim-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "obvious",
+      "before": "We're behind on Q3 by 14% for two reasons: the API migration slipped three weeks and we lost two engineers.",
+      "after": "We're behind on Q3 for a couple of reasons and we're working on it.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "specificity_added",
+        "no_fabrication"
+      ],
+      "fail_dimension": "meaning_preserved",
+      "why": "Over-correction by deletion: `after` drops the 14% figure and both concrete causes (API migration slip, two engineers lost), replacing them with 'a couple of reasons' and empty reassurance. This is the opposite failure from fabrication — the rewrite is honest but gutted the load-bearing claims -> meaning_preserved FAIL."
+    }
+  ]
+}

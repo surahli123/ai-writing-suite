@@ -12,7 +12,7 @@ import unittest
 from detector.detector import analyze
 from fixtures import judge
 from fixtures.run_fixtures import (
-    load_fixtures, build_judge_prompt, _extract_judge_template)
+    load_fixtures, load_fail_fixtures, build_judge_prompt, _extract_judge_template)
 
 REQUIRED = {"id", "genre", "difficulty", "before", "after",
             "rubric_focus", "expect_baseline"}
@@ -529,6 +529,174 @@ class JudgeIntegration(unittest.TestCase):
         (p, f, s, live), out = self._run(lambda prompt: reply)
         self.assertEqual((p, f, s, live), (0, n, 0, False))
         self.assertIn(f"agreement: 0/{n}", out)
+
+
+class GoldFailSuiteShape(unittest.TestCase):
+    """The separate gold-FAIL file (fixtures_fail.json) is well-formed, covers the
+    required archetypes, and cannot leak into the calibration denominator."""
+
+    FAIL_REQUIRED = {"id", "genre", "difficulty", "before", "after",
+                     "rubric_focus", "expected_verdict", "fail_dimension"}
+
+    def test_all_fail_fixtures_have_required_fields(self):
+        for f in load_fail_fixtures()["fixtures"]:
+            missing = self.FAIL_REQUIRED - set(f)
+            self.assertFalse(missing, f"{f.get('id')} missing {missing}")
+
+    def test_every_expected_verdict_is_fail(self):
+        for f in load_fail_fixtures()["fixtures"]:
+            self.assertEqual(f["expected_verdict"], "FAIL",
+                             f"{f['id']} expected_verdict must be FAIL")
+
+    def test_fail_dimension_is_weighed_by_the_judge(self):
+        # The FAIL driver must be in rubric_focus (so the judge actually scores it)
+        # unless it is no_fabrication, which the rubric requires on every verdict.
+        for f in load_fail_fixtures()["fixtures"]:
+            fd = f["fail_dimension"]
+            self.assertTrue(fd in f["rubric_focus"] or fd == "no_fabrication",
+                            f"{f['id']}: fail_dimension {fd!r} not weighed")
+
+    def test_required_archetypes_present(self):
+        # The hardening plan mandates at minimum: fabricated fact (no_fabrication),
+        # over-corrected over-stepping + dropped claim (meaning_preserved), and a
+        # payoff_clear stub. Guard that the suite keeps covering all three drivers.
+        dims = {f["fail_dimension"] for f in load_fail_fixtures()["fixtures"]}
+        for required in ("no_fabrication", "meaning_preserved", "payoff_clear"):
+            self.assertIn(required, dims,
+                          f"gold-FAIL suite missing a {required}-driven archetype")
+
+    def test_fail_ids_never_appear_in_calibration_suite(self):
+        # Structural exclusion: the FAIL fixtures live in their OWN file and must
+        # never appear in fixtures.json, so they cannot pollute the 30-40% band.
+        pass_ids = {f["id"] for f in load_fixtures()["fixtures"]}
+        fail_ids = {f["id"] for f in load_fail_fixtures()["fixtures"]}
+        self.assertEqual(pass_ids & fail_ids, set(),
+                         "a gold-FAIL id leaked into fixtures.json (calibration set)")
+
+    def test_declared_score_bands_hold(self):
+        for f in load_fail_fixtures()["fixtures"]:
+            if "before_band_max" in f:
+                self.assertLessEqual(analyze(f["before"])["score"],
+                                     f["before_band_max"], f["id"])
+            if "after_band_max" in f:
+                self.assertLessEqual(analyze(f["after"])["score"],
+                                     f["after_band_max"], f["id"])
+
+
+class GoldFailDiscrimination(unittest.TestCase):
+    """Canned-judge-response DISCRIMINATION over gold-FAIL fixtures. gold=FAIL, so
+    judge-says-FAIL == agreement (the judge discriminated); judge-says-PASS ==
+    DISAGREEMENT — the signal this suite exists to surface. Same no-network canned
+    shape as JudgeParsing, but keyed to expected_verdict='FAIL'."""
+
+    def _fixture(self, fid):
+        return next(f for f in load_fail_fixtures()["fixtures"] if f["id"] == fid)
+
+    def test_fabricated_number_judge_fail_is_agreement(self):
+        f = self._fixture("fail-fabricated-number-en")
+        reply = ("meaning_preserved: PASS\n"
+                 "specificity_added: PASS — added figures\n"
+                 "no_fabrication: FAIL — 37% / 2.1s->1.3s appear nowhere in before")
+        verdict = judge.aggregate([judge.parse_dimension_lines(reply)],
+                                  f["rubric_focus"])
+        self.assertEqual(verdict, "FAIL")
+        self.assertEqual(verdict, f["expected_verdict"])  # agreement
+
+    def test_fabricated_number_judge_pass_is_disagreement(self):
+        # The judge is FOOLED by the fluent, specific rewrite and marks it PASS.
+        # gold=FAIL -> a DISAGREEMENT the runner must surface, not a silent pass.
+        f = self._fixture("fail-fabricated-number-en")
+        reply = ("meaning_preserved: PASS\n"
+                 "specificity_added: PASS\n"
+                 "no_fabrication: PASS")  # wrongly accepts the invented stats
+        verdict = judge.aggregate([judge.parse_dimension_lines(reply)],
+                                  f["rubric_focus"])
+        self.assertEqual(verdict, "PASS")
+        self.assertNotEqual(verdict, f["expected_verdict"])  # DISAGREEMENT
+
+    def test_payoff_stub_judge_fail_is_agreement(self):
+        f = self._fixture("fail-payoff-stub-en")
+        reply = ("overstepping_removed: PASS\n"
+                 "payoff_clear: FAIL — 'It reduces them' lost its subject\n"
+                 "meaning_preserved: PASS\n"
+                 "no_fabrication: PASS")
+        verdict = judge.aggregate([judge.parse_dimension_lines(reply)],
+                                  f["rubric_focus"])
+        self.assertEqual(verdict, "FAIL")
+
+    def test_overcorrected_overstep_judge_fail_is_agreement(self):
+        f = self._fixture("fail-overcorrected-overstep-en")
+        reply = ("overstepping_removed: PASS — a 'X isn't Y' frame was removed\n"
+                 "meaning_preserved: FAIL — 'love=feeling' is a real prior; the "
+                 "contrast was legitimate, removing it loses information\n"
+                 "no_fabrication: PASS")
+        verdict = judge.aggregate([judge.parse_dimension_lines(reply)],
+                                  f["rubric_focus"])
+        self.assertEqual(verdict, "FAIL")
+
+
+class GoldFailJudgeIntegration(unittest.TestCase):
+    """run_fail_judge end-to-end with a STUBBED model (no network, no key): prove
+    the discrimination tally separates a judge that catches every bad rewrite from
+    one that misses them all, and that the 0/N liveness gate fires."""
+
+    def _run(self, fake_score):
+        import os
+        import io
+        import contextlib
+        from unittest import mock
+        from fixtures.run_fixtures import run_fail_judge
+        env = {"AIWS_JUDGE_URL": "https://x", "AIWS_JUDGE_MODEL": "m",
+               "AIWS_JUDGE_KEY": "k", "AIWS_JUDGE_RUN": "1"}
+        buf = io.StringIO()
+        with mock.patch.dict(os.environ, env, clear=True), \
+                mock.patch("fixtures.judge.score", side_effect=fake_score), \
+                contextlib.redirect_stdout(buf):
+            result = run_fail_judge(load_fail_fixtures())
+        return result, buf.getvalue()
+
+    def test_judge_that_fails_everything_discriminates_all(self):
+        n = len(load_fail_fixtures()["fixtures"])
+        # no_fabrication FAIL forces every fixture's verdict FAIL == gold -> all caught.
+        reply = "\n".join(f"{d}: PASS" for d in
+                          ("overstepping_removed", "payoff_clear",
+                           "meaning_preserved", "specificity_added")
+                          ) + "\nno_fabrication: FAIL"
+        (d, m, s, live), out = self._run(lambda p: reply)
+        self.assertEqual((d, m, s, live), (n, 0, 0, False))
+        self.assertIn(f"{n}/{n} caught", out)
+
+    def test_judge_that_passes_everything_misses_all(self):
+        n = len(load_fail_fixtures()["fixtures"])
+        # All-PASS (incl no_fabrication + payoff_clear) -> judge PASS on every bad
+        # rewrite -> gold=FAIL -> all MISSED (disagreement).
+        reply = "\n".join(f"{d}: PASS" for d in
+                          ("overstepping_removed", "payoff_clear", "meaning_preserved",
+                           "specificity_added", "no_fabrication"))
+        (d, m, s, live), out = self._run(lambda p: reply)
+        self.assertEqual((d, m, s, live), (0, n, 0, False))
+        self.assertIn("DISAGREEMENT", out)
+
+    def test_unparseable_triggers_live_error(self):
+        (d, m, s, live), out = self._run(lambda p: "no verdict here")
+        self.assertEqual((d, m), (0, 0))
+        self.assertTrue(live)
+        self.assertIn("envelope likely changed", out)
+
+    def test_offline_all_skip_no_live_error(self):
+        # Not configured -> every fixture SKIPPED, no discrimination attempted, and
+        # crucially no live_error (mirrors run_judge's keyless all-SKIP exiting 0).
+        import os
+        import io
+        import contextlib
+        from unittest import mock
+        from fixtures.run_fixtures import run_fail_judge
+        n = len(load_fail_fixtures()["fixtures"])
+        buf = io.StringIO()
+        with mock.patch.dict(os.environ, {"AIWS_JUDGE_RUN": "0"}, clear=False), \
+                contextlib.redirect_stdout(buf):
+            d, m, s, live = run_fail_judge(load_fail_fixtures())
+        self.assertEqual((d, m, s, live), (0, 0, n, False))
 
 
 if __name__ == "__main__":

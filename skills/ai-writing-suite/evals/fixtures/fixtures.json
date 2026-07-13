@@ -234,6 +234,25 @@
       "expect_baseline": "miss",
       "detector_blind": true,
       "subtle_tell": "Over-stepping: presumed-cognition with a manufactured prior ('You might think X, but'). This is the payoff_clear ANCHOR: the PASS rewrite deletes the presumption AND leaves the surviving claim complete on its own ('Merging ... reduces outages: ...'). Its minimal-pair FAIL partner over-strips to 'It actually reduces them: ...', where 'it/them' lost the antecedent the deleted presumption supplied — that stub lives in test_fixtures.py::PayoffClearHardNegative. Detector scores 0 -> judge-only."
+    },
+    {
+      "id": "overstep-06-strawman-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "You might think a bigger context window always means better answers, but longer prompts often bury the key instruction and accuracy drops. We cap retrieved context at 8 chunks and rerank before sending.",
+      "after": "Longer prompts often bury the key instruction, so accuracy can drop as context grows. We cap retrieved context at 8 chunks and rerank before sending.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "overstepping_removed",
+        "payoff_clear",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Over-stepping (反代入式越位感), presumed-MISCONCEPTION strawman sub-type (O2) — the one over-stepping variant with no dedicated fixture until now. The `before` manufactures a specific wrong belief and pins it on the reader ('You might think a bigger context window always means better answers, but…') then corrects it from above. Distinct from overstep-02/05 presumed-COGNITION (which presume an expectation/assumption): here the invented prior is framed as a factual misconception the audience never voiced. The reader may never have held it, so the frame over-steps. The surviving claim (long prompts bury the instruction → accuracy drops; cap at 8 chunks + rerank) is preserved intact in `after` without presuming the reader was wrong; the leftover stands on its own (payoff_clear PASS). Zero vocabulary tells -> detector scores 0 -> a flat threshold misses it -> detector_blind (excluded from the 30-40% denominator; band stays 38%). Judge keyed to STANCE catches it."
     }
   ]
 }
