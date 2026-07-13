@@ -1,6 +1,6 @@
 {
   "name": "ai-writing-suite",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Suite of writing-assistant skills for professional and product communication. Polish and de-AI prose, learn an author's voice, answer KB questions, and draft from a knowledge base.",
   "author": { "name": "surahli123" },
   "homepage": "https://github.com/surahli123/ai-writing-suite",

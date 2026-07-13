@@ -9,6 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [1.1.0] — 2026-07-13
+
+### Added (eval hardening — 2026-07-13, from the de-slop landscape research)
+- **Gold-FAIL fixture suite** (`evals/fixtures/fixtures_fail.json`, 4 bad-rewrite pairs:
+  fabricated number, over-corrected overstepping, payoff stub, dropped claim) so the LLM
+  judge is tested on discrimination, not just agreement; plus the O2 presumed-misconception
+  strawman fixture (`overstep-06-strawman-en`). Both excluded from the naive-baseline
+  calibration denominator (band stays 38%).
+- **Adversarial false-positive suite** (`evals/fixtures/false_positives.json` +
+  `run_false_positives.py`, wired as `run_all.sh` step 4): 9 clean human-style samples
+  (non-native ESL, terse-parataxis, formal-academic, ordinary professional across all
+  genres) the detector must NOT flag, plus 2 planted AI-slop controls it MUST catch;
+  fails the run on any false positive or missed control.
+- **Quoted-evidence judge protocol**: per-dimension verdicts now require a verbatim
+  quoted snippet; the parser flags missing quotes as advisory warnings (never blocks).
+  Added a judge/rewriter cross-family self-preference warning via the optional
+  `AIWS_REWRITER_MODEL` env var.
+
+### Changed
+- **Router seam fix**: `comms-polish` and `comms-draft` frontmatter descriptions each
+  gained one disambiguating clause so mixed "polish this AND add a section" requests
+  route to `comms-draft` (polishing never adds substance).
+
 ### Fixed
 - **Publishable installs across hosts** — the published repo was not actually
   installable: the plugin body was gitignored (only manifests reached the remote)
