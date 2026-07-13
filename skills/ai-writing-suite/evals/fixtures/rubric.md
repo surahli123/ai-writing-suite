@@ -111,6 +111,11 @@ For each dimension, output ONE line in this exact shape:
 The EVIDENCE quote must be copied verbatim (word-for-word) from the before or after
 text — never paraphrased and never invented. A dimension you mark N/A has nothing to
 quote, so emit it as `<dimension>: N/A — <reason>` with no EVIDENCE segment.
+ONE LINE PER DIMENSION: each verdict must fit on a single line, and the EVIDENCE quote
+must NOT span lines — never wrap a quote across a newline. If the snippet you want to
+cite is long, quote a shorter contiguous fragment of it that still fits on one line.
+Open and close the quote with the SAME quote character (" ... " or “ ... ”); a mixed
+pair is treated as a malformed quote and the verdict is flagged unaudited.
 Then output: VERDICT: PASS|FAIL.
 Rule: no_fabrication must PASS or the whole verdict is FAIL, regardless of how
 good the prose reads.

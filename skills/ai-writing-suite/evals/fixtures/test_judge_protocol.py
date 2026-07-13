@@ -118,6 +118,38 @@ class PairedQuoteParsing(unittest.TestCase):
         self.assertEqual(rec["evidence_status"], "ok")
         self.assertFalse(rec["evidence_missing"])
 
+    def test_matching_pairs_parse_ok(self):
+        # Each opener closes on ITS OWN closer: " on ", “ on ”, ‘ on ’.
+        for open_c, close_c in (('"', '"'), ("“", "”"), ("‘", "’")):
+            line = f'genre_fit: PASS — fits | EVIDENCE: {open_c}ship it{close_c}'
+            rec = judge.parse_dimensions(line)["genre_fit"]
+            self.assertEqual(rec["evidence"], "ship it", f"pair {open_c}{close_c}")
+            self.assertEqual(rec["evidence_status"], "ok", f"pair {open_c}{close_c}")
+
+    def test_mismatched_opener_closer_is_malformed(self):
+        # FIX-B: a straight opener closed by a smart closer (and every other
+        # cross-family pairing) used to parse as 'ok'. A model that mixes delimiters
+        # is not trustworthy about the quote body — flag it, don't accept it.
+        for open_c, close_c in (('"', "”"), ('"', "’"), ("“", '"'), ("“", "’"),
+                                ("‘", '"'), ("‘", "”")):
+            line = f'genre_fit: PASS — fits | EVIDENCE: {open_c}text{close_c}'
+            rec = judge.parse_dimensions(line)["genre_fit"]
+            self.assertIsNone(rec["evidence"], f"pair {open_c}{close_c}")
+            self.assertEqual(rec["evidence_status"], "malformed",
+                             f"pair {open_c}{close_c} must be malformed")
+            self.assertTrue(rec["evidence_missing"], f"pair {open_c}{close_c}")
+
+    def test_quote_wrapped_across_newline_is_malformed(self):
+        # Deliberate, documented behaviour (no multiline state machine on an advisory
+        # path): the rubric prompt requires one line per verdict with the EVIDENCE
+        # quote unbroken, so a quote split across lines is a protocol violation and
+        # is surfaced as malformed rather than silently stitched back together.
+        text = ('meaning_preserved: PASS — kept | EVIDENCE: "we shipped\n'
+                'three fixes on Tuesday"')
+        rec = judge.parse_dimensions(text)["meaning_preserved"]
+        self.assertEqual(rec["evidence_status"], "malformed")
+        self.assertTrue(rec["evidence_missing"])
+
     def test_multiline_model_text_parses_each_line(self):
         text = ('meaning_preserved: PASS — kept | EVIDENCE: "shipped 3 fixes"\n'
                 'no_fabrication: FAIL — invented | EVIDENCE: "cut load by 37%"\n'

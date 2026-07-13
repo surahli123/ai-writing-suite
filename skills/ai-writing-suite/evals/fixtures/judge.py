@@ -76,11 +76,16 @@ _DIM_LINE = re.compile(r"^([a-z][a-z_]+)\s*:\s*(PASS|FAIL|N/A|NA)\b", re.IGNOREC
 # RAW line, not the bullet-cleaned one, so evidence text keeps its own punctuation.
 _EVIDENCE_TAG = re.compile(r"EVIDENCE\s*:\s*", re.IGNORECASE)
 
-# Opening quote = a straight " or a smart “ ; closing = a straight " or a smart ”.
-# Apostrophes/single quotes are deliberately NOT delimiters, so contractions
-# ("We're", "don't") inside the quote survive intact.
-_EVIDENCE_OPEN = ('"', "“")   # "  “
-_EVIDENCE_CLOSE = ('"', "”")  # "  ”
+# STRICT pairing: each opener closes ONLY on ITS matching closer. A mixed pair
+# (straight open + smart close, `"text”`) is a malformed quote, not an accepted one
+# — a model that mixes delimiters is likely also mangling the quote body, so the
+# audit should see it rather than silently trust the snippet.
+# The straight apostrophe ' is deliberately NOT an opener, so contractions
+# ("We're", "don't") inside a quote survive intact; the smart pair ‘ ’ IS supported
+# because ’ doubles as an apostrophe only INSIDE a quote, where the greedy close
+# below still picks the real terminator.
+_QUOTE_PAIRS = {'"': '"', "“": "”", "‘": "’"}
+_EVIDENCE_OPEN = tuple(_QUOTE_PAIRS)  # "  “  ‘
 
 # Collapse any whitespace run to a single space for verbatim substring checks, so
 # a quote that wraps/re-indents across the model's formatting still matches source.
@@ -99,10 +104,16 @@ def _extract_evidence(raw_line):
       'ok'        a non-empty paired quote was found;
       'missing'   no EVIDENCE segment on the line at all;
       'malformed' an EVIDENCE tag is present but the quote is unpaired (one lone
-                  opening quote, no close) or empty ("").
+                  opening quote, no close), MISMATCHED (an opener closed by a
+                  different family's closer, e.g. `"text”`), or empty ("").
 
-    The close is the LAST closing quote AFTER the opening one on the line (greedy),
-    so an embedded apostrophe never truncates the snippet.
+    The close is the LAST MATCHING closer AFTER the opening one on the line
+    (greedy), so an embedded apostrophe never truncates the snippet. Matching is
+    strict per _QUOTE_PAIRS: " closes on ", “ on ”, ‘ on ’ — never cross-family.
+    A quote wrapped ACROSS A NEWLINE has no closer on its own line and is therefore
+    'malformed' by design; the rubric prompt tells the judge to keep each verdict
+    (and its EVIDENCE quote) on ONE line, so a multi-line quote is a protocol
+    violation the audit should surface, not silently stitch back together.
     """
     tag = _EVIDENCE_TAG.search(raw_line)
     if not tag:
@@ -111,10 +122,11 @@ def _extract_evidence(raw_line):
     open_i = next((i for i, c in enumerate(rest) if c in _EVIDENCE_OPEN), -1)
     if open_i == -1:
         return None, "malformed"  # EVIDENCE: present but no opening quote
+    closer = _QUOTE_PAIRS[rest[open_i]]
     close_i = max((i for i in range(open_i + 1, len(rest))
-                   if rest[i] in _EVIDENCE_CLOSE), default=-1)
+                   if rest[i] == closer), default=-1)
     if close_i == -1:
-        return None, "malformed"  # unpaired opening quote
+        return None, "malformed"  # unpaired or mismatched opener/closer
     evidence = rest[open_i + 1:close_i].strip()
     if not evidence:
         return None, "malformed"  # empty quote ""

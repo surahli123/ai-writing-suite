@@ -413,6 +413,17 @@ class PayoffClearGuards(unittest.TestCase):
         self.assertIn("EVIDENCE", template)
         self.assertIn("verbatim", template.lower())
 
+    def test_judge_template_demands_one_line_unbroken_evidence(self):
+        # FIX-B: the parser classifies a newline-wrapped quote as malformed BY
+        # DESIGN (no multiline state machine on an advisory path), so the prompt a
+        # LIVE judge reads must tell it to keep each verdict — and its EVIDENCE
+        # quote — on ONE line. Goes RED if that instruction is dropped from
+        # rubric.md while judge._extract_evidence still rejects a split quote.
+        # Mirrors test_judge_template_demands_verbatim_evidence.
+        template = _extract_judge_template()
+        self.assertIn("ONE LINE PER DIMENSION", template)
+        self.assertIn("must NOT span lines", template)
+
     def test_payoff_clear_only_paired_with_overstepping_removed(self):
         # Invariant lock (rubric.md): payoff_clear is scored ONLY alongside a
         # removal, so it must never appear in rubric_focus without
@@ -686,16 +697,20 @@ class GoldFailJudgeIntegration(unittest.TestCase):
             result = run_fail_judge(load_fail_fixtures())
         return result, buf.getvalue()
 
-    def test_judge_that_fails_everything_discriminates_all(self):
+    def test_judge_that_fails_everything_is_all_true_positives_here(self):
+        # An all-FAIL judge fails every dimension, so on THIS lane (positives only)
+        # it catches every bad rewrite for its declared driver reason. That is
+        # SENSITIVITY + attribution, NOT discrimination — this lane cannot tell it
+        # apart from a perfect judge, which is exactly why the combined-cohort
+        # confusion matrix exists (see CombinedConfusionMatrix: the same judge
+        # scores specificity 0.0 / balanced accuracy 0.5 there).
         n = len(load_fail_fixtures()["fixtures"])
-        # A TRUE all-FAIL judge fails every dimension, so it also fails each
-        # fixture's declared DRIVER dim -> discrimination, not wrong-reason.
         reply = "\n".join(f"{d}: FAIL" for d in
                           ("overstepping_removed", "payoff_clear", "meaning_preserved",
                            "specificity_added", "no_fabrication"))
         (d, m, w, s, live), out = self._run(lambda p: reply)
         self.assertEqual((d, m, w, s, live), (n, 0, 0, 0, False))
-        self.assertIn(f"{n}/{n} caught", out)
+        self.assertIn("Discrimination requires BOTH cohorts", out)
 
     def test_overall_fail_wrong_driver_is_wrong_reason_not_discrimination(self):
         # The FIX-2 refinement: a judge that FAILs only no_fabrication marks every
@@ -751,6 +766,188 @@ class GoldFailJudgeIntegration(unittest.TestCase):
                 contextlib.redirect_stdout(buf):
             d, m, w, s, live = run_fail_judge(load_fail_fixtures())
         self.assertEqual((d, m, w, s, live), (0, 0, 0, n, False))
+
+
+class CombinedConfusionMatrix(unittest.TestCase):
+    """FIX-A: discrimination is measured across BOTH cohorts, never from the
+    positives alone.
+
+    The gold-FAIL lane alone rewards a constant always-FAIL judge with a perfect
+    "caught for the right reason" tally. Pairing it with the gold-PASS cohort
+    (negatives) turns that same judge into sensitivity 1.00 / specificity 0.00 /
+    balanced accuracy 0.50 — chance. Every judge here is CANNED: no network, no key.
+
+    Stubs key on CALL ORDER, which is deterministic: main() runs the gold-PASS
+    cohort (fixtures.json, N_PASS calls) and then the gold-FAIL cohort
+    (fixtures_fail.json, N_FAIL calls).
+    """
+
+    ALL_DIMS = ("meaning_preserved", "tells_removed", "voice_kept",
+                "specificity_added", "genre_fit", "overstepping_removed",
+                "payoff_clear", "no_fabrication", "negative_parallelism_removed",
+                "rule_of_three_removed", "engagement_hook_removed",
+                "false_concession_removed", "hedge_stack_removed",
+                "vague_attribution_removed", "filler_removed")
+
+    def setUp(self):
+        self.pass_fixtures = load_fixtures()["fixtures"]
+        self.fail_fixtures = load_fail_fixtures()["fixtures"]
+        self.n_pass = len(self.pass_fixtures)
+        self.n_fail = len(self.fail_fixtures)
+        # Premise guard: the cohort sizes the hand-computed numbers below assume.
+        self.assertEqual((self.n_pass, self.n_fail), (14, 4))
+
+    def _reply(self, verdicts):
+        """verdicts: {dim: 'PASS'|'FAIL'} defaults PASS for every other dim."""
+        return "\n".join(f"{d}: {verdicts.get(d, 'PASS')}" for d in self.ALL_DIMS)
+
+    def _run_both(self, fake_score):
+        """Run both judge lanes against one shared matrix. Returns (matrix, stdout)."""
+        import os
+        import io
+        import contextlib
+        from unittest import mock
+        from fixtures.run_fixtures import (
+            run_judge, run_fail_judge, new_confusion, print_confusion)
+        env = {"AIWS_JUDGE_URL": "https://x", "AIWS_JUDGE_MODEL": "m",
+               "AIWS_JUDGE_KEY": "k", "AIWS_JUDGE_RUN": "1"}
+        matrix = new_confusion()
+        buf = io.StringIO()
+        with mock.patch.dict(os.environ, env, clear=True), \
+                mock.patch("fixtures.judge.score", side_effect=fake_score), \
+                contextlib.redirect_stdout(buf):
+            run_judge(load_fixtures(), matrix)
+            run_fail_judge(load_fail_fixtures(), matrix)
+            print_confusion(matrix)
+        return matrix, buf.getvalue()
+
+    def _ordered_stub(self, fn):
+        """Wrap a call-index -> reply function as a judge.score side_effect."""
+        state = {"i": -1}
+
+        def stub(_prompt):
+            state["i"] += 1
+            return fn(state["i"])
+        return stub
+
+    def _metrics(self, matrix):
+        from fixtures.run_fixtures import confusion_metrics
+        m = confusion_metrics(matrix)
+        return (m["sensitivity"], m["specificity"], m["balanced_accuracy"])
+
+    def test_perfect_judge_scores_one_one_one(self):
+        # PASS cohort -> all dims PASS (judge PASS). FAIL cohort -> FAIL the declared
+        # driver dim of that fixture (judge FAIL, right reason).
+        def reply(i):
+            if i < self.n_pass:
+                return self._reply({})
+            driver = self.fail_fixtures[i - self.n_pass]["fail_dimension"]
+            return self._reply({driver: "FAIL"})
+        matrix, out = self._run_both(self._ordered_stub(reply))
+        self.assertEqual((matrix["tp"], matrix["fn"], matrix["tn"], matrix["fp"]),
+                         (self.n_fail, 0, self.n_pass, 0))
+        self.assertEqual(self._metrics(matrix), (1.0, 1.0, 1.0))
+        self.assertEqual(matrix["driver_right"], self.n_fail)
+        self.assertIn("balanced accuracy = 1.00", out)
+
+    def test_constant_always_fail_judge_is_exposed_as_chance(self):
+        # THE regression this fix exists for: an always-FAIL judge catches every bad
+        # rewrite (sens 1.0) but also condemns every good one (spec 0.0) -> balanced
+        # accuracy 0.50 == chance. Its driver attribution is a perfect 1.00, which is
+        # exactly why attribution must never be read as discrimination.
+        matrix, out = self._run_both(
+            lambda _p: self._reply({d: "FAIL" for d in self.ALL_DIMS}))
+        self.assertEqual((matrix["tp"], matrix["fn"], matrix["tn"], matrix["fp"]),
+                         (self.n_fail, 0, 0, self.n_pass))
+        self.assertEqual(self._metrics(matrix), (1.0, 0.0, 0.5))
+        self.assertIn("balanced accuracy = 0.50", out)
+        self.assertIn("driver attribution = 1.00", out)
+
+    def test_constant_always_pass_judge_is_exposed_as_chance(self):
+        matrix, out = self._run_both(lambda _p: self._reply({}))
+        self.assertEqual((matrix["tp"], matrix["fn"], matrix["tn"], matrix["fp"]),
+                         (0, self.n_fail, self.n_pass, 0))
+        self.assertEqual(self._metrics(matrix), (0.0, 1.0, 0.5))
+        self.assertIn("balanced accuracy = 0.50", out)
+
+    def test_mixed_realistic_judge_matches_hand_computed_numbers(self):
+        # FAILs the first 3 gold-PASS fixtures (3 false positives) and the first 2
+        # gold-FAIL fixtures (2 true positives); PASSes everything else.
+        # Hand-computed: TP=2 FN=2 TN=11 FP=3
+        #   sensitivity = 2/4  = 0.50
+        #   specificity = 11/14 = 0.785714...
+        #   balanced    = (0.5 + 11/14) / 2 = 0.642857...
+        all_fail = {d: "FAIL" for d in self.ALL_DIMS}
+
+        def reply(i):
+            if i < 3:                                   # first 3 gold-PASS -> FP
+                return self._reply(all_fail)
+            if i < self.n_pass:                         # rest of gold-PASS -> TN
+                return self._reply({})
+            if i < self.n_pass + 2:                     # first 2 gold-FAIL -> TP
+                return self._reply(all_fail)
+            return self._reply({})                      # last 2 gold-FAIL -> FN
+        matrix, out = self._run_both(self._ordered_stub(reply))
+        self.assertEqual((matrix["tp"], matrix["fn"], matrix["tn"], matrix["fp"]),
+                         (2, 2, 11, 3))
+        sens, spec, bal = self._metrics(matrix)
+        self.assertAlmostEqual(sens, 0.5)
+        self.assertAlmostEqual(spec, 11 / 14)
+        self.assertAlmostEqual(bal, (0.5 + 11 / 14) / 2)
+        self.assertIn("balanced accuracy = 0.64", out)
+
+    def test_unparseable_rep_is_skipped_not_folded_into_a_cell(self):
+        # One gold-FAIL fixture returns garbage -> counted as skipped, absent from
+        # every cell (never a silent FN). The remaining cohort still scores.
+        def reply(i):
+            if i < self.n_pass:
+                return self._reply({})
+            if i == self.n_pass:
+                return "no verdict here"                # unparseable
+            driver = self.fail_fixtures[i - self.n_pass]["fail_dimension"]
+            return self._reply({driver: "FAIL"})
+        matrix, out = self._run_both(self._ordered_stub(reply))
+        self.assertEqual(matrix["skipped"], 1)
+        self.assertEqual((matrix["tp"], matrix["fn"], matrix["tn"], matrix["fp"]),
+                         (self.n_fail - 1, 0, self.n_pass, 0))
+        # Cells + skipped account for every fixture — nothing vanished.
+        self.assertEqual(sum(matrix[k] for k in ("tp", "fn", "tn", "fp", "skipped")),
+                         self.n_pass + self.n_fail)
+        self.assertEqual(self._metrics(matrix), (1.0, 1.0, 1.0))
+        self.assertIn("skipped (excluded from matrix) = 1", out)
+
+    def test_empty_cohort_prints_na_and_does_not_crash(self):
+        from fixtures.run_fixtures import (
+            new_confusion, confusion_metrics, print_confusion)
+        import io
+        import contextlib
+        m = new_confusion()
+        self.assertEqual(confusion_metrics(m),
+                         {"sensitivity": None, "specificity": None,
+                          "balanced_accuracy": None, "attribution": None})
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            print_confusion(m)          # must not ZeroDivisionError
+        self.assertIn("n/a", buf.getvalue())
+
+    def test_matrix_is_advisory_only(self):
+        # A judge that gets EVERY cohort wrong must still not change the exit code:
+        # only live_error (configured but 0/N scored) gates the run. Guards the
+        # promise that nothing new gates CI.
+        matrix, _ = self._run_both(
+            lambda _p: self._reply({d: "FAIL" for d in self.ALL_DIMS}))
+        self.assertEqual(self._metrics(matrix), (1.0, 0.0, 0.5))  # terrible judge
+        # CI's exact invocation (no --judge, no key) is unaffected and still green.
+        import os
+        import io
+        import contextlib
+        from unittest import mock
+        from fixtures.run_fixtures import main
+        buf = io.StringIO()
+        with mock.patch.dict(os.environ, {}, clear=True), \
+                contextlib.redirect_stdout(buf):
+            self.assertEqual(main([]), 0)
+            self.assertEqual(main(["--judge"]), 0)  # offline -> all SKIP, exit 0
 
 
 if __name__ == "__main__":
