@@ -48,11 +48,28 @@ detector documents, review note m4). Chinese/Japanese/Thai have no inter-word
 spaces and different sentence terminators, so whitespace tokenization collapses
 to a tiny word count and every per-word / per-sentence rate becomes garbage.
 Rather than emit authoritative-looking wrong numbers, this module DETECTS a
-predominantly-CJK genre and returns an explicit unsupported marker
-(`supported=False, script="CJK"`) with NO numeric fingerprint. Bilingual/CJK
+predominantly-CJK genre (>=20% CJK letters) and returns an explicit unsupported
+marker (`supported=False, script="CJK"`) with NO numeric fingerprint. Bilingual/CJK
 stylometry is v2 (consistent with voice-onboard + the detector, which both scope
 bilingual to v2). Callers must surface that marker; they must never present CJK
 numbers as if measured.
+
+Below that 20% refuse threshold the module still runs, but a SUB-threshold CJK
+share (say 12%) is not free of the problem: `_WORD_RE` never matches CJK
+codepoints and `.`/`!`/`?` are not how CJK sentences end, so the CJK fraction of
+the text is silently excluded from tokenization — the fingerprint measures only
+the English-script remainder, with an undercounted `total_words`. To avoid
+*silent* partial measurement, any fingerprint computed over text with CJK share
+in (0, 0.20) carries a `partial_scripts` field (e.g. `"CJK 12% excluded from
+tokenization"`) stating exactly what was left out, in both the returned dict and
+`format_fingerprint`'s rendering. Pure-English text has no such field.
+
+NO-CONTENT INPUT
+-----------------
+Samples that are empty, whitespace-only, or tokenize to zero words (e.g. bare
+punctuation) return an explicit `supported=False, reason="no_content"` marker,
+the same shape as the CJK refusal — never a silent all-zeros fingerprint that
+only a thin-N warning would hint at.
 
 USAGE
 -----
@@ -123,14 +140,34 @@ _SENT_SPLIT = re.compile(r"[.!?]+(?:\s+|$)")
 # A "word" for counting: run of word-ish chars incl. internal ' and -.
 _WORD_RE = re.compile(r"[A-Za-z0-9]+(?:['\-][A-Za-z0-9]+)*")
 # A "testable number": integers, decimals, percents, currency, ratios, ranges,
-# and figures with magnitude/units (2x, 3.5M, $40, 12%, 2025). We require a
-# digit so spelled-out "two" is not counted (rossmann means concrete figures).
+# and figures with magnitude/units (2x, 3.5M, $40, 12%). We require a digit so
+# spelled-out "two" is not counted (rossmann means concrete figures).
+#
+# Version strings ("v1.1", "2.3.4") are identifiers, not testable metrics, and
+# are stripped from the text BEFORE this regex runs (_VERSION_RE below) so they
+# never inflate the count.
+#
+# Bare 4-digit years (1900-2099, e.g. "2025") are, BY DESIGN, EXCLUDED from the
+# count: a year reads as a date/label, not a concrete claim about magnitude. A
+# 4-digit figure that carries a currency prefix, decimal, comma, or magnitude
+# suffix (e.g. "$2025", "2,025", "2025%", "2025x") is NOT a bare year and DOES
+# count — see `_is_bare_year` for the exact boundary. Code and this docstring
+# must agree: if you change one, change the other.
 _NUMBER_RE = re.compile(
     r"""(?<![\w])            # not mid-word
         [\$€£]?              # optional currency
         \d[\d,]*             # integer part
         (?:\.\d+)?           # optional decimal
         (?:\s?%|x|k|m|b|bn)? # optional unit/magnitude
+    """,
+    re.IGNORECASE | re.VERBOSE,
+)
+# Version-string patterns to strip before counting: "v1", "v1.1", "v2.3.4", and
+# bare semver "1.2.3" (no leading v). Removed wholesale so no fragment of them
+# leaks into _NUMBER_RE's matches.
+_VERSION_RE = re.compile(
+    r"""\bv\d+(?:\.\d+){0,2}\b   # v1, v1.1, v2.3.4
+      | \b\d+\.\d+\.\d+\b        # bare semver 1.2.3
     """,
     re.IGNORECASE | re.VERBOSE,
 )
@@ -144,17 +181,36 @@ def _round(x, n=1):
     return round(float(x), n)
 
 
+def _cjk_share(text):
+    """Fraction of alphabetic characters that are CJK-script. 0.0 if no letters."""
+    letters = [c for c in text if c.isalpha()]
+    if not letters:
+        return 0.0
+    cjk = sum(1 for c in letters if _CJK_RE.match(c))
+    return cjk / len(letters)
+
+
 def is_cjk_dominant(text, threshold=0.20):
     """True if CJK-script codepoints are a large share of the letters.
 
     Threshold is low (0.20) on purpose: even a fifth CJK means whitespace word
     counting is already unreliable, so we refuse rather than emit garbage.
     """
-    letters = [c for c in text if c.isalpha()]
-    if not letters:
+    return _cjk_share(text) >= threshold
+
+
+def _is_bare_year(raw_match):
+    """True if a raw _NUMBER_RE match is a plain 1900-2099 year, nothing else.
+
+    A "bare" year has no currency, decimal point, comma, or magnitude/percent
+    suffix — those all mean "this 4-digit figure is doing more than dating
+    something" and must still count. Must stay consistent with the _NUMBER_RE
+    docstring above.
+    """
+    s = raw_match.strip()
+    if not s.isdigit() or len(s) != 4:
         return False
-    cjk = sum(1 for c in letters if _CJK_RE.match(c))
-    return (cjk / len(letters)) >= threshold
+    return 1900 <= int(s) <= 2099
 
 
 def confidence_label(n_samples):
@@ -266,9 +322,16 @@ def punctuation_density(text):
 
 
 def testable_number_density(text):
-    """Concrete figures per 100 words (rossmann's testable-number signal)."""
+    """Concrete figures per 100 words (rossmann's testable-number signal).
+
+    Version strings (v1.1, 1.2.3) are stripped before counting — identifiers,
+    not metrics. Bare 4-digit years (1900-2099) are excluded by design — dates,
+    not testable claims (see _NUMBER_RE / _is_bare_year docstrings).
+    """
     words = len(_words(text))
-    nums = len(_NUMBER_RE.findall(text))
+    cleaned = _VERSION_RE.sub(" ", text)
+    raw = _NUMBER_RE.findall(cleaned)
+    nums = len([m for m in raw if not _is_bare_year(m)])
     per100 = (nums / words * 100.0) if words else 0.0
     return {"count": nums, "per_100_words": _round(per100)}
 
@@ -311,19 +374,31 @@ def compute_fingerprint(samples, genre=None):
     n = len(samples)
     joined = "\n\n".join(samples)
 
-    if is_cjk_dominant(joined):
+    cjk_share = _cjk_share(joined)
+    if cjk_share >= 0.20:
         return {
             "genre": genre,
             "sample_count": n,
             "supported": False,
             "script": "CJK",
-            "note": ("CJK / non-whitespace script detected: stylometry assumes "
-                     "whitespace-delimited words, so per-word/per-sentence rates "
-                     "would be garbage. No numbers emitted. Bilingual/CJK "
-                     "stylometry is v2."),
+            "note": ("CJK / non-whitespace script detected (%.0f%% of letters): "
+                      "stylometry assumes whitespace-delimited words, so "
+                      "per-word/per-sentence rates would be garbage. No numbers "
+                      "emitted. Bilingual/CJK stylometry is v2."
+                      % (cjk_share * 100)),
         }
 
     total_words = len(_words(joined))
+    if n == 0 or total_words == 0:
+        return {
+            "genre": genre,
+            "sample_count": n,
+            "supported": False,
+            "reason": "no_content",
+            "note": ("No measurable content: samples are empty, whitespace-only, "
+                     "or tokenize to zero words. No numbers emitted."),
+        }
+
     result = {
         "genre": genre,
         "sample_count": n,
@@ -341,6 +416,12 @@ def compute_fingerprint(samples, genre=None):
         result["warning"] = (
             "N=%d is below the %d-sample floor; treat every number as "
             "indicative only, not an established habit." % (n, MIN_SAMPLES))
+    # Sub-threshold CJK (0 < share < 0.20): the CJK fraction never matches
+    # _WORD_RE and its sentences aren't split on . ! ? — it is silently excluded
+    # from tokenization, not measured. Never let that be silent.
+    if 0.0 < cjk_share < 0.20:
+        result["partial_scripts"] = (
+            "CJK %.0f%% excluded from tokenization" % (cjk_share * 100))
     return result
 
 
@@ -355,8 +436,9 @@ def compute_per_genre(genre_samples):
 def format_fingerprint(fp):
     g = fp.get("genre") or "(unlabelled)"
     if not fp.get("supported", True):
-        return ("### Measured Fingerprint — %s\n- UNSUPPORTED: %s (N=%d)"
-                % (g, fp.get("note", ""), fp.get("sample_count", 0)))
+        reason = fp.get("script") or fp.get("reason") or "unsupported"
+        return ("### Measured Fingerprint — %s\n- UNSUPPORTED (%s): %s (N=%d)"
+                % (g, reason, fp.get("note", ""), fp.get("sample_count", 0)))
     sl = fp["sentence_length"]
     pd = fp["punctuation_density"]
     tn = fp["testable_number_density"]
@@ -372,6 +454,8 @@ def format_fingerprint(fp):
     ]
     if fp.get("warning"):
         lines.append("- CONFIDENCE NOTE: %s" % fp["warning"])
+    if fp.get("partial_scripts"):
+        lines.append("- CAVEAT: partial_scripts: %s" % fp["partial_scripts"])
     lines += [
         "- Sentence length: mean=%.1f, variance=%.1f, burstiness(CV)=%.2f "
         "over %d sentences (variance is the rhythm signal)"

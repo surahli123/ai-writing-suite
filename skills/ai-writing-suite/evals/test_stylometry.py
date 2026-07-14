@@ -56,6 +56,29 @@ class KnownInputKnownOutput(unittest.TestCase):
         tn = S.testable_number_density("two teams shipped 12% faster over 40 days")
         self.assertEqual(tn["count"], 2)
 
+    def test_testable_number_strips_version_strings(self):
+        # "v1.1" is an identifier, not a metric -> excluded entirely.
+        self.assertEqual(
+            S.testable_number_density("shipped v1.1 today")["count"], 0)
+        # Full semver, with or without leading 'v' -> also excluded.
+        self.assertEqual(
+            S.testable_number_density("bumped to v2.3.4 release")["count"], 0)
+        self.assertEqual(
+            S.testable_number_density("now at 1.2.3 stable")["count"], 0)
+
+    def test_testable_number_excludes_bare_years_by_design(self):
+        # A bare 1900-2099 year reads as a date, not a testable claim.
+        self.assertEqual(
+            S.testable_number_density("back in 2025 we shipped")["count"], 0)
+
+    def test_testable_number_still_counts_year_with_suffix_or_currency(self):
+        # A 4-digit figure is NOT a "bare" year once it carries a magnitude/
+        # percent suffix or currency prefix — those mean it's a real metric.
+        self.assertEqual(
+            S.testable_number_density("grew 2025% this year")["count"], 1)
+        self.assertEqual(
+            S.testable_number_density("cost $2025 total")["count"], 1)
+
     def test_ai_register_absence_and_hits(self):
         clean = S.ai_register_absences("We shipped it. It was fast. Nobody noticed.")
         self.assertEqual(clean["total_hits"], 0)
@@ -182,6 +205,74 @@ class CJKPath(unittest.TestCase):
         fp = S.compute_fingerprint(self.ZH, genre="blog-zh")
         rendered = S.format_fingerprint(fp)
         self.assertIn("UNSUPPORTED", rendered)
+
+    def test_boundary_at_threshold(self):
+        # 19% -> below refuse threshold; 20% and 21% -> at/above, refused.
+        def _text(cjk_chars, total=100):
+            return "一" * cjk_chars + "a" * (total - cjk_chars)
+        self.assertAlmostEqual(S._cjk_share(_text(19)), 0.19)
+        self.assertFalse(S.is_cjk_dominant(_text(19)))
+        self.assertAlmostEqual(S._cjk_share(_text(20)), 0.20)
+        self.assertTrue(S.is_cjk_dominant(_text(20)))
+        self.assertTrue(S.is_cjk_dominant(_text(21)))
+
+    def test_sub_threshold_cjk_gets_partial_scripts_caveat(self):
+        # A genuinely mixed sample under 20% CJK: numbers still print (not
+        # refused), but the fingerprint must carry an explicit caveat saying the
+        # CJK fraction was excluded from tokenization — never silent.
+        mixed = [
+            "This report covers Q3 numbers and a little 中文 aside here today.",
+            "Second sample stays mostly English with some 中文 mixed in too.",
+            "Third sample: English dominant, small 中文 aside again right here.",
+        ]
+        joined = "\n\n".join(mixed)
+        share = S._cjk_share(joined)
+        self.assertGreater(share, 0.0)
+        self.assertLess(share, 0.20)
+
+        fp = S.compute_fingerprint(mixed, genre="mixed")
+        self.assertTrue(fp["supported"])  # not refused
+        self.assertIn("partial_scripts", fp)
+        self.assertIn("CJK", fp["partial_scripts"])
+        self.assertIn("excluded from tokenization", fp["partial_scripts"])
+
+        rendered = S.format_fingerprint(fp)
+        self.assertIn("CAVEAT: partial_scripts", rendered)
+
+    def test_pure_english_has_no_partial_scripts_field(self):
+        fp = S.compute_fingerprint(
+            ["Plain English text.", "No CJK here.", "Third sample line."],
+            genre="en")
+        self.assertNotIn("partial_scripts", fp)
+
+
+class NoContentRefusal(unittest.TestCase):
+    """Empty/whitespace-only/zero-word input must refuse loudly, not emit a
+    silent all-zeros fingerprint (the pre-fix behavior only the N<3 warning
+    hinted at)."""
+
+    def test_all_empty_samples_refused(self):
+        fp = S.compute_fingerprint(["", "   ", ""], genre="empty")
+        self.assertFalse(fp["supported"])
+        self.assertEqual(fp.get("reason"), "no_content")
+        self.assertIn("note", fp)
+        # No numeric fingerprint keys leak through.
+        self.assertNotIn("sentence_length", fp)
+        self.assertNotIn("testable_number_density", fp)
+
+    def test_punctuation_only_samples_refused(self):
+        # Non-empty strings that tokenize to zero words (_WORD_RE never matches
+        # bare punctuation) must also refuse, not silently report total_words=0.
+        fp = S.compute_fingerprint(["...", "!!!", "???"], genre="punct-only")
+        self.assertFalse(fp["supported"])
+        self.assertEqual(fp.get("reason"), "no_content")
+        self.assertEqual(fp["sample_count"], 3)
+
+    def test_format_renders_no_content_unsupported(self):
+        fp = S.compute_fingerprint([], genre="nothing")
+        rendered = S.format_fingerprint(fp)
+        self.assertIn("UNSUPPORTED", rendered)
+        self.assertIn("no_content", rendered)
 
 
 if __name__ == "__main__":
