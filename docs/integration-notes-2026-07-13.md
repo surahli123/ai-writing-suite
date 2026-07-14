@@ -77,3 +77,27 @@ C/D: narrative+audit). Verdicts to be appended.
 - kb lane adds tools/ + evals/test_kb_ingest.py — no file overlap with any other
   lane (verified by diff --stat), only run_all discovery picks the tests up
   automatically.
+
+## Architecture roadmap (from the external /improve review — DO NOT start before merges)
+
+Full review: reviews/2026-07-13-architecture-improve-review.md (verdict NEEDS-WORK).
+Five refactors, ranked; every one except the two "safe NOW" preparation items is
+gated on the open branches merging (run_all.sh and evals/fixtures/ are merge-hot):
+
+1. Capability-runner discovery replaces ordinal run_all.sh numbering (the 3-branch
+   renumbering collision proved the point). Safe NOW: design the runner protocol only.
+2. Pattern markdown becomes the typed registry (metadata table per tell entry + one
+   stdlib loader); 00-index/rubric/coverage-matrix become generated projections.
+3. One text-analysis seam (aiws/text.py) before multilingual #14 — three tokenizers
+   already disagree (detector, voice grader, stylometry).
+4. judge.py behind one evaluate() façade (deep module — do NOT split into shallow utils).
+5. Reverse the tools→evals dependency (aiws/kb/ module; kb_validate currently imports
+   test scaffolding via sys.path hacks).
+
+OWNER DECISIONS needed before the registry/refactor work (the review's hard questions):
+(a) does catalog "severity" mean editorial harm, detection confidence, or enforcement
+strength — one axis per field; (b) what is the scheduled live lane FOR (availability vs
+quality vs release regression); (c) are tell IDs language-universal before #14;
+(d) is the detector's numeric score a compatibility contract (shared tokenization will
+shift bands); (e) are generated markdown projections mandatory review artifacts;
+(f) does a multi-sub-type judge dimension score aggregate or per-ID.
