@@ -299,12 +299,12 @@ def run_fail_judge(data, matrix=None):
     discriminated = missed = wrong_reason = skipped = 0
     for f in data["fixtures"]:
         prompt = build_judge_prompt(f, template)
-        raw = judge.score(prompt)  # raises JudgeError on transport/auth (loud)
-        parsed = judge.parse_dimensions(raw) if raw is not None else {}
+        result = judge.evaluate(judge.JudgeRequest(
+            prompt=prompt, before=f["before"], after=f["after"],
+            rubric_focus=f["rubric_focus"]))  # raises JudgeError on transport (loud)
+        raw, parsed, verdict = result.raw, result.parsed, result.verdict
         if raw is not None:
-            _report_evidence(f, raw, judge)
-        verdict = (judge.aggregate([judge.parse_dimension_lines(raw)],
-                                   f["rubric_focus"]) if raw is not None else None)
+            _report_evidence(f, result)
         record_verdict(matrix, f.get("expected_verdict"), verdict)
         if verdict is None:
             skipped += 1
@@ -345,18 +345,18 @@ def run_fail_judge(data, matrix=None):
     return discriminated, missed, wrong_reason, skipped, live_error
 
 
-def _report_evidence(fixture, raw, judge):
+def _report_evidence(fixture, result):
     """Advisory per-dimension evidence audit for one scored fixture.
 
     Prints the accepted EVIDENCE quote for every graded dim (so an operator can
     read what the judge cited), plus a [warn] line when a quote is missing,
     malformed, or well-formed-but-not-verbatim (appears nowhere in before/after —
     a fabricated quote the parser alone can't catch). Purely advisory: it never
-    changes the verdict or the exit code. Mirrors judge.evidence_warnings() for the
-    missing case and adds the verbatim check on top.
+    changes the verdict or the exit code. Reads the parsed dims + verbatim check the
+    façade already computed on this fixture's before/after (JudgeResult).
     """
-    parsed = judge.parse_dimensions(raw)
-    verified = judge.verify_evidence(parsed, fixture["before"], fixture["after"])
+    parsed = result.parsed
+    verified = result.verified
     fid = fixture["id"]
     for dim, rec in parsed.items():
         ev = rec.get("evidence")
@@ -448,11 +448,12 @@ def run_judge(data, matrix=None):
             print(f"        prompt[0:2]: {head[:90]}...")
             continue
 
-        raw = judge.score(prompt)  # raises JudgeError on transport/auth (loud)
+        result = judge.evaluate(judge.JudgeRequest(
+            prompt=prompt, before=f["before"], after=f["after"],
+            rubric_focus=f["rubric_focus"]))  # raises JudgeError on transport (loud)
+        raw, verdict = result.raw, result.verdict
         if raw is not None:
-            _report_evidence(f, raw, judge)
-        verdict = (judge.aggregate([judge.parse_dimension_lines(raw)],
-                                   f["rubric_focus"]) if raw is not None else None)
+            _report_evidence(f, result)
         record_verdict(matrix, f.get("expected_verdict"), verdict)
         if verdict is None:
             skipped += 1
