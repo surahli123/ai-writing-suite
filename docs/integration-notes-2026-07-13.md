@@ -134,3 +134,18 @@ shift bands); (e) are generated markdown projections mandatory review artifacts;
 5. Full-suite verification after EACH merge: run_all.sh green + calibration 38% + 
    validate_packaging.py green.
 6. Then the prose mega-fix branch + Q10 design doc.
+
+## FINAL STATE (2026-07-13, end of session)
+
+ALL EIGHT PRs MERGED: #15 eval-hardening (v1.1.0 tagged), #16 behavioral-evals +
+records, #17 release-hygiene, #18 assets-catalog-lifecycle, #19 narrative-shape,
+#20 audit-report, #21 stylometry, #22 kb-ingestion. Main @ 087cbec: 7-step run_all
+green, 341 tests OK, calibration 3/8 = 38%, packaging validator green. Premise
+guards fired twice during integration (confusion-matrix cohort sizes 14/4→18/5;
+catalog registry pin 67→71) — both re-derived, not weakened.
+
+REMAINING (next session): the prose mega-fix (remediation items 1.8–1.13) +
+Q7 full-document mixed mode + Q8 post-edit voice-capture rider + Q9 frontmatter
+fix + Q10 multi-genre profile contract (DESIGN DOC first, owner review, then
+build). Architecture roadmap (5 refactors) now unblocked by Q1–Q6. Cleanup: delete
+merged local branches + the empty feat/audit-report-template; agent worktrees.

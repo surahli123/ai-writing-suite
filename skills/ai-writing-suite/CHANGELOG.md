@@ -9,6 +9,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Document/narrative-shape tell category (#9)** — the first document-altitude
+  category (`narrative-shape.md`, N1–N4): over-explained themes, tidy single-track
+  resolution, flat escalation, absent ambiguity, each with a validity condition so
+  a genuinely simple update is never forced to fake complexity. Judge-only/advisory
+  `narrative_shape_ok` dimension wired into comms-draft's structural planning, with
+  a gold-FAIL over-correction partner fixture.
+- **Quantitative stylometric fingerprint (#15)** — `_shared/stylometry.py` computes a
+  per-genre measured fingerprint (sentence-length variance/burstiness, function-word
+  deltas, char 3-grams, punctuation and testable-number density, AI-register absences)
+  written alongside the 10 qualitative dimensions; every number is recomputable from
+  the samples, so the voice-contract eval asserts on numbers, not prose. CJK is
+  detected and refused rather than silently mismeasured.
+- **Audit-report output contract (#19)** — comms-polish detect/review now emit a fixed
+  report shape (worst-offender lead, Critical/Moderate/Minor with definitions,
+  Quote→Tell→Why→Fix findings resolved against the live 71-id catalog, calibrated
+  "reads well" close, on-demand score as the final line), enforced by a deterministic
+  output-contract check (`run_all.sh` step 7) — structure only, not behavioral coverage.
+- **Fork KB ingestion tooling (#25)** — `tools/kb_ingest.py` (Confluence HTML/markdown
+  export → KB entries + INDEX merge; idempotent including the collision path; atomic
+  writes; the frozen INDEX protocol header is never rewritten) and `tools/kb_validate.py`
+  (structural pre-flight wrapping kb_lint, with retrieval-smoke tie/shadow detection and
+  a generic-KB shadowing warning), plus a data-person onboarding guide
+  (`docs/kb-onboarding.md`).
+- **Behavioral-eval lanes for comms-draft and voice-onboard** (`run_all.sh` steps 5–6):
+  pre-authored good/bad artifact discrimination with white-box mutant families
+  (must-catch floors) and a black-box holdout adversary corpus.
+
+### Fixed
+- **Pattern-catalog contradictions** — register shift consolidated to one canonical
+  entry with a validity condition; C2/H7/H8 and S9/L1 duplicates resolved via
+  canonical/alias precedence; the R1→C8 rhetorical-question fix-loop closed; validity
+  conditions added to S1/S2/T9 (owner ruling: the catalog optimizes prose quality,
+  not provenance detection).
+- **Self-improvement lifecycle** — `graduated` status defined everywhere; scope enum
+  covers all four sub-skills; a concrete owner-gated promotion procedure replaces the
+  ownerless one (a proposed rule older than 30 days now prompts a decision).
+- **Release hygiene** — version-neutral manifest descriptions; root LICENSE; corrected
+  copyright holder; NOTICE records the MIT-era nature-skills absorption bounds; CI now
+  validates manifests + SKILL.md frontmatter (`scripts/validate_packaging.py`); README
+  reconciled to shipped reality with a quickstart; RovoDev claims narrowed to the
+  verified 2026-06-08 scope.
+
 ---
 
 ## [1.1.0] — 2026-07-13
