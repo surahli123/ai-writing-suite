@@ -15,8 +15,8 @@
   table is a contract between the pipeline that writes it and the model that
   reads it:
     - WRITER:  `voice-onboard`  fills this in from your samples.
-    - READER:  `comms-polish`   reads it every run to match YOUR voice instead
-               of imposing a generic "clean" register.
+    - READER:  `comms-polish`   reads it before any rewrite to match YOUR voice
+               instead of imposing a generic "clean" register.
 
   Because both sides depend on it, the FIELD NAMES below are stable. Treat the
   `## H2 headers` as the column names of the contract. Add evidence and detail
@@ -63,6 +63,10 @@
 > SAMPLE PROFILE. Replace by running `voice-onboard`. The example below is a
 > fictional author ("Sam, a data-scientist who blogs about search ranking") so
 > the field shapes are concrete. Your real profile overwrites all of it.
+> **Consumers (`comms-polish`, `comms-draft`) must treat any file carrying this
+> `> SAMPLE PROFILE.` banner as NO profile** — degrade to inferred voice and make
+> the Q8 voice-onboard offer, exactly as if the file were absent. A real profile
+> written by `voice-onboard` never carries this banner.
 
 ## Meta
 

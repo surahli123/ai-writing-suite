@@ -9,8 +9,9 @@ Learn how *you* write, so the rest of the suite stops sounding like a clean
 generic robot and starts sounding like you.
 
 The job is narrow: read your real writing, distill a **voice profile**, and write
-it to a file the polish skill reads on every run. This skill does NOT draft or
-rewrite anything — it only listens and profiles.
+it to a file `comms-polish` reads before any rewrite (and `comms-draft` before
+drafting). This skill does NOT draft or rewrite anything — it only listens and
+profiles.
 
 ## Locating shared assets (suite root)
 
@@ -71,13 +72,15 @@ How they can hand samples over:
 - Point to local files ("read everything in `~/writing/`") — you read them.
 - Paste text inline, separated by `---`.
 - **Their own edits to something the suite returned.** If the user hand-corrected
-  a `comms-polish` or `comms-draft` output, the delta between what was returned and
-  what they changed is the strongest voice signal available — treat the corrected
-  version as a high-value sample (`comms-polish`/`comms-draft` offer to route those
-  edits here).
+  a `comms-polish` output, the delta between what was returned and what they
+  changed is the strongest voice signal available — treat the corrected version as
+  a high-value sample (`comms-polish` offers to route those edits here).
 
-Confirm what you received before extracting: "Got 6 samples — 4 blog posts,
-2 memos. That's Medium confidence. Want me to extract now, or add more first?"
+Confirm what you received before extracting: "Got 6 blog posts — that's Medium
+confidence for your blog voice. Extract now, or add more first?" If the samples
+span genres, say so and ask which ONE to profile this run: "These are 4 blog posts
+and 2 memos — different voices. Which should I profile this run? (One genre per
+run; the other can be a separate run.)"
 
 ### Step 2 — Extract the style fingerprint
 
@@ -182,8 +185,14 @@ Only after the user confirms, write the profile to
 already exists, show what changed before overwriting — don't silently replace
 their previous one.
 
+**A real profile must NOT carry the `> SAMPLE PROFILE.` banner** the shipped
+example uses. Overwrite that banner and Sam's example content entirely — consumers
+(`comms-polish`, `comms-draft`) detect the un-replaced sample by that banner and
+treat it as *no profile*, so leaving the banner in place would make your real
+profile invisible. A real profile is defined by the banner's absence.
+
 Tell the user where it landed and that `comms-polish` will now read it
-automatically.
+automatically (before any rewrite).
 
 ### Step 5 — Leave a calibration loop open
 
