@@ -15,7 +15,7 @@ README, memo**.
 
 Adapted from `weijt606/anti-vibe-writing` (`scenario-presets.md`, MIT). The
 original ships five Chinese-platform scenarios; this is the English subset mapped
-to the v1 genres. Bilingual presets are a v2 item (design §5, deferred list).
+to the v1 genres. Bilingual presets are a v2 item (deferred).
 
 ## How to use a preset
 
@@ -47,7 +47,9 @@ truth instead of re-listing patterns inline.
 - `structural-tells` — rule-of-three and "not X but Y" theatrics read as
   performance, not a person.
 - `significance-attribution` — "many / some / a lot": replace with the actual
-  number.
+  number **only when the source provides it**; otherwise flag the missing number
+  and leave the vague quantifier — never invent a figure (see *Cross-scenario
+  invariants*: don't invent facts, numbers are immutable).
 
 **Target tone/length:** punchy, one idea per tweet, leave a reason to read the
 next line. Inversion, fragments, and an incomplete sentence are fine here.
@@ -59,8 +61,9 @@ next line. Inversion, fragments, and an incomplete sentence are fine here.
   this. Never touch numbers, names, or links.
 
 **Endings that work:** a sharp question, a concrete next step, one quotable line,
-or just stop on the fact. Never "more in the next tweet" — the next tweet starts
-itself.
+or just stop on the fact — each pulled from what the draft already says, never
+invented (see *Cross-scenario invariants*). Never "more in the next tweet" — the
+next tweet starts itself.
 
 ---
 
@@ -88,7 +91,9 @@ neutrality. Specific story or claim up front, payoff the reader can take away.
 - A single emoji *if* it's the author's habit and earns its place.
 
 **Endings that work:** a concrete takeaway, a real question (not bait), or a
-specific next step. Drop "What do you think? Let me know in the comments."
+specific next step — each sourced from the post's own material, never newly
+invented (see *Cross-scenario invariants*). Drop "What do you think? Let me know
+in the comments."
 
 ---
 
@@ -149,7 +154,9 @@ what was chosen, what was dropped, and why.
 - Legal, security, financial, or safety warnings — never polished away.
 
 **Endings that work:** a clear recommendation or decision, not a balanced summary
-that refuses to judge.
+that refuses to judge — the recommendation must follow from the memo's own
+analysis; don't manufacture a branch, decision, or next step the content doesn't
+support (see *Cross-scenario invariants*).
 
 ---
 
@@ -159,6 +166,10 @@ No matter the genre, these never change (these are the bottom line, not preset
 preferences):
 
 - Don't invent facts.
+- **Endings are selected, not invented.** Sharpen an ending from material the
+  source already carries; never invent a new question, next step, takeaway,
+  call-to-action, or branch the source doesn't support. If a genre wants an ending
+  the source can't supply, flag `[NEEDS: …]` rather than fabricating one.
 - Don't strengthen the author's position for them.
 - Keep caveats that carry real uncertainty.
 - Numbers, names, and quotes are immutable unless the user asks.

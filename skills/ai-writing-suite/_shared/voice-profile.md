@@ -15,14 +15,40 @@
   table is a contract between the pipeline that writes it and the model that
   reads it:
     - WRITER:  `voice-onboard`  fills this in from your samples.
-    - READER:  `comms-polish`   reads it every run to match YOUR voice instead
-               of imposing a generic "clean" register.
+    - READER:  `comms-polish`   reads it before any rewrite to match YOUR voice
+               instead of imposing a generic "clean" register.
 
   Because both sides depend on it, the FIELD NAMES below are stable. Treat the
   `## H2 headers` as the column names of the contract. Add evidence and detail
   under them freely, but do not rename or drop the headers, or `comms-polish`
   will silently fall back to generic behavior (a silent-fallback bug we want to
   avoid).
+
+  CANONICAL HEADER ORDER (the single source of truth)
+  ---------------------------------------------------
+  This ordered list IS the contract. `voice-onboard` (producer) and `comms-polish`
+  + `comms-draft` (consumers) all reference THIS list rather than restating a
+  divergent subset of their own. The blank twin `host-profile-template.md` mirrors
+  it header-for-header, and the voice-contract eval guards it against drift.
+
+    1.  Meta
+    2.  Tone
+    3.  Sentence Length
+    4.  Vocabulary
+    5.  Vocabulary Do
+    6.  Vocabulary Don't
+    7.  Signature Moves
+    8.  Punctuation & Formatting
+    9.  Openings & Closings
+    10. Uncertainty Style
+    11. Things To Avoid
+    12. Scope & Calibration
+    13. Measured Fingerprint
+    14. Changelog
+
+  Note: `Vocabulary` (the descriptive header) AND `Scope & Calibration` are BOTH
+  in the contract — earlier drafts of the skills each dropped one; the fix is that
+  every skill points here instead of listing headers inline.
 
   EVERY claim needs sample evidence. No evidence -> leave the field "Unknown"
   rather than inventing a trait. A profile built on guesses is worse than no
@@ -37,6 +63,10 @@
 > SAMPLE PROFILE. Replace by running `voice-onboard`. The example below is a
 > fictional author ("Sam, a data-scientist who blogs about search ranking") so
 > the field shapes are concrete. Your real profile overwrites all of it.
+> **Consumers (`comms-polish`, `comms-draft`) must treat any file carrying this
+> `> SAMPLE PROFILE.` banner as NO profile** — degrade to inferred voice and make
+> the Q8 voice-onboard offer, exactly as if the file were absent. A real profile
+> written by `voice-onboard` never carries this banner.
 
 ## Meta
 

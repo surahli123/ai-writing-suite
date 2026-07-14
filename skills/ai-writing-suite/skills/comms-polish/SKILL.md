@@ -1,6 +1,6 @@
 ---
 name: comms-polish
-description: Polish prose that sounds AI-written while preserving meaning, facts, and author voice. Modes - detect, review, rewrite, edit - plus a 0-100 AI-tell score on demand. Use for docs, emails, posts, reports, and user-facing copy. Not for code cleanup, and not for learning or extracting an author's voice - that is voice-onboard. A mixed request to polish AND add a new section or content routes to comms-draft - polishing never adds substance.
+description: Polish prose that sounds AI-written while preserving meaning, facts, and author voice. Modes - detect, review, rewrite, edit - plus a 0-100 AI-tell score on demand. Use for docs, emails, posts, reports, and user-facing copy. Not for code cleanup, and not for learning or extracting an author's voice - that is voice-onboard. A mixed request to polish AND add new content routes to comms-draft, which treats the existing text as immutable source, returns the fully revised document, and runs this polish final-pass itself - polishing here never adds substance.
 ---
 
 # comms-polish
@@ -38,17 +38,17 @@ Before scanning or rewriting, load the consolidated catalog. Read the index firs
 to see what's where, then the category files relevant to the draft:
 
 - `_shared/patterns/00-index.md` — index + how to read entries
-- `lexical-tells.md` — AI vocabulary (tiered), copula avoidance, synonym cycling, false ranges, hyphen pairs, hollow intensifiers
-- `significance-attribution.md` — significance/novelty inflation, vague attribution, name-dropping, promotional language, superficial -ing, speculative gap-filling, consultant-speak
-- `structural-tells.md` — rule of three, negative parallelism, formulaic challenges, over-structure, inline-header lists, reshuffle immunity, treadmill effect
-- `hedging-filler.md` — filler, stacked hedging, generic/future-narrative closers, confidence-calibration phrases, signposting
-- `punctuation-formatting.md` — em dashes, bold overuse, emoji headers, curly quotes, title case, hashtag stuffing, placeholders, citation/UTM fingerprints
-- `communication-artifacts.md` — chatbot tics, sycophancy, acknowledgment loops, cutoff disclaimers, reasoning-chain leaks, engagement hooks, emotional flatline
-- `rhythm-stylometric.md` — sentence/paragraph uniformity (burstiness), low TTR, perplexity, register shift, **and the what-NOT-to-flag guardrails**
-- `overstepping-presumption.md` — over-stepping (反代入式越位感): presumed cognition, strawman misconception, projected mental image, self-Q&A-as-judge. Self-scan: does the draft think *for* the reader ("you assume X / 你以为 X / Can you…? Yes —")? Flag only when the presumed prior is a **manufactured** strawman; keep it when X is a real, widespread belief (the validity condition). Judge-only — preserve legitimate contrasts.
+- `_shared/patterns/lexical-tells.md` — AI vocabulary (tiered), copula avoidance, synonym cycling, false ranges, hyphen pairs, hollow intensifiers
+- `_shared/patterns/significance-attribution.md` — significance/novelty inflation, vague attribution, name-dropping, promotional language, superficial -ing, speculative gap-filling, consultant-speak
+- `_shared/patterns/structural-tells.md` — rule of three, negative parallelism, formulaic challenges, over-structure, inline-header lists, reshuffle immunity, treadmill effect
+- `_shared/patterns/hedging-filler.md` — filler, stacked hedging, generic/future-narrative closers, confidence-calibration phrases, signposting
+- `_shared/patterns/punctuation-formatting.md` — em dashes, bold overuse, emoji headers, curly quotes, title case, hashtag stuffing, placeholders, citation/UTM fingerprints
+- `_shared/patterns/communication-artifacts.md` — chatbot tics, sycophancy, acknowledgment loops, cutoff disclaimers, reasoning-chain leaks, engagement hooks, emotional flatline
+- `_shared/patterns/rhythm-stylometric.md` — sentence/paragraph uniformity (burstiness), low TTR, perplexity, register shift, **and the what-NOT-to-flag guardrails**
+- `_shared/patterns/overstepping-presumption.md` — over-stepping (反代入式越位感): presumed cognition, strawman misconception, projected mental image, self-Q&A-as-judge. Self-scan: does the draft think *for* the reader ("you assume X / 你以为 X / Can you…? Yes —")? Flag only when the presumed prior is a **manufactured** strawman; keep it when X is a real, widespread belief (the validity condition). Judge-only — preserve legitimate contrasts.
 
-Always apply the guardrails in `rhythm-stylometric.md`: look for clusters, not
-isolated tells. These are signals, not proof.
+Always apply the guardrails in `_shared/patterns/rhythm-stylometric.md`: look for
+clusters, not isolated tells. These are signals, not proof.
 
 The catalog is the rule source. The local references decide *how* to apply it:
 
@@ -63,6 +63,11 @@ This skill edits prose, not code.
 - Do not use for: source-code cleanup, architecture simplification, test rewriting, or changing program behavior.
 - Preserve: facts, citations, numbers, file paths, commands, API names, quoted text, and claims unless the user explicitly asks to change them.
 - Flag unsupported claims instead of inventing evidence.
+- **Mixed polish-plus-add is not this skill.** If the request also asks to ADD new
+  content (a new section, new material, not just rewording), hand it to
+  `comms-draft`: it treats your existing text as immutable source, returns the
+  fully revised whole document, and runs the final-pass itself. Polishing never
+  adds substance — do not write the new section here.
 
 ## Modes
 
@@ -79,23 +84,54 @@ Pick the mode from the user's request. If unclear, use `rewrite`.
 
 Voice has three sources, in priority order:
 
-1. **A learned voice profile** at `_shared/voice-profile.md`. This is produced
-   by the `voice-onboard` sub-skill.
-   **Before any rewrite, check whether this file exists and read it if it does.**
+1. **A valid learned voice profile** at `_shared/voice-profile.md`, produced by
+   the `voice-onboard` sub-skill.
+   **Before any rewrite, check for a *valid* profile: the file must exist AND not
+   be the shipped sample.** The shipped file is a filled example (fictional "Sam")
+   carrying a `> SAMPLE PROFILE.` banner blockquote near the top. If that banner is
+   present, the profile is **not real** — do not load Sam's voice; treat it as no
+   profile and fall through to graceful degradation and the Q8 offer below. Only a
+   file with no such banner counts as a valid profile.
    It is loose coupling: comms-polish does not create or own that file — it reads
-   whatever fields are present and biases edits toward them. Sections to use when
-   present: Tone, Sentence Length, Vocabulary Do / Vocabulary Don't, Signature
-   Moves, Punctuation & Formatting, Openings & Closings, Uncertainty Style, Things
-   To Avoid, and Scope & Calibration (which says where the profile applies). Read
-   what's there; ignore what isn't — never fail on a missing section.
+   whatever fields are present in a valid profile and biases edits toward them. The
+   profile's header set is the **canonical ordered list at the top of
+   `_shared/voice-profile.md`** (the single source of truth; do not restate a
+   divergent subset here). Use every header present that carries voice guidance —
+   Tone, Sentence Length, Vocabulary Don't (the strongest signal), and every other
+   header on the canonical list that carries voice guidance, **including Measured
+   Fingerprint** (the quantitative rhythm/punctuation targets). Read what's there;
+   ignore what isn't — never fail on a missing section.
 2. **A writing sample the user pastes** in this request — match it directly.
 3. **Inferred voice** from the draft itself, when neither of the above exists.
 
-**Graceful degradation:** if `_shared/voice-profile.md` is absent, do not error
-and do not block. Note briefly that no profile was found, then polish normally
-using a pasted sample or inferred voice. The profile is a bias signal, never a
-hard dependency. A hard genre constraint (e.g. a tweet's 280-char limit) still
-wins over a profile preference.
+**Graceful degradation:** if there is no valid `_shared/voice-profile.md` (absent,
+or still the shipped sample — see source #1), do not error and do not block. Polish
+normally using a pasted sample or inferred voice. The profile is a bias signal,
+never a hard dependency. A hard genre constraint (e.g. a tweet's 280-char limit)
+still wins over a profile preference. Any "no profile found" mention here is
+**conversational** — it belongs in the chat around the deliverable, not inside the
+polished `rewrite` text. (The one exception to text-only output is the
+degraded-voice note in the explicit my-voice case below.)
+
+**Voice-onboard offer budget: at most ONE offer per session, total.** The two
+triggers below share a single budget — make the offer once, then do not re-offer
+this session, whichever trigger fires. An offer is always offer-only: never
+auto-run `voice-onboard`, never block the deliverable on it.
+
+- **Pre-run — "in my voice" with no valid profile (Q8).** When the user explicitly
+  asks for *their own* voice ("in my voice", "match how I write") and no valid
+  profile exists, offer `voice-onboard` once — e.g. "I can learn your voice from a
+  few samples first (more accurate), or infer it from this draft. Which?" **The
+  question never blocks:** if the user does not answer in this turn, proceed with
+  inferred voice and add the one-line degraded-voice note to the output (see
+  Output — the sole text-only exception). Spends the shared offer budget.
+- **Post-run / visible manual edits (owner rider).** After a polish run with no
+  valid profile — *especially* when the user's **manual edits** to a previous
+  output are visible in the session — offer to capture their voice with
+  `voice-onboard`, noting that the delta between what you returned and what they
+  changed by hand is the strongest voice signal there is. This offer is
+  **conversational: it lives after the output block, not inside the polished
+  text.** Skip it if the shared offer budget is already spent.
 
 When a profile or sample exists, match:
 
@@ -121,9 +157,10 @@ When neither exists, use the lightest voice that fits the context:
    `references/scenario-presets.md` (tweet / LinkedIn / README / memo). It tells
    you which catalog categories to weight harder and what to leave alone in this
    genre. If no preset fits, scan the catalog evenly.
-3. **Load the voice profile if present.** Check for `_shared/voice-profile.md`
-   and read it if it exists; otherwise use a pasted sample or inferred voice
-   (see Voice Matching). Degrade gracefully when absent.
+3. **Load the voice profile if valid.** Check for `_shared/voice-profile.md` and
+   read it only if it is a *valid* profile — present and not the shipped sample
+   (the `> SAMPLE PROFILE.` banner means treat as absent; see Voice Matching).
+   Otherwise use a pasted sample or inferred voice and degrade gracefully.
 4. Mark the factual anchors that must survive unchanged.
 5. Scan against the pattern catalog, weighted by the preset, and remove the tells
    you find:
@@ -135,7 +172,12 @@ When neither exists, use the lightest voice that fits the context:
    - "not X but Y" theatrics
    - uniform sentence length
    - chatbot artifacts
-6. Replace vague abstractions with concrete actors, actions, examples, or consequences.
+6. Make concrete details **already in the source** more prominent — surface the
+   specific actor, action, example, or consequence the text already names, instead
+   of leaving it buried under an abstraction. If the source has no such detail,
+   **preserve the abstraction or flag the missing detail** — never invent an
+   actor, action, example, number, or consequence that is not in the source
+   (Safety Rules).
 7. Vary rhythm without adding fake personality. Bias word choice and cadence
    toward the voice profile when one was loaded.
 8. **Re-scan your rewrite against the pattern catalog** (repeat step 5 on the *output*).
@@ -165,8 +207,14 @@ This robust workflow enables teams to seamlessly leverage contextual insights, e
 After:
 
 ```text
-This workflow gives teams the context they need before they start editing.
+This workflow gives teams contextual insights for a more effective, streamlined development experience.
 ```
+
+(Every term in the *after* — workflow, teams, contextual insights, more effective,
+streamlined development experience — is present in the *before*. Polish drops the
+empty intensifiers ("robust", "seamlessly leverage", "enables ... ensuring"); it
+adds nothing the source did not say — note it does **not** invent "editing" or any
+timing the source never mentioned.)
 
 ### Status update
 
@@ -179,8 +227,16 @@ It is important to note that the migration represents a pivotal step toward impr
 After:
 
 ```text
-The migration removes the retry job that caused last week's duplicate sends.
+The migration is a step toward more reliable, scalable, efficient operation.
 ```
+
+(Every term in the *after* traces to the *before*: "step toward" **keeps the
+original modality** — the migration is *aiming at* these gains, not proven to
+deliver them — and the reliability/scalability/efficiency triple is inherited from
+the source, not composed here (polish preserves meaning, it does not restructure
+the facts). Polish strips the throat-clearing ("It is important to note that") and
+the inflation ("pivotal"); it does **not** strengthen "step toward improving" into
+"improves", add a fact, or restructure the claim.)
 
 ### Personal note
 
@@ -193,8 +249,14 @@ I wanted to take a moment to express my sincere appreciation for your invaluable
 After:
 
 ```text
-Thank you for sticking with me through this. It helped more than you probably know.
+Thank you for sticking with me through this.
 ```
+
+(The *after* keeps only what the *before* carried — thanks for support through the
+whole thing. The dropped draft closer "It helped more than you probably know"
+would have invented a magnitude *and* presumed the reader's mind (an
+overstepping-presumption tell in our own catalog) — polish removes slop, it does
+not add either.)
 
 ## Scoring
 
@@ -242,6 +304,11 @@ it. In short:
 ## Output
 
 - For `rewrite`: return the polished text only unless the user asks for notes.
+  **Narrow sanctioned exception (Q8):** when the user asked for *their own* voice
+  but no profile was found and you degraded to inferred voice, append a single
+  one-line note saying so — e.g. `Note: no voice profile found — inferred voice
+  used; run voice-onboard to capture yours.` That one degraded-voice line is the
+  only voice-related addition allowed to `rewrite` output.
 - For `detect` or `review`: follow the **Audit Report Contract** below.
 - For `edit`: summarize changed files, what improved, verification, and any preserved uncertainty.
 

@@ -1,6 +1,6 @@
 ---
 name: comms-draft
-description: "Draft a new page from a brief, guided by the knowledge base / playbook, so the first draft already reads human instead of AI-generated. Derives per-task acceptance criteria, injects concrete detail and varied rhythm at draft time, then self-scans for tells. Use to produce a fresh draft. Not for polishing existing text - that is comms-polish. Not for answering questions from the knowledge base - that is comms-qa. Drafting or adding content belongs here, including mixed polish-plus-add requests; pure rewording with no new content is comms-polish. Never invents facts; marks gaps with [NEEDS: ...]."
+description: "Draft a new page from a brief, or revise a document that mixes existing text with a requested addition, guided by the knowledge base / playbook, so the output already reads human instead of AI-generated. In mixed polish-plus-add mode the existing text is immutable source material and comms-draft returns the fully revised whole document, running the polish final-pass itself. Derives per-task acceptance criteria, injects concrete detail and varied rhythm, then self-scans for tells. Use to produce a fresh draft or to handle a mixed polish-plus-add request. Pure rewording with no new content is comms-polish; answering questions from the knowledge base is comms-qa. Never invents facts; marks gaps with [NEEDS: ...]."
 ---
 
 # comms-draft
@@ -35,6 +35,11 @@ Read what is present; degrade gracefully on anything absent (see Safety Rules).
   and any facts/numbers/names they supply. This is the *only* source of new
   facts, alongside the KB. Everything in the draft must trace back to the brief
   or the KB — nothing else.
+- **The existing document** (mixed mode only). When the request is
+  polish-plus-add ("polish this and add a risks section"), the text the user
+  already wrote comes in as **immutable source material** — see *Mixed mode*
+  below. It is not a brief and not a new-fact source you may extend; its content
+  is preserved, not invented on.
 - **The knowledge base** via `_shared/knowledge/INDEX.md`. Read the index, match
   the task against its **Summary** and **Keywords / aliases** columns, and open
   the entries that apply. The KB supplies writing guidance (clarity, structure,
@@ -42,10 +47,17 @@ Read what is present; degrade gracefully on anything absent (see Safety Rules).
   terminology, and house facts. Quote/apply the relevant passage; cite the entry
   filename when a draft choice came from it.
 - **The voice profile** (optional) at `_shared/voice-profile.md`, produced by
-  `voice-onboard`. Read it if present and bias the draft toward its fields (Tone,
-  Sentence Length, Vocabulary Do / Don't, Signature Moves, Punctuation &
-  Formatting, Openings & Closings, Uncertainty Style, Things To Avoid, Scope &
-  Calibration). Read what is there; ignore what is not.
+  `voice-onboard`. Read it only if it is a *valid* profile — present AND not the
+  shipped sample. The shipped file is a filled example carrying a
+  `> SAMPLE PROFILE.` banner blockquote near the top; if that banner is present,
+  treat it as **no profile** (infer voice and make the Q8 offer, below). For a
+  valid profile, bias the draft toward its fields. The profile's header set is the
+  **canonical ordered list at the top of `_shared/voice-profile.md`** (the single
+  source of truth — do not restate a divergent subset here); use every header
+  present that carries voice guidance — Tone, Sentence Length, Vocabulary Don't,
+  and every other header on the canonical list that carries voice guidance,
+  **including Measured Fingerprint** (quantitative targets). Read what is there;
+  ignore what is not.
 - **Genre presets** via `skills/comms-polish/references/scenario-presets.md`
   (suite-root-relative). Reuse comms-polish's presets — do not duplicate them.
   A preset tells you the genre's hard form constraints (a tweet's 280-char limit,
@@ -55,6 +67,30 @@ Read what is present; degrade gracefully on anything absent (see Safety Rules).
   relevant. Used here as a **negative checklist** — patterns to avoid *while
   writing*, not just to scrub afterward. (This file references the index only;
   comms-polish carries the per-category enumeration.)
+
+## Mixed mode (polish-plus-add)
+
+A request that asks to polish existing text **and** add new content ("polish this
+and add a risks section") routes here, not to `comms-polish`. Handle it as one
+job, not two:
+
+- **The existing text is immutable SOURCE MATERIAL.** Its facts, claims, numbers,
+  names, and quotes must survive unaltered. You may re-order, tighten, and de-AI
+  the prose around them, but you invent nothing beyond what that text and the
+  brief/KB already carry — the Safety Rules below bind the existing text exactly
+  as they bind a fresh draft.
+- **Return the fully revised WHOLE document.** Weave the existing material and the
+  new material into one deliverable — not just the new section, and not a plan to
+  polish it later.
+- **Run the polish final-pass yourself before returning.** After drafting the
+  combined document, run the requirements in
+  `skills/comms-polish/references/final-pass-checklist.md` (suite-root-relative)
+  over the whole thing — the same pre-ship sweep `comms-polish` would run. In
+  mixed mode the polish is part of the deliverable you owe; do not defer it to a
+  separate `comms-polish` pass.
+
+Everything else — the acceptance criteria, the input loading, the draft-time
+constraints, the self-scan — runs the same way as for a fresh draft below.
 
 ## Drafting Workflow
 
@@ -77,9 +113,18 @@ proceed — do not stall on a fourth question.
 
 Run the suite's self-improvement ON START read (see below). Then: pull the
 matching genre preset; read the relevant KB entries via `INDEX.md`; load the
-voice profile if present (otherwise infer the lightest voice that fits the
-reader); open the catalog categories the genre weights hardest. Note any absent
-input out loud — never block on a missing one.
+voice profile if valid — present and not the shipped sample (the `> SAMPLE
+PROFILE.` banner means treat it as absent), otherwise infer the lightest voice
+that fits the reader; open the catalog categories the genre weights hardest. Note
+any absent input out loud — never block on a missing one.
+
+**"In my voice" with no valid profile (Q8).** If the user explicitly asked for
+*their own* voice and no valid `_shared/voice-profile.md` exists (absent, or still
+the shipped sample), offer `voice-onboard` once ("I can learn your voice from a few
+samples first, or infer it from the brief — which?"). **The question never
+blocks:** if declined or unanswered this turn, infer the voice and record in the
+Inputs note (Output) that no profile was used. Offer at most once per session;
+never auto-run `voice-onboard`, never block the draft on it.
 
 **Once these inputs are loaded, plan the document's shape here, before drafting a
 sentence.** The single new detection frontier is *narrative shape*: a piece can
@@ -163,22 +208,29 @@ flattened reading the plan called for? If the step-5 document-shape pass already
 reshaped it, confirm that reshape didn't invent a new fact to manufacture the
 residue/ambiguity — the validity condition applies at this check too.
 
-### 7. Hand off
+### 7. Hand off / final pass
 
-Offer `comms-polish` as the optional final pass: the draft is built clean, but a
-polish run is the dedicated pre-ship sweep (scoring, final-pass checklist). The
-draft is the deliverable; polish is the next step the user may want.
+- **Fresh draft (no existing text):** the draft is built clean; offer
+  `comms-polish` as the optional dedicated pre-ship sweep (scoring, final-pass
+  checklist) if the user wants a second look. The draft is the deliverable.
+- **Mixed mode (polish-plus-add):** you already ran the polish final-pass over
+  the whole revised document (see *Mixed mode*), so the deliverable is ship-ready.
+  Do **not** punt the requested polish to a later `comms-polish` step — the polish
+  was part of what the user asked for and you have completed it.
 
 ## Boundary
 
-This skill writes new prose from a brief. It does not edit existing user text and
-it does not answer KB questions.
+This skill writes new prose from a brief. In mixed mode it also revises a document
+that combines existing text with a requested addition — treating the existing text
+as immutable source (see *Mixed mode*). It does not answer KB questions.
 
 - Use for: drafting a doc, email, post, README section, memo, report, launch
-  note, or user-facing copy from a brief.
-- Do not use for: polishing or de-AI-ing text the user already wrote (that is
-  `comms-polish`), answering a question from the knowledge base (that is
-  `comms-qa`), or any source-code work.
+  note, or user-facing copy from a brief; and for a mixed polish-plus-add request
+  where new content is added to text the user already has.
+- Do not use for: **pure** polishing or de-AI-ing with no new content added (that
+  is `comms-polish`), answering a question from the knowledge base (that is
+  `comms-qa`), or any source-code work. A request that adds substance is mixed
+  mode and belongs here, not in `comms-polish`.
 - The new facts in a draft come only from the brief and the KB. Writing guidance
   comes from the KB and the catalog. Nothing else is a source.
 
@@ -228,4 +280,7 @@ Return, in this order:
    fill them. Omit if there are none.
 4. **Inputs note** — one line on what was loaded vs. absent (voice profile, KB
    match, preset) so the user knows the basis of the draft.
-5. **Polish handoff** — offer `comms-polish` as the optional final pass.
+5. **Polish handoff** — for a fresh draft, offer `comms-polish` as the optional
+   final pass. In mixed mode, state that the polish final-pass already ran over
+   the whole document (it is ship-ready), rather than offering it as a still-open
+   step.

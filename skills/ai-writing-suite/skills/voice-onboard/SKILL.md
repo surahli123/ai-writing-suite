@@ -9,8 +9,9 @@ Learn how *you* write, so the rest of the suite stops sounding like a clean
 generic robot and starts sounding like you.
 
 The job is narrow: read your real writing, distill a **voice profile**, and write
-it to a file the polish skill reads on every run. This skill does NOT draft or
-rewrite anything — it only listens and profiles.
+it to a file `comms-polish` reads before any rewrite (and `comms-draft` before
+drafting). This skill does NOT draft or rewrite anything — it only listens and
+profiles.
 
 ## Locating shared assets (suite root)
 
@@ -56,8 +57,12 @@ Ask the user for samples. State plainly what makes a good sample:
 - **3 minimum, 5-10 ideal.** Fewer than 3 → tell them confidence will be Low and
   the profile will be conservative. Don't force-extract from thin data.
 - **Same genre as the target.** Learning their LinkedIn voice → ask for LinkedIn
-  posts, not academic papers. Mixed genres → offer to extract two profiles
-  rather than averaging them into a blur.
+  posts, not academic papers. **One genre per run.** The current build stores a
+  single `_shared/voice-profile.md`, so if the samples span genres, pick the one
+  target genre for this run rather than averaging them into a blur — don't promise
+  a second stored profile the build can't hold. (Storing a separate profile per
+  genre, with IDs and selection, is a designed follow-up, not yet available; note
+  it to the user rather than acting on it.)
 - **Their own words, not AI-polished.** A draft Claude already cleaned teaches
   the clean robot's voice, not theirs.
 - **Recent (last ~6 months).** Voice drifts; recent samples track current style.
@@ -66,9 +71,16 @@ How they can hand samples over:
 
 - Point to local files ("read everything in `~/writing/`") — you read them.
 - Paste text inline, separated by `---`.
+- **Their own edits to something the suite returned.** If the user hand-corrected
+  a `comms-polish` output, the delta between what was returned and what they
+  changed is the strongest voice signal available — treat the corrected version as
+  a high-value sample (`comms-polish` offers to route those edits here).
 
-Confirm what you received before extracting: "Got 6 samples — 4 blog posts,
-2 memos. That's Medium confidence. Want me to extract now, or add more first?"
+Confirm what you received before extracting: "Got 6 blog posts — that's Medium
+confidence for your blog voice. Extract now, or add more first?" If the samples
+span genres, say so and ask which ONE to profile this run: "These are 4 blog posts
+and 2 memos — different voices. Which should I profile this run? (One genre per
+run; the other can be a separate run.)"
 
 ### Step 2 — Extract the style fingerprint
 
@@ -78,7 +90,11 @@ samples.** No evidence → write "Unknown — not enough signal", never invent.
 A trait counts only if it appears **3+ times**. One occurrence is noise. This is
 the single most common extraction mistake — learning an accident as a habit.
 
-The 10 dimensions (these map 1:1 to the `voice-profile.md` headers):
+The 10 qualitative dimensions below are the extraction schema; they populate ten
+of the profile's headers. The profile's **full** header set — including Meta,
+Scope & Calibration, Measured Fingerprint, and Changelog — is the **canonical
+ordered list at the top of `_shared/voice-profile.md`**. Reference that list and
+keep every header exactly; do not restate a divergent subset. The 10 dimensions:
 
 1. **Tone** — overall register (direct / warm / dry / formal).
 2. **Sentence Length** — average words/sentence, short vs long share, rhythm habit.
@@ -102,7 +118,10 @@ Two extraction principles to repeat to yourself:
 - **Strip content, keep style.** They wrote about search ranking → that's the
   topic, not the voice. Look at rhythm, word choice, structure — not subject.
 - **Don't average across genres.** Same person writes a tweet and a report
-  differently. Mixed samples → split, don't flatten.
+  differently. Mixed samples → pick the target genre for this run and profile
+  that one; do not pool them into a single blurred profile. (Storing a distinct
+  profile per genre is the designed follow-up above — today one genre is profiled
+  and stored per run.)
 
 #### The measurement pass (quantitative half — run alongside the 10 dimensions)
 
@@ -166,8 +185,14 @@ Only after the user confirms, write the profile to
 already exists, show what changed before overwriting — don't silently replace
 their previous one.
 
+**A real profile must NOT carry the `> SAMPLE PROFILE.` banner** the shipped
+example uses. Overwrite that banner and Sam's example content entirely — consumers
+(`comms-polish`, `comms-draft`) detect the un-replaced sample by that banner and
+treat it as *no profile*, so leaving the banner in place would make your real
+profile invisible. A real profile is defined by the banner's absence.
+
 Tell the user where it landed and that `comms-polish` will now read it
-automatically.
+automatically (before any rewrite).
 
 ### Step 5 — Leave a calibration loop open
 
@@ -185,7 +210,7 @@ A profile is a living file, not a one-shot. Tell the user:
 - **Profile is not a permanent contract.** Prompt re-calibration periodically.
 - **Stay in your lane.** This skill profiles; it does not rewrite. Rewriting is
   `comms-polish`. (And note: this suite is separate from the personal
-  writing-vault "never ghostwrite" pipeline — see the project plan, R1.)
+  writing-vault "never ghostwrite" pipeline — this suite may draft and rewrite.)
 - **Self-improvement is human-gated (suite-wide).** See "Self-improvement" below;
   never auto-edit this SKILL.md.
 

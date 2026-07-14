@@ -1,6 +1,6 @@
 ---
 name: comms-qa
-description: Answer a question from the knowledge base / playbook, citing the KB entry the answer came from, so the user gets the playbook's actual guidance instead of a plausible guess. Reads the KB index, matches the question to the single best entry (or both on a tie), and answers only from that entry's content. Use to answer "what does the playbook say about X" questions. Not for drafting a new page - that is comms-draft. Not for polishing existing text - that is comms-polish. Never invents playbook guidance; if the KB does not cover the question, it says so.
+description: Answer a question from the knowledge base / playbook, citing the KB entry the answer came from, so the user gets the playbook's actual guidance instead of a plausible guess. The KB answer is source-locked — traced only to the matched entry's content; any optional general advice appears ONLY in a separately-labeled "Outside the playbook" section, never blended in, and the user can request strict KB-only mode to suppress it. Reads the KB index and matches the question to the single best entry (or both on a tie). Use to answer "what does the playbook say about X" questions. Not for drafting a new page - that is comms-draft. Not for polishing existing text - that is comms-polish. Never invents playbook guidance; if the KB does not cover the question, it says so.
 ---
 
 # comms-qa
@@ -85,6 +85,16 @@ choose to add it, put it **only** in a clearly separated, labeled section headed
 always be able to tell the playbook's guidance from your own. This separation is
 non-negotiable: a company fork's KB is policy, and a blurred line is how a guess
 gets mistaken for the playbook.
+
+**Strict KB-only mode (user-requestable, Q9).** If the user asks for KB-only /
+playbook-only answers ("only what the playbook says, no outside advice"), suppress
+the "Outside the playbook:" section entirely for this invocation: answer purely
+from the KB, adding no general advice even in a labeled section. **"Stop" is
+per sub-question, not the whole request:** for a multi-part question, answer every
+part the KB covers and, for each uncovered part, state the gap (step 5) and add
+nothing for it. Abort the whole answer only when the KB covers *none* of the parts.
+The default mode keeps the optional labeled section available; strict mode is
+opt-in per request.
 
 ### 5. Note coverage
 

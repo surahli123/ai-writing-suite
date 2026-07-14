@@ -1,65 +1,75 @@
 ---
 name: ai-writing-suite
-description: A suite of writing-assistant skills for professional and product communication — polish/de-AI prose, learn an author's voice, and (later) answer questions from a knowledge base and draft from it. Routes a request to the right sub-skill. Use for docs, emails, posts, reports, and user-facing copy; not for source-code cleanup.
+description: A suite of writing-assistant skills for professional and product communication — polish/de-AI prose, learn an author's voice, answer questions from a knowledge base, and draft from it. Classifies a request and loads the right sub-skill. Use for docs, emails, posts, reports, and user-facing copy; not for source-code cleanup.
 ---
 
 # AI Writing Suite (router)
 
-This is a thin router. It does not contain polishing or drafting logic itself —
-it points the host at the sub-skill that does the work. Think of it as the
-dispatch layer in front of four specialized writers.
+This is the router for the suite. When this skill is selected, it classifies the
+request and loads the sub-skill that does the work — it does not polish or draft
+itself. Think of it as the dispatch layer in front of four specialized writers.
 
 ## Sub-skills
 
 | Sub-skill | What it does | Status |
 | --- | --- | --- |
-| `comms-polish` | Polish, review, detect, or edit prose to remove AI tells while preserving meaning and voice. 0-100 AI-tell score on demand. | **available (v1)** |
-| `voice-onboard` | Interview the author and distill their historical writing into a reusable voice profile that `comms-polish` reads. | built in Layer 1 |
-| `comms-qa` | Answer a question from the pluggable KB/playbook, citing the entry the answer came from; says so when the KB does not cover it. Never invents playbook guidance. | **available (v1.1)** |
-| `comms-draft` | Draft a new page from a brief, guided by the KB/playbook — bakes anti-AI discipline (concreteness, varied rhythm, self-scan) into the first draft; never fabricates, marks gaps with `[NEEDS: …]`. | **available (v1.1)** |
+| `comms-polish` | Polish, review, detect, or edit existing prose to remove AI tells while preserving meaning and voice. 0-100 AI-tell score on demand. | **available** |
+| `voice-onboard` | Interview the author and distill their historical writing into a reusable voice profile that `comms-polish` and `comms-draft` read. | **available** |
+| `comms-qa` | Answer a question from the pluggable KB/playbook, citing the entry the answer came from; says so when the KB does not cover it. Never invents playbook guidance. | **available** |
+| `comms-draft` | Draft a new page from a brief — or revise a document that mixes existing text with a requested addition — guided by the KB/playbook; bakes anti-AI discipline (concreteness, varied rhythm, self-scan) into the draft and never fabricates, marking gaps with `[NEEDS: …]`. | **available** |
 
 The sub-skills live under `skills/<name>/SKILL.md`. Shared assets (the AI-tell
-pattern catalog, and later the voice profile and learned-rules log) live under
+pattern catalog, the voice profile, and the learned-rules log) live under
 `_shared/`.
 
-## How routing works
+## How to route (executable)
 
-The right dispatch path depends on the host. Two cases:
+When **this router skill is the one selected or invoked**, classify the request
+and load the matching child skill, then follow that child's own instructions.
+Skip this classification only when a child skill was already selected directly —
+in that case just run that child.
 
-### Claude / Codex / Cursor — host-native dispatch
-
-These hosts already discover and trigger skills by their `name` + `description`.
-Do **not** intercept or re-route here. Let the host pick the sub-skill from the
-request. This router exists mainly as documentation and as the package entry
-point; it is not a runtime interceptor on these surfaces. (Reinventing host
-dispatch is a Layer 1 concern, deliberately out of scope.)
-
-### RovoDev — explicit intent routing
-
-RovoDev does not auto-trigger skills. When invoked there, read the user's intent
-and route explicitly:
+Classify by what the request asks you to **do**:
 
 | If the user wants to… | Route to |
 | --- | --- |
-| clean up / de-AI / polish / review / score a draft | `comms-polish` |
-| teach the tool their writing style, build a voice profile | `voice-onboard` (Layer 1; until then, fall back to `comms-polish` voice matching) |
-| ask a question answered by the knowledge base | `comms-qa` |
-| draft a new page from the playbook | `comms-draft` |
+| clean up / de-AI / polish / review / score / edit existing text, with no new content added | `comms-polish` |
+| add new content — a new page from a brief, a new section, or a mix of polishing existing text **and** adding to it | `comms-draft` |
+| ask a question the knowledge base answers | `comms-qa` |
+| teach the tool their writing style / build a voice profile | `voice-onboard` |
 
-If intent is ambiguous, default to `comms-polish` (the most common job) and say
-which sub-skill you chose.
+**Precedence rule for mixed requests.** Any request that asks for a substantive
+**addition** — even when it also asks to polish existing text ("polish this and
+add a risks section") — routes to `comms-draft`. Drafting owns everything that
+adds substance; `comms-polish` never adds content. Route to `comms-polish` only
+when the request is pure rewording with no new material. This one rule breaks
+every polish-vs-draft tie — there is no "ambiguous defaults to polish" fallback
+for mixed cases.
 
-**Then load the sub-skill yourself.** Even when RovoDev registers the nested sub-skills, the
-polishing/drafting logic does not arrive just by loading *this* router file — so once you have
-chosen a sub-skill, read it explicitly before doing any work:
+If a request genuinely matches none of the four (e.g. "translate this, no other
+change"), say so plainly and pick the closest fit rather than stalling.
 
-1. Open `skills/<name>/SKILL.md` (e.g. `skills/comms-polish/SKILL.md`), relative to this
-   suite's root.
-2. Read every file that sub-skill references — its AI-tell pattern catalog and any other
-   shared assets under this suite's `_shared/` directory (e.g. `_shared/patterns/`, and the
-   voice profile / learned-rules log if present).
-3. Follow that sub-skill's instructions to perform the task. Do not attempt the work from
-   this router's summary alone — the actual logic lives in the sub-skill, not here.
+## Then load and run the child skill
+
+Once you have chosen a child skill, load it and let **it** decide what else to
+read:
+
+1. Open `skills/<name>/SKILL.md` (e.g. `skills/comms-polish/SKILL.md`), relative
+   to this suite's root.
+2. Follow that child skill's own instructions. The child decides which referenced
+   assets it needs — its pattern-catalog categories, the voice profile, the KB
+   entries — and loads them selectively. Do **not** pre-load every referenced
+   file from here; that defeats the child's selective loading and bloats context.
+   The actual logic lives in the child, not in this router's summary.
+
+### Host note
+
+On Claude / Codex / Cursor the host may discover and trigger a child skill
+directly from its `name` + `description`; when that happens this router is
+bypassed and the child runs on its own. The classify-and-load step above is what
+runs when the router itself is the selected skill — including on RovoDev, which
+does not auto-trigger nested skills. Either path ends in the same place: the right
+child skill loaded and followed.
 
 ## Boundary
 
@@ -72,4 +82,4 @@ The suite is the *engine*; the knowledge base under `_shared/knowledge/` is the
 *fuel*. The open-source build ships a generic KB; a company fork drops its own
 playbook into the same slot. The playbook never enters this public repo. (This
 build ships a generic 5-entry KB seed + `INDEX.md` + a working retrieval smoke
-path; the `comms-qa` sub-skill that answers questions over that KB now ships.)
+path, and the `comms-qa` sub-skill that answers questions over it.)
