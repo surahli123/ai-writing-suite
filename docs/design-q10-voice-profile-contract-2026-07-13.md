@@ -1,5 +1,26 @@
 # Design — Q10 Multi-Genre Voice-Profile Contract (2026-07-13)
-Status: DRAFT — owner review gate, do not build
+Status: APPROVED 2026-07-14 — amendments below
+
+## Decisions (owner, 2026-07-14) — resolve the §7 open questions
+
+The three §7 open questions plus one matching-semantics ruling, answered by the
+product owner. These override any conflicting text in §1–§6 above.
+
+- **OQ1 (§7.1 — named genre, no profile):** OFFER voice-onboard creation for that
+  genre. The offer shares the single per-session Q8 offer budget (`comms-polish`
+  Voice Matching / `comms-draft` step 2). Declined or unanswered → degrade to
+  inferred voice and note it. Never block.
+- **OQ2 (§7.2 — `Genre:` in Meta):** KEEP a `Genre:` field in each profile's Meta
+  block (a self-description that survives a manual rename). But the **filename is
+  the sole source of truth on conflict** — lookup reads filenames only and never
+  parses `Genre:` to decide selection. `Genre:` is documentation, not the key.
+- **OQ3 (§7.3 — multiple profiles, none match):** never block; degrade to inferred
+  voice and let the output note list the genres that DO exist so the user can
+  redirect. Do not ask interactively.
+- **OQ4 (preset↔profile matching semantics):** NORMALIZED EXACT match — lowercase,
+  spaces→hyphens, then string equality. No fuzzy/prefix/alias matching
+  (`formal-report` ≠ `report`; `formal-report` ≠ `formal`). A miss falls through
+  the §3 precedence to offer-then-degrade, it does not silently pick a near-name.
 
 Implements decisions Q10 (`build-multi`) and the Q8 rider from `docs/decisions-2026-07-13.md:16,18`, closing review finding 4 (`reviews/2026-07-13-e2e-product-prose.md:37-42`): the producer offers two profiles for mixed genres (`voice-onboard/SKILL.md:60,105`) but only `_shared/voice-profile.md` exists and both consumers hardcode that single path (`comms-polish/SKILL.md:82`, `comms-draft/SKILL.md:44`).
 
