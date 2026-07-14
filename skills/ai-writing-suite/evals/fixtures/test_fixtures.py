@@ -730,7 +730,7 @@ class GoldFailJudgeIntegration(unittest.TestCase):
         n = len(load_fail_fixtures()["fixtures"])
         reply = "\n".join(f"{d}: FAIL" for d in
                           ("overstepping_removed", "payoff_clear", "meaning_preserved",
-                           "specificity_added", "no_fabrication"))
+                           "specificity_added", "no_fabrication", "narrative_shape_ok"))
         (d, m, w, s, live), out = self._run(lambda p: reply)
         self.assertEqual((d, m, w, s, live), (n, 0, 0, 0, False))
         self.assertIn("Discrimination requires BOTH cohorts", out)
@@ -747,7 +747,8 @@ class GoldFailJudgeIntegration(unittest.TestCase):
                       if f["fail_dimension"] == "no_fabrication")
         reply = "\n".join(f"{d}: PASS" for d in
                           ("overstepping_removed", "payoff_clear",
-                           "meaning_preserved", "specificity_added")
+                           "meaning_preserved", "specificity_added",
+                           "narrative_shape_ok")
                           ) + "\nno_fabrication: FAIL"
         (d, m, w, s, live), out = self._run(lambda p: reply)
         self.assertEqual(d, n_nofab)          # only the no_fabrication-driven one
@@ -764,7 +765,7 @@ class GoldFailJudgeIntegration(unittest.TestCase):
         # rewrite -> gold=FAIL -> all MISSED (disagreement).
         reply = "\n".join(f"{d}: PASS" for d in
                           ("overstepping_removed", "payoff_clear", "meaning_preserved",
-                           "specificity_added", "no_fabrication"))
+                           "specificity_added", "no_fabrication", "narrative_shape_ok"))
         (d, m, w, s, live), out = self._run(lambda p: reply)
         self.assertEqual((d, m, w, s, live), (0, n, 0, 0, False))
         self.assertIn("DISAGREEMENT", out)
@@ -807,7 +808,8 @@ class CombinedConfusionMatrix(unittest.TestCase):
 
     ALL_DIMS = ("meaning_preserved", "tells_removed", "voice_kept",
                 "specificity_added", "genre_fit", "overstepping_removed",
-                "payoff_clear", "no_fabrication", "negative_parallelism_removed",
+                "payoff_clear", "no_fabrication", "narrative_shape_ok",
+                "negative_parallelism_removed",
                 "rule_of_three_removed", "engagement_hook_removed",
                 "false_concession_removed", "hedge_stack_removed",
                 "vague_attribution_removed", "filler_removed")
@@ -818,7 +820,7 @@ class CombinedConfusionMatrix(unittest.TestCase):
         self.n_pass = len(self.pass_fixtures)
         self.n_fail = len(self.fail_fixtures)
         # Premise guard: the cohort sizes the hand-computed numbers below assume.
-        self.assertEqual((self.n_pass, self.n_fail), (14, 4))
+        self.assertEqual((self.n_pass, self.n_fail), (18, 5))
 
     def _reply(self, verdicts):
         """verdicts: {dim: 'PASS'|'FAIL'} defaults PASS for every other dim."""
@@ -896,10 +898,11 @@ class CombinedConfusionMatrix(unittest.TestCase):
     def test_mixed_realistic_judge_matches_hand_computed_numbers(self):
         # FAILs the first 3 gold-PASS fixtures (3 false positives) and the first 2
         # gold-FAIL fixtures (2 true positives); PASSes everything else.
-        # Hand-computed: TP=2 FN=2 TN=11 FP=3
-        #   sensitivity = 2/4  = 0.50
-        #   specificity = 11/14 = 0.785714...
-        #   balanced    = (0.5 + 11/14) / 2 = 0.642857...
+        # Hand-computed for the post-narrative cohorts (18 PASS / 5 FAIL):
+        # TP=2 FN=3 TN=15 FP=3
+        #   sensitivity = 2/5   = 0.40
+        #   specificity = 15/18 = 0.8333...
+        #   balanced    = (0.4 + 15/18) / 2 = 0.61666...
         all_fail = {d: "FAIL" for d in self.ALL_DIMS}
 
         def reply(i):
@@ -909,15 +912,15 @@ class CombinedConfusionMatrix(unittest.TestCase):
                 return self._reply({})
             if i < self.n_pass + 2:                     # first 2 gold-FAIL -> TP
                 return self._reply(all_fail)
-            return self._reply({})                      # last 2 gold-FAIL -> FN
+            return self._reply({})                      # last 3 gold-FAIL -> FN
         matrix, out = self._run_both(self._ordered_stub(reply))
         self.assertEqual((matrix["tp"], matrix["fn"], matrix["tn"], matrix["fp"]),
-                         (2, 2, 11, 3))
+                         (2, 3, 15, 3))
         sens, spec, bal = self._metrics(matrix)
-        self.assertAlmostEqual(sens, 0.5)
-        self.assertAlmostEqual(spec, 11 / 14)
-        self.assertAlmostEqual(bal, (0.5 + 11 / 14) / 2)
-        self.assertIn("balanced accuracy = 0.64", out)
+        self.assertAlmostEqual(sens, 2 / 5)
+        self.assertAlmostEqual(spec, 15 / 18)
+        self.assertAlmostEqual(bal, (2 / 5 + 15 / 18) / 2)
+        self.assertIn("balanced accuracy = 0.62", out)
 
     def test_unparseable_rep_is_skipped_not_folded_into_a_cell(self):
         # One gold-FAIL fixture returns garbage -> counted as skipped, absent from
