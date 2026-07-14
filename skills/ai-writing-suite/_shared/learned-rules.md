@@ -28,25 +28,46 @@
     - id        : LR-001, LR-002, ... (zero-padded, never reused)
     - rule      : the imperative the skill should follow (one or two sentences)
     - rationale : why — grounded in a real session correction, not theory
-    - scope     : comms-polish | voice-onboard | all
+    - scope     : comms-polish | comms-draft | comms-qa | voice-onboard | all
     - date      : YYYY-MM-DD it was approved
-    - status    : proposed | active | retired
-                  (proposed = approved by user, not yet eval-measured in Layer 3;
-                   active   = trusted/eval-passed, applied on every run;
-                   retired  = superseded — see the entry that replaced it)
+    - status    : proposed | active | retired | graduated
+                  (proposed  = approved by user, not yet eval-measured in Layer 3;
+                   active    = trusted/eval-passed, applied on every run;
+                   retired   = superseded — see the entry that replaced it;
+                   graduated = folded into the pattern catalog by a maintainer;
+                               the log entry is a tombstone, applied from the
+                               catalog, NOT re-applied from here on start.)
     - source    : short note on the session that produced it (auditable trail)
 
   STATUS LIFECYCLE
   ----------------
   proposed --(Layer 3 eval passes, or user says "make it active")--> active
   active   --(a later entry supersedes it)--> retired
+  active   --(maintainer folds it into the catalog by hand)--> graduated
+
+  PROMOTION PROCEDURE (proposed -> active; owner-gated)
+  -----------------------------------------------------
+  A `proposed` rule advances to `active` only through this procedure, so no rule
+  sits in `proposed` forever unowned:
+  - WHO INITIATES: the owner, at review time OR when a sub-skill's ON START read
+    finds a `proposed` rule whose `date:` is more than 30 days old. In that case
+    the skill PAUSES and asks, one line — "LR-NNN proposed since <date>: promote,
+    retire, or keep waiting?" — and waits for the answer before touching the rule.
+  - EVIDENCE THAT QUALIFIES: exactly one of (a) a Layer-3 eval pass, with the pass
+    output pasted into the entry as evidence, or (b) an explicit user "make it
+    active." Nothing else promotes a rule.
+  - WHO EDITS STATUS: the agent, only after the user confirms — a one-line flip of
+    `status: proposed` to `status: active`, never a rewrite of the rule text.
+  See `_shared/self-improvement.md` (PROMOTION) for the full protocol.
 
   HOW SUB-SKILLS USE IT
   ---------------------
   On start, read this file and apply every entry whose status is `active` and
-  whose scope matches the running skill (`all` matches both). Ignore `proposed`
-  and `retired` entries when deciding behavior — `proposed` rules are not yet
-  trusted; `retired` rules have been superseded.
+  whose scope matches the running skill (`all` matches both). Ignore `proposed`,
+  `retired`, and `graduated` entries when deciding behavior — `proposed` rules are
+  not yet trusted; `retired` rules have been superseded; `graduated` rules now
+  live in the pattern catalog and are applied from there, so re-applying them here
+  would double-count.
 ================================================================================
 -->
 
@@ -96,5 +117,9 @@ start by the sub-skills; appended to only on explicit user approval. See
 - **scope:** comms-polish
 - **date:** 2026-06-14
 - **status:** proposed
+- **next-review:** proposed 2026-06-14; now past the 30-day mark, so a sub-skill's
+  ON START read surfaces it under the PROMOTION PROCEDURE — the owner should
+  promote, retire, or keep waiting. No Layer-3 eval pass and no user "make it
+  active" yet, so it stays `proposed` until one of those qualifies it.
 - **source:** SMA_v2 report-narrative de-slop session; owner override of a section preamble,
   cross-checked against stop-slop ("meta-joiners / throat-clearing — delete").

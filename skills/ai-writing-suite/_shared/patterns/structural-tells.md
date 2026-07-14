@@ -117,6 +117,11 @@ every flagged word while leaving the shape untouched still reads as AI.
 - **Fix:** Make paragraph N+1 depend on something concrete in paragraph N
   (references, callbacks, "this is why…"). If two paragraphs are interchangeable,
   merge or cut one. If they're all independent, the piece is missing a thesis.
+- **Validity condition:** the reshuffle test only indicts *argumentative* prose.
+  Reference docs, FAQs, API entries, changelogs, glossaries, and deliberately
+  modular documents have independent, swappable blocks by design — that is correct
+  structure, not an AI tell. Ask: is this piece building one unfolding argument,
+  or is it a reference whose entries are meant to stand alone?
 - **Sources:** blader (P38), avoid-ai (paragraph-reshuffle immunity).
 
 ---

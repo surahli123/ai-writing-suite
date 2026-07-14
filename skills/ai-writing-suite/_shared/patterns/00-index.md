@@ -1,9 +1,12 @@
 # AI-Tell Pattern Catalog — Index
 
-This is the consolidated, deduplicated catalog of AI-writing "tells" that
-`comms-polish` draws on. It merges seven source catalogs into one set of
-patterns organized by category, with each pattern carrying a source tag so
-`NOTICE.md` attribution stays accurate later.
+This is the consolidated catalog of AI-writing "tells" that `comms-polish` draws
+on. It merges seven source catalogs into one set of patterns organized by
+category, with each pattern carrying a source tag so `NOTICE.md` attribution stays
+accurate later. Where two entries describe the same phenomenon, one is the
+**canonical** entry and the narrower ones are marked **aliases/subtypes** with a
+precedence note ("if both match, apply the canonical fix") rather than silently
+duplicated — see C2/H7/H8 (signposting) and S9↔L1 (consultant vocabulary).
 
 ## Why this catalog exists
 
@@ -35,14 +38,30 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 
 | File | Category | What it covers |
 | --- | --- | --- |
-| `lexical-tells.md` | Word-level tells | AI vocabulary, copula avoidance, synonym cycling, false ranges, hyphen-pair overuse |
-| `significance-attribution.md` | Inflation & sourcing | Significance/novelty inflation, vague attribution, promotional language, name-dropping, superficial -ing, speculative gap-filling |
-| `structural-tells.md` | Structure & shape | Rule of three, negative parallelism, formulaic challenges, over-structure, inline-header lists, reshuffle immunity, treadmill effect, false concession |
-| `hedging-filler.md` | Hedging & filler | Filler phrases, excessive/stacked hedging, generic conclusions, future-narrative closers, confidence-calibration phrases, signposting, "let's" openers |
-| `punctuation-formatting.md` | Punctuation & formatting | Em/en dashes, bold overuse, emoji headers, curly quotes, title case, hashtag stuffing, placeholders, citation-markup leaks, UTM params |
-| `communication-artifacts.md` | Chat artifacts | Chatbot tics, sycophancy, acknowledgment loops, cutoff disclaimers, collaborative-framing leaks, reasoning-chain leaks, engagement hooks, emotional flatline |
-| `rhythm-stylometric.md` | Rhythm & stylometry | Sentence/paragraph uniformity (burstiness), low vocabulary diversity (TTR), perplexity, register shift |
-| `overstepping-presumption.md` | Over-stepping (反代入式越位感) | Presumed cognition, presumed-misconception strawman, presumed mental image, self-Q&A-as-judge — plus the validity condition (judge-only, advisory) |
+| [`lexical-tells.md`](lexical-tells.md) | Word-level tells | AI vocabulary, copula avoidance, synonym cycling, false ranges, hyphen-pair overuse |
+| [`significance-attribution.md`](significance-attribution.md) | Inflation & sourcing | Significance/novelty inflation, vague attribution, promotional language, name-dropping, superficial -ing, speculative gap-filling |
+| [`structural-tells.md`](structural-tells.md) | Structure & shape | Rule of three, negative parallelism, formulaic challenges, over-structure, inline-header lists, reshuffle immunity, treadmill effect, false concession |
+| [`hedging-filler.md`](hedging-filler.md) | Hedging & filler | Filler phrases, excessive/stacked hedging, generic conclusions, future-narrative closers, confidence-calibration phrases, signposting, "let's" openers |
+| [`punctuation-formatting.md`](punctuation-formatting.md) | Punctuation & formatting | Em/en dashes, bold overuse, emoji headers, curly quotes, title case, hashtag stuffing, placeholders, citation-markup leaks, UTM params |
+| [`communication-artifacts.md`](communication-artifacts.md) | Chat artifacts | Chatbot tics, sycophancy, acknowledgment loops, cutoff disclaimers, collaborative-framing leaks, reasoning-chain leaks, engagement hooks, emotional flatline, register/style shift (canonical C11) |
+| [`rhythm-stylometric.md`](rhythm-stylometric.md) | Rhythm & stylometry | Sentence/paragraph uniformity (burstiness), low vocabulary diversity (TTR), perplexity |
+| [`overstepping-presumption.md`](overstepping-presumption.md) | Over-stepping (反代入式越位感) | Presumed cognition, presumed-misconception strawman, presumed mental image, self-Q&A-as-judge — plus the validity condition (judge-only, advisory) |
+
+## Inventory (entry counts)
+
+| File | Entries |
+| --- | --- |
+| [`lexical-tells.md`](lexical-tells.md) | 6 (L1–L6) |
+| [`significance-attribution.md`](significance-attribution.md) | 9 (S1–S9) |
+| [`structural-tells.md`](structural-tells.md) | 12 (T1–T12) |
+| [`hedging-filler.md`](hedging-filler.md) | 10 (H1–H10) |
+| [`punctuation-formatting.md`](punctuation-formatting.md) | 10 (F1–F10) |
+| [`communication-artifacts.md`](communication-artifacts.md) | 11 (C1–C11) |
+| [`rhythm-stylometric.md`](rhythm-stylometric.md) | 5 (R1–R5) |
+| [`overstepping-presumption.md`](overstepping-presumption.md) | 4 (O1–O4) |
+| **Total** | **67** |
+
+(Plus L1's three vocabulary tiers in `lexical-tells.md`.)
 
 ## Source legend (for `Sources` tags)
 
@@ -59,4 +78,5 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 > The corrupted `blader` reference (P31-P43 had duplicated/run-together "Fix /
 > What's happening / Triggers / Source" blocks collapsed onto single lines) was
 > **re-derived from intent**, not copied. Each affected pattern was reduced back
-> to one clean Tell / Fix / example. See `notes/` if a lineage question comes up.
+> to one clean Tell / Fix / example. The per-pattern `Sources` tag is the lineage
+> record if a provenance question comes up.

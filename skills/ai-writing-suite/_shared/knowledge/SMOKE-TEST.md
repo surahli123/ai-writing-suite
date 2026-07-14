@@ -53,6 +53,13 @@ a company fork does with its Confluence page — see `README.md`.)
 
 Follow the retrieval protocol at the top of `INDEX.md`.
 
+Two kinds of match can fire, and the protocol uses both: an **exact alias match**
+(a query term appears verbatim in an entry's Keywords/aliases column) and a
+**semantic Summary match** (the query's intent lines up with an entry's Summary
+even when no keyword token overlaps). They are different retrieval signals — the
+protocol scans keywords first, then Summary intent to break ties. Case 1 below is
+carried by the semantic Summary match, not by an exact alias.
+
 ---
 
 ## TEST CASE (run this to verify the chain)
@@ -62,11 +69,15 @@ Follow the retrieval protocol at the top of `INDEX.md`.
 
 **Expected entry retrieved:** `clarity.md`
 
-- *Why:* the query terms "too long," "say too much at once," and "fix" overlap
-  the `clarity.md` keywords (`wordy`, `verbose`, `one idea`, `cut words`) and its
-  Summary ("Say one idea per sentence... cut filler"). No other entry's keyword
-  set matches "one sentence saying too much" — `structure.md` is about
-  document/paragraph order, not within-sentence overload.
+- *Why:* `clarity.md` wins on **Summary/intent match**, not literal keyword
+  overlap. The query's content terms ("too long," "say too much at once," "fix")
+  line up with the *intent* of clarity's Summary ("Say one idea per sentence...
+  cut filler") and with its keywords `wordy` / `verbose` / `cut words`. Note that
+  `one idea` — the phrase that most precisely names this problem — lives only in
+  the Summary, NOT in the Keywords/aliases column, so it is reached by semantic
+  Summary matching, not by an exact alias hit. No other entry carries
+  within-sentence-overload signal: `structure.md` is about document/paragraph
+  order, not one sentence trying to say too much.
 
 **Expected passage quoted:**
 > **One idea per sentence.** If you find an "and" joining two full claims, make
@@ -166,4 +177,4 @@ under the retrieval protocol, and asserts: (a) the returned entry filename equal
 **Expected entry**, and (b) the quoted text contains the **Expected passage**.
 Calibrate by adding harder near-neighbor queries until the baseline misses
 ~30-40% (per the project eval-calibration rule), then tighten the index keywords
-to recover recall. Until Layer 3, run these two cases by hand after any KB edit.
+to recover recall. Until Layer 3, run all five cases by hand after any KB edit.

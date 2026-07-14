@@ -16,6 +16,11 @@ priority to fix in any professional or factual document.
 - **Before:** established in 1989, marking a pivotal moment in the evolution of
   regional statistics.
 - **After:** established in 1989 to collect regional statistics.
+- **Validity condition:** flag only *unearned* significance — puffery the text
+  can't back. If the claim is evidence-backed (the sentence, or one near it, shows
+  the concrete consequence that makes the moment pivotal), it is analysis, not
+  inflation — keep it. Ask: does the genre and evidence justify the significance
+  claim, or is the claim doing the work the evidence should?
 - **Sources:** blader (P1), aboudjem (§1), avoid-ai, anti-vibe.
 
 ---
@@ -33,6 +38,11 @@ priority to fix in any professional or factual document.
   and speaks to broader anxieties about post-industrial identity.
 - **After:** The factory closed in 2009. Three hundred jobs. The town's high
   school dropped football the next year.
+- **Validity condition:** flag only interpretation *substituting* for the fact.
+  When interpretation IS the document's job (an essay, an analysis, a review whose
+  reader wants the "what it means"), the meaning layer is the deliverable — keep
+  it and make it specific. Ask: is meaning-making this document's purpose, or is
+  it glossing a fact the reader could judge alone?
 - **Sources:** blader (P40), avoid-ai (folded into superficial -ing), aboudjem.
 
 ---
@@ -120,4 +130,11 @@ priority to fix in any professional or factual document.
   打通 / 闭环 / 抓手 / 链路.)
 - **Fix:** If the draft makes a claim, say the claim plainly. Replace the
   abstraction with what actually happened, exists, or should be done.
+- **Canonical / precedence:** the single-word AI-vocabulary items here
+  (best-in-class, learnings, actionable, holistic, synergy) are **owned by L1** in
+  `lexical-tells.md` — its tiered lists and replace-on-sight table are canonical
+  for them. If a word matches both, apply L1's tier rule. S9 remains canonical for
+  what L1 does not cover: multi-word consultant phrases (value-add, strategic
+  lever, future-proof, actionable insights, holistic approach) and the Chinese
+  buzzwords (赋能 / 打通 / 闭环 / 抓手 / 链路).
 - **Sources:** anti-vibe (consultant tone + Chinese buzzwords), avoid-ai.
