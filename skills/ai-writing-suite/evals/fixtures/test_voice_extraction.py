@@ -23,6 +23,7 @@ recomputed within a genre. The previous corpus pooled genres to reach its declar
 import io
 import json
 import os
+import pathlib
 import re
 import shutil
 import tempfile
@@ -30,8 +31,36 @@ import unittest
 from contextlib import redirect_stdout
 from unittest import mock
 
+import ast
+
+from fixtures import holdout_adversary as ha
 from fixtures import mutants_voice as mv
 from fixtures import run_voice_extraction as rve
+
+# Identifiers that would make the holdout white-box: checker regexes, constants, and
+# parse helpers. The holdout may touch only public scoring/loader entry points.
+_CHECKER_INTERNALS = {
+    "_NEEDS_SPAN", "CRITERIA_DIMENSIONS", "_BULLET_LABEL", "_NUMERIC", "_MONTHS",
+    "_MAGNITUDES", "_num_key", "_typed_claim_for_match", "typed_numeric_claims",
+    "numeric_keys", "TRAIT_FEATURES", "_DENIAL", "_CLAUSE_SPLIT", "_NEGATIONS",
+    "parse_sections", "mean_sentence_words", "asserted_features", "_CAP_RUN",
+}
+
+
+def _forbidden_references(module):
+    """The checker internals a module actually REFERENCES in code (AST, not text).
+
+    Strings and comments are ignored, so a module may NAME a forbidden symbol in its
+    docstring to explain what it avoids without tripping the guard.
+    """
+    tree = ast.parse(pathlib.Path(module.__file__).read_text(encoding="utf-8"))
+    used = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Attribute):
+            used.add(node.attr)
+        elif isinstance(node, ast.Name):
+            used.add(node.id)
+    return used & _CHECKER_INTERNALS
 
 
 class WordCounting(unittest.TestCase):
@@ -228,8 +257,8 @@ class ReviewerEvasions(unittest.TestCase):
         # v1 passed if the genre NAMES appeared and >= 2 numerals appeared anywhere in
         # the section. A profile that says outright "one figure is enough" satisfied both.
         for genre, good, spec in self._each_genre():
-            mid, md = mv.family_genre_scoped_rhythm(good, spec, self.corpus, genre)[1]
-            self.assertEqual(mid, "rhythm/both-genres-alike")
+            mid, md, _k = mv.family_genre_scoped_rhythm(good, spec, self.corpus, genre)[1]
+            self.assertEqual(mid, "both-genres-alike")
             body = rve.parse_sections(md)["Sentence Length"]
             self.assertTrue(all(rve.count_word(g, body)
                                 for g in rve.genres_of(self.corpus)),
@@ -243,8 +272,8 @@ class ReviewerEvasions(unittest.TestCase):
         # The hard mutant: no "average", no "both", no genre name — nothing lexical to
         # key on. Only comparing the figure against the recomputed means catches it.
         for genre, good, spec in self._each_genre():
-            mid, md = mv.family_genre_scoped_rhythm(good, spec, self.corpus, genre)[2]
-            self.assertEqual(mid, "rhythm/hard-no-keywords")
+            mid, md, _k = mv.family_genre_scoped_rhythm(good, spec, self.corpus, genre)[2]
+            self.assertEqual(mid, "hard-no-keywords")
             body = rve.parse_sections(md)["Sentence Length"].lower()
             self.assertNotIn("average", body)
             self.assertNotIn("both", body)
@@ -257,8 +286,8 @@ class ReviewerEvasions(unittest.TestCase):
         # v1 asked "does this string appear anywhere in the file", so a profile could
         # assert the INVERSE of the corpus and score as having learned the habit.
         for genre, good, spec in self._each_genre():
-            mid, md = mv.family_learns_habit_word(good, spec, self.corpus, genre)[2]
-            self.assertEqual(mid, "habit/inverse-never-writes")
+            mid, md, _k = mv.family_learns_habit_word(good, spec, self.corpus, genre)[2]
+            self.assertEqual(mid, "inverse-never-writes")
             habit = spec["habit_word"]["word"]
             self.assertTrue(rve.profile_mentions(habit, md),
                             "the word must still be IN the file — that is the trick")
@@ -280,7 +309,7 @@ class ReviewerEvasions(unittest.TestCase):
 
     def test_noise_word_claimed_in_a_positive_section_still_trips(self):
         for genre, good, spec in self._each_genre():
-            for _mid, md in mv.family_omits_noise_word(good, spec, self.corpus, genre):
+            for _tmpl, md, _k in mv.family_omits_noise_word(good, spec, self.corpus, genre):
                 ok, _ = rve.CHECKS["omits_noise_word"](md, self.corpus, genre)
                 self.assertFalse(ok)
 
@@ -288,8 +317,8 @@ class ReviewerEvasions(unittest.TestCase):
 
     def test_unquoted_invented_trait_is_caught(self):
         for genre, good, spec in self._each_genre():
-            mid, md = mv.family_no_invented_traits(good, spec, self.corpus, genre)[1]
-            self.assertEqual(mid, "invented/unquoted-features")
+            mid, md, _k = mv.family_no_invented_traits(good, spec, self.corpus, genre)[1]
+            self.assertEqual(mid, "unquoted-features")
             ok, detail = rve.CHECKS["no_invented_traits"](md, self.corpus, genre)
             self.assertFalse(ok, f"[{genre}] unquoted invented traits were invisible")
             self.assertIn("INVENTED features", detail)
@@ -320,7 +349,7 @@ class ReviewerEvasions(unittest.TestCase):
 
     def test_honest_gap_must_land_in_the_evidence_free_section(self):
         for genre, good, spec in self._each_genre():
-            mid, md = mv.family_honest_gap(good, spec, self.corpus, genre)[1]
+            mid, md, _k = mv.family_honest_gap(good, spec, self.corpus, genre)[1]
             self.assertIn("parked-elsewhere", mid)
             self.assertIn(rve.HONEST_GAP.lower(), md.lower(),
                           "the phrase must still be in the file — that is the evasion")
@@ -328,27 +357,66 @@ class ReviewerEvasions(unittest.TestCase):
             self.assertFalse(ok, f"[{genre}] the phrase parked in a convenient section "
                                  f"satisfied the check")
 
+    # --- FIX 2 (audit): feature lexicon + scoped polarity ---------------------
+
+    def test_invented_semicolon_habit_is_caught(self):
+        # AUDIT EVASION 3: semicolons were outside the closed feature lexicon, so a
+        # claimed semicolon habit was invisible. The corpus carries zero ';'.
+        for genre, good, _spec in self._each_genre():
+            self.assertEqual(rve.corpus_text(self.corpus, genre).count(";"), 0)
+            md = mv.append_to_section(good, "Signature Moves",
+                                      "\n- Leans on semicolons to string clauses together.\n")
+            ok, detail = rve.CHECKS["no_invented_traits"](md, self.corpus, genre)
+            self.assertFalse(ok, f"[{genre}] invented semicolon habit escaped")
+            self.assertIn("semicolons", detail)
+
+    def test_double_negative_feature_claim_is_caught(self):
+        # AUDIT EVASION 4: "emoji use is not rare" is a POSITIVE claim (double negative).
+        # The old _DENIAL suppressed any line holding a denial token, so it escaped.
+        for genre, good, _spec in self._each_genre():
+            md = mv.append_to_section(good, "Signature Moves",
+                                      "\n- Emoji use is not rare in her posts.\n")
+            ok, detail = rve.CHECKS["no_invented_traits"](md, self.corpus, genre)
+            self.assertFalse(ok, f"[{genre}] positive double-negative emoji claim escaped")
+            self.assertIn("emoji", detail)
+
+    def test_a_genuine_denial_is_still_not_an_invented_trait(self):
+        # The mirror: single negation ("never — 0 semicolons") stays a denial, not a claim.
+        for genre, good, _spec in self._each_genre():
+            md = mv.append_to_section(good, "Punctuation & Formatting",
+                                      "\n- **Semicolons:** never — 0 across the samples.\n")
+            ok, detail = rve.CHECKS["no_invented_traits"](md, self.corpus, genre)
+            self.assertTrue(ok, f"[{genre}] a denial was misread as a claim: {detail}")
+
 
 class MutantFamilies(unittest.TestCase):
-    """The families are the point: a checker must catch artifacts it has never seen."""
+    """White-box families are cheap smoke. FIX 3: must_catch floor 100%; declared gaps
+    are expected_escape, reported out of the denominator."""
 
     def setUp(self):
         self.corpus = rve.load_corpus()
         self.pairs = rve.profile_pairs(self.corpus)
 
-    def test_every_family_meets_its_declared_floor(self):
+    def test_must_catch_families_are_all_at_100_percent(self):
         for mode, (caught, total) in mv.catch_rates(self.corpus, self.pairs).items():
-            self.assertGreater(total, 0, f"{mode}: an empty family proves nothing")
-            rate = caught / total
-            self.assertGreaterEqual(
-                rate, mv.MUTANT_FLOORS[mode],
-                f"{mode}: catch rate {caught}/{total} = {rate:.0%} is below the declared "
-                f"floor {mv.MUTANT_FLOORS[mode]:.0%} — the checker is memorizing exemplars")
+            self.assertGreater(total, 0, f"{mode}: an empty must_catch family proves nothing")
+            self.assertEqual(caught, total,
+                             f"{mode}: {caught}/{total} must_catch mutants caught — a "
+                             f"must_catch escape is a checker gap, not a tolerable rate")
+
+    def test_declared_floor_is_100_percent(self):
+        self.assertEqual(mv.MUST_CATCH_FLOOR, 1.0)
 
     def test_families_are_deterministic(self):
         # No RNG, no clock: CI must be byte-reproducible or the catch rate is noise.
         self.assertEqual(mv.catch_rates(self.corpus, self.pairs),
                          mv.catch_rates(self.corpus, self.pairs))
+
+    def test_templates_reported_apart_from_instantiations(self):
+        # FIX 3: one template run across two genres is one idea, two instances.
+        counts = mv.template_counts(self.corpus, self.pairs)
+        uniq, insts = counts["scope_declared"]
+        self.assertGreater(insts, uniq)
 
     def test_every_family_has_more_than_one_member(self):
         # A family of one is the N=1 boundary that produced every finding in review.
@@ -366,34 +434,53 @@ class MutantFamilies(unittest.TestCase):
             md = rve.load_profile(good)
             spec = self.corpus["ground_truth"]["genres"][genre]
             for mode, build in mv.FAMILIES.items():
-                for mid, mutant in build(md, spec, self.corpus, genre):
+                for mid, mutant, _k in build(md, spec, self.corpus, genre):
                     ok, _ = rve.CHECKS["headers_present"](mutant, self.corpus, genre)
                     self.assertTrue(ok, f"{mid}: mutant broke the header contract")
 
-    def test_the_known_miss_is_still_a_miss_and_still_declared(self):
-        # Honesty guard. If this starts passing, the checker got better and the floor
-        # should rise — but it must never pass SILENTLY while the docs declare a gap.
-        for genre, good, _bad in self.pairs:
+    def test_expected_escapes_are_declared_and_still_escape(self):
+        # Honesty guard. Every declared gap must be tagged expected_escape AND actually
+        # escape. If one starts being caught, promote it to must_catch.
+        escapes = mv.expected_escapes(self.corpus, self.pairs)
+        self.assertTrue(escapes, "no declared gaps — the honesty ledger is empty")
+        for mode, genre, tmpl in escapes:
+            good = rve.load_profile(dict((g, gp) for g, gp, _b in self.pairs)[genre])
             spec = self.corpus["ground_truth"]["genres"][genre]
-            family = dict(mv.family_no_invented_traits(rve.load_profile(good), spec,
-                                                       self.corpus, genre))
-            md = family["invented/hard-unquoted-vocabulary"]
-            ok, _ = rve.CHECKS["no_invented_traits"](md, self.corpus, genre)
-            self.assertTrue(ok, "the declared KNOWN MISS is now caught — raise the "
-                                "no_invented_traits floor and update the module _doc")
-        self.assertLess(mv.MUTANT_FLOORS["no_invented_traits"], 1.0,
-                        "a family with a declared known miss cannot have a 100% floor")
+            family = {t: m for t, m, _k in mv.FAMILIES[mode](good, spec, self.corpus, genre)}
+            ok, _ = rve.CHECKS[mode](family[tmpl], self.corpus, genre)
+            self.assertTrue(ok, f"{genre}/{tmpl} is now CAUGHT — move it to must_catch")
 
-    def test_hard_tail_controls_are_not_flagged(self):
-        for genre, good, _bad in self.pairs:
-            spec = self.corpus["ground_truth"]["genres"][genre]
-            for hid, md, mode, must_catch in mv.hard_tail(rve.load_profile(good), spec,
-                                                          self.corpus, genre):
-                if must_catch or mode is None:
-                    continue
-                ok, detail = rve.CHECKS[mode](md, self.corpus, genre)
-                self.assertTrue(ok, f"[{genre}] {hid} is correct behavior but was "
-                                    f"flagged: {detail}")
+
+class BlackBoxHoldout(unittest.TestCase):
+    """FIX 1: the adversarial claim is the black-box holdout, which shares NOTHING with
+    the checker. The two voice audit evasions live here as permanent must-catch entries."""
+
+    def setUp(self):
+        self.corpus = rve.load_corpus()
+        self.pairs = rve.profile_pairs(self.corpus)
+
+    def test_the_two_voice_audit_evasions_are_caught(self):
+        ids = {hid for hid, _c, must, caught in ha.voice_results(self.corpus, self.pairs)
+               if must and caught}
+        for needle in ("invented-semicolon-habit", "double-negative-emoji"):
+            self.assertTrue(any(needle in i for i in ids),
+                            f"audit evasion {needle} not caught by the holdout")
+
+    def test_every_must_catch_holdout_entry_is_caught(self):
+        for hid, check, must, caught in ha.voice_results(self.corpus, self.pairs):
+            if must:
+                self.assertTrue(caught, f"holdout {hid} ESCAPED — a closed gap reopened")
+
+    def test_holdout_controls_are_not_flagged(self):
+        for hid, check, must, caught in ha.voice_results(self.corpus, self.pairs):
+            if not must:
+                self.assertFalse(caught, f"holdout control {hid} was FALSE-flagged")
+
+    def test_holdout_is_black_box_uses_no_checker_internals(self):
+        # AST-level, so the module's own docstring (which NAMES the forbidden symbols to
+        # explain what it avoids) does not trip the guard — only real code references do.
+        hits = _forbidden_references(ha)
+        self.assertEqual(hits, set(), f"holdout reaches into checker internals: {hits}")
 
 
 class MainGate(unittest.TestCase):

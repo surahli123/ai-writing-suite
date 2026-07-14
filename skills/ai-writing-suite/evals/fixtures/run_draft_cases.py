@@ -175,13 +175,73 @@ def _num_key(tok):
 
 
 def numeric_keys(text):
-    """The SET of numeric values asserted in `text` (see _num_key).
+    """The SET of bare numeric values asserted in `text` (see _num_key).
 
     Set membership, never substring: "150" in the brief must not mask an invented
-    "50", "15", "1" or "0" in the draft.
+    "50", "15", "1" or "0" in the draft. This is the VALUE-ONLY view, kept for the
+    masked-number derivation in the mutant smoke suite; the fabrication check itself
+    uses the TYPED view below, which also carries each value's unit/kind.
     """
     return {_num_key(m.group(0)) for m in _NUMERIC.finditer(text or "")
             if _num_key(m.group(0)) != ""}
+
+
+# Context that changes what a number MEANS. Two invented specifics escaped the
+# value-only check by borrowing a supported value: "$3 million" reused the "3" that
+# "3 March" grounds, and "3 November" reused the supported DAY while changing the
+# month. So a claim now carries its TYPE, and grounding requires value AND type.
+_MONTHS = {
+    "jan": "january", "january": "january", "feb": "february", "february": "february",
+    "mar": "march", "march": "march", "apr": "april", "april": "april", "may": "may",
+    "jun": "june", "june": "june", "jul": "july", "july": "july",
+    "aug": "august", "august": "august", "sep": "september", "sept": "september",
+    "september": "september", "oct": "october", "october": "october",
+    "nov": "november", "november": "november", "dec": "december", "december": "december",
+}
+_MAGNITUDES = {"thousand", "million", "billion", "trillion", "k", "m", "mn", "bn", "b"}
+_CURRENCY_CHARS = "$£€"
+_CURRENCY_WORDS = {"usd", "eur", "gbp", "dollar", "dollars", "pound", "pounds",
+                   "euro", "euros"}
+_LETTERS = re.compile(r"[A-Za-z]+")
+
+
+def _typed_claim_for_match(text, m):
+    """The TYPED key for one numeric match: value bound to its unit/kind.
+
+    Kinds, chosen by the context immediately around the digits:
+      * ("date", day, month)  — a month name sits next to the number ("3 March"),
+      * ("qty", value, unit)  — a currency symbol/word precedes it or a magnitude
+                                word follows it ("$3", "3 million"),
+      * ("pct", value)        — a "%" is attached or "percent"/"percentage" follows,
+      * ("num", value)        — a plain number, matched only by a plain number.
+    A date grounds only a date, a magnitude amount only the same amount+unit, so a
+    supported "3 March" no longer launders an invented "$3 million" or "3 November".
+    """
+    val = _num_key(m.group(0))
+    before = text[:m.start()]
+    after = text[m.end():]
+    prev_words = _LETTERS.findall(before)
+    prev_word = prev_words[-1].lower() if prev_words else ""
+    nxt = _LETTERS.search(after)
+    next_word = nxt.group(0).lower() if nxt and after[:nxt.start()].strip(" ,.:;)-–—\"'") == "" else ""
+    month = _MONTHS.get(next_word) or _MONTHS.get(prev_word)
+    stripped_before = before.rstrip()
+    has_currency = (bool(stripped_before) and stripped_before[-1] in _CURRENCY_CHARS) \
+        or prev_word in _CURRENCY_WORDS
+    surface = m.group(0)
+    is_percent = surface.endswith("%") or next_word in ("percent", "percentage")
+    if month is not None:
+        return ("date", val, month)
+    if next_word in _MAGNITUDES or has_currency:
+        return ("qty", val, next_word if next_word in _MAGNITUDES else "$")
+    if is_percent:
+        return ("pct", val)
+    return ("num", val)
+
+
+def typed_numeric_claims(text):
+    """The SET of TYPED numeric claims in `text` (see _typed_claim_for_match)."""
+    return {_typed_claim_for_match(text, m) for m in _NUMERIC.finditer(text or "")}
 
 
 def _name_candidates(body):
@@ -217,18 +277,18 @@ def find_fabrications(draft, sources):
     Two candidate classes, chosen because they are the two shapes an invented fact
     takes in practice: a NUMBER presented as measurement ("churn fell 23%") and a
     CAPITALIZED NAME presented as a real entity ("Northwind Retention", "Acme, Inc.",
-    "the Falcon program"). A number is a violation iff its VALUE is absent from the
-    sources' value set (_num_key); a name is a violation iff its phrase appears
-    nowhere in the source text.
+    "the Falcon program"). A number is a violation iff its TYPED claim (value + kind:
+    date / magnitude / percent / plain) is absent from the sources; a name is a
+    violation iff its phrase appears nowhere in the source text.
 
     Known limits, stated rather than hidden: a lone capitalized word bound to no
     designator is not a candidate (sentence starts and ordinary names would drown
     the signal — draft-03's good_draft legitimately writes "Wednesday", absent from
-    its brief), and magnitude words ("million") ride along untested. This is a
-    checker for the fabrication SHAPE, not a semantic fact-checker.
+    its brief), and a spelled-out numeral ("fifty percent") is not tokenized. This is
+    a checker for the fabrication SHAPE, not a semantic fact-checker.
     """
     src_text = _norm(sources)
-    src_nums = numeric_keys(sources)
+    src_claims = typed_numeric_claims(src_text)
     body = _NEEDS_SPAN.sub(" ", draft or "")  # a declared gap is not a claimed fact
     found = []
 
@@ -236,7 +296,7 @@ def find_fabrications(draft, sources):
         tok = m.group(0).rstrip(".,:/")
         if not tok:
             continue
-        if _num_key(m.group(0)) in src_nums:
+        if _typed_claim_for_match(body, m) in src_claims:
             continue
         found.append(tok)
 
@@ -406,11 +466,15 @@ def run_deterministic(data):
 
     # One planted positive per mode is a boundary of one point: a checker can pass it by
     # memorizing the exemplar it was written against (which is exactly how the substring
-    # and line-count bugs survived). The mutant families draw fresh artifacts from the
-    # same failure mode, so memorization stops working.
+    # and line-count bugs survived). Two layers widen that boundary:
+    #   1. white-box mutant families (cheap smoke, must_catch floor 100%), and
+    #   2. a BLACK-BOX holdout adversary that shares nothing with the checker — the
+    #      real adversarial claim, seeded with the evasions past reviews found.
     from fixtures.mutants_draft import run_mutant_families  # lazy: keeps the import cheap
+    from fixtures.holdout_adversary import run_draft_holdout
     m_pass, m_fail = run_mutant_families(cases)
-    return passes + m_pass, fails + m_fail
+    h_pass, h_fail = run_draft_holdout(cases)
+    return passes + m_pass + h_pass, fails + m_fail + h_fail
 
 
 # --- advisory judge lane ------------------------------------------------------

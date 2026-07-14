@@ -85,13 +85,25 @@ TRAIT_FEATURES = {
     "rhetorical question": ("question marks", lambda t: t.count("?")),
     "question mark": ("question marks", lambda t: t.count("?")),
     "question marks": ("question marks", lambda t: t.count("?")),
+    "semicolon": ("semicolons", lambda t: t.count(";")),
+    "semicolons": ("semicolons", lambda t: t.count(";")),
+    "semi-colon": ("semicolons", lambda t: t.count(";")),
 }
 
-# A line that DENIES a feature ("Em-dash density: never — 0 em-dashes across all 5
-# samples") is correct mining, not an invented trait. Only a line ASSERTING a feature
-# the corpus does not carry is a fabrication, so denial markers suppress the flag.
-_DENIAL = re.compile(
-    r"\b(never|none|no|not|zero|absent|unknown|avoids?|rarely|0)\b", re.IGNORECASE)
+# Tokens that flip a feature claim's polarity. A CLAUSE is negated when it holds an
+# ODD number of these (double negatives cancel: "not rare" is a POSITIVE claim). The
+# old code skipped a whole line if any denial token appeared anywhere on it, so an
+# emoji habit asserted as "not rare" — the denial token belonging to "rare", not to
+# a suppression of emoji — escaped. Polarity is now scoped to the clause, with parity.
+_NEGATIONS = {
+    "never", "none", "no", "not", "zero", "absent", "unknown", "avoid", "avoids",
+    "without", "neither", "nor", "rarely", "rare", "uncommon", "seldom",
+    "scarcely", "hardly", "lacks", "lack", "0",
+}
+# Clause boundaries: sentence stops, semicolons, and dash separators. NOT the hyphen
+# inside "em-dash" — only a SPACED hyphen or a real en/em dash separates clauses.
+_CLAUSE_SPLIT = re.compile(r"[.;]|—|–|\s-\s")
+_TOKEN = re.compile(r"[a-z0-9'’]+")
 
 
 # --------------------------------------------------------------------------
@@ -206,22 +218,38 @@ def quoted_terms(md):
     return terms
 
 
+def _clause_is_negated(clause):
+    """True when the clause carries an ODD number of negation tokens.
+
+    Parity, not presence: "never — 0 em-dashes" is a denial (two negations, but they
+    sit in different clauses after the split), while "not rare" inside one clause is
+    two negations that cancel to a POSITIVE claim.
+    """
+    return sum(1 for t in _TOKEN.findall(clause.lower()) if t in _NEGATIONS) % 2 == 1
+
+
 def asserted_features(md, text):
     """Style features the profile ASSERTS in a claim section but `text` does not carry.
 
-    Returns a sorted list of feature names. A denial ("never", "0 em-dashes",
-    "Unknown") is mining an absence, not inventing a trait, so it is skipped.
+    Returns a sorted list of feature names. Polarity is scoped to the CLAUSE the
+    feature is named in: a feature is invented only when the corpus has zero of it
+    AND the clause naming it is not negated. Mining an absence ("Em-dash density:
+    never — 0 em-dashes") stays correct; a positive double-negative claim ("emoji use
+    is not rare") is caught.
     """
     invented = set()
     for body in claim_sections(md).values():
         for line in body.splitlines():
-            if line.lstrip().startswith(">") or _DENIAL.search(line):
+            if line.lstrip().startswith(">"):
                 continue
-            low = line.lower()
-            for alias, (feature, evidence) in TRAIT_FEATURES.items():
-                if re.search(r"\b" + re.escape(alias) + r"\b", low) \
-                        and evidence(text) == 0:
-                    invented.add(feature)
+            for clause in _CLAUSE_SPLIT.split(line):
+                if _clause_is_negated(clause):
+                    continue
+                low = clause.lower()
+                for alias, (feature, evidence) in TRAIT_FEATURES.items():
+                    if re.search(r"\b" + re.escape(alias) + r"\b", low) \
+                            and evidence(text) == 0:
+                        invented.add(feature)
     return sorted(invented)
 
 
@@ -639,8 +667,10 @@ def run(corpus, pairs):
                   f"wrong on CONTENT only\n")
 
     from fixtures.mutants_voice import run_mutant_families  # lazy: keeps the import cheap
+    from fixtures.holdout_adversary import run_voice_holdout
     m_pass, m_fail = run_mutant_families(corpus, pairs)
-    return passes + m_pass, fails + m_fail
+    h_pass, h_fail = run_voice_holdout(corpus, pairs)
+    return passes + m_pass + h_pass, fails + m_fail + h_fail
 
 
 def main(argv=None):

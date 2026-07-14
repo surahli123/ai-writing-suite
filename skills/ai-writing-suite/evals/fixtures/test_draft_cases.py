@@ -19,6 +19,10 @@ import tempfile
 import unittest
 from unittest import mock
 
+import ast
+import pathlib
+
+import fixtures.holdout_adversary as ha
 import fixtures.mutants_draft as md
 import fixtures.run_draft_cases as rdc
 from fixtures.run_draft_cases import (
@@ -289,87 +293,133 @@ class MainExitCodes(unittest.TestCase):
         self.assertEqual(self._run_main_on(data), 1)
 
 
-class MutantFamilies(unittest.TestCase):
-    """The families are the point: a checker must catch drafts it has never seen.
+class TypedNumericFabrication(unittest.TestCase):
+    """FIX 2 (audit): a number is grounded only when its VALUE and its TYPE both appear
+    in the source. Bare-value matching let a supported "3 March" launder an invented
+    "$3 million" or "3 November"."""
 
-    One planted positive per mode is a boundary of ONE point, and a checker can pass it
-    by memorizing that exemplar — which is exactly how the substring lookup, the line
-    counter and the bag-of-words criteria test all stayed green while being broken.
-    """
+    SRC = ("We shipped the win-back campaign on 3 March; Priya owns the follow-up. "
+           "Q3 churn was 4.1%.")
+
+    def test_currency_magnitude_reusing_a_supported_value_is_flagged(self):
+        # "$3 million" reuses the "3" that "3 March" grounds, but the source states no
+        # magnitude. AUDIT EVASION 1.
+        self.assertIn("3", find_fabrications("The campaign cost $3 million to run.", self.SRC))
+
+    def test_supported_day_with_a_wrong_month_is_flagged(self):
+        # "3 November" reuses the supported DAY while changing the month. AUDIT EVASION 2.
+        self.assertIn("3", find_fabrications("We shipped it on 3 November.", self.SRC))
+
+    def test_the_supported_date_itself_is_not_flagged(self):
+        self.assertEqual(find_fabrications("We shipped on 3 March.", self.SRC), [])
+
+    def test_percent_surface_equivalence_still_holds(self):
+        # The typed view must not regress the value-equality policy.
+        self.assertEqual(find_fabrications("Churn was 14%.", "Q3 churn was 14 percent."), [])
+        self.assertEqual(find_fabrications("Saw 1,000 signups.", "There were 1000 signups."), [])
+
+    def test_typed_claims_expose_kind(self):
+        claims = rdc.typed_numeric_claims("on 3 March we spent $3 million, up 4.1%")
+        self.assertIn(("date", 3.0, "march"), claims)
+        self.assertIn(("qty", 3.0, "million"), claims)
+        self.assertIn(("pct", 4.1), claims)
+
+
+class MutantFamilies(unittest.TestCase):
+    """White-box families are cheap smoke. FIX 3: must_catch floor is 100% (no escape
+    tolerated); declared gaps are expected_escape, reported out of the denominator."""
 
     def setUp(self):
         self.cases = load_draft_cases()["cases"]
 
-    def test_every_family_meets_its_declared_floor(self):
+    def test_must_catch_families_are_all_at_100_percent(self):
         for check, (caught, total) in md.catch_rates(self.cases).items():
-            self.assertGreater(total, 0, f"{check}: an empty family proves nothing")
-            rate = caught / total
-            self.assertGreaterEqual(
-                rate, md.MUTANT_FLOORS[check],
-                f"{check}: catch rate {caught}/{total} = {rate:.0%} is below the declared "
-                f"floor {md.MUTANT_FLOORS[check]:.0%} — the checker is memorizing exemplars")
+            self.assertGreater(total, 0, f"{check}: an empty must_catch family proves nothing")
+            self.assertEqual(caught, total,
+                             f"{check}: {caught}/{total} must_catch mutants caught — a "
+                             f"must_catch escape is a checker gap, not a tolerable rate")
+
+    def test_declared_floor_is_100_percent(self):
+        self.assertEqual(md.MUST_CATCH_FLOOR, 1.0)
 
     def test_families_are_deterministic(self):
         # No RNG, no clock: CI must be byte-reproducible or the catch rate is noise.
         self.assertEqual(md.catch_rates(self.cases), md.catch_rates(self.cases))
 
-    def test_every_family_has_more_than_one_member(self):
-        for case in self.cases:
-            for check, build in md.FAMILIES.items():
-                if check not in case["checks"]:
-                    continue
-                if check == "needs_marker" and not case.get("requires_needs_marker"):
-                    continue
-                self.assertGreater(len(build(case)), 1,
-                                   f"{case['id']}/{check}: family of <2 is the N=1 boundary "
-                                   f"that caused every finding in review")
+    def test_templates_reported_apart_from_instantiations(self):
+        # FIX 3: the same template applied to three briefs is one idea, three instances.
+        counts = md.template_counts(self.cases)
+        uniq, insts = counts["no_fabrication"]
+        self.assertGreater(insts, uniq, "instantiations should exceed unique templates "
+                                        "when a template runs across multiple cases")
 
     def test_the_masked_number_mutant_is_derived_from_the_brief(self):
         # The hard member: a value whose digits hide inside a legitimate source number
-        # ("50" inside the brief's "150"). It must be DERIVED, not hardcoded, or it only
-        # tests the one case the reviewer happened to look at.
+        # ("50" inside the brief's "150"). It must be DERIVED, not hardcoded.
         case = self.cases[0]
         surface, value = md._masked_value(rdc.numeric_keys(source_blob(case)))
         self.assertIsNotNone(surface)
-        self.assertIn(surface, case["brief"])                     # digits hide in the brief
+        self.assertIn(surface, case["brief"])                        # digits hide in the brief
         self.assertNotIn(value, rdc.numeric_keys(source_blob(case)))  # the VALUE does not
-        family = dict(md.family_no_fabrication(case))
-        mutant = family[f"fabrication/number-masked-by-source-{surface}"]
-        self.assertTrue(CHECKS["no_fabrication"](case, mutant),
+        family = {t: art for t, art, _k in md.family_no_fabrication(case)}
+        self.assertTrue(CHECKS["no_fabrication"](case, family["number-masked-by-source"]),
                         "the masked-number mutant escaped — the substring bug is back")
 
-    def test_the_known_misses_are_still_declared(self):
-        # Honesty guard: the two declared gaps (a spelled-out numeral, a bare
-        # single-word name) must remain misses, or the floor and the _doc are lying.
-        case = self.cases[0]
-        family = dict(md.family_no_fabrication(case))
-        for mid in ("fabrication/number-spelled-out-KNOWN-MISS",
-                    "fabrication/name-bare-single-word-KNOWN-MISS"):
-            self.assertFalse(
-                CHECKS["no_fabrication"](case, family[mid]),
-                f"{mid} is now CAUGHT — raise the no_fabrication floor and update the _doc")
-        self.assertLess(md.MUTANT_FLOORS["no_fabrication"], 1.0,
-                        "a family with declared known misses cannot have a 100% floor")
+    def test_expected_escapes_are_declared_and_still_escape(self):
+        # Honesty guard: every declared gap must be tagged expected_escape AND actually
+        # escape. If one starts being caught, the checker improved — promote it.
+        escapes = md.expected_escapes(self.cases)
+        self.assertTrue(escapes, "no declared gaps — the honesty ledger is empty")
+        for check, cid, tmpl in escapes:
+            case = next(c for c in self.cases if c["id"] == cid)
+            family = {t: art for t, art, _k in md.FAMILIES[check](case)}
+            self.assertFalse(CHECKS[check](case, family[tmpl]),
+                             f"{cid}/{tmpl} is now CAUGHT — move it to must_catch")
 
-    def test_hard_tail_controls_are_not_flagged(self):
-        for case in self.cases:
-            for hid, draft, check, must_catch in md.hard_tail(case):
-                if must_catch:
-                    continue
-                self.assertFalse(
-                    CHECKS[check](case, draft),
-                    f"{case['id']}/{hid} is correct behavior but was flagged")
 
-    def test_hard_tail_reviewer_evasions_are_caught(self):
-        found = 0
-        for case in self.cases:
-            for hid, draft, check, must_catch in md.hard_tail(case):
-                if not must_catch:
-                    continue
-                found += 1
-                self.assertTrue(CHECKS[check](case, draft),
-                                f"{case['id']}/{hid} ESCAPED — the evasion is back")
-        self.assertGreater(found, 0, "the append-only hard tail is empty")
+class BlackBoxHoldout(unittest.TestCase):
+    """FIX 1: the adversarial claim is the black-box holdout, which shares NOTHING with
+    the checker. The four audit evasions live here as permanent must-catch entries."""
+
+    def setUp(self):
+        self.cases = load_draft_cases()["cases"]
+
+    def test_the_two_draft_audit_evasions_are_caught(self):
+        ids = {hid for hid, _c, must, caught in ha.draft_results(self.cases)
+               if must and caught}
+        for needle in ("currency-magnitude-reuses-supported-value",
+                       "supported-day-wrong-month"):
+            self.assertTrue(any(needle in i for i in ids),
+                            f"audit evasion {needle} not caught by the holdout")
+
+    def test_every_must_catch_holdout_entry_is_caught(self):
+        for hid, check, must, caught in ha.draft_results(self.cases):
+            if must:
+                self.assertTrue(caught, f"holdout {hid} ESCAPED — a closed gap reopened")
+
+    def test_holdout_controls_are_not_flagged(self):
+        for hid, check, must, caught in ha.draft_results(self.cases):
+            if not must:
+                self.assertFalse(caught, f"holdout control {hid} was FALSE-flagged")
+
+    def test_holdout_is_black_box_uses_no_checker_internals(self):
+        # The discipline that makes the holdout adversarial: it may touch only public
+        # entry points, never the checker's regexes/constants/parse helpers. AST-level,
+        # so the module's docstring may NAME the symbols it avoids without tripping this.
+        tree = ast.parse(pathlib.Path(ha.__file__).read_text(encoding="utf-8"))
+        used = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Attribute):
+                used.add(node.attr)
+            elif isinstance(node, ast.Name):
+                used.add(node.id)
+        forbidden = {"_NEEDS_SPAN", "CRITERIA_DIMENSIONS", "_BULLET_LABEL", "_NUMERIC",
+                     "_MONTHS", "_MAGNITUDES", "_num_key", "_typed_claim_for_match",
+                     "typed_numeric_claims", "numeric_keys", "TRAIT_FEATURES", "_DENIAL",
+                     "_CLAUSE_SPLIT", "parse_sections", "mean_sentence_words",
+                     "asserted_features", "_CAP_RUN"}
+        self.assertEqual(used & forbidden, set(),
+                         f"holdout reaches into checker internals: {used & forbidden}")
 
 
 class JudgeLane(unittest.TestCase):
