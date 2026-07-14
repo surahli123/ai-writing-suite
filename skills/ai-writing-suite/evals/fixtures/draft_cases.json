@@ -1,0 +1,70 @@
+{
+  "_doc": {
+    "what": "Behavioral eval for the comms-draft skill. comms-draft is SKILL PROSE (agent behavior), not code — you cannot produce a draft without a model. So instead of asserting a fixture file is well-formed (a vacuous eval that can never fail), each case ships an input brief and TWO PRE-AUTHORED DRAFT ARTIFACTS, as if the skill had run: a `good_draft` (the behavior comms-draft/SKILL.md mandates) and a `bad_draft` (the specific failure mode). A deterministic checker must tell them apart.",
+    "planted_positive": "Every case is its own planted positive: good_draft must PASS every check in `checks`, and bad_draft must FAIL the check named in `failure_mode`. A checker that cannot catch its own planted failure is broken, so a bad_draft that does not trip FAILS the run.",
+    "artifact_shape": "Each draft is a comms-draft turn transcript. Everything before the first line starting with '## Draft' is the PRE-DRAFT section (step-1 clarifying questions + acceptance criteria). Headings are sentence-case on purpose: the proper-noun half of the fabrication checker treats a run of 2+ capitalized words as a candidate invented name, and Title Case Headings would be indistinguishable from one.",
+    "fields": {
+      "id": "case id",
+      "brief": "the user's brief — one of the only two legitimate sources of fact (SKILL.md: Inputs)",
+      "kb_facts": "the KB passages the skill legitimately has — the other legitimate source of fact",
+      "good_draft": "the artifact the SKILL mandates",
+      "bad_draft": "the artifact exhibiting `failure_mode`",
+      "failure_mode": "the check bad_draft MUST trip (the planted positive)",
+      "checks": "every deterministic check to run on this case",
+      "requires_needs_marker": "true when the brief has a gap the draft cannot fill, so a correct draft MUST carry a [NEEDS: ...] marker"
+    },
+    "checks_vocabulary": {
+      "no_fabrication": "no number/date/percentage and no multi-word proper noun in the draft that appears in NEITHER the brief NOR kb_facts. SKILL.md Safety Rules: 'A visible gap is correct; an invented fact is the worst failure this skill can make.'",
+      "needs_marker": "when requires_needs_marker, the draft must contain a '[NEEDS:' marker (SKILL.md step 3 + Output contract item 3)",
+      "question_count": "at most 3 clarifying questions in the pre-draft section (SKILL.md step 1: 'ask at most 2-3 targeted questions ... do not stall on a fourth question')",
+      "criteria_dimensions": "all five acceptance-criteria dimensions named before the draft: style, format, length, content integration, depth (SKILL.md step 1)"
+    }
+  },
+
+  "cases": [
+    {
+      "id": "draft-01-missing-fact",
+      "failure_mode": "no_fabrication",
+      "checks": ["no_fabrication", "needs_marker"],
+      "requires_needs_marker": true,
+      "brief": "Write a short internal update email to the support team about the retention push. What I can give you: we shipped the win-back campaign on 3 March, it covers lapsed annual customers, and Priya owns the follow-up. Open with the Q3 churn number so the team sees why this matters. Keep it under 150 words.",
+      "kb_facts": [
+        "structure.md: lead with the point (BLUF) before the supporting detail.",
+        "audience.md: an internal team email assumes shared context and skips the background paragraph.",
+        "clarity.md: name the owner of a follow-up, not 'the team'."
+      ],
+      "good_draft": "## Acceptance criteria\n- style: plain internal register, no announcement gloss\n- format: email, no headers\n- length: under 150 words\n- content integration: campaign ship date, who it covers, the owner, the churn figure\n- depth: overview, the team already has the context\n\n## Draft\nSubject: win-back campaign is live\n\nChurn was [NEEDS: Q3 churn number] last quarter, which is why the win-back campaign matters.\n\nWe shipped it on 3 March. It covers lapsed annual customers only, so if a monthly account asks, that is out of scope for now. Priya owns the follow-up and will pick up anything the campaign surfaces.\n\nNothing changes in your queue today. If you see a lapsed annual customer come back through support, route it to Priya rather than closing it out.\n\n## [NEEDS: ...]\n- [NEEDS: Q3 churn number] — the brief asks the email to open on it and does not supply it.\n\n## Inputs note\nBrief plus three KB entries (structure, audience, clarity). No voice profile present.",
+      "bad_draft": "## Acceptance criteria\n- style: plain internal register\n- format: email\n- length: under 150 words\n- content integration: ship date, scope, owner, churn\n- depth: overview\n\n## Draft\nSubject: win-back campaign is live\n\nChurn fell 23% in Q3, the sharpest drop since we launched Northwind Retention, and the win-back campaign is what kept it moving.\n\nWe shipped on 3 March. It covers lapsed annual customers only. Priya owns the follow-up.\n\nNothing changes in your queue today. Route any returning annual customer to Priya.\n\n## Inputs note\nBrief plus three KB entries. No voice profile present."
+    },
+
+    {
+      "id": "draft-02-thin-brief",
+      "failure_mode": "question_count",
+      "checks": ["question_count", "no_fabrication", "needs_marker"],
+      "requires_needs_marker": true,
+      "brief": "Write something about the new onboarding flow for the blog.",
+      "kb_facts": [
+        "audience.md: name the reader before choosing a register.",
+        "clarity.md: a draft with no defined reader drifts into generic copy.",
+        "structure.md: lead with the point (BLUF) before the supporting detail."
+      ],
+      "good_draft": "## Clarifying questions\n- Who is the reader — an existing customer, or someone evaluating us?\n- What actually changed in the flow, in one sentence?\n- Is there a launch date I should name, or is this evergreen?\n\n## Acceptance criteria (inferred, proceeding)\nI have what I need to start; here is what I inferred, correct me where I guessed wrong.\n- style: plain product voice, first person plural\n- format: blog post with a lede and two short sections\n- length: short post, roughly the length below\n- content integration: what changed, why it changed, what the reader does next\n- depth: overview for a reader who has seen the old flow\n\n## Draft\nOnboarding got shorter.\n\n[NEEDS: what changed in the flow — the specific steps removed or reordered]\n\nWe changed it because [NEEDS: the reason the old flow was a problem — the drop-off point, the support tickets, whatever drove this].\n\nIf you are already set up, nothing moves for you. New accounts see the new flow from [NEEDS: launch date, or confirm this is evergreen].\n\n## [NEEDS: ...]\n- [NEEDS: what changed in the flow]\n- [NEEDS: the reason the old flow was a problem]\n- [NEEDS: launch date, or confirm evergreen]\n\n## Inputs note\nBrief is thin; three KB entries applied (audience, clarity, structure). No voice profile present.",
+      "bad_draft": "## Clarifying questions\n- Who is the reader — an existing customer, or someone evaluating us?\n- What actually changed in the flow?\n- Is there a launch date I should name?\n- What tone do you want — playful or straight?\n- And how long should this be, roughly?\n\nI cannot draft anything until I know these. Let me know and I will start.\n\n## Draft\n(pending your answers)"
+    },
+
+    {
+      "id": "draft-03-acceptance-criteria",
+      "failure_mode": "criteria_dimensions",
+      "checks": ["criteria_dimensions", "no_fabrication"],
+      "requires_needs_marker": false,
+      "brief": "Write a one-page memo to the eng leads recommending we move the weekly deploy from Friday to Tuesday. Facts: the last three Friday deploys each needed a weekend hotfix; the on-call rotation hands over on Saturday, so the hotfix lands on whoever just came on; Dana has signed off on the change. Target 300 to 400 words, plain memo, no slides.",
+      "kb_facts": [
+        "structure.md: a memo leads with the decision, then the evidence, then the ask.",
+        "audience.md: eng leads want the tradeoff, not the pep talk.",
+        "revision.md: cut any sentence that does not move the decision."
+      ],
+      "good_draft": "## Acceptance criteria\n- style: direct, peer-to-peer, no pep talk (KB: audience.md)\n- format: memo, decision first, no slides (KB: structure.md)\n- length: 300 to 400 words\n- content integration: the three Friday deploys and their weekend hotfixes, the Saturday on-call handover, Dana's sign-off\n- depth: enough for a lead to say yes or no in one read, not an implementation plan\n\n## Draft\nRecommendation: move the weekly deploy from Friday to Tuesday, starting next cycle. Dana has signed off.\n\nThe last three Friday deploys each needed a weekend hotfix. That is the whole argument. A Friday deploy that goes wrong goes wrong on a Saturday, and the on-call rotation hands over on Saturday, so the person fixing it is the one who just walked in and has the least context on what shipped.\n\nA Tuesday deploy fails on a Tuesday. The engineer who wrote the change is at a desk, the person who reviewed it is reachable, and the fix ships in hours rather than eating a weekend.\n\nThe cost is real and I am not going to pretend otherwise: Tuesday deploys mean a change that lands late in the week waits. That is a slower cycle for anyone who merges on Wednesday. My read is that a slower cycle beats a weekend hotfix handed to someone who did not ship the code, but it is a tradeoff, not a free win.\n\nThe ask: confirm by end of week so the next cycle starts on the new schedule.\n\n## Inputs note\nBrief plus three KB entries (structure, audience, revision). No voice profile present.",
+      "bad_draft": "## Acceptance criteria\n- style: professional and clear\n- length: about a page\n\n(Standard rubric applied: is it clear, is it concise, is it correct, is it engaging.)\n\n## Draft\nRecommendation: move the weekly deploy from Friday to Tuesday. Dana has signed off.\n\nThe last three Friday deploys each needed a weekend hotfix, and because the on-call rotation hands over on Saturday, the fix lands on whoever just came on.\n\nA Tuesday deploy fails on a Tuesday, when the author of the change is at a desk.\n\nThe ask: confirm by end of week.\n\n## Inputs note\nBrief plus three KB entries."
+    }
+  ]
+}
