@@ -70,6 +70,23 @@
       ],
       "fail_dimension": "meaning_preserved",
       "why": "Over-correction by deletion: `after` drops the 14% figure and both concrete causes (API migration slip, two engineers lost), replacing them with 'a couple of reasons' and empty reassurance. This is the opposite failure from fabrication — the rewrite is honest but gutted the load-bearing claims -> meaning_preserved FAIL."
+    },
+    {
+      "id": "narrshape-fail-01-manufactured-ambiguity-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "The nightly backup job is green again. The fix was a one-character typo in the cron schedule.",
+      "after": "The nightly backup job is green again, for now. The fix was a one-character typo in the cron schedule, though I keep wondering whether the real story is messier, whether something deeper in how we think about scheduling is unresolved, and whether fixed is ever really the right word.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "narrative_shape_ok",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "narrative_shape_ok",
+      "why": "OVER-CORRECTION of the narrative-shape category. The `before` is a genuinely simple, single-outcome update: the thread is truly closed (a one-character cron typo, now green). Its tidy resolution is MOTIVATED (validity condition) -> NOT a tell. The `after` manufactures fake residue and fake ambiguity ('for now', 'the real story is messier', 'whether fixed is ever really the right word') purely to LOOK human -- injected complexity where the material supplies none. A naive judge might reward 'it left a thread open, good'; the validity condition forbids that. narrative_shape_ok: FAIL (over-correction). This is the failure mode the category must ship paired with, exactly as over-stepping ships its 不是X而是Y over-strip hard-negatives."
     }
   ]
 }

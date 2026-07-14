@@ -46,6 +46,7 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 | [`communication-artifacts.md`](communication-artifacts.md) | Chat artifacts | Chatbot tics, sycophancy, acknowledgment loops, cutoff disclaimers, collaborative-framing leaks, reasoning-chain leaks, engagement hooks, emotional flatline, register/style shift (canonical C11) |
 | [`rhythm-stylometric.md`](rhythm-stylometric.md) | Rhythm & stylometry | Sentence/paragraph uniformity (burstiness), low vocabulary diversity (TTR), perplexity |
 | [`overstepping-presumption.md`](overstepping-presumption.md) | Over-stepping (反代入式越位感) | Presumed cognition, presumed-misconception strawman, presumed mental image, self-Q&A-as-judge — plus the validity condition (judge-only, advisory) |
+| [`narrative-shape.md`](narrative-shape.md) | Document / narrative shape (文档叙事形状) | Over-explained themes, tidy single-track resolution, flat escalation (reported as Claude's own StoryScope fingerprint), absent ambiguity — document-altitude, plus the validity condition (judge-only, advisory) |
 
 ## Inventory (entry counts)
 
@@ -59,7 +60,8 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 | [`communication-artifacts.md`](communication-artifacts.md) | 11 (C1–C11) |
 | [`rhythm-stylometric.md`](rhythm-stylometric.md) | 5 (R1–R5) |
 | [`overstepping-presumption.md`](overstepping-presumption.md) | 4 (O1–O4) |
-| **Total** | **67** |
+| [`narrative-shape.md`](narrative-shape.md) | 4 (N1–N4) |
+| **Total** | **71** |
 
 (Plus L1's three vocabulary tiers in `lexical-tells.md`.)
 
