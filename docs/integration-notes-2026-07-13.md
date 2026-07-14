@@ -48,3 +48,32 @@ Orchestrator's ledger for merging the four Opus lanes. Do not lose these.
    suite after each (run_all.sh green + calibration 38% + unittest discover).
 4. One PR per lane (small, reviewable), each with its review evidence.
 
+
+## Lane completion status (updated after all four landed)
+
+| Lane | Branch @ SHA | Size | Agent-reported suite state |
+|---|---|---|---|
+| #9 narrative | feat/narrative-shape-category @ 6141dd3 | 6 files, +347 | green, 38%, 78 tests |
+| #15 stylometry | feat/stylometric-fingerprint @ 13e944e | 6 files, +870 | green, 38%, 98 tests |
+| #19 audit-report | feat/audit-report-contract @ 5ea555c | 9 files, +564 | green, 38%, 92 tests |
+| #25 kb-ingestion | feat/kb-ingestion-tooling @ 19d1300 | 4 files, +1106 | green, 38%, 85 tests |
+
+Reviews in flight: OMC code-reviewer (all four) + Codex xhigh (A/B: stylometry+kb;
+C/D: narrative+audit). Verdicts to be appended.
+
+## Additional integration facts
+
+- `feat/audit-report-template` (2026-07-03) is an EMPTY branch (0 commits past main)
+  — the plan it was made for lived only as an untracked file
+  (docs/plan-audit-report-template-2026-07-03.md, never committed). The audit lane's
+  build was reconciled against that plan: consistent on every load-bearing decision
+  (worst-offender lead without a number; C/M/M tiers; quote→tell→why→fix;
+  "What already reads well"; score separation; detect/review-only firewall).
+  Safe to delete the empty branch at cleanup.
+- NEW collision beyond the earlier list: run_all.sh step NUMBERING. audit lane adds
+  its checker as step [4/4] off main; the behavioral-evals branch already renumbered
+  to [5/6]+[6/6] on its own stack. Post-merge the step headers must be renumbered
+  once, in whatever order the branches land.
+- kb lane adds tools/ + evals/test_kb_ingest.py — no file overlap with any other
+  lane (verified by diff --stat), only run_all discovery picks the tests up
+  automatically.
