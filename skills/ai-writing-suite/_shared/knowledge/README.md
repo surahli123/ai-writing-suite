@@ -48,6 +48,11 @@ building an engine** (decisions D11 + D12). The steps:
 That's the whole integration. Because the index and entries are plain markdown,
 the company never touches retrieval code — they edit a table and drop in pages.
 
+**Prefer automation over doing the 4 steps by hand?** `tools/kb_ingest.py` +
+`tools/kb_validate.py` (repo-root-relative: `skills/ai-writing-suite/tools/`)
+do this mechanically from a Confluence/Notion/Markdown export, plus a
+pre-flight check before first use. Full walkthrough: `docs/kb-onboarding.md`.
+
 ## Wiki conventions (Related entries)
 
 Each entry ends with a `## Related entries` footer — 2-3 wiki-style links to
