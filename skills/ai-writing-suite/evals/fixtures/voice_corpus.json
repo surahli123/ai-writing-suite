@@ -1,0 +1,71 @@
+{
+  "_doc": {
+    "what": "SYNTHETIC voice corpus for the voice-onboard extraction eval. Five hand-authored samples attributed to a FICTIONAL author (Mara Quill). This is NOT a real author's writing and must never be described as one.",
+    "why": "voice-onboard is skill prose: an agent reads samples and writes a voice profile. There is no function to unit-test. So the corpus is engineered with traits whose ground truth is countable by hand, and the eval scores PROFILE ARTIFACTS (see voice_profile_good.md / voice_profile_bad.md) against that ground truth. Every check has a planted positive: the bad profile must trip it.",
+    "engineered_traits": [
+      "HABIT word 'ledger' appears exactly 4x -> clears the SKILL's 3+ rule -> a correct profile learns it.",
+      "NOISE word 'kaleidoscope' appears exactly 2x -> fails the 3+ rule -> a correct profile must NOT learn it. The SKILL calls this 'the single most common extraction mistake'.",
+      "ABSENT words 'delve' and 'leverage' appear 0x -> per the SKILL, absences are the strongest signal -> a correct profile lists them under Vocabulary Don't.",
+      "BOUNDARY DECOY 'ledgers' appears exactly 1x -> must not inflate the 'ledger' count (word-boundary counting).",
+      "MIXED GENRES: 3 terse tweets vs 2 long memos, with genuinely different rhythm -> a profile that averages them into one flat sentence-length figure is detectably wrong; a correct one splits by genre."
+    ],
+    "ground_truth_discipline": "The counts below are DECLARED. run_voice_extraction.py RECOMPUTES them from sample text at runtime and fails loudly on any disagreement. If they ever disagree, fix the SAMPLES, not the declared numbers - a fixture whose own ground truth has drifted is worse than no fixture."
+  },
+
+  "author": "Mara Quill (fictional)",
+
+  "ground_truth": {
+    "habit_word": {
+      "word": "ledger",
+      "count": 4,
+      "rule": "3+ occurrences -> habit -> MUST appear in the profile"
+    },
+    "noise_word": {
+      "word": "kaleidoscope",
+      "count": 2,
+      "rule": "<3 occurrences -> noise -> MUST NOT appear in the profile"
+    },
+    "absent_words": [
+      {"word": "delve", "count": 0},
+      {"word": "leverage", "count": 0}
+    ],
+    "boundary_decoy": {
+      "word": "ledgers",
+      "count": 1,
+      "rule": "plural must NOT be counted as an occurrence of 'ledger'"
+    },
+    "genres": {
+      "tweet": {"max_mean_sentence_words": 8},
+      "memo": {"min_mean_sentence_words": 20}
+    },
+    "min_genre_mean_gap_words": 10
+  },
+
+  "samples": [
+    {
+      "id": "tweet-01",
+      "genre": "tweet",
+      "text": "Shipped the pricing ledger today. Two weeks late. It works."
+    },
+    {
+      "id": "tweet-02",
+      "genre": "tweet",
+      "text": "Every forecast is a story. The ledger is the fact. Trust the ledger."
+    },
+    {
+      "id": "tweet-03",
+      "genre": "tweet",
+      "text": "Dashboards are a kaleidoscope. Nobody reads them. Cut three."
+    },
+    {
+      "id": "memo-01",
+      "genre": "memo",
+      "text": "The revenue ledger we maintain in finance is the only artifact in this company that has never lied to us, and I would rather ship a forecast late than ship one that disagrees with it. When the quarterly review turns into a kaleidoscope of competing dashboards, each owned by a different team and each telling a slightly flattering story, the honest move is to go back to the one number nobody is allowed to edit. I am not asking anyone to stop building dashboards, but I am asking that every dashboard we present next quarter carries a line showing where its numbers diverge from finance."
+    },
+    {
+      "id": "memo-02",
+      "genre": "memo",
+      "text": "Our onboarding funnel lost eleven percent of new accounts last month, and the cause was not the product but a queue that silently dropped retries after midnight. I spent a day reading the raw event logs instead of the summary tables, because summary tables round away exactly the kind of small persistent failure that ends up costing a quarter. The fix is boring: retry with backoff, alert on queue depth, and reconcile the two ledgers every morning before anyone looks at a chart."
+    }
+  ]
+}
