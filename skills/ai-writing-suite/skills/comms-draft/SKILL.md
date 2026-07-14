@@ -73,6 +73,22 @@ If the brief is too thin to fix these criteria, ask **at most 2-3** targeted
 questions. After that, propose the criteria you inferred, state them, and
 proceed — do not stall on a fourth question.
 
+**Plan the document's shape here, before drafting a sentence.** The single new
+detection frontier is *narrative shape*: a piece can pass every word-level check
+and still read as machine-written because its arc is a tell (StoryScope classifies
+human-vs-AI at 93.2% from structure alone, and that signal survives lexical
+cleanup — you cannot prose-edit your way out of a structural fingerprint). So
+decide the arc *up front*, not in a post-hoc line edit. From the material the brief
+and KB actually supply, plan: **where the stakes peak** (don't pace every beat flat
+— uniform escalation is Claude's own fingerprint), **what stays open** (real
+residue the piece should keep, not every thread tied in a bow), **whether there's a
+competing reading** to hold rather than flatten, and a resolve **not** to state the
+moral the facts already carry. **Validity condition (load-bearing):** only shape
+what the material motivates — a genuinely simple update *should* resolve tidily and
+a single-outcome result *is* unambiguous. Do **not** manufacture ambiguity, fake
+loose ends, or an invented peak to look human; that injected complexity is a worse
+failure than the tell. See `_shared/patterns/narrative-shape.md`.
+
 ### 2. Load the inputs (KB, voice, preset, catalog)
 
 Run the suite's self-improvement ON START read (see below). Then: pull the
@@ -120,6 +136,13 @@ catalog (`_shared/patterns/00-index.md`), the same way `comms-polish` re-scans
 its own rewrite. Drafting reintroduces tells — fixing one plants another. Remove
 any tell you find. Apply the catalog's guardrails: look for clusters, not
 isolated signals.
+
+Include a **document-shape** pass at this altitude (the step-1 plan, verified on
+the finished text): did the draft end up stating its own moral, tying every thread
+in a bow, pacing every beat flat, or admitting only one reading where the material
+had more? Reshape if so — but hold the validity condition: if the material is
+genuinely simple, a tidy, single-reading draft is correct and you must not bolt on
+fake ambiguity to dodge the tell (`_shared/patterns/narrative-shape.md`).
 
 ### 6. Check the draft against the acceptance criteria
 

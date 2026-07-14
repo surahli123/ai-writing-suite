@@ -234,6 +234,78 @@
       "expect_baseline": "miss",
       "detector_blind": true,
       "subtle_tell": "Over-stepping: presumed-cognition with a manufactured prior ('You might think X, but'). This is the payoff_clear ANCHOR: the PASS rewrite deletes the presumption AND leaves the surviving claim complete on its own ('Merging ... reduces outages: ...'). Its minimal-pair FAIL partner over-strips to 'It actually reduces them: ...', where 'it/them' lost the antecedent the deleted presumption supplied — that stub lives in test_fixtures.py::PayoffClearHardNegative. Detector scores 0 -> judge-only."
+    },
+    {
+      "id": "narrshape-01-overexplained-theme-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "We shipped the billing fix Tuesday. Support tickets about double-charges dropped from 40 a week to 3. The real lesson here is that small, unglamorous fixes often deliver the most value: impact rarely comes from the big launches.",
+      "after": "We shipped the billing fix Tuesday. Support tickets about double-charges dropped from 40 a week to 3.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "narrative_shape_ok",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Narrative-shape N1 (over-explained theme): the draft names its own moral ('the real lesson here is...') instead of letting the 40->3 number carry it. The two factual sentences are word-for-word identical in before/after; only the stated-moral sentence is dropped. The moral was interpretation, not fact, so meaning_preserved holds. Zero vocabulary tells -> detector scores 0 -> a flat threshold misses it; only a judge reading the ARC catches it."
+    },
+    {
+      "id": "narrshape-02-tidy-resolution-en",
+      "expected_verdict": "PASS",
+      "genre": "linkedin",
+      "difficulty": "subtle",
+      "before": "We ran the migration over the weekend. The database moved cleanly and the API held. Every risk we had listed beforehand turned out fine, and the team came out stronger for it.",
+      "after": "We ran the migration over the weekend. The database moved cleanly and the API held. But replica lag under load still spikes past our threshold, and we do not yet know why.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "narrative_shape_ok",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Narrative-shape N2 (tidy single-track resolution): before closes every thread ('every risk turned out fine', 'came out stronger') with no residue. The two setup sentences are word-for-word identical in before/after; only the resolution sentence differs. The `after` surfaces a REAL open thread (replica lag) the tidy draft papered over -> motivated residue, not manufactured (validity condition). Detector scores 0 -> judge-only, ARC-level."
+    },
+    {
+      "id": "narrshape-03-flat-escalation-en",
+      "expected_verdict": "PASS",
+      "genre": "linkedin",
+      "difficulty": "subtle",
+      "before": "Day one, we found a bug in the export job. Day two, we found a bug in the import job. Day three, we found a bug in the reconciliation job. We fixed each one and moved on.",
+      "after": "Day one, we found a bug in the export job. Day two, one in the import job. Day three, the reconciliation bug had been silently corrupting balances for a month, and it forced us to halt the release.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "narrative_shape_ok",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Narrative-shape N3 (flat escalation): before paces three beats at identical weight ('we found a bug... we found a bug... we found a bug... fixed each and moved on') with no peak. StoryScope names flat escalation as Claude's OWN per-model fingerprint. The day-one clause is word-for-word identical in before/after; the `after` re-weights the arc to the beat that actually carried the consequence (reconciliation corrupting balances -> halted release). Detector scores 0 -> judge-only, ARC-level."
+    },
+    {
+      "id": "narrshape-04-absent-ambiguity-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "The A/B test is clear: variant B lifted conversion 6%. We should roll it out to everyone next week.",
+      "after": "The A/B test showed variant B lifted conversion 6%. But B also raised refund requests 2%, so calling it clear overstates it; I want one more week to see if the lift holds.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "narrative_shape_ok",
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Narrative-shape N4 (absent ambiguity): before admits exactly one reading and one action ('is clear... roll it out') with no competing signal. The 6%-lift clause is preserved in `after`; the `after` names a REAL competing signal (refunds up 2%) the decisive draft flattened away -> motivated ambiguity, not invented (validity condition). Its over-correction partner — manufacturing fake doubt on a genuinely simple update — lives in fixtures_fail.json. Detector scores 0 -> judge-only, ARC-level."
     }
   ]
 }

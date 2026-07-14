@@ -43,6 +43,7 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 | `communication-artifacts.md` | Chat artifacts | Chatbot tics, sycophancy, acknowledgment loops, cutoff disclaimers, collaborative-framing leaks, reasoning-chain leaks, engagement hooks, emotional flatline |
 | `rhythm-stylometric.md` | Rhythm & stylometry | Sentence/paragraph uniformity (burstiness), low vocabulary diversity (TTR), perplexity, register shift |
 | `overstepping-presumption.md` | Over-stepping (反代入式越位感) | Presumed cognition, presumed-misconception strawman, presumed mental image, self-Q&A-as-judge — plus the validity condition (judge-only, advisory) |
+| `narrative-shape.md` | Document / narrative shape (文档叙事形状) | Over-explained themes, tidy single-track resolution, flat escalation (Claude's own StoryScope fingerprint), absent ambiguity — document-altitude, plus the validity condition (judge-only, advisory) |
 
 ## Source legend (for `Sources` tags)
 
