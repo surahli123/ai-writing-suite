@@ -106,7 +106,8 @@ Voice has three sources, in priority order:
    - **Directory absent or empty** → fall back to the legacy single file
      `_shared/voice-profile.md`, still gated by the `> SAMPLE PROFILE.` banner: a
      file carrying that banner counts as **no profile** (the shipped sample) →
-     degrade + Q8 offer. A profile is valid only with the banner absent.
+     degrade per rule 4 (Q8 offer only on an explicit my-voice request). A profile
+     is valid only with the banner absent.
    It is loose coupling: comms-polish does not create or own these files — it reads
    whatever fields are present in the selected profile and biases edits toward them.
    The profile's header set is the **canonical ordered list at the top of
