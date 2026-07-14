@@ -73,7 +73,8 @@ If a candidate exists, **present it to the user** in the proposed-rule shape
 
 - the proposed rule text,
 - a one-line rationale grounded in *this* session (cite what happened),
-- the scope it would apply to (`comms-polish`, `voice-onboard`, or `all`),
+- the scope it would apply to (`comms-polish`, `comms-draft`, `comms-qa`,
+  `voice-onboard`, or `all`),
 - a note that in Layer 3 this rule will be eval-measured before it counts as
   trusted (do not build or run that eval here — just reference it).
 
@@ -93,6 +94,25 @@ Only on an explicit "yes" / "approve" / "add it" from the user:
 
 If the user says no, or edits the wording, follow their version exactly. Never
 append a rule they did not approve. Never append more than they approved.
+
+### PROMOTION — advance a `proposed` rule to `active` (owner-gated)
+
+`proposed` means the user approved the rule but it is not yet trusted for
+every-run application. Promotion is the step that makes it `active`, and it
+follows a fixed procedure so no rule sits in `proposed` forever with no one
+responsible for it:
+
+- **Who initiates:** the product owner — either at a review, or when a sub-skill's
+  ON START read surfaces a `proposed` rule whose `date:` is more than 30 days old.
+  In that second case the skill must PAUSE and ask the user, in one line: "LR-NNN
+  has been proposed since <date> — promote, retire, or keep waiting?" It does
+  nothing to the rule until the user answers.
+- **What evidence qualifies:** exactly one of (a) a Layer-3 eval pass, with the
+  pass output pasted into the rule's entry as its evidence, or (b) an explicit
+  user "make it active." Nothing else promotes a rule.
+- **Who edits status:** the agent, and only after the user confirms. The edit is a
+  single-line change of `status: proposed` to `status: active` on that entry — no
+  rewrite of the rule text, consistent with the append-only rule.
 
 ### GRADUATION — fold stable rules into the catalog (human-gated, maintainer-run)
 

@@ -18,8 +18,12 @@ personality chasing clean prose.
   writing has high burstiness; AI has low. If most sentences run 15-25 words with
   no short punches and no long flowing thoughts, it reads robotic.
 - **Fix:** Mix short (3-8 words), medium (12-20), and long (25-40) in every
-  paragraph. Never 3+ consecutive sentences of similar length. Fragments work.
-  Questions break monotony. Let one sentence run long when the thought needs room.
+  paragraph. Never 3+ consecutive sentences of similar length. Reach for genuine
+  syntactic variation first — fragments, clause inversion, a long thought given
+  room. Use a question only when the question itself carries reader value, never
+  as a bare rhythm device: a question dropped in purely to break monotony trips C8
+  (rhetorical-question openers) in `communication-artifacts.md`. Let one sentence
+  run long when the thought needs room.
 - **Sources:** blader (P30 + burstiness principle), avoid-ai (rhythm and
   uniformity), stop-slop (vary rhythm), aboudjem (variety in sentence length).
 
@@ -80,7 +84,10 @@ reliable AI indicators on their own:
 
 - Perfect grammar and consistent style. Polish ≠ AI; many writers are edited.
 - Mixed casual/formal register. Often signals a technical field, a young writer,
-  or neurodivergent prose habits.
+  or neurodivergent prose habits — never a tell on its own. The one exception, an
+  *unexplained* register discontinuity corroborated by other signals, lives as a
+  single canonical entry: **C11 in `communication-artifacts.md`**. Apply C11's
+  validity condition there; do not re-flag register shift here.
 - "Bland" or "robotic" prose. AI has *specific* tells; generic dryness is just
   dry writing.
 - Formal/academic vocabulary. AI overuses *specific* fancy words, not all of them.

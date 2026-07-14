@@ -27,6 +27,12 @@ immediately.
 - **Before:** In this article, we will explore the characteristics that make this
   framework worth using.
 - **After:** This framework solves three problems React Router doesn't.
+- **Canonical / precedence:** C2 is the **canonical** entry for *first-person
+  tutorial narration* ("we will explore," "let me walk you through"). Bare
+  announcement openers ("Let's dive in," "Here's what you need to know") overlap
+  H7 (signposting), which is **canonical for those**; the "Let's + verb" form is
+  its H8 subtype. If a line matches both, apply the canonical fix — H7 for an
+  announcement opener, C2 for tutorial narration.
 - **Sources:** blader (P32), aboudjem (§20), avoid-ai (chatbot meta-narration).
 
 ---
@@ -130,10 +136,28 @@ immediately.
 
 ### C11 — Register / style shift (mixed authorship)
 
-- **Tell:** A sudden change in voice, register, or error profile mid-document —
-  one paragraph of perfect formal English next to casual text with errors;
-  graduate-thesis prose in the middle of casual notes. Catches mixed human+AI
-  authorship.
-- **Fix:** Maintain a consistent register throughout. Rewrite the AI-generated
-  sections to match the author's natural voice.
-- **Sources:** blader (P36).
+This is the single **canonical** entry for register shift. The false-positive
+guardrail in `rhythm-stylometric.md` ("Mixed casual/formal register") points here
+and does not re-flag it; apply the validity condition below before flagging.
+
+- **Tell:** A sudden, *unexplained* change in voice, register, or error profile
+  mid-document — one paragraph of perfect formal English next to casual text with
+  errors; graduate-thesis prose dropped into casual notes. Such a discontinuity
+  *can* mark a seam where AI-generated text was pasted into human writing.
+- **Fix:** Only when the validity condition holds, rewrite the out-of-place
+  section so its register is continuous with the author's natural voice. If the
+  shift is explained (a quoted passage, a deliberate aside, a code comment, a
+  section aimed at a different audience), leave it alone.
+- **Validity condition (do not skip this):**
+  > A register shift is a tell ONLY when it is an *unexplained discontinuity
+  > corroborated by other signals* in the same passage — e.g. the out-of-place
+  > section also carries rule-of-three, AI vocabulary, or low burstiness. Ordinary
+  > mixed register is NOT a tell: a technical field, a young writer, a
+  > second-language writer, or neurodivergent prose habits all produce legitimate
+  > register mixing. Never flag mixed register on its own — require the
+  > corroborating cluster.
+- **Advisory, not mandatory (quality-first):** this is a weak provenance signal,
+  not a prose-quality defect. Flag the seam for review; never mandate a rewrite on
+  register alone.
+- **Sources:** blader (P36); validity condition added 2026-07-13, cross-referencing
+  the `rhythm-stylometric.md` false-positive guardrail.

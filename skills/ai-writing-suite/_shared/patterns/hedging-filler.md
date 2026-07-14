@@ -92,6 +92,11 @@ written feel.
   to know.
 - **After:** Next.js caches data at several layers: request memoization, the data
   cache, and the router cache.
+- **Canonical / precedence:** H7 is the **canonical** entry for announcing what
+  the text will do ("Let's dive in," "Here's what you need to know," "Now let's
+  look at"). H8 ("Let's + verb") is a marked **subtype** of H7; C2
+  (collaborative-framing, `communication-artifacts.md`) overlaps on the shared
+  openers. If a line matches more than one, apply H7's fix.
 - **Sources:** aboudjem (§28), avoid-ai (chatbot artifacts / "let's"
   constructions), anti-vibe (signposting), stop-slop (meta-joiners).
 
@@ -103,6 +108,8 @@ written feel.
   "Let's take a look," "Let's break this down," "Let's examine." A false-
   collaborative ease-in that delays the point.
 - **Fix:** Start with the point. (Related to H7 but broader than "let's dive in.")
+- **Subtype of H7 (alias):** the "Let's + verb" transition is a narrower case of
+  H7 signposting, kept as its own id for reference. If both match, apply H7's fix.
 - **Sources:** avoid-ai ("let's" constructions).
 
 ---
