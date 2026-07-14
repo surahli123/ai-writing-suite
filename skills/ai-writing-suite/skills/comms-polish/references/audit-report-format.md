@@ -21,6 +21,13 @@ reject.
 
 ## The report
 
+Fenced below (not rendered as headings) so the eval
+(`evals/audit_report/test_report_contract.py`) can extract this exact text with
+`extract_fenced_report()` and check it against the same contract a live report
+must satisfy — the canonical example has to pass its own checker, or it's
+teaching the wrong shape.
+
+```
 **Biggest problem:** the draft claims importance ("transformative leap forward")
 instead of showing what the dashboard actually does, so it reads as promotional AI
 filler rather than a real update.
@@ -57,3 +64,4 @@ filler rather than a real update.
 - "The dashboard is fast" is a plain, checkable claim — keep that register and give the rest of the draft the same concreteness.
 
 **AI-tell score:** 58/100
+```
