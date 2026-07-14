@@ -41,7 +41,9 @@ So the whole point of this skill is: produce an honest, evidence-backed table.
 - **Reads (your samples):** local markdown/text files you point to, or text you
   paste inline. (A Confluence-page link as a voice source is **v2** — note it to
   the user, do not attempt to fetch it. No programmatic ingestion in v1.)
-- **Fills in:** `_shared/host-profile-template.md` (the blank form).
+- **Fills in:** a **copy** of `_shared/host-profile-template.md` (the blank form).
+  Copy the template into each new profile file and fill the copy; **never modify
+  the template itself** — it is the reusable blank the next run also copies.
 - **Writes:** one file per genre under `_shared/voice-profiles/`, named
   `<genre-slug>.md` where the slug is `[a-z0-9-]+` (lowercase, spaces→hyphens),
   e.g. `_shared/voice-profiles/<genre>.md` for slugs like `blog` or `formal-report`.
@@ -64,6 +66,9 @@ Ask the user for samples. State plainly what makes a good sample:
 
 - **3 minimum, 5-10 ideal.** Fewer than 3 → tell them confidence will be Low and
   the profile will be conservative. Don't force-extract from thin data.
+  **Confidence thresholds** (by sample count N; the Meta comment in
+  `host-profile-template.md` is ground truth): **Low** = N<5, **Medium** = 5-10,
+  **High** = 10+. Record the resulting level in the profile's Meta.
 - **Grouped by genre.** Learning their LinkedIn voice → ask for LinkedIn posts,
   not academic papers. **One profile file per genre** (this build stores each
   genre separately under `_shared/voice-profiles/`). If the samples span genres,
@@ -168,7 +173,8 @@ Rules the skill must honor — in what it computes AND what it is allowed to cla
 
 ### Step 3 — Fill the template, then show a draft
 
-Fill `host-profile-template.md` field by field with evidence — both the 10
+Fill a **copy** of `host-profile-template.md` (one copy per genre — never edit the
+template itself) field by field with evidence — both the 10
 qualitative dimensions AND the **Measured Fingerprint** section (one `### <genre>`
 block per genre, straight from the measurement pass). Then show the user the
 draft profile and name the 3 most distinctive features, backed by the measured
@@ -209,7 +215,10 @@ A profile is a living file, not a one-shot. Tell the user:
 
 - "After a few polish runs, if something feels 'not me', come back and we'll
   adjust the profile."
-- Note the sample date in the changelog so stale profiles are visible later.
+- Note the sample date in the **profile's own `## Changelog` section** (inside the
+  genre file), so stale profiles are visible later. This is the profile field, NOT
+  the package `CHANGELOG.md` — sample-date and per-profile updates never touch the
+  package changelog.
 - If their style drifts, new samples should *replace* old ones, not mix in.
 
 ## Safety & boundaries
@@ -234,9 +243,9 @@ it. In short:
   extraction-judgment rule). Degrade gracefully if the file is absent.
 - **On end:** if a repeatable extraction correction surfaced this session (a voice
   judgment the user overrode that would recur), **propose** one candidate rule
-  (rule + session-grounded rationale + scope) and **wait for explicit approval**
-  before appending it to `learned-rules.md`. Propose nothing if nothing repeatable
-  surfaced.
+  (rule + session-grounded rationale + scope `voice-onboard`) and **wait for
+  explicit approval** before appending it to `learned-rules.md`. Propose nothing if
+  nothing repeatable surfaced.
 - **Never** auto-edit this SKILL.md — approved rules live only in
   `learned-rules.md` (append-only). Each rule is eval-measured in Layer 3 before
   it is trusted.

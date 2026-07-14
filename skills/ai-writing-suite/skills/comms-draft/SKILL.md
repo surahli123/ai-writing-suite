@@ -29,7 +29,12 @@ install path — do not guess or silently skip the shared assets.
 
 ## Inputs
 
-Read what is present; degrade gracefully on anything absent (see Safety Rules).
+**Two inputs are REQUIRED; the rest are OPTIONAL.** Required: the **brief** and
+the **suite root** (the directory holding `_shared/` — see *Locating shared
+assets*). If either is missing, ask for it — do not fabricate a brief or guess the
+root. Optional: the **voice profile**, a **KB match**, and the **genre preset** —
+"degrade gracefully" applies to *these*: read what is present, note what is absent,
+never block on a missing optional input.
 
 - **The brief** (required). The user's request: what to write, for whom, why,
   and any facts/numbers/names they supply. This is the *only* source of new
@@ -288,7 +293,12 @@ Return, in this order:
    fill them. Omit if there are none.
 4. **Inputs note** — one line on what was loaded vs. absent (voice profile, KB
    match, preset) so the user knows the basis of the draft.
-5. **Polish handoff** — for a fresh draft, offer `comms-polish` as the optional
+5. **`Sources used:`** — a non-deliverable line listing the KB entry filename(s) a
+   draft choice came from (e.g. `Sources used: structure.md, tone.md`). This is
+   **internal provenance, not part of the deliverable** — keep it out of the draft
+   itself, and surface it only when the user asks for provenance. Omit when no KB
+   entry was applied.
+6. **Polish handoff** — for a fresh draft, offer `comms-polish` as the optional
    final pass. In mixed mode, state that the polish final-pass already ran over
    the whole document (it is ship-ready), rather than offering it as a still-open
    step.

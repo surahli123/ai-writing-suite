@@ -315,9 +315,9 @@ it. In short:
   and apply any entry whose `status: active` and whose scope is `comms-polish` or
   `all`. Degrade gracefully if the file is absent.
 - **On end:** if a repeatable polish correction surfaced this session, **propose**
-  one candidate rule (rule + session-grounded rationale + scope) and **wait for
-  explicit approval** before appending it to `learned-rules.md`. Propose nothing
-  if nothing repeatable surfaced.
+  one candidate rule (rule + session-grounded rationale + scope `comms-polish`) and
+  **wait for explicit approval** before appending it to `learned-rules.md`. Propose
+  nothing if nothing repeatable surfaced.
 - **Never** auto-edit this SKILL.md or the pattern catalog — approved rules live
   only in `learned-rules.md` (append-only). Each rule is eval-measured in Layer 3
   before it is trusted.
@@ -325,11 +325,18 @@ it. In short:
 ## Output
 
 - For `rewrite`: return the polished text only unless the user asks for notes.
-  **Narrow sanctioned exception (Q8):** when the user asked for *their own* voice
-  but no profile was found and you degraded to inferred voice, append a single
-  one-line note saying so — e.g. `Note: no voice profile found — inferred voice
-  used; run voice-onboard to capture yours.` That one degraded-voice line is the
-  only voice-related addition allowed to `rewrite` output.
+  Two narrow additions are sanctioned, both appended *after* the polished text,
+  never woven into it:
+  - **Degraded-voice line (Q8).** When the user asked for *their own* voice but no
+    profile was found and you degraded to inferred voice, append a single one-line
+    note — e.g. `Note: no voice profile found — inferred voice used; run
+    voice-onboard to capture yours.` This is the only voice-related addition allowed.
+  - **`Notes:` block for evidence flags (finding 9).** When step 6 preserved an
+    abstraction for lack of a source, or step 10 found a claim still needing
+    evidence, append an optional `Notes:` block listing only those
+    missing-evidence / unsupported-claim flags — nothing else. Omit the block when
+    there are none. (Conversational voice-onboard offers stay outside the output
+    block entirely, per Voice Matching — do not fold them in here.)
 - For `detect` or `review`: follow the **Audit Report Contract** below.
 - For `edit`: summarize changed files, what improved, verification, and any preserved uncertainty.
 

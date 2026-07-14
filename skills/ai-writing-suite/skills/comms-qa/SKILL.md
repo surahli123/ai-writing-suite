@@ -159,7 +159,8 @@ In short:
   `learned-rules.md`. Propose nothing if nothing repeatable surfaced.
 - **Never** auto-edit this SKILL.md or the KB entries — approved rules live only
   in `learned-rules.md` (append-only), and the KB is edited by the company fork's
-  owner, not by this skill.
+  owner, not by this skill. Each rule is eval-measured in Layer 3 before it is
+  trusted.
 
 ## Output
 
