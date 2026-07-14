@@ -61,8 +61,9 @@ next line. Inversion, fragments, and an incomplete sentence are fine here.
   this. Never touch numbers, names, or links.
 
 **Endings that work:** a sharp question, a concrete next step, one quotable line,
-or just stop on the fact. Never "more in the next tweet" — the next tweet starts
-itself.
+or just stop on the fact — each pulled from what the draft already says, never
+invented (see *Cross-scenario invariants*). Never "more in the next tweet" — the
+next tweet starts itself.
 
 ---
 
@@ -90,7 +91,9 @@ neutrality. Specific story or claim up front, payoff the reader can take away.
 - A single emoji *if* it's the author's habit and earns its place.
 
 **Endings that work:** a concrete takeaway, a real question (not bait), or a
-specific next step. Drop "What do you think? Let me know in the comments."
+specific next step — each sourced from the post's own material, never newly
+invented (see *Cross-scenario invariants*). Drop "What do you think? Let me know
+in the comments."
 
 ---
 
@@ -151,7 +154,9 @@ what was chosen, what was dropped, and why.
 - Legal, security, financial, or safety warnings — never polished away.
 
 **Endings that work:** a clear recommendation or decision, not a balanced summary
-that refuses to judge.
+that refuses to judge — the recommendation must follow from the memo's own
+analysis; don't manufacture a branch, decision, or next step the content doesn't
+support (see *Cross-scenario invariants*).
 
 ---
 
@@ -161,6 +166,10 @@ No matter the genre, these never change (these are the bottom line, not preset
 preferences):
 
 - Don't invent facts.
+- **Endings are selected, not invented.** Sharpen an ending from material the
+  source already carries; never invent a new question, next step, takeaway,
+  call-to-action, or branch the source doesn't support. If a genre wants an ending
+  the source can't supply, flag `[NEEDS: …]` rather than fabricating one.
 - Don't strengthen the author's position for them.
 - Keep caveats that carry real uncertainty.
 - Numbers, names, and quotes are immutable unless the user asks.

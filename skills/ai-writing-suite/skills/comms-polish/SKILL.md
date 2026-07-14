@@ -84,45 +84,54 @@ Pick the mode from the user's request. If unclear, use `rewrite`.
 
 Voice has three sources, in priority order:
 
-1. **A learned voice profile** at `_shared/voice-profile.md`. This is produced
-   by the `voice-onboard` sub-skill.
-   **Before any rewrite, check whether this file exists and read it if it does.**
+1. **A valid learned voice profile** at `_shared/voice-profile.md`, produced by
+   the `voice-onboard` sub-skill.
+   **Before any rewrite, check for a *valid* profile: the file must exist AND not
+   be the shipped sample.** The shipped file is a filled example (fictional "Sam")
+   carrying a `> SAMPLE PROFILE.` banner blockquote near the top. If that banner is
+   present, the profile is **not real** — do not load Sam's voice; treat it as no
+   profile and fall through to graceful degradation and the Q8 offer below. Only a
+   file with no such banner counts as a valid profile.
    It is loose coupling: comms-polish does not create or own that file — it reads
-   whatever fields are present and biases edits toward them. The profile's header
-   set is the **canonical ordered list at the top of `_shared/voice-profile.md`**
-   (the single source of truth; do not restate a divergent subset here). Use every
-   header present that carries voice guidance — Tone, Sentence Length, Vocabulary,
-   Vocabulary Do / Don't, Signature Moves, Punctuation & Formatting, Openings &
-   Closings, Uncertainty Style, Things To Avoid, and Scope & Calibration (which
-   says where the profile applies). Read what's there; ignore what isn't — never
-   fail on a missing section.
+   whatever fields are present in a valid profile and biases edits toward them. The
+   profile's header set is the **canonical ordered list at the top of
+   `_shared/voice-profile.md`** (the single source of truth; do not restate a
+   divergent subset here). Use every header present that carries voice guidance —
+   Tone, Sentence Length, Vocabulary Don't (the strongest signal), and every other
+   header on the canonical list that carries voice guidance, **including Measured
+   Fingerprint** (the quantitative rhythm/punctuation targets). Read what's there;
+   ignore what isn't — never fail on a missing section.
 2. **A writing sample the user pastes** in this request — match it directly.
 3. **Inferred voice** from the draft itself, when neither of the above exists.
 
-**Graceful degradation:** if `_shared/voice-profile.md` is absent, do not error
-and do not block. Note briefly that no profile was found, then polish normally
-using a pasted sample or inferred voice. The profile is a bias signal, never a
-hard dependency. A hard genre constraint (e.g. a tweet's 280-char limit) still
-wins over a profile preference.
+**Graceful degradation:** if there is no valid `_shared/voice-profile.md` (absent,
+or still the shipped sample — see source #1), do not error and do not block. Polish
+normally using a pasted sample or inferred voice. The profile is a bias signal,
+never a hard dependency. A hard genre constraint (e.g. a tweet's 280-char limit)
+still wins over a profile preference. Any "no profile found" mention here is
+**conversational** — it belongs in the chat around the deliverable, not inside the
+polished `rewrite` text. (The one exception to text-only output is the
+degraded-voice note in the explicit my-voice case below.)
 
-**"In my voice" with no profile — offer once, then degrade (Q8).** When the user
-explicitly asks for *their own* voice ("in my voice", "match how I write") and no
-`_shared/voice-profile.md` exists:
+**Voice-onboard offer budget: at most ONE offer per session, total.** The two
+triggers below share a single budget — make the offer once, then do not re-offer
+this session, whichever trigger fires. An offer is always offer-only: never
+auto-run `voice-onboard`, never block the deliverable on it.
 
-1. **Offer `voice-onboard` once** — e.g. "I can learn your voice from a few
-   samples first (more accurate), or infer it from this draft. Which?" Offer at
-   most once per session; never auto-run it, never block on it.
-2. **If declined or unanswered, degrade to inferred voice** and add the
-   degraded-voice note to the output (see Output — this note is the sanctioned
-   exception to text-only `rewrite` output).
-
-**Voice-capture offer after a run (owner rider).** After a polish run completes
-with no profile loaded — and *especially* when the user's **manual edits** to a
-previous output are visible in the session — **offer** (once per session) to
-capture their voice with `voice-onboard`, noting that the delta between what you
-returned and what they changed by hand is the strongest voice signal there is.
-This is an offer only: never auto-run `voice-onboard`, never block the current
-deliverable on it.
+- **Pre-run — "in my voice" with no valid profile (Q8).** When the user explicitly
+  asks for *their own* voice ("in my voice", "match how I write") and no valid
+  profile exists, offer `voice-onboard` once — e.g. "I can learn your voice from a
+  few samples first (more accurate), or infer it from this draft. Which?" **The
+  question never blocks:** if the user does not answer in this turn, proceed with
+  inferred voice and add the one-line degraded-voice note to the output (see
+  Output — the sole text-only exception). Spends the shared offer budget.
+- **Post-run / visible manual edits (owner rider).** After a polish run with no
+  valid profile — *especially* when the user's **manual edits** to a previous
+  output are visible in the session — offer to capture their voice with
+  `voice-onboard`, noting that the delta between what you returned and what they
+  changed by hand is the strongest voice signal there is. This offer is
+  **conversational: it lives after the output block, not inside the polished
+  text.** Skip it if the shared offer budget is already spent.
 
 When a profile or sample exists, match:
 
@@ -148,9 +157,10 @@ When neither exists, use the lightest voice that fits the context:
    `references/scenario-presets.md` (tweet / LinkedIn / README / memo). It tells
    you which catalog categories to weight harder and what to leave alone in this
    genre. If no preset fits, scan the catalog evenly.
-3. **Load the voice profile if present.** Check for `_shared/voice-profile.md`
-   and read it if it exists; otherwise use a pasted sample or inferred voice
-   (see Voice Matching). Degrade gracefully when absent.
+3. **Load the voice profile if valid.** Check for `_shared/voice-profile.md` and
+   read it only if it is a *valid* profile — present and not the shipped sample
+   (the `> SAMPLE PROFILE.` banner means treat as absent; see Voice Matching).
+   Otherwise use a pasted sample or inferred voice and degrade gracefully.
 4. Mark the factual anchors that must survive unchanged.
 5. Scan against the pattern catalog, weighted by the preset, and remove the tells
    you find:
@@ -197,8 +207,14 @@ This robust workflow enables teams to seamlessly leverage contextual insights, e
 After:
 
 ```text
-This workflow gives teams the context they need before they start editing.
+This workflow gives teams contextual insights for a more effective, streamlined development experience.
 ```
+
+(Every term in the *after* — workflow, teams, contextual insights, more effective,
+streamlined development experience — is present in the *before*. Polish drops the
+empty intensifiers ("robust", "seamlessly leverage", "enables ... ensuring"); it
+adds nothing the source did not say — note it does **not** invent "editing" or any
+timing the source never mentioned.)
 
 ### Status update
 
@@ -211,13 +227,16 @@ It is important to note that the migration represents a pivotal step toward impr
 After:
 
 ```text
-The migration improves reliability, scalability, and efficiency.
+The migration is a step toward more reliable, scalable, efficient operation.
 ```
 
-(Every noun in the *after* — migration, reliability, scalability, efficiency —
-comes straight from the *before*. Polish strips the throat-clearing ("It is
-important to note that") and the inflated framing ("represents a pivotal step
-toward"); it does **not** add a fact the source never stated.)
+(Every term in the *after* traces to the *before*: "step toward" **keeps the
+original modality** — the migration is *aiming at* these gains, not proven to
+deliver them — and the reliability/scalability/efficiency triple is inherited from
+the source, not composed here (polish preserves meaning, it does not restructure
+the facts). Polish strips the throat-clearing ("It is important to note that") and
+the inflation ("pivotal"); it does **not** strengthen "step toward improving" into
+"improves", add a fact, or restructure the claim.)
 
 ### Personal note
 
@@ -230,8 +249,14 @@ I wanted to take a moment to express my sincere appreciation for your invaluable
 After:
 
 ```text
-Thank you for sticking with me through this. It helped more than you probably know.
+Thank you for sticking with me through this.
 ```
+
+(The *after* keeps only what the *before* carried — thanks for support through the
+whole thing. The dropped draft closer "It helped more than you probably know"
+would have invented a magnitude *and* presumed the reader's mind (an
+overstepping-presumption tell in our own catalog) — polish removes slop, it does
+not add either.)
 
 ## Scoring
 
