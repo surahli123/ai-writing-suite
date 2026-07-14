@@ -58,10 +58,13 @@ never block on a missing optional input.
   request (named genre → that file; absent → drop to rule 4), (2) normalized-exact
   preset/genre match (lowercase, spaces→hyphens, string equality; no fuzzy/prefix/
   alias — `formal-report` ≠ `report`), (3) single-profile fallback (exactly one
-  file → use it), (4) no match → Q8 offer once then infer (below); **read** the
-  full body of that one file only. If the directory is absent/empty, fall back to
-  the legacy `_shared/voice-profile.md`, gated by the `> SAMPLE PROFILE.` banner
-  (banner present = no profile → infer + Q8 offer). For a valid profile, bias the
+  file → use it), (4) no match → infer (below), and IF the user explicitly asked
+  for their own voice make the Q8 offer once, OTHERWISE degrade silently with no
+  question asked; **read** the full body of that one file only. If the directory is
+  absent/empty, fall back to the legacy `_shared/voice-profile.md`. **Any profile
+  file carrying the `> SAMPLE PROFILE.` banner — in `voice-profiles/` or the legacy
+  path — counts as NO profile** (infer; make the Q8 offer only on an explicit
+  my-voice request). For a valid profile, bias the
   draft toward its fields. The profile's header set is the **canonical ordered list
   at the top of `_shared/voice-profile.md`** (the single source of truth — do not
   restate a divergent subset here); use every header present that carries voice
@@ -136,8 +139,11 @@ never block on a missing one.
 from the brief — which?") — offering to create the named/needed genre. If profiles
 exist but none match, say which genres DO exist so the user can redirect. **The
 question never blocks:** if declined or unanswered this turn, infer the voice and
-record in the Inputs note (Output) that no profile was used. Offer at most once per
-session; never auto-run `voice-onboard`, never block the draft on it.
+record in the Inputs note (Output) that no profile was used. **The offer budget is
+SUITE-WIDE: at most one voice-onboard offer per session across the whole suite** —
+an offer already made by `comms-polish`, `comms-draft`, or the router spends it, so
+check the conversation for a prior offer before making one. Never auto-run
+`voice-onboard`, never block the draft on it.
 
 **Once these inputs are loaded, plan the document's shape here, before drafting a
 sentence.** The single new detection frontier is *narrative shape*: a piece can

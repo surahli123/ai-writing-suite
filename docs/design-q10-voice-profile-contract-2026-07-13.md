@@ -16,13 +16,15 @@ product owner. These override any conflicting text in §1–§6 above.
   parses `Genre:` to decide selection. `Genre:` is documentation, not the key.
 - **OQ3 (§7.3 — multiple profiles, none match):** never block; degrade to inferred
   voice and let the output note list the genres that DO exist so the user can
-  redirect. Do not ask interactively.
+  redirect. Do not ask interactively. Note: the Q8/OQ1 voice-onboard offer (on
+  explicit my-voice requests only) is sanctioned and is never a which-profile
+  question; OQ3 forbids interactive profile-picking, not the Q8 offer.
 - **OQ4 (preset↔profile matching semantics):** NORMALIZED EXACT match — lowercase,
   spaces→hyphens, then string equality. No fuzzy/prefix/alias matching
   (`formal-report` ≠ `report`; `formal-report` ≠ `formal`). A miss falls through
   the §3 precedence to offer-then-degrade, it does not silently pick a near-name.
 
-Implements decisions Q10 (`build-multi`) and the Q8 rider from `docs/decisions-2026-07-13.md:16,18`, closing review finding 4 (`reviews/2026-07-13-e2e-product-prose.md:37-42`): the producer offers two profiles for mixed genres (`voice-onboard/SKILL.md:60,105`) but only `_shared/voice-profile.md` exists and both consumers hardcode that single path (`comms-polish/SKILL.md:82`, `comms-draft/SKILL.md:44`).
+Implements decisions Q10 (`build-multi`) and the Q8 rider from `docs/decisions-2026-07-13.md:16,18`, closing review finding 4 (`reviews/2026-07-13-e2e-product-prose.md:37-42`). This describes the pre-Q10 state now fixed: the producer offered profiles for mixed genres (`voice-onboard/SKILL.md`, "Gather samples" / "Split, don't flatten") but only `_shared/voice-profile.md` existed and both consumers hardcoded that single path (`comms-polish/SKILL.md` Voice Matching, `comms-draft/SKILL.md` Inputs). The Decisions section above and §1–§6 below record the built contract.
 
 ## 1. Storage — per-genre files, legacy file as fallback
 New profiles live at `_shared/voice-profiles/<profile-id>.md`, one file per genre. The **filename is the contract**: it encodes the genre, so a directory listing alone answers "which genres do I have" without reading any file body.
@@ -53,9 +55,9 @@ Both consumers run: (a) list `_shared/voice-profiles/*.md` — one directory rea
 ## 6. Q8 rider interaction
 The post-edit voice-capture updates the **profile used for that run** (the one §3 resolved). If the run was **degraded/inferred** (no profile matched), the capture offer instead **creates a new profile of that run's genre** — the edit delta seeds a genre file that did not exist. This is the strongest-voice-signal intent of the rider (`decisions:16`) made unambiguous about *which* file it touches.
 
-## 7. Non-goals + open questions
+## 7. Non-goals + resolved questions
 **Non-goals:** cross-genre inheritance/merging; auto-detecting a text's genre without a preset or user hint; migrating the legacy single file (it stays as fallback until re-onboarded).
-**Open questions for owner (max 3):**
-1. When rule 1 names a genre with no profile, **offer to create it** (voice-onboard handoff) or silently degrade?
-2. Is `Genre:` in Meta worth the redundancy with the filename, or is the filename the sole source of truth?
-3. Multiple-match-none case (§3): **ask** the user interactively, or **degrade + note** without asking?
+**Resolved questions** (answered by the owner — see the Decisions section at the top of this doc for the binding rulings):
+1. Rule-1 names a genre with no profile → **OFFER to create it** (OQ1).
+2. `Genre:` in Meta is kept, but the **filename is the sole source of truth** on conflict (OQ2).
+3. Multiple-match-none case (§3) → **degrade + note** which genres exist; never ask interactively (OQ3).

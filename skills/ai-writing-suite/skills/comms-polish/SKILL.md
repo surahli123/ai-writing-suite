@@ -96,10 +96,12 @@ Voice has three sources, in priority order:
      — normalize the run's genre preset and each filename slug the same way
      (lowercase, spaces→hyphens) and match by string equality, no fuzzy/prefix/alias
      (`formal-report` ≠ `report`); (3) **single-profile fallback** — exactly one
-     file exists → use it; (4) **no match** → make the Q8 offer once, then degrade
-     (below): offer to create the named/needed genre (shares the one offer budget),
-     and if profiles exist but none match, the degraded note lists which genres DO
-     exist so the user can redirect.
+     file exists → use it; (4) **no match** → degrade (below). IF the user explicitly
+     asked for their own voice, make the Q8 offer once (offer to create the
+     named/needed genre; shares the one offer budget) then degrade; OTHERWISE
+     degrade silently — inferred voice with no question asked. Either way, if
+     profiles exist but none match, the degraded note lists which genres DO exist
+     so the user can redirect.
    - **Read** the full body of the one selected file only.
    - **Directory absent or empty** → fall back to the legacy single file
      `_shared/voice-profile.md`, still gated by the `> SAMPLE PROFILE.` banner: a
@@ -127,10 +129,12 @@ still wins over a profile preference. Any "no profile found" mention here is
 polished `rewrite` text. (The one exception to text-only output is the
 degraded-voice note in the explicit my-voice case below.)
 
-**Voice-onboard offer budget: at most ONE offer per session, total.** The two
-triggers below share a single budget — make the offer once, then do not re-offer
-this session, whichever trigger fires. An offer is always offer-only: never
-auto-run `voice-onboard`, never block the deliverable on it.
+**Voice-onboard offer budget: at most ONE offer per session, SUITE-WIDE.** The
+budget is shared across the whole suite, not just this skill — an offer already
+made by `comms-polish`, `comms-draft`, or the router spends it. Check the
+conversation for a prior voice-onboard offer before making one; the two triggers
+below also share this single budget. An offer is always offer-only: never auto-run
+`voice-onboard`, never block the deliverable on it.
 
 - **Pre-run — "in my voice" with no matching profile (Q8).** When the user
   explicitly asks for *their own* voice ("in my voice", "match how I write") and the

@@ -7,8 +7,9 @@
   ------------
   The reusable blank form that `voice-onboard` fills in, one field at a time,
   from your interview answers + writing samples. When complete, its contents
-  are written out to `voice-profile.md` (the contract file `comms-polish`
-  reads).
+  are written out to `_shared/voice-profiles/<genre-slug>.md` (one file per genre;
+  the legacy `voice-profile.md` is the shipped sample + fallback, no longer the
+  write target).
 
   HOW TO USE
   ----------
@@ -39,7 +40,7 @@
 - **Sample count:** [N]
 - **Sample sources:** [blog / LinkedIn / X / internal memos / other]
 - **Sample time span:** [earliest — latest]
-- **Confidence:** [Low (N<5) / Medium (5-10) / High (10+)]
+- **Confidence:** [Low (N<5) / Medium (5-9) / High (10+)]
 
 ## Tone
 

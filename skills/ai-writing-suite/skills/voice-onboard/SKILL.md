@@ -67,7 +67,7 @@ Ask the user for samples. State plainly what makes a good sample:
 - **3 minimum, 5-10 ideal.** Fewer than 3 → tell them confidence will be Low and
   the profile will be conservative. Don't force-extract from thin data.
   **Confidence thresholds** (by sample count N; the Meta comment in
-  `host-profile-template.md` is ground truth): **Low** = N<5, **Medium** = 5-10,
+  `host-profile-template.md` is ground truth): **Low** = N<5, **Medium** = 5-9,
   **High** = 10+. Record the resulting level in the profile's Meta.
 - **Grouped by genre.** Learning their LinkedIn voice → ask for LinkedIn posts,
   not academic papers. **One profile file per genre** (this build stores each
@@ -193,8 +193,10 @@ UNSUPPORTED (CJK), say so plainly rather than inventing numbers.
 ### Step 4 — Confirm, then write the contract file
 
 Only after the user confirms, write each genre's profile to its own file at
-`_shared/voice-profiles/<genre-slug>.md`, preserving every `## H2` header. Mixed
-samples → write N files, one per genre, each named for its genre. If a file for
+`_shared/voice-profiles/<genre-slug>.md`, preserving every `## H2` header. Set the
+`Genre:` field in each file's Meta to that file's genre slug — the same value as
+its filename. Mixed samples → write N files, one per genre, each named for its
+genre. If a file for
 that exact genre already exists, show what changed in **that one file** before
 overwriting it — don't silently replace their previous one, and don't touch the
 other genres' files.

@@ -6,8 +6,9 @@
   WHAT THIS IS
   ------------
   This is a SAMPLE/EXAMPLE voice profile. It is shipped filled-in so you can see
-  the shape, but it is meant to be OVERWRITTEN per user. `voice-onboard` produces
-  the real one by interviewing you + reading your writing samples.
+  the shape. Real profiles are created by `voice-onboard` under
+  `_shared/voice-profiles/<genre>.md` (one file per genre) — this file is NOT the
+  write target; it stays as the shipped sample and the legacy single-file fallback.
 
   WHY IT EXISTS (the contract)
   ----------------------------
@@ -69,7 +70,9 @@
 
 > SAMPLE PROFILE. Replace by running `voice-onboard`. The example below is a
 > fictional author ("Sam, a data-scientist who blogs about search ranking") so
-> the field shapes are concrete. Your real profile overwrites all of it.
+> the field shapes are concrete. Your real profiles live at
+> `_shared/voice-profiles/<genre>.md` — run `voice-onboard` to create them; this
+> sample file is never the write target.
 > **Consumers (`comms-polish`, `comms-draft`) must treat any file carrying this
 > `> SAMPLE PROFILE.` banner as NO profile** — degrade to inferred voice and make
 > the Q8 voice-onboard offer, exactly as if the file were absent. A real profile
@@ -83,7 +86,7 @@
 - **Sample count:** 7
 - **Sample sources:** personal blog posts, internal memos
 - **Sample time span:** 2025-11 to 2026-05
-- **Confidence:** Medium  <!-- Low if N<5, Medium if 5-10, High if 10+ -->
+- **Confidence:** Medium  <!-- Low if N<5, Medium if 5-9, High if 10+ -->
 
 ## Tone
 
