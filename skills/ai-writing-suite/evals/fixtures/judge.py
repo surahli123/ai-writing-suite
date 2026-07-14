@@ -50,6 +50,7 @@ import re
 import sys
 import urllib.error
 import urllib.request
+from dataclasses import dataclass, field
 
 # no_fabrication is ALWAYS required for an overall PASS, even when a fixture's
 # rubric_focus does not list it (rubric.md: "Verdict aggregation"). This is the
@@ -466,3 +467,87 @@ def aggregate(per_rep_results, rubric_focus):
     merged = majority_vote(complete)
     graded = [dim for dim in required if merged.get(dim) in ("PASS", "FAIL")]
     return "PASS" if all(merged[dim] == "PASS" for dim in graded) else "FAIL"
+
+
+# --- One evaluation façade over the whole score->parse->verify->aggregate life --
+# This is the ONLY entry point callers outside judge.py should use. It hides the
+# transport (score), the envelope/verdict parse (parse_dimensions /
+# parse_dimension_lines), the verbatim evidence audit (verify_evidence), and the
+# Python-side verdict recompute (aggregate) behind ONE call, so each runner
+# (run_fixtures, run_draft_cases, the future scheduled live lane) stops reproducing
+# the same four-step lifecycle. The module-level functions above stay public on
+# purpose — the unit-protocol tests exercise them directly — but the runners talk
+# to the module through `evaluate` alone.
+
+
+@dataclass
+class JudgeRequest:
+    """One judging call's inputs. The caller still owns PROMPT CONSTRUCTION and
+    gold-label accounting; it just hands the finished prompt plus the two texts the
+    evidence audit is allowed to match against.
+
+    before / after are the ONLY two sources verify_evidence checks a quote against
+    (fixtures pass before/after rewrites; the draft lane passes brief/draft). Either
+    may be "" when a lane has only one text. rubric_focus is the fixture's declared
+    focus list; aggregate() always unions no_fabrication in, so an empty focus still
+    grades the load-bearing dimension.
+    """
+    prompt: str
+    before: str = ""
+    after: str = ""
+    rubric_focus: tuple = ()
+
+
+@dataclass
+class JudgeResult:
+    """The whole verdict lifecycle for one request in one struct.
+
+    configured  is_configured() at call time — the spend-gate state, so a caller can
+                branch offline vs online without re-probing the env.
+    raw         the model's raw text (None when not configured OR the 200 carried no
+                extractable text — the caller treats both as "no verdict").
+    parsed      parse_dimensions(raw): per-dimension verdict + evidence records ({}
+                when raw is None).
+    verified    verify_evidence(parsed, before, after): {dim: 'ok'|'not_verbatim'}
+                for dims carrying a usable quote ({} when nothing to check).
+    verdict     the Python-recomputed overall 'PASS'|'FAIL', or None to SKIP (no
+                complete rep / not configured / no raw) — never a fabricated PASS.
+    warnings    evidence_warnings(raw): graded dims that shipped no usable quote
+                (advisory; never gates).
+
+    Transport/auth failure is NOT a field: score() raises JudgeError and evaluate()
+    lets it propagate, so a dead provider stays LOUD (caller exits nonzero) instead
+    of being laundered into a quiet result — identical to the pre-façade runners.
+    """
+    configured: bool
+    raw: str
+    parsed: dict = field(default_factory=dict)
+    verified: dict = field(default_factory=dict)
+    verdict: str = None
+    warnings: list = field(default_factory=list)
+
+
+def evaluate(request):
+    """Run one judging call end to end: score -> parse -> verify -> aggregate.
+
+    The spend gate is checked FIRST (is_configured requires AIWS_JUDGE_RUN=1 on top
+    of URL/MODEL/KEY): when not configured we return a SKIP result WITHOUT touching
+    the network — no stray key can trigger a billed call through this façade, same as
+    calling score() directly. When configured we make exactly one POST via score()
+    (which raises JudgeError loudly on transport/auth — propagated, never a silent
+    SKIP), then reproduce the byte-for-byte lifecycle the runners used to inline.
+    """
+    if not is_configured():
+        return JudgeResult(configured=False, raw=None)
+    raw = score(request.prompt)  # one POST; raises JudgeError loudly on failure
+    if raw is None:
+        return JudgeResult(configured=True, raw=None)
+    parsed = parse_dimensions(raw)
+    return JudgeResult(
+        configured=True,
+        raw=raw,
+        parsed=parsed,
+        verified=verify_evidence(parsed, request.before, request.after),
+        verdict=aggregate([parse_dimension_lines(raw)], request.rubric_focus),
+        warnings=evidence_warnings(raw),
+    )
