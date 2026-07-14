@@ -18,23 +18,26 @@ set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")"   # the evals/ directory
 
-echo "== [1/6] unit tests =="
+echo "== [1/7] unit tests =="
 python3 -m unittest discover -p 'test_*.py'
 
-echo "== [2/6] KB smoke =="
+echo "== [2/7] KB smoke =="
 python3 smoke_test.py
 
-echo "== [3/6] fixtures (deterministic + calibration) =="
+echo "== [3/7] fixtures (deterministic + calibration) =="
 python3 -m fixtures.run_fixtures
 
-echo "== [4/6] false positives =="
+echo "== [4/7] false positives =="
 python3 -m fixtures.run_false_positives
 
-echo "== [5/6] comms-draft behavioral cases =="
+echo "== [5/7] comms-draft behavioral cases =="
 python3 -m fixtures.run_draft_cases
 
-echo "== [6/6] voice-onboard extraction =="
+echo "== [6/7] voice-onboard extraction =="
 python3 -m fixtures.run_voice_extraction
+
+echo "== [7/7] audit-report output contract =="
+python3 -m audit_report.run_report_contract
 
 echo
 echo "ALL CHECKS PASSED"
