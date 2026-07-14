@@ -89,9 +89,12 @@ gets mistaken for the playbook.
 **Strict KB-only mode (user-requestable, Q9).** If the user asks for KB-only /
 playbook-only answers ("only what the playbook says, no outside advice"), suppress
 the "Outside the playbook:" section entirely for this invocation: answer purely
-from the KB, and for anything the KB does not cover, state the gap (step 5) and
-stop — do not add general advice even in a labeled section. The default mode keeps
-the optional labeled section available; strict mode is opt-in per request.
+from the KB, adding no general advice even in a labeled section. **"Stop" is
+per sub-question, not the whole request:** for a multi-part question, answer every
+part the KB covers and, for each uncovered part, state the gap (step 5) and add
+nothing for it. Abort the whole answer only when the KB covers *none* of the parts.
+The default mode keeps the optional labeled section available; strict mode is
+opt-in per request.
 
 ### 5. Note coverage
 
