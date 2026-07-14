@@ -101,3 +101,36 @@ quality vs release regression); (c) are tell IDs language-universal before #14;
 (d) is the detector's numeric score a compatibility contract (shared tokenization will
 shift bands); (e) are generated markdown projections mandatory review artifacts;
 (f) does a multi-sub-type judge dimension score aggregate or per-ID.
+
+## Post-decision fix lanes (2026-07-13, late)
+
+- fix/release-hygiene @ 7f27ad9 (off main): manifests version-neutral, root LICENSE,
+  NOTICE nature-skills provenance (MIT-era bounds proven; upstream SHA candidate w/ TODO),
+  scripts/validate_packaging.py + CI step, .gitignore worktrees, README reconciliation +
+  quickstart, RovoDev claim narrowed (Q15), design-doc banner.
+- fix/assets-catalog-lifecycle @ 9f98f06 (off main): register-shift canonicalized w/
+  validity condition (Q16), C2/H7/H8 + S9/L1 dedup via canonical/alias, R1→C8 loop fixed,
+  S1/S2/T9 validity conditions, lifecycle schema repaired (graduated, 4 scopes, concrete
+  promotion procedure), SMOKE-TEST corrections, 00-index inventory/links.
+- New merge-conflict notes: fix/assets touches 00-index.md (narrative lane appends a row —
+  both kept append-only, expect trivial conflict); fix/release-hygiene touches suite README
+  (kb lane was told to stay off it — clean) and .github/workflows/ci.yml (audit lane's
+  run_all renumbering does NOT touch ci.yml — clean).
+- REMAINING QUEUED: prose mega-fix (1.8–1.13) + Q7 full-document mixed mode + Q8 rider
+  (post-edit voice-capture offers) + Q9 frontmatter fix + Q10 multi-genre profile contract
+  (DESIGN DOC FIRST, owner review, then build) — starts after the six feature/fix branches
+  merge, to avoid a fourth concurrent editor on the SKILL.md files.
+
+## Recommended merge order (updated)
+
+1. PR #15 (feat/eval-hardening-now) — owner merges + tags v1.1.0.
+2. feat/behavioral-evals-draft-voice — rebase onto main, PR (carries all review records
+   + decisions + this ledger).
+3. fix/release-hygiene, fix/assets-catalog-lifecycle — small PRs, independent.
+4. feat/narrative-shape-category (resolve fixtures_fail.json add/add + rubric/fixtures/
+   00-index unions per the earlier collision list), then feat/audit-report-contract
+   (run_all step renumbering), then feat/stylometric-fingerprint, then
+   feat/kb-ingestion-tooling.
+5. Full-suite verification after EACH merge: run_all.sh green + calibration 38% + 
+   validate_packaging.py green.
+6. Then the prose mega-fix branch + Q10 design doc.

@@ -9,25 +9,25 @@ Orchestrator-owned; updated as items close.
 | # | Finding (source) | Where | Status |
 | --- | --- | --- | --- |
 | 1.1 | comms-draft frontmatter invalid strict YAML → skill undiscoverable on fresh install (B1) | PR #15 @ 8ce298f + class regression test | **FIXED, pushed, CI green** |
-| 1.2 | kb collision re-ingest mints tone-3.md — idempotency promise false (B2, executed) | lane-kb-ingestion round 2 | dispatched |
-| 1.3 | kb_ingest destroys shipped INDEX header incl. frozen protocol text (B2, executed) | lane-kb-ingestion round 2 | dispatched |
-| 1.4 | Onboarding funnel entrances (kb-onboarding front pointer + \_shared/knowledge/README) (B2) | lane-kb-ingestion round 2 | dispatched |
-| 1.5 | Troubleshooting table + dual-bookkeeping hint + "ready for first use" softening (B2) | lane-kb-ingestion round 2 | dispatched |
-| 1.6 | Register-shift contradiction C11 vs rhythm guardrail + index misplacement (A2 BLOCKER) | needs a prose fix lane | queued |
-| 1.7 | Self-improvement lifecycle: `graduated` illegal status; scope schema excludes comms-draft/qa; README order contradicts protocol (A2 BLOCKERs) | needs a prose fix lane | queued |
+| 1.2 | kb collision re-ingest mints tone-3.md — idempotency promise false (B2, executed) | lane-kb-ingestion round 2 | **FIXED @ c386398, verified** |
+| 1.3 | kb_ingest destroys shipped INDEX header incl. frozen protocol text (B2, executed) | lane-kb-ingestion round 2 | **FIXED @ c386398, verified** |
+| 1.4 | Onboarding funnel entrances (kb-onboarding front pointer + \_shared/knowledge/README) (B2) | lane-kb-ingestion round 2 | **FIXED @ c386398, verified** |
+| 1.5 | Troubleshooting table + dual-bookkeeping hint + "ready for first use" softening (B2) | lane-kb-ingestion round 2 | **FIXED @ c386398, verified** |
+| 1.6 | Register-shift contradiction C11 vs rhythm guardrail + index misplacement (A2 BLOCKER) | fix/assets-catalog-lifecycle | **FIXED @ 9f98f06** |
+| 1.7 | Self-improvement lifecycle schema + promotion procedure (A2 BLOCKERs) | fix/assets-catalog-lifecycle (shared files) + fix/release-hygiene (README order) | **FIXED @ 9f98f06 + 7f27ad9** |
 | 1.8 | comms-polish worked example fabricates facts its own rules forbid; scenario-presets "actual number" drift (A1 BLOCKER) | needs a prose fix lane | queued |
 | 1.9 | Router refuses to route when directly invoked (A1 BLOCKER) — add an executable classify-and-load step | needs a prose fix lane | queued |
 | 1.10 | Router "read every referenced file" defeats selective loading (A1) | same lane as 1.9 | queued |
 | 1.11 | Voice-profile header schema drift producer vs consumers (A1) — one canonical list | same lane | queued |
 | 1.12 | Stale router status prose ("later"/"until then" for shipped skills) (A1) | same lane | queued |
 | 1.13 | Dead refs: voice "project plan R1", scenario-presets "design §5"; catalog paths not fully qualified (A1) | same lane | queued |
-| 1.14 | Marketplace descriptions still say "v2" for shipped skills (B1) | release-hygiene lane | queued |
-| 1.15 | LICENSE copyright says "AI Writing Humanizer contributors"; NOTICE points to nonexistent root LICENSE (B1) | release-hygiene lane | queued |
-| 1.16 | CI never validates the plugin body — add manifest checks + `claude plugin validate` equivalents where runnable key-free (B1 BLOCKER) | release-hygiene lane | queued |
-| 1.17 | .gitignore the runtime worktrees (`.claude/worktrees/`) — accidental `git add .` trap (B1) | release-hygiene lane | queued |
-| 1.18 | Root README vs suite README contradict on comms-qa/draft status (B2) | release-hygiene lane | queued |
-| 1.19 | SMOKE-TEST stale "two cases" + Case-1 wrong-reason rationale (A2) | assets fix lane | queued |
-| 1.20 | 00-index: real links, counts, fix dead `notes/` pointer, drop "deduplicated" overclaim until true (A2) | assets fix lane | queued |
+| 1.14 | Marketplace descriptions still say "v2" for shipped skills (B1) | fix/release-hygiene | **FIXED @ 7f27ad9** |
+| 1.15 | LICENSE copyright says "AI Writing Humanizer contributors"; NOTICE points to nonexistent root LICENSE (B1) | fix/release-hygiene | **FIXED @ 7f27ad9** |
+| 1.16 | CI never validates the plugin body — add manifest checks + `claude plugin validate` equivalents where runnable key-free (B1 BLOCKER) | fix/release-hygiene | **FIXED @ 7f27ad9** |
+| 1.17 | .gitignore the runtime worktrees (`.claude/worktrees/`) — accidental `git add .` trap (B1) | fix/release-hygiene | **FIXED @ 7f27ad9** |
+| 1.18 | Root README vs suite README contradict on comms-qa/draft status (B2) | fix/release-hygiene | **FIXED @ 7f27ad9** |
+| 1.19 | SMOKE-TEST stale "two cases" + Case-1 wrong-reason rationale (A2) | fix/assets-catalog-lifecycle | **FIXED @ 9f98f06** |
+| 1.20 | 00-index: real links, counts, fix dead `notes/` pointer, drop "deduplicated" overclaim until true (A2) | fix/assets-catalog-lifecycle | **FIXED @ 9f98f06** |
 
 ## Bucket 2 — closes automatically at integration (verify, don't build)
 
@@ -38,7 +38,7 @@ Orchestrator-owned; updated as items close.
 | 2.3 | CHANGELOG missing the draft/voice eval lanes (B1) | behavioral-evals branch merge adds its own entries |
 | 2.4 | KB tools invisible + no CHANGELOG entry (B2 part) | kb branch merge PR carries README/CHANGELOG entries (root README part is 1.18) |
 
-## Bucket 3 — owner decisions (blocked on you; do not implement until answered)
+## Bucket 3 — owner decisions — **ALL 16 ANSWERED 2026-07-13, see docs/decisions-2026-07-13.md**
 
 Collected across all reviews. The first six are already in the decision artifact
 (claude.ai/code/artifact/26f490e8-…); the rest below should be answered in the same pass.
