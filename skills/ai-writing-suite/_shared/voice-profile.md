@@ -24,6 +24,32 @@
   will silently fall back to generic behavior (a silent-fallback bug we want to
   avoid).
 
+  CANONICAL HEADER ORDER (the single source of truth)
+  ---------------------------------------------------
+  This ordered list IS the contract. `voice-onboard` (producer) and `comms-polish`
+  + `comms-draft` (consumers) all reference THIS list rather than restating a
+  divergent subset of their own. The blank twin `host-profile-template.md` mirrors
+  it header-for-header, and the voice-contract eval guards it against drift.
+
+    1.  Meta
+    2.  Tone
+    3.  Sentence Length
+    4.  Vocabulary
+    5.  Vocabulary Do
+    6.  Vocabulary Don't
+    7.  Signature Moves
+    8.  Punctuation & Formatting
+    9.  Openings & Closings
+    10. Uncertainty Style
+    11. Things To Avoid
+    12. Scope & Calibration
+    13. Measured Fingerprint
+    14. Changelog
+
+  Note: `Vocabulary` (the descriptive header) AND `Scope & Calibration` are BOTH
+  in the contract — earlier drafts of the skills each dropped one; the fix is that
+  every skill points here instead of listing headers inline.
+
   EVERY claim needs sample evidence. No evidence -> leave the field "Unknown"
   rather than inventing a trait. A profile built on guesses is worse than no
   profile, because `comms-polish` will trust it.
