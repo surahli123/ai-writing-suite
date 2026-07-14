@@ -445,6 +445,29 @@ class PayoffClearGuards(unittest.TestCase):
         self.assertNotIn("you might think", fixture["after"].lower())
 
 
+class NarrativeShapeGuards(unittest.TestCase):
+    """Template-pin guard for `narrative_shape_ok`, mirroring
+    PayoffClearGuards.test_judge_template_documents_payoff_clear: the fenced
+    prompt block a LIVE judge actually reads must define the dimension and its
+    validity condition. Goes RED if the NARRATIVE-SHAPE CHECK block is removed
+    from rubric.md while narrative_shape_ok stays in a fixture's rubric_focus."""
+
+    def test_judge_template_documents_narrative_shape(self):
+        template = _extract_judge_template()
+        self.assertIn("NARRATIVE-SHAPE CHECK", template)
+        self.assertIn("narrative_shape_ok", template)
+        self.assertIn("VALIDITY CONDITION", template)
+
+    def test_narrative_shape_fixtures_declare_the_dimension(self):
+        # Every narrshape-* fixture must actually list narrative_shape_ok in its
+        # rubric_focus, so the judge is told to weigh it -- a fixture that forgot
+        # the marker would silently stop exercising the dimension it exists for.
+        for f in load_fixtures()["fixtures"]:
+            if f["id"].startswith("narrshape-"):
+                self.assertIn("narrative_shape_ok", f["rubric_focus"],
+                              f"{f['id']} missing narrative_shape_ok in rubric_focus")
+
+
 class JudgeGate(unittest.TestCase):
     """The 3-state gate, exercised with NO network."""
 
