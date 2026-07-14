@@ -1,6 +1,6 @@
 ---
 name: comms-draft
-description: Draft a new page from a brief, guided by the knowledge base / playbook, so the first draft already reads human instead of AI-generated. Derives per-task acceptance criteria, injects concrete detail and varied rhythm at draft time, then self-scans for tells. Use to produce a fresh draft. Not for polishing existing text - that is comms-polish. Not for answering questions from the knowledge base - that is comms-qa. Drafting or adding content belongs here, including mixed polish-plus-add requests; pure rewording with no new content is comms-polish. Never invents facts; marks gaps with [NEEDS: ...].
+description: "Draft a new page from a brief, guided by the knowledge base / playbook, so the first draft already reads human instead of AI-generated. Derives per-task acceptance criteria, injects concrete detail and varied rhythm at draft time, then self-scans for tells. Use to produce a fresh draft. Not for polishing existing text - that is comms-polish. Not for answering questions from the knowledge base - that is comms-qa. Drafting or adding content belongs here, including mixed polish-plus-add requests; pure rewording with no new content is comms-polish. Never invents facts; marks gaps with [NEEDS: ...]."
 ---
 
 # comms-draft
