@@ -11,7 +11,7 @@
   "interface": {
     "displayName": "AI Writing Suite",
     "shortDescription": "Polish/de-AI prose, learn an author's voice, KB-guided writing.",
-    "longDescription": "A suite of writing-assistant skills: polish and de-AI prose while preserving meaning and voice, learn an author's historical voice into a reusable profile, and (in v2) answer questions from and draft against a pluggable knowledge base.",
+    "longDescription": "A suite of writing-assistant skills: polish and de-AI prose while preserving meaning and voice, learn an author's historical voice into a reusable profile, answer questions from a pluggable knowledge base, and draft new pages against it.",
     "developerName": "surahli123",
     "category": "Productivity",
     "capabilities": ["Read", "Write"]

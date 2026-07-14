@@ -1,3 +1,10 @@
+> ⚠️ **HISTORICAL — superseded by [`docs/packaging.md`](packaging.md) (2026-06-07 restructure).**
+> This document is kept for its decision log (D1–D12) and rationale only. Its packaging
+> prescriptions — the `packaging/`/`sync.sh` generate-and-sync machinery and the
+> `cursor-rules/`/`rovodev/` manifest directories — were **removed**; all hosts now read the
+> single source tree directly. For the current, authoritative packaging and install model, read
+> `docs/packaging.md`. Do not follow the packaging/sync steps below.
+
 # Design Plan — AI Writing Suite (OSS) v1
 
 Date: 2026-06-06

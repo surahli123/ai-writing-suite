@@ -123,8 +123,8 @@ After each session, the suite proposes new rules based on error analysis:
 
 1. Analyze edits you made or approved.
 2. Propose candidate rules (e.g., "remove 'seamlessly'" or "tighten 'important to note'").
-3. You approve; we eval-test the rule against the baseline.
-4. Approved rules append to `_shared/learned-rules.md` (append-only, never auto-editing core logic).
+3. You approve.
+4. Approved rules append to `_shared/learned-rules.md` as `proposed` (append-only, never auto-editing core logic); a later eval measures each rule before it is promoted to trusted.
 
 Rules improve over time without drift or degradation.
 
@@ -170,8 +170,10 @@ cp -R ai-writing-suite/skills/ai-writing-suite ~/.cursor/skills/ai-writing-suite
 ### RovoDev
 
 Manual install, same primitive as Cursor — copy the folder into RovoDev's skills directory, then
-invoke explicitly (RovoDev does not auto-trigger). Smoke-tested working 2026-06-08: `/skills`
-registered the router and the sub-skills, and `comms-polish` produced a before/after rewrite.
+invoke explicitly (RovoDev does not auto-trigger). Verified scope 2026-06-08: registration
+(`/skills` listed the router and the four sub-skills) plus one `comms-polish` before/after
+rewrite. `comms-qa`, `comms-draft`, and the overstepping / payoff-clear behaviors are untested on
+RovoDev pending re-verification.
 
 ```bash
 git clone https://github.com/surahli123/ai-writing-suite
@@ -220,9 +222,9 @@ The suite shows `_shared/learned-rules.md`, which grows as new patterns emerge f
 The suite ships with:
 
 - **Before/after fixtures** across genres (tweet, LinkedIn, README, memo).
-- **LLM-judged scoring** — a rubric calibrated so the baseline fails 30–40% of cases.
+- **LLM-judged scoring** — a rubric calibrated so the baseline fails 30–40% of cases; the LLM judge is opt-in (runs only when `AIWS_JUDGE_*` is set) and never gates CI.
 - **Mechanical regression gate** — ported from avoid-ai JavaScript detector.
-- **Self-improvement integration** — each proposed rule is eval-tested before you approve it.
+- **Self-improvement integration** — after you approve a rule it is appended as `proposed`, then eval-tested later before it is promoted to trusted.
 
 See `evals/` for details.
 
