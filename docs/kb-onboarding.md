@@ -79,7 +79,30 @@ python3 tools/kb_ingest.py export --out _shared/knowledge --force
 ```
 
 Re-running with the same export is safe: identical input produces identical
-output.
+output. This also holds if you re-run ingest after hand-editing an `INDEX.md`
+row (e.g. adding an alias keyword directly in the table) — **a row you have not
+re-generated with `--force` is never rewritten from a page's re-parsed
+content.** The precedence, on every run, for a file that already exists:
+
+1. **Written this run** (new, or `--force` used) → the row is freshly generated
+   from that page, matching the file exactly.
+2. **Not written, and a row already exists** → your existing row is **kept
+   exactly as-is** — including any hand edits.
+3. **Not written, no row exists yet, but the file has its own metadata header**
+   → the row is built from that file's own header (never from an incoming
+   page you happen to be re-ingesting).
+4. **A stray file with neither** → a best-effort row is generated and flagged
+   with a TODO for you to check.
+
+**Name collisions with an existing entry.** If a new page's title happens to
+produce the same filename as an entry that is already in `_shared/knowledge/`
+(and that existing file did not come from ingesting this same source page —
+e.g. it is one of the shipped generic entries, or a different page entirely),
+the new page is **never merged into it**. It is written under a renamed file
+(`your-title-2.md`) with a `duplicate topic/filename` TODO, and the existing
+file plus its INDEX row are left completely untouched. Resolve the TODO by
+either renaming the new file to something more specific, or merging the two
+pages by hand if they really are the same topic.
 
 ### What the report looks like
 
@@ -106,7 +129,7 @@ Open each entry the report mentioned and fix its `TODO:` markers. Common ones:
 | `TODO: add keywords/aliases` or "only N keyword(s)" | Add the words a colleague would actually type to find this page (synonyms, the "how do I…" phrasing). Edit the `Keywords:` line in the `<!-- kb-entry-meta -->` block **and** the Keywords column in `INDEX.md`. |
 | `TODO: add a one-line summary` | Write one plain sentence describing the page; put it in `Summary:` and the INDEX Summary column. |
 | `TODO: source page had no body content` | The page was empty. Add the real text, or delete the entry and its INDEX row. |
-| `TODO: duplicate topic` | Two pages had the same title. Merge them into one entry, or rename one. |
+| `TODO: duplicate topic/filename ... collided` | Two pages had the same title, or a new page's title collided with an entry already in the KB. Merge them into one entry, or rename the new file. |
 | `TODO: add >=2 bidirectional links` | List at least two related entries in the footer, and add a matching link back in each of those entries. |
 
 **Deleting `TODO` text is not enough — fix the underlying gap.** The validator
@@ -120,18 +143,26 @@ checks the *content*, not just the absence of the word.
 python3 tools/kb_validate.py _shared/knowledge
 ```
 
-This runs seven checks and prints a `PASS`/`FAIL` line for each, with the exact
+This runs nine checks and prints a `PASS`/`FAIL` line for each, with the exact
 `file:line` of every problem. It must say **PASS** before you ship. The checks:
 
 1. **INDEX ↔ files line up** — every INDEX row has a file and vice versa.
 2. **Related-entries valid** — each entry has ≥2 links, none broken.
 3. **Links go both ways** — if A links B, B links A.
 4. **Keywords present** — no empty Keywords cell.
-5. **Summary present** — no empty/placeholder Summary.
-6. **No TODO markers left** — every gap from Step 3 is resolved.
-7. **Retrieval smoke** — each entry's own keywords actually find that entry (if
-   not, its keywords are too weak or clash with a neighbour — make them more
-   specific).
+5. **Summary present** — no empty/placeholder Summary in `INDEX.md`.
+6. **Entry metadata non-empty** — the entry file's *own* Keywords/Summary
+   header isn't blank, even if the INDEX cell still looks fine.
+7. **INDEX matches entry metadata** — the INDEX row's Summary matches the
+   entry file's own header exactly, and the row's Keywords include every word
+   the file declares (you may hand-add extra alias keywords straight into the
+   row; the file just can't be swapped out from under it — this is what
+   catches a row silently pointing at the wrong file's content).
+8. **No TODO markers left** — every gap from Step 3 is resolved.
+9. **Retrieval smoke** — each entry's own keywords find that entry, and find
+   it *uniquely* — no other entry ties it on the same query (if they tie, add
+   more distinct terms to each so a query for one topic can't as easily
+   resolve to the other).
 
 ### A FAIL looks like this
 
@@ -145,11 +176,12 @@ This runs seven checks and prints a `PASS`/`FAIL` line for each, with the exact
 Fix each line, re-run, repeat until you see:
 
 ```
-PASS — KB is ready for first use (7 checks).
+PASS — KB is ready for first use (9 checks).
 ```
 
-If check 7 keeps failing for two entries, their keywords overlap too much. Give
-each the distinct terms a user would use for *that* topic specifically.
+If the retrieval-smoke check keeps failing for two entries, their keywords
+overlap too much. Give each the distinct terms a user would use for *that*
+topic specifically.
 
 ---
 

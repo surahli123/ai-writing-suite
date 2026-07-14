@@ -18,9 +18,16 @@ checks (never copies them) and ADDS the ingestion-specific ones:
   * `## Related entries` validity + bidirectionality (via kb_lint.check_related_*)
   * every entry has non-empty Keywords               (via kb_lint.check_keywords)
   * every entry has a non-empty Summary              (added here, with file:line)
+  * every entry's OWN kb-entry-meta header is non-blank (added here — catches a
+    blank file-level Keywords/Summary that an INDEX-only check can't see)
+  * INDEX.md agrees with each entry's own kb-entry-meta header (added here —
+    this is the check that catches a stale/desynced INDEX row: one regenerated
+    from a DIFFERENT page than the one that actually produced the on-disk file)
   * NO `TODO:` markers left anywhere                 (added here, with file:line)
-  * retrieval smoke: each entry's own Keywords must retrieve THAT entry through
-    the exact matching logic smoke_test.py uses      (imports smoke_test.retrieve)
+  * retrieval smoke: each entry's own Keywords must retrieve THAT entry, and
+    must do so UNIQUELY (not merely tie-and-win-by-table-order against another
+    entry) through the exact matching logic smoke_test.py uses (imports
+    smoke_test.retrieve)
 
 Output: a human-readable PASS/FAIL report; exit nonzero on any failure.
 Stdlib only. Run:  python3 tools/kb_validate.py <knowledge-dir>
@@ -39,8 +46,20 @@ if _EVALS not in sys.path:
 
 import kb_lint      # noqa: E402  (path set above)
 import smoke_test   # noqa: E402
+import kb_ingest     # noqa: E402  (same tools/ dir as this file)
 
 NON_ENTRY_FILES = kb_lint.NON_ENTRY_FILES
+
+
+def _norm_ws(s):
+    """Collapse whitespace + strip, for tolerant text comparison."""
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def _kw_set(s):
+    """A comma-separated keyword string -> a lowercased set of terms, so
+    comparisons are robust to ordering/whitespace differences."""
+    return {t.strip().lower() for t in s.split(",") if t.strip()}
 
 
 # ── Row parsing with line numbers (for file:line reporting) ─────────────────
@@ -96,14 +115,96 @@ def check_no_todo_markers(kb):
     return (not problems), problems
 
 
+def check_entry_meta_non_empty(kb):
+    """Every entry's OWN `kb-entry-meta` header (if present) has non-blank
+    Keywords and Summary fields.
+
+    kb_lint.check_keywords and check_summary_non_empty above both read
+    INDEX.md's cells — neither looks at the file's own declared metadata. A
+    hand edit (or a bug) that blanks a file's `Keywords:`/`Summary:` line while
+    the INDEX row still shows old, unrelated text would pass every check above
+    (Finding 6 — "blank entry metadata passes validation"). This one reads the
+    file directly, so a blank header fails here regardless of what INDEX
+    says."""
+    problems = []
+    for name in sorted(kb_lint._entry_files(kb)):
+        path = os.path.join(kb, name)
+        meta = kb_ingest.read_entry_meta(path)
+        if meta is None:
+            continue  # no kb-entry-meta header - not a kb_ingest-produced entry
+        if not meta["keywords_raw"]:
+            problems.append(path + ":0 kb-entry-meta Keywords is blank")
+        if not meta["summary"]:
+            problems.append(path + ":0 kb-entry-meta Summary is blank")
+    return (not problems), problems
+
+
+def check_index_matches_entry_meta(kb):
+    """Every entry's own `kb-entry-meta` header agrees with its INDEX.md row.
+
+    This is the check that catches the Finding-1 collision class directly: a
+    stale/mismatched INDEX row (regenerated from a DIFFERENT incoming page than
+    the one that produced the on-disk file) is otherwise invisible to every
+    other check here — they all compare existence/shape, never row-fields vs.
+    the entry's own declared content. Only entries that carry a kb-entry-meta
+    header are checked; hand-authored entries with no such header (e.g. the
+    shipped generic KB) have nothing to compare against and are skipped.
+
+    Summary must match EXACTLY (normalized whitespace) — a desync always swaps
+    in a wholly different one-line summary, so exact match alone catches it.
+    Keywords use a SUBSET relation instead (every word the file's own header
+    declares must appear in the INDEX row, but the row may carry EXTRA words):
+    the KB's own onboarding docs (README.md "Wiki conventions") explicitly
+    support a human hand-adding alias keywords straight into an INDEX row
+    without touching the entry file — exact-set equality would wrongly flag
+    that legitimate enrichment as a desync. A genuine desync (the row replaced
+    with an unrelated page's keywords) still fails: the file's real keywords
+    are then absent from the row entirely, violating the subset relation."""
+    problems = []
+    rows = {r["file"]: r for r in _index_rows_with_lines(kb)}
+    idx_path = os.path.join(kb, "INDEX.md")
+    for name in sorted(kb_lint._entry_files(kb)):
+        path = os.path.join(kb, name)
+        meta = kb_ingest.read_entry_meta(path)
+        if meta is None:
+            continue
+        row = rows.get(name)
+        if row is None:
+            continue  # INDEX<->directory sync check already reports this
+        if _norm_ws(row["summary"]) != _norm_ws(meta["summary"]):
+            problems.append(
+                idx_path + ":" + str(row["line"]) + " INDEX Summary for " +
+                name + " does not match its kb-entry-meta Summary "
+                "('" + row["summary"] + "' vs '" + meta["summary"] + "')")
+        meta_kw = _kw_set(meta["keywords_raw"])
+        row_kw = _kw_set(row["keywords"])
+        if not meta_kw <= row_kw:
+            problems.append(
+                idx_path + ":" + str(row["line"]) + " INDEX Keywords for " +
+                name + " is missing word(s) its kb-entry-meta declares "
+                "(missing: " + ", ".join(sorted(meta_kw - row_kw)) + ")")
+    return (not problems), problems
+
+
 def check_retrieval_smoke(kb):
-    """Each entry's OWN Keywords must retrieve THAT entry.
+    """Each entry's OWN Keywords must retrieve THAT entry, UNIQUELY.
 
     Reuses the exact matching logic smoke_test.py uses (smoke_test.load_index +
-    smoke_test.retrieve) — no reimplementation. If an entry's keyword string
-    resolves to a different entry (or to nothing), retrieval for that topic is
-    broken: the keywords are too weak or collide with a neighbour. This is the
-    ingestion-time analogue of the shipped-KB smoke test, run over the fork KB."""
+    smoke_test.retrieve) — no reimplementation. Two failure modes are checked:
+
+    (a) an entry's keyword string resolves to a DIFFERENT entry (or nothing) —
+        retrieval for that topic is broken.
+    (b) an entry's keyword string TIES another entry's score and only "wins"
+        because of INDEX table order (Finding 2 — retrieval-smoke false-pass on
+        shared keywords). A tie means the entry is not uniquely identified by
+        its own keywords; smoke_test.retrieve()'s strict `>` comparison would
+        silently pick whichever entry comes first in the table, which can mask
+        the fact that a query for THIS entry would just as validly resolve to
+        the other one. Both members of a tie are flagged, not just whichever
+        one loses the position-dependent tie-break.
+
+    This is the ingestion-time analogue of the shipped-KB smoke test, run over
+    the fork KB."""
     problems = []
     # smoke_test.load_index() reads its module-level INDEX_PATH. Point it at the
     # target KB for the duration of this check, then restore it — genuine reuse
@@ -116,13 +217,29 @@ def check_retrieval_smoke(kb):
             return False, [os.path.join(kb, "INDEX.md") +
                            ":0 no entries parsed from INDEX.md"]
         for e in entries:
-            got, overlap = smoke_test.retrieve(", ".join(sorted(e["keywords"])),
-                                               entries)
+            q = set(e["keywords"])
+            path = os.path.join(kb, e["file"])
+            got, overlap = smoke_test.retrieve(", ".join(sorted(q)), entries)
             if got != e["file"]:
                 problems.append(
-                    os.path.join(kb, e["file"]) +
-                    ":0 own keywords retrieve '" + str(got) +
+                    path + ":0 own keywords retrieve '" + str(got) +
                     "' not '" + e["file"] + "' (overlap=" + str(overlap) + ")")
+                continue
+            # e "won" the retrieval — now check whether it won UNIQUELY, or
+            # only by table-order privilege over a genuine tie.
+            e_terms = e["keywords"] | e["summary_kw"]
+            e_score = (len(q & e_terms), len(q & e["summary_kw"]))
+            for g in entries:
+                if g is e:
+                    continue
+                g_terms = g["keywords"] | g["summary_kw"]
+                g_score = (len(q & g_terms), len(q & g["summary_kw"]))
+                if g_score >= e_score:
+                    problems.append(
+                        path + ":0 own keywords are shadowed by '" +
+                        g["file"] + "' (self=" + str(e_score) + ", shadow=" +
+                        str(g_score) + ") — not uniquely retrievable")
+                    break
     finally:
         smoke_test.INDEX_PATH = saved
     return (not problems), problems
@@ -136,8 +253,10 @@ CHECKS = [
     ("Bidirectionality (kb_lint)", kb_lint.check_bidirectional),
     ("Keywords non-empty (kb_lint)", kb_lint.check_keywords),
     ("Summary non-empty", check_summary_non_empty),
+    ("Entry metadata non-empty (file-level)", check_entry_meta_non_empty),
+    ("INDEX matches entry metadata", check_index_matches_entry_meta),
     ("No TODO markers left", check_no_todo_markers),
-    ("Retrieval smoke (own keywords -> own entry)", check_retrieval_smoke),
+    ("Retrieval smoke (own keywords -> own entry, unique)", check_retrieval_smoke),
 ]
 
 
