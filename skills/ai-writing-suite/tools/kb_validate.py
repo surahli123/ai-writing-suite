@@ -186,6 +186,64 @@ def check_index_matches_entry_meta(kb):
     return (not problems), problems
 
 
+def _read_entry_title(path):
+    """Read an entry file's own `# Title` heading (the line kb_ingest writes
+    right after the `<!-- kb-entry-meta -->` block). Returns "" if none."""
+    if not os.path.isfile(path):
+        return ""
+    with open(path, encoding="utf-8") as fh:
+        text = fh.read()
+    m = re.search(r"^#\s+(.+)$", text, re.M)
+    return m.group(1).strip() if m else ""
+
+
+def warn_generic_shadowing(kb):
+    """ADVISORY ONLY — never fails validation, never affects the exit code.
+
+    For each kb_ingest-produced entry (one with its own `kb-entry-meta`
+    header), check whether a query built from its OWN TITLE words resolves to
+    a DIFFERENT entry that has NO such header — i.e. a hand-authored/generic
+    entry (the shipped `audience/clarity/structure/tone/revision.md`) is
+    shadowing the fork's real page on the fork's own topic name. This is
+    exactly the failure the Journeys review measured (2.3): a query like "how
+    should our team sound when writing to execs?" retrieved the generic
+    `tone.md`, not the company's tone page — and every other check here tests
+    an entry's own keywords against ITSELF, so none of them can see this.
+
+    It stays advisory rather than a hard failure because keeping the generic
+    KB alongside a fork's playbook is a legitimate product decision this tool
+    cannot make on the operator's behalf (see docs/kb-onboarding.md)."""
+    warnings = []
+    saved = smoke_test.INDEX_PATH
+    smoke_test.INDEX_PATH = os.path.join(kb, "INDEX.md")
+    try:
+        entries = smoke_test.load_index()
+        if not entries:
+            return warnings
+        for name in sorted(kb_lint._entry_files(kb)):
+            path = os.path.join(kb, name)
+            meta = kb_ingest.read_entry_meta(path)
+            if meta is None:
+                continue  # not a kb_ingest-produced entry
+            title = _read_entry_title(path)
+            q = set(smoke_test.tokens(title))
+            if not q:
+                continue
+            got, overlap = smoke_test.retrieve(", ".join(sorted(q)), entries)
+            if not got or got == name:
+                continue
+            if kb_ingest.read_entry_meta(os.path.join(kb, got)) is not None:
+                continue  # shadowed by another fork entry - not the failure mode
+            warnings.append(
+                path + ":0 WARN own title words ('" + title + "') retrieve '" +
+                got + "' instead — a generic/hand-authored entry may be "
+                "shadowing this fork entry on its own topic (overlap=" +
+                str(overlap) + ")")
+    finally:
+        smoke_test.INDEX_PATH = saved
+    return warnings
+
+
 def check_retrieval_smoke(kb):
     """Each entry's OWN Keywords must retrieve THAT entry, UNIQUELY.
 
@@ -292,8 +350,17 @@ def main(argv=None):
 
     print()
     if all_ok:
-        print("PASS — KB is ready for first use (" + str(len(CHECKS)) +
-              " checks).")
+        print("PASS — structural checks pass (" + str(len(CHECKS)) + "). "
+              "Run the Step-5 retrieval smoke (a real comms-qa question) "
+              "before first use — PASS is necessary, not sufficient: it "
+              "cannot see a generic KB entry silently shadowing your own "
+              "page on the same topic.")
+        warnings = warn_generic_shadowing(kb)
+        if warnings:
+            print("\n[WARN] Possible generic-KB shadowing (advisory, does "
+                  "not fail this check):")
+            for w in warnings:
+                print("       - " + w)
         return 0
     print("FAIL — " + str(failed) + "/" + str(len(CHECKS)) +
           " check(s) failed. Fix the items above before first use.")

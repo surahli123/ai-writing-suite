@@ -14,6 +14,7 @@ KB is never touched. Stdlib-only (unittest, tempfile). Collected automatically b
 
 import os
 import re
+import shutil
 import sys
 import tempfile
 import unittest
@@ -521,6 +522,135 @@ class BoilerplateHeadingExcluded(unittest.TestCase):
         keywords = kb_ingest.extract_keywords(title, body)
         self.assertNotIn("related", keywords)
         self.assertNotIn("entries", keywords)
+
+
+# ── Journeys review Bug 1: idempotency false on the collision path ──────────
+class CollisionReingestIdempotent(unittest.TestCase):
+    """A page colliding with an existing entry (tone.md -> tone-2.md) must
+    converge on re-ingest: re-running the SAME export must reuse tone-2.md,
+    never mint tone-3.md, tone-4.md, ... on every run."""
+
+    def test_double_ingest_of_colliding_export_is_a_noop(self):
+        with tempfile.TemporaryDirectory() as d:
+            src, kb = os.path.join(d, "exp"), os.path.join(d, "kb")
+            os.makedirs(src)
+            os.makedirs(kb)
+
+            # A shipped/hand-authored entry (no provenance) already in the KB.
+            _write(os.path.join(kb, "tone.md"),
+                   "# Tone\n\nHouse tone: warm but precise.\n")
+            _write(os.path.join(kb, "INDEX.md"),
+                   "# Knowledge Base — Navigation Index\n\n"
+                   "## Entries\n\n"
+                   "| Entry file | Summary (one line) | Keywords / aliases |\n"
+                   "| --- | --- | --- |\n"
+                   "| `tone.md` | House tone guidance. | tone, house style |\n")
+            # A NEW page whose title collides with it.
+            _write(os.path.join(src, "our-tone.md"),
+                   "# Tone\n\nOur company tone: direct, no hype, no jargon.\n\n"
+                   "## Register\nSound like a competent colleague.\n")
+
+            report1 = kb_ingest.ingest(src, kb)
+            self.assertIn("tone-2.md", report1["written"])
+            files_after_1 = set(_entry_files(kb))
+            index_after_1 = _read(os.path.join(kb, "INDEX.md"))
+
+            # Re-run the SAME export again, same output dir, no --force.
+            report2 = kb_ingest.ingest(src, kb)
+
+            self.assertEqual(report2["written"], [],
+                             "re-ingesting the same colliding export must "
+                             "write nothing new")
+            self.assertEqual(set(_entry_files(kb)), files_after_1,
+                             "no tone-3.md or further siblings must appear")
+            self.assertNotIn("tone-3.md", _entry_files(kb))
+            self.assertEqual(_read(os.path.join(kb, "INDEX.md")), index_after_1,
+                             "INDEX.md must be byte-identical on the no-op re-run")
+
+
+# ── Journeys review Bug 2: ingest must not destroy INDEX.md's own prose ─────
+class IndexNonTableContentPreserved(unittest.TestCase):
+    """First ingest into an EXISTING INDEX.md must leave every line outside
+    the Entries table (header prose, Categories, Provenance, anything else)
+    byte-for-byte untouched — only the table's data rows are kb_ingest's to
+    manage. Exercised against a COPY of the real shipped KB (never the KB
+    itself) so the fixture matches production shape exactly."""
+
+    def test_ingest_preserves_shipped_index_non_table_content(self):
+        shipped_kb = os.path.normpath(os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "..",
+            "_shared", "knowledge"))
+        with tempfile.TemporaryDirectory() as d:
+            kb = os.path.join(d, "kb")
+            shutil.copytree(shipped_kb, kb)   # copy only - shipped KB untouched
+            src = os.path.join(d, "exp")
+            os.makedirs(src)
+            _write(os.path.join(src, "newpage.md"),
+                   "# Escalation Emails\n\n"
+                   "Write escalation emails with a clear, specific ask.\n\n"
+                   "## Ask\nState the decision needed.\n\n"
+                   "## Timeline\nGive a deadline.\n")
+
+            before_idx = _read(os.path.join(kb, "INDEX.md"))
+            before_non_table = [ln for ln in before_idx.splitlines()
+                                if not kb_ingest._INDEX_ROW_RE.match(ln)]
+
+            kb_ingest.ingest(src, kb)
+
+            after_idx = _read(os.path.join(kb, "INDEX.md"))
+            after_non_table = [ln for ln in after_idx.splitlines()
+                               if not kb_ingest._INDEX_ROW_RE.match(ln)]
+
+            self.assertEqual(before_non_table, after_non_table,
+                             "non-table INDEX.md content must be byte-identical")
+            self.assertTrue(
+                any("escalation" in ln.lower() for ln in after_idx.splitlines()),
+                "the new page's row must still have been added to the table")
+            self.assertNotEqual(kb, shipped_kb)   # sanity: operated on the copy
+
+
+# ── Journeys review Mechanical 5: advisory generic-KB shadowing WARN ────────
+class GenericShadowingWarning(unittest.TestCase):
+    def test_warns_when_fork_entry_shadowed_by_generic_entry(self):
+        with tempfile.TemporaryDirectory() as d:
+            kb = os.path.join(d, "kb")
+            os.makedirs(kb)
+            # A "generic" hand-authored entry (no kb-entry-meta header).
+            _write(os.path.join(kb, "tone.md"),
+                   "# Tone\n\nGeneric tone guidance: warm, precise, house style.\n\n"
+                   "## Related entries\n\n- `our-tone.md`\n- `our-tone.md`\n")
+            # A kb_ingest-produced fork entry on the SAME topic.
+            _write(os.path.join(kb, "our-tone.md"),
+                   "<!-- kb-entry-meta\n"
+                   "Keywords: tone\n"
+                   "Summary: Our company tone guidance.\n"
+                   "-->\n\n# Tone\n\n"
+                   "> Generated by `kb_ingest.py` from `our-tone-src.md`. "
+                   "Confirm the content below before first use.\n\n"
+                   "Our company tone guidance: direct and clear.\n\n"
+                   "## Related entries\n\n- `tone.md`\n- `tone.md`\n")
+            _write(os.path.join(kb, "INDEX.md"),
+                   "# Knowledge Base — Navigation Index\n\n"
+                   "## Entries\n\n"
+                   "| Entry file | Summary (one line) | Keywords / aliases |\n"
+                   "| --- | --- | --- |\n"
+                   "| `tone.md` | Generic tone guidance. "
+                   "| tone, house, style, warm, precise |\n"
+                   "| `our-tone.md` | Our company tone guidance. | tone |\n")
+
+            warnings = kb_validate.warn_generic_shadowing(kb)
+            self.assertTrue(
+                any("our-tone.md" in w and "retrieve 'tone.md' instead" in w
+                    for w in warnings), warnings)
+
+    def test_no_warning_when_no_generic_entry_present(self):
+        with tempfile.TemporaryDirectory() as d:
+            src, kb = os.path.join(d, "exp"), os.path.join(d, "kb")
+            os.makedirs(src)
+            _clean_export(src)
+            kb_ingest.ingest(src, kb)
+            warnings = kb_validate.warn_generic_shadowing(kb)
+            self.assertEqual(warnings, [])
 
 
 if __name__ == "__main__":

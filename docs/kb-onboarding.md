@@ -1,5 +1,14 @@
 # Onboarding your playbook into the knowledge base
 
+**Forking: bring your playbook.** This page is the fork's entire integration
+surface — if you found it by searching the repo (or were pointed here from
+`_shared/knowledge/README.md`), you're in the right place and nothing else
+needs reading first. Two scripts do the work: `tools/kb_ingest.py` (turns your
+Confluence/Notion/Markdown export into KB entries) and `tools/kb_validate.py`
+(the pre-flight gate you run before shipping). Both are stdlib-only Python,
+live in `skills/ai-writing-suite/tools/`, and the five steps below walk
+through using them end to end.
+
 **Who this is for:** the person on a company fork who owns the writing playbook —
 a data / comms / ops person, **not** an engineer. You will export pages, run two
 scripts, and fix whatever they flag. No code to write, no retrieval engine to
@@ -72,17 +81,25 @@ find the right entry.
   with the same title, too few keywords), it writes a **`TODO:` marker** into the
   file and lists it at the end. It never guesses silently.
 
-It **never overwrites** an entry you have already edited. To regenerate anyway:
+It **never overwrites** an entry file you have already edited, and it never
+touches `INDEX.md`'s own prose either — only the table's data rows are ever
+added or updated. Any header text, a "Categories" section, a "Provenance"
+section, anything you've written into `INDEX.md` outside the table survives
+every ingest run byte-for-byte. To regenerate an entry FILE anyway:
 
 ```
 python3 tools/kb_ingest.py export --out _shared/knowledge --force
 ```
 
-Re-running with the same export is safe: identical input produces identical
-output. This also holds if you re-run ingest after hand-editing an `INDEX.md`
-row (e.g. adding an alias keyword directly in the table) — **a row you have not
-re-generated with `--force` is never rewritten from a page's re-parsed
-content.** The precedence, on every run, for a file that already exists:
+Re-running with the **same, unchanged** export is a no-op: identical input
+produces identical output — the same files, the same `INDEX.md`, every time.
+This holds even on the collision path (below): re-ingesting a page that
+collided with an existing entry on an earlier run reuses the SAME renamed
+file it got that time, rather than minting another `-N.md` copy. It also
+holds if you hand-edit an `INDEX.md` row (e.g. adding an alias keyword
+directly in the table) — **a row you have not re-generated with `--force` is
+never rewritten from a page's re-parsed content.** The precedence, on every
+run, for a file that already exists:
 
 1. **Written this run** (new, or `--force` used) → the row is freshly generated
    from that page, matching the file exactly.
@@ -102,7 +119,9 @@ the new page is **never merged into it**. It is written under a renamed file
 (`your-title-2.md`) with a `duplicate topic/filename` TODO, and the existing
 file plus its INDEX row are left completely untouched. Resolve the TODO by
 either renaming the new file to something more specific, or merging the two
-pages by hand if they really are the same topic.
+pages by hand if they really are the same topic. **Re-running ingest on the
+same colliding page reuses that same renamed file** (`your-title-2.md`) —
+it will not mint `your-title-3.md`, `-4.md`, and so on with every re-run.
 
 ### What the report looks like
 
@@ -131,6 +150,7 @@ Open each entry the report mentioned and fix its `TODO:` markers. Common ones:
 | `TODO: source page had no body content` | The page was empty. Add the real text, or delete the entry and its INDEX row. |
 | `TODO: duplicate topic/filename ... collided` | Two pages had the same title, or a new page's title collided with an entry already in the KB. Merge them into one entry, or rename the new file. |
 | `TODO: add >=2 bidirectional links` | List at least two related entries in the footer, and add a matching link back in each of those entries. |
+| `INDEX Keywords for X.md is missing word(s) its kb-entry-meta declares` (a Step-4 FAIL, not a `TODO:`) | **Edit the INDEX row, not the file.** This means the entry file's own header has a word the INDEX table row is missing — add that word to the Keywords column in `INDEX.md`. (The reverse — adding an alias only to the INDEX row — is fine and expected; it's the file's own words disappearing from the row that this catches.) |
 
 **Deleting `TODO` text is not enough — fix the underlying gap.** The validator
 checks the *content*, not just the absence of the word.
@@ -176,12 +196,26 @@ This runs nine checks and prints a `PASS`/`FAIL` line for each, with the exact
 Fix each line, re-run, repeat until you see:
 
 ```
-PASS — KB is ready for first use (9 checks).
+PASS — structural checks pass (9). Run the Step-5 retrieval smoke (a real
+comms-qa question) before first use — PASS is necessary, not sufficient: it
+cannot see a generic KB entry silently shadowing your own page on the same
+topic.
 ```
 
 If the retrieval-smoke check keeps failing for two entries, their keywords
 overlap too much. Give each the distinct terms a user would use for *that*
 topic specifically.
+
+**PASS is a structural gate, not a content gate — Step 5 is not optional.**
+The validator can only check an entry against itself; it cannot tell you
+whether the *generic* KB entries shipped with this repo (`clarity.md`,
+`structure.md`, `audience.md`, `tone.md`, `revision.md`) are answering
+questions that should go to your own page instead. If a PASS run also prints
+a `[WARN] Possible generic-KB shadowing` line, that is telling you exactly
+that: one of your pages' own title words currently resolve to a *generic*
+entry, not yours. Strengthen that page's keywords (Step 3), or — the more
+common real fix — delete the generic entries your playbook fully replaces
+(and their `INDEX.md` rows) so there's nothing left to shadow it.
 
 ---
 
@@ -195,10 +229,25 @@ e.g. *"How should I open a status update for an exec?"* A good answer:
 
 If it cites the wrong entry, strengthen that topic's keywords (Step 3) and
 re-validate. If it says the KB does not cover the question and it should, you are
-missing an entry — export that page and start again at Step 1.
+missing an entry — export that page and start again at Step 1. **If it cites a
+generic entry instead of your own page on the same topic** (the failure Step 4's
+WARN is for), that's the same fix: sharpen your page's keywords, or delete the
+generic entry your playbook has replaced.
 
 You can also add your own cases to `_shared/knowledge/SMOKE-TEST.md` (query →
 expected entry → expected passage) so future KB edits are checked automatically.
+
+---
+
+## Troubleshooting first errors
+
+| Symptom | What it means / what to do |
+| --- | --- |
+| `can't open file '.../tools/kb_ingest.py': [Errno 2] No such file or directory` | Wrong working directory. These commands assume you've run `cd skills/ai-writing-suite` first (see the top of this doc) — run that, then retry from there. |
+| `command not found: python` | macOS/Linux ship `python3`, not `python`. Use `python3 tools/kb_ingest.py ...` (Windows: try `py -3 tools/kb_ingest.py ...`). |
+| `error: the following arguments are required: --out` | `--out` is required — always `python3 tools/kb_ingest.py <export-dir> --out _shared/knowledge`. |
+| `kb_ingest report: Wrote 0 entries` / `ERRORS: no .html/.md export files found` | Your export folder has no `.html`/`.md` files at its top level (subfolders aren't scanned) — check the path and that files actually landed there. |
+| `kb_validate.py` prints `FAIL — N/9 check(s) failed` | Normal mid-flow, not a crash. Fix each `file:line` listed, re-run — you'll bounce between this and Step 3 a few times before it says PASS. That loop is expected. |
 
 ---
 
