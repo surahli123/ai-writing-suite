@@ -135,6 +135,23 @@ practitioner explaining a tradeoff to a peer, not a brand talking to a market.
 - **Applies to:** blog posts, internal memos, LinkedIn.
 - **Re-calibrate for:** formal external reports, customer-facing comms.
 
+## Measured Fingerprint
+
+<!-- ILLUSTRATIVE shape only (fictional Sam). Real numbers are produced by
+     `_shared/stylometry.py` from your samples and must be recomputable from
+     them. ONE `### <genre>` block per genre — never pool. See
+     host-profile-template.md for the rules and the CJK/unsupported line. -->
+
+### blog
+
+- **Provenance:** genre=blog, N=7 samples, ~2100 words, confidence=Medium
+- **Sentence length:** mean=15.8, variance=61.2, burstiness(CV)=0.49 over ~130 sentences  <!-- variance is the signal: irregular human rhythm -->
+- **Punctuation /1k words:** em-dash=6.1, semicolon=0.4, ellipsis=0.9, exclamation=0.3
+- **Testable numbers:** 3.4 per 100 words (72 figures)
+- **AI-register words:** 0 hits across 55 terms checked  <!-- the absence IS the fingerprint -->
+- **Function-word deltas /1k (vs generic baseline):** over-uses that +9.0, we +7.2; under-uses of -8.0, the -6.0
+- **Char 3-gram top:** ['he ' 0.0121, ' th' 0.0118, 'the' 0.0102, 'ed ' 0.0071, 'ing' 0.0064]
+
 ## Changelog
 
 <!-- voice-onboard appends here on each update. Living file, not a one-shot. -->
