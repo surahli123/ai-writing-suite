@@ -52,7 +52,7 @@ class CatalogRegistry(unittest.TestCase):
         # itself raises on a duplicate id (dict keys can't collide silently),
         # so len(CATALOG) == len(set(CATALOG)) is true by construction — the
         # exact-count assert is what actually catches shrinkage/growth.
-        self.assertEqual(len(CATALOG), 67)
+        self.assertEqual(len(CATALOG), 71)  # 67 + N1-N4 (narrative-shape, merged 2026-07-13)
 
     def test_malformed_heading_raises(self):
         with tempfile.TemporaryDirectory() as tmp:
