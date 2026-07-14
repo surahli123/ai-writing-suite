@@ -19,6 +19,7 @@ import tempfile
 import unittest
 from unittest import mock
 
+import fixtures.mutants_draft as md
 import fixtures.run_draft_cases as rdc
 from fixtures.run_draft_cases import (
     CHECKS, CRITERIA_DIMENSIONS, build_draft_judge_prompt, count_questions,
@@ -101,22 +102,122 @@ class Fabrication(unittest.TestCase):
 
 
 class PreDraftHelpers(unittest.TestCase):
+    CRITERIA_HEAD = "## Acceptance criteria\n"
+
     def test_question_count_only_counts_pre_draft_lines(self):
         draft = ("## Clarifying questions\n- Who is the reader?\n- What changed?\n"
                  "## Draft\nIs this counted? No — it is in the body.\n")
         self.assertEqual(count_questions(draft), 2)
 
     def test_missing_criteria_dimensions_needs_all_five(self):
-        pre = "\n".join(f"- {d}: something" for d in CRITERIA_DIMENSIONS)
+        # The five must be NAMED AS CRITERIA — bullet labels under a criteria
+        # heading. (The heading is required now; the old check accepted the five
+        # words appearing anywhere in the pre-draft, which prose satisfied by
+        # accident. See test_criteria_named_only_in_prose_do_not_count.)
+        pre = self.CRITERIA_HEAD + "\n".join(f"- {d}: something"
+                                             for d in CRITERIA_DIMENSIONS)
         self.assertEqual(rdc.missing_criteria_dimensions(pre + "\n## Draft\nx"), [])
         self.assertIn("depth", rdc.missing_criteria_dimensions(
-            "- style: x\n- format: x\n- length: x\n- content integration: x\n## Draft\nx"))
+            self.CRITERIA_HEAD + "- style: x\n- format: x\n- length: x\n"
+            "- content integration: x\n## Draft\nx"))
 
     def test_source_blob_includes_brief_and_kb(self):
         case = {"brief": "Ship on 3 March.", "kb_facts": ["structure.md: lead with the point."]}
         blob = source_blob(case)
         self.assertIn("3 march", blob)
         self.assertIn("lead with the point", blob)
+
+
+class ReviewerEvasions(unittest.TestCase):
+    """Regression tests for the evasions a reviewer constructed against v1 of these
+    checkers. Each one slipped through; each one is now a permanent gate. Deleting a
+    test here re-opens the hole it names.
+    """
+
+    # --- BLOCKER: substring lookup made the fabrication check miss its own case ---
+
+    def test_masked_number_evasion_is_caught(self):
+        # v1 did `tok in src` on RAW TEXT. draft-01's brief says "under 150 words",
+        # so "50", "15", "1" and "0" all substring-matched inside "150" and were
+        # silently cleared. Three invented specifics, zero flags.
+        case = load_draft_cases()["cases"][0]
+        self.assertIn("150", case["brief"], "the masking substring must still be here")
+        draft = ("## Draft\nChurn fell 50% in Q3, our 15th straight quarter of "
+                 "decline, costing 1 million.\nWe shipped on 3 March.\n")
+        flagged = find_fabrications(draft, source_blob(case))
+        for invented in ("50%", "15", "1"):
+            self.assertIn(invented, flagged,
+                          f"{invented!r} is masked by '150' in the brief again")
+        # ...and the two specifics that DO come from the brief still survive.
+        self.assertNotIn("3", flagged)
+
+    def test_equivalent_percent_surface_is_not_flagged(self):
+        # Same value, different surface: the policy is value equality, so a brief
+        # that writes "14 percent" must not make a draft's "14%" a fabrication.
+        self.assertEqual(
+            find_fabrications("Churn was 14%.", "Q3 churn was 14 percent."), [])
+        self.assertEqual(find_fabrications("Churn was 14 percent.", "Churn: 14%."), [])
+
+    def test_comma_separated_thousands_are_the_same_value(self):
+        self.assertEqual(find_fabrications("We saw 1,000 signups.",
+                                           "There were 1000 signups."), [])
+
+    # --- MINOR: Title Case headings false-positived as invented proper nouns ---
+
+    def test_title_case_heading_is_not_flagged(self):
+        # SKILL.md never mandates sentence-case headings; the fixtures merely
+        # happened to use them. The checker must strip heading lines instead.
+        case = load_draft_cases()["cases"][0]
+        self.assertEqual(
+            find_fabrications("## Acceptance Criteria\n## Draft\nWe shipped on 3 March.",
+                              source_blob(case)), [])
+
+    def test_subject_label_line_is_not_flagged(self):
+        # The three content words ("subject", "recommendation", "standard") that used
+        # to sit in _RUN_LEAD_STOPWORDS existed only to protect the fixtures' own
+        # label lines. They are gone — a label word is terminated by ':', so it
+        # cannot start a capitalized run.
+        case = load_draft_cases()["cases"][0]
+        draft = ("## Draft\nSubject: win-back campaign is live\n"
+                 "Recommendation: ship it.\n(Standard rubric applied.)\n")
+        self.assertEqual(find_fabrications(draft, source_blob(case)), [])
+
+    # --- MINOR: invented names in natural punctuated / designator form escaped ---
+
+    def test_corporate_suffix_name_is_caught(self):
+        self.assertIn("Acme, Inc",
+                      find_fabrications("Built by Acme, Inc. under contract.", ""))
+
+    def test_designator_name_is_caught(self):
+        self.assertIn("Falcon program",
+                      find_fabrications("Shipped under the Falcon program.", ""))
+
+    def test_designator_name_present_in_sources_is_not_flagged(self):
+        self.assertEqual(
+            find_fabrications("Shipped under the Falcon program.",
+                              "The Falcon program ships in March."), [])
+
+    # --- MINOR: question count was a LINE count, blind to the draft body ---
+
+    def test_question_count_counts_marks_not_lines(self):
+        # Two questions on one line are two questions — a line counter let a stall
+        # hide behind formatting.
+        self.assertEqual(count_questions("- Who is the reader? What changed?\n"
+                                         "## Draft\nx"), 2)
+
+    def test_questions_in_the_draft_body_are_not_counted(self):
+        draft = ("- Who is the reader?\n## Draft\nWhy does this matter? Because "
+                 "churn is up. Right? Right.\n")
+        self.assertEqual(count_questions(draft), 1)
+
+    # --- MINOR: criteria check was a substring test over the whole pre-draft ---
+
+    def test_criteria_named_only_in_prose_do_not_count(self):
+        # Prose that merely USES the five words has not named them as criteria.
+        pre = ("## Notes\nI thought about style, format, length, content integration "
+               "and depth before writing.\n## Draft\nx")
+        self.assertEqual(sorted(rdc.missing_criteria_dimensions(pre)),
+                         sorted(CRITERIA_DIMENSIONS))
 
 
 class Discrimination(unittest.TestCase):
@@ -186,6 +287,89 @@ class MainExitCodes(unittest.TestCase):
         data = copy.deepcopy(load_draft_cases())
         del data["cases"][1]["bad_draft"]
         self.assertEqual(self._run_main_on(data), 1)
+
+
+class MutantFamilies(unittest.TestCase):
+    """The families are the point: a checker must catch drafts it has never seen.
+
+    One planted positive per mode is a boundary of ONE point, and a checker can pass it
+    by memorizing that exemplar — which is exactly how the substring lookup, the line
+    counter and the bag-of-words criteria test all stayed green while being broken.
+    """
+
+    def setUp(self):
+        self.cases = load_draft_cases()["cases"]
+
+    def test_every_family_meets_its_declared_floor(self):
+        for check, (caught, total) in md.catch_rates(self.cases).items():
+            self.assertGreater(total, 0, f"{check}: an empty family proves nothing")
+            rate = caught / total
+            self.assertGreaterEqual(
+                rate, md.MUTANT_FLOORS[check],
+                f"{check}: catch rate {caught}/{total} = {rate:.0%} is below the declared "
+                f"floor {md.MUTANT_FLOORS[check]:.0%} — the checker is memorizing exemplars")
+
+    def test_families_are_deterministic(self):
+        # No RNG, no clock: CI must be byte-reproducible or the catch rate is noise.
+        self.assertEqual(md.catch_rates(self.cases), md.catch_rates(self.cases))
+
+    def test_every_family_has_more_than_one_member(self):
+        for case in self.cases:
+            for check, build in md.FAMILIES.items():
+                if check not in case["checks"]:
+                    continue
+                if check == "needs_marker" and not case.get("requires_needs_marker"):
+                    continue
+                self.assertGreater(len(build(case)), 1,
+                                   f"{case['id']}/{check}: family of <2 is the N=1 boundary "
+                                   f"that caused every finding in review")
+
+    def test_the_masked_number_mutant_is_derived_from_the_brief(self):
+        # The hard member: a value whose digits hide inside a legitimate source number
+        # ("50" inside the brief's "150"). It must be DERIVED, not hardcoded, or it only
+        # tests the one case the reviewer happened to look at.
+        case = self.cases[0]
+        surface, value = md._masked_value(rdc.numeric_keys(source_blob(case)))
+        self.assertIsNotNone(surface)
+        self.assertIn(surface, case["brief"])                     # digits hide in the brief
+        self.assertNotIn(value, rdc.numeric_keys(source_blob(case)))  # the VALUE does not
+        family = dict(md.family_no_fabrication(case))
+        mutant = family[f"fabrication/number-masked-by-source-{surface}"]
+        self.assertTrue(CHECKS["no_fabrication"](case, mutant),
+                        "the masked-number mutant escaped — the substring bug is back")
+
+    def test_the_known_misses_are_still_declared(self):
+        # Honesty guard: the two declared gaps (a spelled-out numeral, a bare
+        # single-word name) must remain misses, or the floor and the _doc are lying.
+        case = self.cases[0]
+        family = dict(md.family_no_fabrication(case))
+        for mid in ("fabrication/number-spelled-out-KNOWN-MISS",
+                    "fabrication/name-bare-single-word-KNOWN-MISS"):
+            self.assertFalse(
+                CHECKS["no_fabrication"](case, family[mid]),
+                f"{mid} is now CAUGHT — raise the no_fabrication floor and update the _doc")
+        self.assertLess(md.MUTANT_FLOORS["no_fabrication"], 1.0,
+                        "a family with declared known misses cannot have a 100% floor")
+
+    def test_hard_tail_controls_are_not_flagged(self):
+        for case in self.cases:
+            for hid, draft, check, must_catch in md.hard_tail(case):
+                if must_catch:
+                    continue
+                self.assertFalse(
+                    CHECKS[check](case, draft),
+                    f"{case['id']}/{hid} is correct behavior but was flagged")
+
+    def test_hard_tail_reviewer_evasions_are_caught(self):
+        found = 0
+        for case in self.cases:
+            for hid, draft, check, must_catch in md.hard_tail(case):
+                if not must_catch:
+                    continue
+                found += 1
+                self.assertTrue(CHECKS[check](case, draft),
+                                f"{case['id']}/{hid} ESCAPED — the evasion is back")
+        self.assertGreater(found, 0, "the append-only hard tail is empty")
 
 
 class JudgeLane(unittest.TestCase):

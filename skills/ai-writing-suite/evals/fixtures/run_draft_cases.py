@@ -60,29 +60,64 @@ _NEEDS_SPAN = re.compile(r"\[NEEDS:[^\]]*\]", re.IGNORECASE)
 _NEEDS_MARKER = re.compile(r"\[NEEDS:", re.IGNORECASE)
 
 # Candidate specific #1: any digit-bearing token (numbers, percentages, years,
-# "3 March"'s 3). Punctuation is trimmed; the "%" is kept AND a bare-number form is
-# also checked against the sources, which is the conservative direction (a number
-# present in the brief is never flagged just because the draft added a % sign).
+# "3 March"'s 3). The SOURCES are tokenized with the SAME regex and compared by SET
+# MEMBERSHIP on a normalized value — never by substring. Substring lookup was a
+# false-negative machine: a brief saying "under 150 words" made the invented "50",
+# "15", "1" and "0" all "present in the source" because their digits live inside
+# "150".
 _NUMERIC = re.compile(r"\d[\d,\.:/]*%?")
 
 # Candidate specific #2: a run of 2+ capitalized words — the shape an invented
 # product/company/person name takes ("Northwind Retention"). Single capitalized
 # words are NOT candidates: sentence starts and ordinary given names would drown
-# the signal in false positives. The gap is [ \t]+, never \s+: a name does not span
-# a line break, and a greedy \s+ stitched a heading to the next line's first word
-# ("## Draft" + "Subject:" -> a phantom "Draft Subject").
+# the signal in false positives, and the shipped good_drafts prove it (draft-03
+# legitimately writes "Wednesday", a weekday that appears nowhere in its brief).
+# The gap is [ \t]+, never \s+: a name does not span a line break, and a greedy
+# \s+ stitched a heading to the next line's first word ("## Draft" + "Subject:"
+# -> a phantom "Draft Subject").
 _CAP_RUN = re.compile(r"\b[A-Z][\w'’\-]*(?:[ \t]+[A-Z][\w'’\-]*)+")
+
+# Candidate #2b: a company name in its natural punctuated form ("Acme, Inc."). The
+# comma-join is restricted to a closed set of corporate suffixes on purpose — a
+# general comma-join would stitch unrelated names into a phantom entity
+# ("Priya, Dana" -> a company that does not exist).
+_CORP_RUN = re.compile(
+    r"\b[A-Z][\w'’\-]*,[ \t]+(?:Inc|Inc\.|LLC|Ltd|Ltd\.|Corp|Corp\.|Co\.|GmbH|PLC)\b")
+
+# Candidate #2c: a capitalized word bound to a lowercase designator noun — the other
+# natural form of an invented product/program name ("the Falcon program"). The
+# designator is what makes a lone capitalized word safe to flag here.
+_DESIGNATOR_RUN = re.compile(
+    r"\b[A-Z][\w'’\-]+[ \t]+(?:program|project|initiative|campaign|platform|product"
+    r"|release|migration|rollout|programme)\b")
+
+# Markdown heading lines are stripped before the proper-noun scan: "## Acceptance
+# Criteria" is a heading, not an invented entity. Sentence-case headings in the
+# fixtures used to hide this — the eval passed by the fixtures' convenience, which
+# is exactly the rigging pattern this suite exists to prevent.
+_HEADING_LINE = re.compile(r"^[ \t]*#{1,6}[ \t]+.*$", re.M)
 
 # Stripped from the FRONT of a capitalized run before the 2+-word test, so a
 # sentence-initial function word ("The Acme dashboard") does not manufacture a
-# two-word "proper noun" out of one ordinary name.
+# two-word "proper noun" out of one ordinary name. Function words ONLY: the three
+# content words that used to sit here ("subject", "recommendation", "standard")
+# existed solely to stop the fixtures' own label lines from false-positiving. They
+# are gone; label lines are handled structurally instead (a line-initial label word
+# is terminated by ':', and a capitalized run never crosses ':', so "Subject: ..."
+# cannot start a run — see test_subject_label_line_is_not_flagged).
 _RUN_LEAD_STOPWORDS = {
     "a", "an", "the", "and", "but", "so", "or", "if", "in", "on", "at", "for",
     "we", "i", "it", "you", "they", "this", "that", "these", "those", "our",
     "my", "their", "his", "her", "no", "not", "nothing", "when", "where",
     "while", "after", "before", "once", "here", "there", "then", "now",
-    "subject", "recommendation", "standard",
 }
+
+# The acceptance-criteria section of the pre-draft. The five dimensions must be
+# NAMED AS CRITERIA (bullet labels under a criteria heading), not merely present as
+# vocabulary somewhere in the prose — a draft whose prose happens to use the word
+# "depth" has not named depth as a criterion.
+_CRITERIA_HEADING = re.compile(r"^[ \t]*#{1,6}[ \t]*(.*criteria.*)$", re.I)
+_BULLET_LABEL = re.compile(r"^[ \t]*[-*][ \t]+\**([^:*]+?)\**[ \t]*:")
 
 _WS = re.compile(r"\s+")
 
@@ -115,24 +150,85 @@ def pre_draft_section(draft):
     return draft  # no draft body at all (a stall) — the whole artifact is pre-draft
 
 
+def _num_key(tok):
+    """Normalize one numeric token to the VALUE it asserts.
+
+    The equivalence policy, decided and stated rather than left to accident:
+
+    * surface forms of the same value collapse — "14", "14%" and the "14" inside
+      "14 percent" all key to 14.0, so a figure the brief states as "14 percent"
+      is NOT flagged when the draft writes "14%" (same value, different surface);
+    * separators are stripped: "1,000" -> 1000.0, "23%." -> 23.0;
+    * currency is value-only: "$1M" / "1 million" tokenize to the numeral 1, so the
+      MAGNITUDE WORD is not checked. Documented under-flagging, not a silent one;
+    * dates are value-only too: "3 March" keys to 3.0, so it matches any source
+      occurrence of the value 3. Deliberate: this is a shape checker, not a
+      date parser, and the conservative direction is to under-flag;
+    * anything that does not parse as a number (a ratio "3/4", a time "10:30")
+      keys to its lowercased string and must match exactly.
+    """
+    t = tok.rstrip(".,:/").rstrip("%").replace(",", "")
+    try:
+        return float(t)
+    except ValueError:
+        return t.lower()
+
+
+def numeric_keys(text):
+    """The SET of numeric values asserted in `text` (see _num_key).
+
+    Set membership, never substring: "150" in the brief must not mask an invented
+    "50", "15", "1" or "0" in the draft.
+    """
+    return {_num_key(m.group(0)) for m in _NUMERIC.finditer(text or "")
+            if _num_key(m.group(0)) != ""}
+
+
+def _name_candidates(body):
+    """Proper-noun-shaped candidates: multi-word runs, "Acme, Inc.", "X program"."""
+    # Headings are structure, not entities: "## Acceptance Criteria" is a heading.
+    scan = _HEADING_LINE.sub(" ", body)
+    out = []
+    for m in _CAP_RUN.finditer(scan):
+        words = m.group(0).split()
+        while words and words[0].lower() in _RUN_LEAD_STOPWORDS:
+            words.pop(0)
+        if len(words) < 2:
+            continue  # one name after the stopword strip — not a candidate
+        out.append(" ".join(words))
+    for rx in (_CORP_RUN, _DESIGNATOR_RUN):
+        for m in rx.finditer(scan):
+            phrase = m.group(0)
+            # "The campaign shipped" is a sentence start, not a program name — the
+            # designator only makes a capitalized word a candidate when that word is
+            # a NAME, not a function word.
+            if phrase.split()[0].lower() in _RUN_LEAD_STOPWORDS:
+                continue
+            out.append(phrase)
+    return out
+
+
 def find_fabrications(draft, sources):
     """Return the specifics in `draft` that trace back to NEITHER the brief nor the KB.
 
     Pure fn (no I/O, no env) so tests can call it on hand-built inputs. `sources` is
-    the raw brief+KB text; it is normalized here.
+    the raw brief+KB text; it is tokenized here with the SAME rules as the draft.
 
     Two candidate classes, chosen because they are the two shapes an invented fact
     takes in practice: a NUMBER presented as measurement ("churn fell 23%") and a
-    multi-word CAPITALIZED NAME presented as a real entity ("Northwind Retention").
-    A candidate is a violation iff it appears nowhere in the sources.
+    CAPITALIZED NAME presented as a real entity ("Northwind Retention", "Acme, Inc.",
+    "the Falcon program"). A number is a violation iff its VALUE is absent from the
+    sources' value set (_num_key); a name is a violation iff its phrase appears
+    nowhere in the source text.
 
-    Known limits, stated rather than hidden: single-word proper nouns are not
-    candidates (too many false positives from sentence starts), and Title Case
-    Headings would read as a proper-noun run — the artifacts use sentence-case
-    headings on purpose. This is a checker for the fabrication SHAPE, not a
-    semantic fact-checker.
+    Known limits, stated rather than hidden: a lone capitalized word bound to no
+    designator is not a candidate (sentence starts and ordinary names would drown
+    the signal — draft-03's good_draft legitimately writes "Wednesday", absent from
+    its brief), and magnitude words ("million") ride along untested. This is a
+    checker for the fabrication SHAPE, not a semantic fact-checker.
     """
-    src = _norm(sources)
+    src_text = _norm(sources)
+    src_nums = numeric_keys(sources)
     body = _NEEDS_SPAN.sub(" ", draft or "")  # a declared gap is not a claimed fact
     found = []
 
@@ -140,19 +236,12 @@ def find_fabrications(draft, sources):
         tok = m.group(0).rstrip(".,:/")
         if not tok:
             continue
-        bare = tok.rstrip("%")
-        if tok.lower() in src or bare.lower() in src:
+        if _num_key(m.group(0)) in src_nums:
             continue
         found.append(tok)
 
-    for m in _CAP_RUN.finditer(body):
-        words = m.group(0).split()
-        while words and words[0].lower() in _RUN_LEAD_STOPWORDS:
-            words.pop(0)
-        if len(words) < 2:
-            continue  # one name after the stopword strip — not a candidate
-        phrase = " ".join(words)
-        if _norm(phrase) in src:
+    for phrase in _name_candidates(body):
+        if _norm(phrase) in src_text:
             continue
         found.append(phrase)
 
@@ -166,14 +255,42 @@ def find_fabrications(draft, sources):
 
 
 def count_questions(draft):
-    """Clarifying questions asked before drafting: '?'-bearing lines in the pre-draft."""
-    return sum(1 for line in pre_draft_section(draft).splitlines() if "?" in line)
+    """Clarifying questions asked before drafting: '?' MARKS in the pre-draft section.
+
+    Marks, not lines: two questions on one line are two questions, and a line
+    counter let a stall hide behind formatting. Questions after the `## Draft`
+    marker are draft body (a rhetorical question in the prose), not step-1
+    clarifying questions, so pre_draft_section() bounds the count.
+    """
+    return pre_draft_section(draft).count("?")
+
+
+def criteria_labels(draft):
+    """The bullet LABELS declared under the pre-draft's acceptance-criteria heading.
+
+    Scoped to the criteria section(s) on purpose: the old check was a substring test
+    over the whole pre-draft, so prose that merely used the word "depth" satisfied
+    the "depth" dimension. A criterion is something you NAME as a criterion.
+    """
+    pre = pre_draft_section(draft)
+    labels, in_criteria = [], False
+    for line in pre.splitlines():
+        if re.match(r"^[ \t]*#{1,6}[ \t]+", line):
+            in_criteria = bool(_CRITERIA_HEADING.match(line))
+            continue
+        if not in_criteria:
+            continue
+        m = _BULLET_LABEL.match(line)
+        if m:
+            labels.append(_norm(m.group(1)))
+    return labels
 
 
 def missing_criteria_dimensions(draft):
-    """Which of the five step-1 dimensions are NOT named before the draft body."""
-    pre = _norm(pre_draft_section(draft))
-    return [d for d in CRITERIA_DIMENSIONS if d not in pre]
+    """Which of the five step-1 dimensions are NOT named as criteria before the draft."""
+    labels = criteria_labels(draft)
+    return [d for d in CRITERIA_DIMENSIONS
+            if not any(lab == d or lab.startswith(d) for lab in labels)]
 
 
 # --- the check registry -------------------------------------------------------
@@ -285,8 +402,15 @@ def run_deterministic(data):
         print()
 
     print(f"Discrimination: {len(cases)} case(s), each asserting "
-          f"good-passes AND bad-trips-{'/'.join(sorted({c['failure_mode'] for c in cases}))}.")
-    return passes, fails
+          f"good-passes AND bad-trips-{'/'.join(sorted({c['failure_mode'] for c in cases}))}.\n")
+
+    # One planted positive per mode is a boundary of one point: a checker can pass it by
+    # memorizing the exemplar it was written against (which is exactly how the substring
+    # and line-count bugs survived). The mutant families draw fresh artifacts from the
+    # same failure mode, so memorization stops working.
+    from fixtures.mutants_draft import run_mutant_families  # lazy: keeps the import cheap
+    m_pass, m_fail = run_mutant_families(cases)
+    return passes + m_pass, fails + m_fail
 
 
 # --- advisory judge lane ------------------------------------------------------

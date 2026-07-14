@@ -1,44 +1,68 @@
 {
   "_doc": {
-    "what": "SYNTHETIC voice corpus for the voice-onboard extraction eval. Five hand-authored samples attributed to a FICTIONAL author (Mara Quill). This is NOT a real author's writing and must never be described as one.",
-    "why": "voice-onboard is skill prose: an agent reads samples and writes a voice profile. There is no function to unit-test. So the corpus is engineered with traits whose ground truth is countable by hand, and the eval scores PROFILE ARTIFACTS (see voice_profile_good.md / voice_profile_bad.md) against that ground truth. Every check has a planted positive: the bad profile must trip it.",
+    "what": "SYNTHETIC voice corpus for the voice-onboard extraction eval. Eight hand-authored samples attributed to a FICTIONAL author (Mara Quill). This is NOT a real author's writing and must never be described as one.",
+    "why": "voice-onboard is skill prose: an agent reads samples and writes a voice profile. There is no function to unit-test. So the corpus is engineered with traits whose ground truth is countable by hand, and the eval scores PROFILE ARTIFACTS against that ground truth. Every check has a planted positive, and every failure mode is additionally probed with a FAMILY of programmatically generated mutants (mutants_voice.py), so no checker can pass by memorizing one exemplar.",
+
+    "ground_truth_is_PER_GENRE": "Every count below is scoped to ONE genre and RECOMPUTED WITHIN that genre at runtime. This is not a stylistic choice, it is the spec. voice-onboard/SKILL.md Step 2: 'Don't average across genres. Same person writes a tweet and a report differently. Mixed samples -> split, don't flatten.' A ground truth built by pooling genres would itself commit the failure the eval exists to detect: the previous version declared 'ledger' 4x, which was tweet=3 + memo=1, and cleared the 3+ bar only by luck of aggregation.",
+
+    "two_profiles_not_one": "The corpus is mixed-genre, so per SKILL.md Step 1 ('Mixed genres -> offer to extract two profiles rather than averaging them into a blur') this fixture ships TWO GENRE-SCOPED PROFILES per cohort, a tweet profile and a memo profile, never one blended profile. The blended profile that used to be the 'good' artifact here committed the exact failure the SKILL forbids, and an artifact that violates the spec cannot be the gold standard.",
+
     "engineered_traits": [
-      "HABIT word 'ledger' appears exactly 4x -> clears the SKILL's 3+ rule -> a correct profile learns it.",
-      "NOISE word 'kaleidoscope' appears exactly 2x -> fails the 3+ rule -> a correct profile must NOT learn it. The SKILL calls this 'the single most common extraction mistake'.",
-      "ABSENT words 'delve' and 'leverage' appear 0x -> per the SKILL, absences are the strongest signal -> a correct profile lists them under Vocabulary Don't.",
-      "BOUNDARY DECOY 'ledgers' appears exactly 1x -> must not inflate the 'ledger' count (word-boundary counting).",
-      "MIXED GENRES: 3 terse tweets vs 2 long memos, with genuinely different rhythm -> a profile that averages them into one flat sentence-length figure is detectably wrong; a correct one splits by genre."
+      "TWEET habit word 'ledger': 4x WITHIN tweets -> clears the SKILL's 3+ rule -> the tweet profile must learn it. 0x in memos -> a memo profile claiming it is importing a trait across genres.",
+      "MEMO habit word 'queue': 4x WITHIN memos -> the memo profile must learn it. 0x in tweets -> a tweet profile claiming it is importing a trait across genres.",
+      "CROSS-GENRE TRAP 'kaleidoscope': 2x in tweets and 2x in memos. Within either genre it is NOISE (fails 3+, must not be learned). POOLED it is 4x and looks like a habit. Any extractor that aggregates across genres promotes an accident to a trait, which the SKILL calls 'the single most common extraction mistake'.",
+      "SUB-THRESHOLD DECOYS: 'boring' 2x in memos, 'forecast' 1x in tweets. Both have NON-ZERO corpus support, so a checker that only asks 'does this word occur at all' waves them through. The 3+ rule says they are noise, so a positive claim on either is a failure (check: no_subthreshold_claims).",
+      "ABSENT words 'delve' and 'leverage': 0x in both genres -> per the SKILL, absences are the strongest signal -> a correct profile mines them into Vocabulary Don't.",
+      "BOUNDARY DECOYS: 'ledgers' 1x in tweets must not inflate 'ledger'; 'dashboard' (singular) 1x in memos must not inflate 'dashboards'.",
+      "GENRE RHYTHM: terse tweets vs long memos, mean words/sentence separated by >= min_genre_mean_gap_words -> a profile that reports the BLENDED mean for its genre is detectably wrong (check: genre_scoped_rhythm)."
     ],
-    "ground_truth_discipline": "The counts below are DECLARED. run_voice_extraction.py RECOMPUTES them from sample text at runtime and fails loudly on any disagreement. If they ever disagree, fix the SAMPLES, not the declared numbers - a fixture whose own ground truth has drifted is worse than no fixture."
+
+    "ground_truth_discipline": "The counts below are DECLARED. run_voice_extraction.py RECOMPUTES every one of them, per genre, at runtime, and fails loudly on any disagreement. If they ever disagree, fix the SAMPLES, never the declared number — a fixture whose own ground truth has drifted is worse than no fixture."
   },
 
   "author": "Mara Quill (fictional)",
 
+  "profiles": [
+    {"genre": "tweet", "good": "voice_profile_tweet_good.md", "bad": "voice_profile_tweet_bad.md"},
+    {"genre": "memo", "good": "voice_profile_memo_good.md", "bad": "voice_profile_memo_bad.md"}
+  ],
+
   "ground_truth": {
-    "habit_word": {
-      "word": "ledger",
-      "count": 4,
-      "rule": "3+ occurrences -> habit -> MUST appear in the profile"
-    },
-    "noise_word": {
-      "word": "kaleidoscope",
-      "count": 2,
-      "rule": "<3 occurrences -> noise -> MUST NOT appear in the profile"
-    },
-    "absent_words": [
-      {"word": "delve", "count": 0},
-      {"word": "leverage", "count": 0}
-    ],
-    "boundary_decoy": {
-      "word": "ledgers",
-      "count": 1,
-      "rule": "plural must NOT be counted as an occurrence of 'ledger'"
-    },
+    "min_habit_occurrences": 3,
+    "min_genre_mean_gap_words": 10,
+
     "genres": {
-      "tweet": {"max_mean_sentence_words": 8},
-      "memo": {"min_mean_sentence_words": 20}
+      "tweet": {
+        "habit_word": {"word": "ledger", "count": 4, "rule": "3+ occurrences WITHIN this genre -> habit -> MUST be claimed by this genre's profile"},
+        "noise_word": {"word": "kaleidoscope", "count": 2, "rule": "<3 occurrences WITHIN this genre -> noise -> MUST NOT be claimed as a habit"},
+        "subthreshold_decoy": {"word": "forecast", "count": 1, "rule": "non-zero but under the 3+ bar -> a positive claim on it is learning an accident"},
+        "foreign_habit_word": {"word": "queue", "count": 0, "rule": "the OTHER genre's habit word, 0x here -> claiming it is cross-genre import"},
+        "boundary_decoy": {"word": "ledgers", "count": 1, "rule": "plural must NOT be counted as an occurrence of 'ledger'"},
+        "absent_words": [{"word": "delve", "count": 0}, {"word": "leverage", "count": 0}],
+        "max_mean_sentence_words": 8,
+        "expected_unknown_sections": ["Uncertainty Style"],
+        "_expected_unknown_rule": "No tweet hedges, quantifies, or softens a claim, so Uncertainty Style is unextractable from this genre. A correct profile writes 'Unknown — not enough signal' THERE; check_honest_gap is bound to this list, so parking the phrase in a convenient section no longer satisfies it."
+      },
+
+      "memo": {
+        "habit_word": {"word": "queue", "count": 4, "rule": "3+ occurrences WITHIN this genre -> habit -> MUST be claimed by this genre's profile"},
+        "noise_word": {"word": "kaleidoscope", "count": 2, "rule": "<3 occurrences WITHIN this genre -> noise -> MUST NOT be claimed as a habit"},
+        "subthreshold_decoy": {"word": "boring", "count": 2, "rule": "non-zero but under the 3+ bar -> a positive claim on it is learning an accident"},
+        "foreign_habit_word": {"word": "ledger", "count": 0, "rule": "the OTHER genre's habit word, 0x here -> claiming it is cross-genre import"},
+        "boundary_decoy": {"word": "dashboard", "count": 1, "rule": "singular must NOT be counted as an occurrence of 'dashboards'"},
+        "absent_words": [{"word": "delve", "count": 0}, {"word": "leverage", "count": 0}],
+        "min_mean_sentence_words": 20,
+        "expected_unknown_sections": ["Uncertainty Style"],
+        "_expected_unknown_rule": "No memo hedges or quantifies its confidence; the register is flat assertion throughout. Uncertainty Style must be marked Unknown, not guessed."
+      }
     },
-    "min_genre_mean_gap_words": 10
+
+    "cross_genre_trap": {
+      "word": "kaleidoscope",
+      "per_genre_count": 2,
+      "pooled_count": 4,
+      "rule": "Noise within EACH genre (2 < 3), habit-shaped when POOLED (4 >= 3). The runtime ground-truth check asserts BOTH halves still hold; if they stop holding, the fixture can no longer punish cross-genre aggregation."
+    }
   },
 
   "samples": [
@@ -58,14 +82,29 @@
       "text": "Dashboards are a kaleidoscope. Nobody reads them. Cut three."
     },
     {
+      "id": "tweet-04",
+      "genre": "tweet",
+      "text": "Another kaleidoscope of charts today. One ledger. Zero arguments."
+    },
+    {
+      "id": "tweet-05",
+      "genre": "tweet",
+      "text": "Two ledgers, one truth. Reconcile before you argue."
+    },
+    {
       "id": "memo-01",
       "genre": "memo",
-      "text": "The revenue ledger we maintain in finance is the only artifact in this company that has never lied to us, and I would rather ship a forecast late than ship one that disagrees with it. When the quarterly review turns into a kaleidoscope of competing dashboards, each owned by a different team and each telling a slightly flattering story, the honest move is to go back to the one number nobody is allowed to edit. I am not asking anyone to stop building dashboards, but I am asking that every dashboard we present next quarter carries a line showing where its numbers diverge from finance."
+      "text": "When the quarterly review turns into a kaleidoscope of competing dashboards, each owned by a different team and each telling a slightly flattering story, the honest move is to go back to the one number nobody is allowed to edit. I am not asking anyone to stop building dashboards, but I am asking that every dashboard we present next quarter carries a line showing exactly where its numbers diverge from the ones finance publishes."
     },
     {
       "id": "memo-02",
       "genre": "memo",
-      "text": "Our onboarding funnel lost eleven percent of new accounts last month, and the cause was not the product but a queue that silently dropped retries after midnight. I spent a day reading the raw event logs instead of the summary tables, because summary tables round away exactly the kind of small persistent failure that ends up costing a quarter. The fix is boring: retry with backoff, alert on queue depth, and reconcile the two ledgers every morning before anyone looks at a chart."
+      "text": "Our onboarding funnel lost eleven percent of new accounts last month, and the cause was not the product but a queue that silently dropped retries after midnight. I spent a day reading the raw event logs instead of the summary tables, because summary tables round away exactly the kind of small persistent failure that ends up costing a quarter. The fix is boring: retry with backoff, alert on queue depth, and reconcile the numbers every morning before anyone looks at a chart."
+    },
+    {
+      "id": "memo-03",
+      "genre": "memo",
+      "text": "Every incident this quarter traces back to the same queue, and I would rather spend a week making that queue boring than spend another month explaining a kaleidoscope of dashboards to people who have already stopped trusting them. The pattern does not change: a retry storm at midnight, an alert nobody owns, and a morning spent reconstructing what the system was doing while the rest of us slept."
     }
   ]
 }
