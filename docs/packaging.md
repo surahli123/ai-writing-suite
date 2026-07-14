@@ -25,7 +25,7 @@ under `skills/ai-writing-suite/skills/`; the root `SKILL.md` is a documentation 
 - **Claude:** `claude plugin marketplace add surahli123/ai-writing-suite` → `claude plugin install ai-writing-suite@ai-writing-suite`
 - **Codex:** `codex plugin marketplace add surahli123/ai-writing-suite` → `codex plugin add ai-writing-suite@ai-writing-suite`
 - **Cursor:** copy `skills/ai-writing-suite/` into `~/.cursor/skills/ai-writing-suite/` (or a project's `.cursor/skills/`). Cursor reads Anthropic-format `SKILL.md` Agent Skills natively; no manifest needed. (Not `.cursor/rules/*.mdc` — that is passive context injection, the wrong primitive for callable skills.)
-- **RovoDev:** manual folder copy + **explicit** invocation (RovoDev does not auto-trigger). See "RovoDev — manual install" below. Smoke-tested working on the maintainer's in-house RovoDev (2026-06-08): `/skills` registered the router and the four sub-skills, and `comms-polish` produced a before/after.
+- **RovoDev:** manual folder copy + **explicit** invocation (RovoDev does not auto-trigger). See "RovoDev — manual install" below. **Verified scope (2026-06-08):** registration (`/skills` listed the router and the four sub-skills) plus one `comms-polish` before/after rewrite. `comms-qa`, `comms-draft`, and the overstepping/payoff-clear behaviors are **untested** on RovoDev pending re-verification (#27, owner-scheduled on the company machine).
 
 ## Versioning / updates
 
@@ -53,11 +53,16 @@ version source per host and nothing to keep in lockstep with the body.
 is the *fuel* — the generic OSS KB; a company fork drops its real playbook into the same slot
 (never committed to this public repo).
 
-## RovoDev — manual install (smoke-tested 2026-06-08)
+## RovoDev — manual install (partial smoke 2026-06-08)
 
 RovoDev is not a marketplace target — there is no manifest for it; install is a manual folder
-copy, the same primitive as Cursor. Verified working on the maintainer's in-house RovoDev on
-2026-06-08 (see the verify checklist below). Two RovoDev facts shape the workflow:
+copy, the same primitive as Cursor. **Verified scope on the maintainer's in-house RovoDev
+(2026-06-08):** the suite *registered* (`/skills` listed the router and the four sub-skills) and
+`comms-polish` produced a before/after rewrite. **Not yet verified on RovoDev:** `comms-qa`,
+`comms-draft`, and the overstepping / payoff-clear behaviors — untested pending re-verification
+(#27, owner-scheduled on the company machine). Treat RovoDev support as "registration +
+comms-polish confirmed; other sub-skills unproven," not blanket support. Two RovoDev facts shape
+the workflow:
 
 - **It does not auto-trigger skills** by description — you invoke explicitly (name the skill in
   your prompt). The router's "RovoDev — explicit intent routing" section is written for this.
@@ -91,9 +96,13 @@ copy, the same primitive as Cursor. Verified working on the maintainer's in-hous
 - `ai-writing-suite` shows up in `/skills`.
 - An explicit `comms-polish` invocation produces a real **before/after** rewrite on a sample
   draft (loads + behavioural evidence, not "no error thrown").
-- If the agent reads only the router and stops, prompt it to read
-  `skills/ai-writing-suite/skills/comms-polish/SKILL.md` and its `_shared/patterns/` references,
-  then re-run. Needing that by hand means the router self-sufficiency step is being skipped.
+- If the agent reads only the router and stops, tell it to **locate the installed suite root**
+  first — the directory that contains the router `SKILL.md` alongside `_shared/` (e.g. the folder
+  you copied into RovoDev's skills dir, `~/.rovodev/skills/ai-writing-suite/`) — then read
+  `skills/comms-polish/SKILL.md` and its `_shared/patterns/` references **relative to that root**,
+  not against the session cwd. (A bare repo-relative `skills/ai-writing-suite/skills/...` path can
+  miss from an arbitrary working directory.) Needing that by hand means the router
+  self-sufficiency step is being skipped.
 
 ## Deferred (v2)
 

@@ -47,12 +47,25 @@ AI Writing Suite is a consolidated writing-assistant skill that absorbs and exte
 
 **Author:** Yuan Yizhe  
 **Repository:** [Yuan1z0825/nature-skills](https://github.com/Yuan1z0825/nature-skills)  
-**License:** MIT  
+**License at absorption:** MIT  
 **Copyright:** Copyright (c) 2026 Yuan Yizhe
 
 **Contribution:** Academic and technical writing polish rubric, structural editing patterns (from `nature-writing` and `nature-polishing` subskills), Codex plugin manifest conventions.
 
 **Used in:** AI-tell pattern catalog (rhythm, stylometry, structural tells), `comms-polish` scoring and review rubric, Codex packaging conventions.
+
+**Provenance (MIT-era absorption):** This material was absorbed under nature-skills'
+MIT license. Upstream was MIT from its initial commit `521744850c60` (2026-04-24)
+until it relicensed to Apache-2.0 at commit `54eadc65d1c0` (2026-06-18, "Update
+LICENSE"). The absorption into this repository landed at commit `e1368db`
+(2026-06-06, "Layer 0: … consolidated pattern catalog") and was documented in this
+NOTICE at commit `d6616a4` (2026-06-06) — both **predate** the 2026-06-18 upstream
+relicense, so the material was MIT at the time it was taken. Candidate absorbed
+revision: upstream `main` HEAD at the absorption timestamp was `5186579d6c0a`
+(2026-06-06T16:38Z), which is a strong candidate but was NOT recorded at import time.
+**TODO:** confirm and pin the exact upstream MIT-era commit SHA that was absorbed
+(the maintainer's original source revision); until confirmed, the MIT-era window
+`521744850c60`..`54eadc65d1c0^` is the provable license basis.
 
 ---
 
