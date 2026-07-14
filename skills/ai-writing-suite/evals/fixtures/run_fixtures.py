@@ -25,11 +25,23 @@ from detector.detector import analyze  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_PATH = os.path.join(HERE, "fixtures.json")
+FIXTURES_FAIL_PATH = os.path.join(HERE, "fixtures_fail.json")
 RUBRIC_PATH = os.path.join(HERE, "rubric.md")
+
+# Required fields for a gold-FAIL fixture (see fixtures_fail.json::_doc). Distinct
+# from the PASS-suite shape: no expect_baseline (these are NOT calibration items),
+# but a mandatory expected_verdict='FAIL' + a fail_dimension naming the driver.
+FAIL_REQUIRED = {"id", "genre", "difficulty", "before", "after",
+                 "rubric_focus", "expected_verdict", "fail_dimension"}
 
 
 def load_fixtures():
     with open(FIXTURES_PATH, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def load_fail_fixtures():
+    with open(FIXTURES_FAIL_PATH, encoding="utf-8") as fh:
         return json.load(fh)
 
 
@@ -97,6 +109,270 @@ def run_deterministic(data):
     return passes, fails
 
 
+def run_fail_deterministic(data):
+    """Validate the gold-FAIL fixtures: well-formedness + loose detector bands.
+
+    These are JUDGE-DISCRIMINATION fixtures (every `after` is a bad rewrite the
+    judge must reject), NOT calibration items. They are NEVER added to the
+    naive-baseline miss-rate denominator — that computation lives entirely in
+    run_deterministic over fixtures.json and is untouched here. The deterministic
+    path cannot compute a FAIL verdict without a judge, so all it asserts is that
+    each fixture is shaped correctly and its declared score bands still hold.
+    Returns (passes, fails).
+    """
+    passes = fails = 0
+    print("\n=== Gold-FAIL fixtures (well-formedness + bands; judge-discrimination set) ===\n")
+    for f in data["fixtures"]:
+        ok = True
+        reasons = []
+
+        missing = FAIL_REQUIRED - set(f)
+        if missing:
+            ok = False
+            reasons.append(f"missing fields {sorted(missing)}")
+        if f.get("expected_verdict") != "FAIL":
+            ok = False
+            reasons.append(f"expected_verdict={f.get('expected_verdict')!r} (must be 'FAIL')")
+        fd = f.get("fail_dimension")
+        focus = f.get("rubric_focus", [])
+        # The FAIL driver must be a dimension the judge is actually told to weigh,
+        # i.e. present in rubric_focus — except no_fabrication, which the rubric
+        # requires on every verdict even when unlisted.
+        if fd is not None and fd not in focus and fd != "no_fabrication":
+            ok = False
+            reasons.append(f"fail_dimension {fd!r} not in rubric_focus and != no_fabrication")
+
+        before = analyze(f["before"])["score"] if "before" in f else None
+        after = analyze(f["after"])["score"] if "after" in f else None
+        if before is not None and not _in_band(
+                before, f.get("before_band_min"), f.get("before_band_max")):
+            ok = False
+            reasons.append(
+                f"before={before} outside "
+                f"[{f.get('before_band_min', '-')}, {f.get('before_band_max', '-')}]")
+        if after is not None and not _in_band(after, hi=f.get("after_band_max")):
+            ok = False
+            reasons.append(f"after={after} > {f.get('after_band_max')}")
+
+        if ok:
+            passes += 1
+        else:
+            fails += 1
+        mark = "PASS" if ok else "FAIL"
+        loc = (f"before={before:3} after={after:3}"
+               if before is not None and after is not None else "")
+        print(f"[{mark}] {f.get('id', '?'):28} gold=FAIL via "
+              f"{f.get('fail_dimension', '?'):20} {loc}")
+        for r in reasons:
+            print(f"        {r}")
+
+    print(f"\nGold-FAIL well-formedness: {passes} ok, {fails} malformed "
+          f"(judge-discrimination set — excluded from calibration denominator).")
+    return passes, fails
+
+
+def new_confusion():
+    """Empty combined-cohort confusion accumulator (positive == judge says FAIL).
+
+    Cells (gold x judge), filled from BOTH cohorts so discrimination is measurable:
+      tp  gold FAIL & judge FAIL   (fixtures_fail.json — sensitivity lane)
+      fn  gold FAIL & judge PASS
+      tn  gold PASS & judge PASS   (fixtures.json     — specificity lane)
+      fp  gold PASS & judge FAIL
+    Plus:
+      skipped        fixtures with no parseable verdict — NEVER folded into a cell
+      ungraded       fixtures carrying no gold verdict at all (nothing to score against)
+      driver_right   gold-FAIL caught with its DECLARED fail_dimension == FAIL
+      driver_wrong   gold-FAIL caught for the wrong reason (driver dim not FAIL)
+    driver_* is an ATTRIBUTION metric ("right reason"), NOT discrimination — it is
+    computed over the positives only and cannot distinguish a constant classifier.
+    """
+    return {"tp": 0, "fn": 0, "tn": 0, "fp": 0,
+            "skipped": 0, "ungraded": 0,
+            "driver_right": 0, "driver_wrong": 0}
+
+
+def record_verdict(matrix, gold, verdict):
+    """Fold one fixture's (gold, judge) outcome into `matrix`. No-op when matrix is None.
+
+    verdict None (unparseable / not configured) -> `skipped`, never a cell: an
+    unscored fixture is missing data, not evidence for or against the judge.
+    A fixture with no gold verdict is `ungraded` and likewise never lands in a cell.
+    """
+    if matrix is None:
+        return
+    if gold not in ("PASS", "FAIL"):
+        matrix["ungraded"] += 1
+        return
+    if verdict is None:
+        matrix["skipped"] += 1
+        return
+    if gold == "FAIL":
+        matrix["tp" if verdict == "FAIL" else "fn"] += 1
+    else:
+        matrix["fp" if verdict == "FAIL" else "tn"] += 1
+
+
+def confusion_metrics(matrix):
+    """Derive sensitivity / specificity / balanced accuracy / driver attribution.
+
+    Each is None when its denominator is empty (an empty cohort prints "n/a" rather
+    than crashing or implying a score). Balanced accuracy needs BOTH cohorts — that
+    is the whole point: a constant always-FAIL judge scores sensitivity 1.0 but
+    specificity 0.0, so its balanced accuracy is 0.5 (chance), which is exactly what
+    a single-cohort recall number hid.
+    """
+    tp, fn, tn, fp = matrix["tp"], matrix["fn"], matrix["tn"], matrix["fp"]
+    sens = tp / (tp + fn) if (tp + fn) else None
+    spec = tn / (tn + fp) if (tn + fp) else None
+    bal = (sens + spec) / 2 if (sens is not None and spec is not None) else None
+    dr, dw = matrix["driver_right"], matrix["driver_wrong"]
+    attribution = dr / (dr + dw) if (dr + dw) else None
+    return {"sensitivity": sens, "specificity": spec,
+            "balanced_accuracy": bal, "attribution": attribution}
+
+
+def _fmt(x):
+    return "n/a" if x is None else f"{x:.2f}"
+
+
+def print_confusion(matrix):
+    """Print the ONE combined-cohort confusion block (advisory; never gates CI)."""
+    m = confusion_metrics(matrix)
+    print("\n=== Judge discrimination (BOTH cohorts, advisory) ===")
+    print("positive = judge says FAIL (i.e. detects a bad rewrite)\n")
+    print(f"                 judge FAIL   judge PASS")
+    print(f"  gold FAIL      TP {matrix['tp']:<9} FN {matrix['fn']}")
+    print(f"  gold PASS      FP {matrix['fp']:<9} TN {matrix['tn']}")
+    print(f"\nsensitivity       = {_fmt(m['sensitivity'])}  (TP/(TP+FN) — catches bad rewrites)")
+    print(f"specificity       = {_fmt(m['specificity'])}  (TN/(TN+FP) — spares good rewrites)")
+    print(f"balanced accuracy = {_fmt(m['balanced_accuracy'])}  "
+          f"((sens+spec)/2 — 0.50 == chance/constant classifier)")
+    print(f"skipped (excluded from matrix) = {matrix['skipped']}"
+          + (f", ungraded = {matrix['ungraded']}" if matrix["ungraded"] else ""))
+    print(f"\ndriver attribution = {_fmt(m['attribution'])}  "
+          f"({matrix['driver_right']} right-reason / "
+          f"{matrix['driver_right'] + matrix['driver_wrong']} caught) — ATTRIBUTION "
+          f"only,\n  i.e. 'was it caught for the declared reason'. NOT discrimination: "
+          f"a constant\n  always-FAIL judge scores 1.00 here and 0.50 balanced accuracy.")
+
+
+def run_fail_judge(data, matrix=None):
+    """Judge sensitivity + reason-ATTRIBUTION over the gold-FAIL fixtures (opt-in).
+
+    This is the POSITIVES lane only. For each bad rewrite a correct judge returns
+    overall FAIL; overall FAIL AND fail_dimension==FAIL means it was caught for the
+    RIGHT REASON (discriminated / driver_right). Overall FAIL with the driver dim
+    passing is "right verdict, wrong reason" (wrong_reason / driver_wrong) — still a
+    true positive for the confusion matrix, but not proof the judge saw the planted
+    defect. judge-says-PASS overall == DISAGREEMENT (a false negative, missed).
+
+    DISCRIMINATION IS NOT MEASURABLE HERE. Negatives alone cannot expose a constant
+    classifier: an always-FAIL judge fails every dimension, so it also fails every
+    declared driver and would score a perfect "caught for the right reason" tally on
+    this lane. Discrimination is measured ONLY by the combined-cohort confusion
+    matrix (new_confusion / confusion_metrics / print_confusion), which pairs these
+    positives with the gold-PASS negatives from run_judge: the same always-FAIL judge
+    lands sensitivity 1.00 / specificity 0.00 / balanced accuracy 0.50. Pass the
+    shared `matrix` accumulator (main does) to feed that computation.
+
+    Advisory, like run_judge: none of these counts drive the exit code; only a
+    configured-but-broken judge (scored 0/N => provider envelope changed) does.
+    Returns (discriminated, missed, wrong_reason, skipped, live_error).
+    """
+    from fixtures import judge  # lazy: keep the deterministic path network-free
+    template = _extract_judge_template()
+    configured = judge.is_configured()
+
+    print("\n=== Gold-FAIL judge sensitivity + reason attribution ===")
+    if not configured:
+        print("No judge configured — SKIPPING this lane (needs a model).\n")
+        for f in data["fixtures"]:
+            record_verdict(matrix, f.get("expected_verdict"), None)
+            print(f"[SKIP] {f['id']} (gold=FAIL via {f['fail_dimension']})")
+        return 0, 0, 0, len(data["fixtures"]), False
+
+    print("Judge configured — a correct judge marks every one FAIL on its "
+          "declared driver dimension.\n"
+          "(This lane measures SENSITIVITY only; specificity comes from the "
+          "gold-PASS cohort.)\n")
+    discriminated = missed = wrong_reason = skipped = 0
+    for f in data["fixtures"]:
+        prompt = build_judge_prompt(f, template)
+        raw = judge.score(prompt)  # raises JudgeError on transport/auth (loud)
+        parsed = judge.parse_dimensions(raw) if raw is not None else {}
+        if raw is not None:
+            _report_evidence(f, raw, judge)
+        verdict = (judge.aggregate([judge.parse_dimension_lines(raw)],
+                                   f["rubric_focus"]) if raw is not None else None)
+        record_verdict(matrix, f.get("expected_verdict"), verdict)
+        if verdict is None:
+            skipped += 1
+            print(f"[SKIP] {f['id']} — no parseable verdict returned")
+            continue
+        if verdict != "FAIL":
+            missed += 1
+            print(f"[MISS] {f['id']} — judge PASS but gold=FAIL (DISAGREEMENT)")
+            continue
+        # Overall FAIL == a true positive either way; the driver check only decides
+        # WHY it was caught (attribution). A FAIL driven by an unrelated dim is
+        # right-verdict/wrong-reason, not proof the judge saw the planted defect.
+        driver = f["fail_dimension"]
+        driver_verdict = parsed.get(driver, {}).get("verdict")
+        if driver_verdict == "FAIL":
+            discriminated += 1
+            if matrix is not None:
+                matrix["driver_right"] += 1
+            print(f"[OK  ] {f['id']} — judge FAIL on {driver} == gold (right reason)")
+        else:
+            wrong_reason += 1
+            if matrix is not None:
+                matrix["driver_wrong"] += 1
+            print(f"[WARN] {f['id']} — right verdict, wrong reason "
+                  f"({driver} was {driver_verdict or 'absent'})")
+
+    scored = discriminated + wrong_reason + missed
+    print(f"\nGold-FAIL sensitivity lane: {discriminated + wrong_reason}/{scored} "
+          f"caught ({discriminated} for the right reason, {wrong_reason} "
+          f"right-verdict/wrong-reason, {missed} missed, {skipped} skipped) — "
+          f"advisory. Discrimination requires BOTH cohorts: see the confusion matrix.")
+    # Liveness mirror of run_judge: configured but nothing scored => envelope changed.
+    live_error = scored == 0
+    if live_error:
+        print(f"ERROR: judge configured but scored 0/{len(data['fixtures'])} "
+              f"FAIL fixtures — provider response envelope likely changed "
+              f"(check AIWS_JUDGE_URL/MODEL).")
+    return discriminated, missed, wrong_reason, skipped, live_error
+
+
+def _report_evidence(fixture, raw, judge):
+    """Advisory per-dimension evidence audit for one scored fixture.
+
+    Prints the accepted EVIDENCE quote for every graded dim (so an operator can
+    read what the judge cited), plus a [warn] line when a quote is missing,
+    malformed, or well-formed-but-not-verbatim (appears nowhere in before/after —
+    a fabricated quote the parser alone can't catch). Purely advisory: it never
+    changes the verdict or the exit code. Mirrors judge.evidence_warnings() for the
+    missing case and adds the verbatim check on top.
+    """
+    parsed = judge.parse_dimensions(raw)
+    verified = judge.verify_evidence(parsed, fixture["before"], fixture["after"])
+    fid = fixture["id"]
+    for dim, rec in parsed.items():
+        ev = rec.get("evidence")
+        if rec.get("evidence_missing"):
+            why = ("malformed EVIDENCE quote (unpaired/empty)"
+                   if rec.get("evidence_status") == "malformed"
+                   else "verdict missing EVIDENCE quote")
+            print(f"  [warn] {fid}/{dim}: {why}")
+        elif ev and rec.get("evidence_status") == "ok":
+            if verified.get(dim) == "not_verbatim":
+                print(f'  [warn] {fid}/{dim}: EVIDENCE not verbatim in '
+                      f'before/after — "{ev}"')
+            else:
+                print(f'  evidence[{dim}]: "{ev}"')
+
+
 def build_judge_prompt(fixture, rubric_template):
     """Fill the rubric.md judge template for one fixture.
 
@@ -126,8 +402,13 @@ def _extract_judge_template():
     return text[start + 3:end].strip()
 
 
-def run_judge(data):
+def run_judge(data, matrix=None):
     """Score fixtures with the optional LLM judge, or SKIP when unconfigured.
+
+    These fixtures are all gold-PASS: this is the NEGATIVES / SPECIFICITY lane. Pass
+    the shared `matrix` accumulator (main does) so its TN/FP land in the combined
+    confusion matrix alongside run_fail_judge's positives — that pairing is the only
+    thing that can expose a constant classifier.
 
     Honesty stance: when no judge is configured (no key, or not opted in via
     AIWS_JUDGE_RUN=1) we print the filled prompt heads and mark every fixture
@@ -160,6 +441,7 @@ def run_judge(data):
 
         if not configured:
             skipped += 1
+            record_verdict(matrix, f.get("expected_verdict"), None)
             print(f"[SKIP] {f['id']} (focus: {', '.join(f['rubric_focus'])})")
             # Show the first 2 lines of the filled prompt as proof it built.
             head = "\n".join(prompt.splitlines()[:2])
@@ -167,8 +449,11 @@ def run_judge(data):
             continue
 
         raw = judge.score(prompt)  # raises JudgeError on transport/auth (loud)
+        if raw is not None:
+            _report_evidence(f, raw, judge)
         verdict = (judge.aggregate([judge.parse_dimension_lines(raw)],
                                    f["rubric_focus"]) if raw is not None else None)
+        record_verdict(matrix, f.get("expected_verdict"), verdict)
         if verdict is None:
             skipped += 1
             print(f"[SKIP] {f['id']} — no parseable verdict returned")
@@ -218,13 +503,30 @@ def main(argv=None):
     data = load_fixtures()
     passes, fails = run_deterministic(data)
 
+    # Gold-FAIL suite (separate file, judge-discrimination). Its deterministic half
+    # only validates well-formedness + bands and is NOT part of the calibration
+    # denominator; its malformed-count DOES gate the run (a rotted FAIL fixture is
+    # a real regression). See fixtures_fail.json::_doc.
+    fail_data = load_fail_fixtures()
+    fp, ff = run_fail_deterministic(fail_data)
+    passes += fp
+    fails += ff
+
     # The judge is ADVISORY: its PASS/FAIL counts do NOT change the exit code, so
     # CI (which never passes --judge and sets no key) stays deterministic and
     # key-free. The only judge condition that fails the run is a configured-but-
     # broken judge (live_error: scored 0/N) — a harness error, surfaced loudly.
     judge_live_error = False
     if args.judge:
-        _jp, _jf, _js, judge_live_error = run_judge(data)
+        # ONE shared accumulator across BOTH cohorts: gold-PASS (negatives ->
+        # specificity) and gold-FAIL (positives -> sensitivity). Discrimination is
+        # only meaningful over both — a constant always-FAIL judge scores perfect
+        # recall on the positives alone, and the matrix is what exposes it.
+        matrix = new_confusion()
+        _jp, _jf, _js, judge_live_error = run_judge(data, matrix)
+        _d, _m, _w, _s, fail_live_error = run_fail_judge(fail_data, matrix)
+        judge_live_error = judge_live_error or fail_live_error
+        print_confusion(matrix)  # advisory: never touches the exit code
 
     print(f"\nDeterministic: {passes} passed, {fails} failed.")
     return 1 if (fails or judge_live_error) else 0

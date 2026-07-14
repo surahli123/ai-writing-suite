@@ -29,15 +29,25 @@ host-provides-the-model philosophy and avoid a second-vendor dependency:
   AIWS_JUDGE_RUN    must be "1" to actually spend — a stray key in the env alone
                     will NOT trigger a billed call.
 
+  AIWS_REWRITER_MODEL  OPTIONAL. The model id that produced the `after` rewrites.
+                    Purely advisory: when set AND it shares a model family with
+                    AIWS_JUDGE_MODEL, score() prints a ONE-LINE self-preference
+                    warning to stderr (once per run). Never gates, never blocks,
+                    never a required var — leaving it unset just skips the check.
+
 Cross-family note: if your rewrites come from Claude, point AIWS_JUDGE_MODEL at a
-different model family to avoid judge self-preference (~10-25% PASS inflation).
+different model family to avoid judge self-preference — a known bias where a model
+scores its own family's output higher, which can inflate PASS rates.
 For v1 the fixtures' `after` strings are hand-written (not model output), so this
-is a recommendation, not a hard requirement — see evals/README.md.
+is a recommendation, not a hard requirement — see evals/README.md. When the host
+DOES wire a rewriter model, set AIWS_REWRITER_MODEL and the same-family check
+(model_family / same_family_warning below) surfaces the risk automatically.
 """
 
 import json
 import os
 import re
+import sys
 import urllib.error
 import urllib.request
 
@@ -57,6 +67,94 @@ _TIMEOUT_S = 60
 # a third state for conditional dims (e.g. payoff_clear when no removal happened);
 # aggregate() treats it as vacuously satisfied. "N/A" is tried before "NA".
 _DIM_LINE = re.compile(r"^([a-z][a-z_]+)\s*:\s*(PASS|FAIL|N/A|NA)\b", re.IGNORECASE)
+
+# The quoted-evidence segment the rubric now asks each verdict to carry:
+#   "<dim>: PASS|FAIL — <reason> | EVIDENCE: \"<verbatim quote>\"".
+# Parsed by _extract_evidence (paired-quote, NOT a single non-greedy regex): the
+# old regex closed on the FIRST quote-ish char, so `EVIDENCE: "We're behind"`
+# truncated to `We` (the apostrophe read as a closing quote). Matched against the
+# RAW line, not the bullet-cleaned one, so evidence text keeps its own punctuation.
+_EVIDENCE_TAG = re.compile(r"EVIDENCE\s*:\s*", re.IGNORECASE)
+
+# STRICT pairing: each opener closes ONLY on ITS matching closer. A mixed pair
+# (straight open + smart close, `"text”`) is a malformed quote, not an accepted one
+# — a model that mixes delimiters is likely also mangling the quote body, so the
+# audit should see it rather than silently trust the snippet.
+# The straight apostrophe ' is deliberately NOT an opener, so contractions
+# ("We're", "don't") inside a quote survive intact; the smart pair ‘ ’ IS supported
+# because ’ doubles as an apostrophe only INSIDE a quote, where the greedy close
+# below still picks the real terminator.
+_QUOTE_PAIRS = {'"': '"', "“": "”", "‘": "’"}
+_EVIDENCE_OPEN = tuple(_QUOTE_PAIRS)  # "  “  ‘
+
+# Collapse any whitespace run to a single space for verbatim substring checks, so
+# a quote that wraps/re-indents across the model's formatting still matches source.
+_WS_RE = re.compile(r"\s+")
+
+
+def _normalize_ws(text):
+    """Whitespace-normalize for a tolerant substring compare (not for display)."""
+    return _WS_RE.sub(" ", text).strip() if isinstance(text, str) else ""
+
+
+def _extract_evidence(raw_line):
+    """Paired-quote evidence parse. Returns (evidence_or_None, status).
+
+    status:
+      'ok'        a non-empty paired quote was found;
+      'missing'   no EVIDENCE segment on the line at all;
+      'malformed' an EVIDENCE tag is present but the quote is unpaired (one lone
+                  opening quote, no close), MISMATCHED (an opener closed by a
+                  different family's closer, e.g. `"text”`), or empty ("").
+
+    The close is the LAST MATCHING closer AFTER the opening one on the line
+    (greedy), so an embedded apostrophe never truncates the snippet. Matching is
+    strict per _QUOTE_PAIRS: " closes on ", “ on ”, ‘ on ’ — never cross-family.
+    A quote wrapped ACROSS A NEWLINE has no closer on its own line and is therefore
+    'malformed' by design; the rubric prompt tells the judge to keep each verdict
+    (and its EVIDENCE quote) on ONE line, so a multi-line quote is a protocol
+    violation the audit should surface, not silently stitch back together.
+    """
+    tag = _EVIDENCE_TAG.search(raw_line)
+    if not tag:
+        return None, "missing"
+    rest = raw_line[tag.end():]
+    open_i = next((i for i, c in enumerate(rest) if c in _EVIDENCE_OPEN), -1)
+    if open_i == -1:
+        return None, "malformed"  # EVIDENCE: present but no opening quote
+    closer = _QUOTE_PAIRS[rest[open_i]]
+    close_i = max((i for i in range(open_i + 1, len(rest))
+                   if rest[i] == closer), default=-1)
+    if close_i == -1:
+        return None, "malformed"  # unpaired or mismatched opener/closer
+    evidence = rest[open_i + 1:close_i].strip()
+    if not evidence:
+        return None, "malformed"  # empty quote ""
+    return evidence, "ok"
+
+# Coarse model_id -> vendor "family" map for the judge self-preference check.
+# Longest/most-specific prefixes are fine here because none overlap. o-series
+# reasoning models (o1/o3/o4) fold into openai — self-preference is a vendor-level
+# concern, not a per-model one. Anything unrecognized -> "unknown" (never warned
+# on, so a new provider degrades to silence, not a false alarm).
+_FAMILY_PREFIXES = (
+    ("claude", "anthropic"),
+    ("gpt", "openai"),
+    ("o1", "openai"),
+    ("o3", "openai"),
+    ("o4", "openai"),
+    ("gemini", "google"),
+    ("gemma", "google"),
+    ("llama", "meta"),
+    ("mixtral", "mistral"),
+    ("mistral", "mistral"),
+    ("deepseek", "deepseek"),
+    ("qwen", "qwen"),
+    ("grok", "xai"),
+)
+
+# Fire the same-family warning at most once per process (score() runs per fixture).
+_FAMILY_WARNING_EMITTED = False
 
 
 class JudgeError(RuntimeError):
@@ -87,6 +185,8 @@ def score(prompt):
     """
     if not is_configured():
         return None  # honesty stance: no fabrication, caller SKIPs
+
+    _maybe_warn_same_family()  # advisory stderr note; never blocks the call
 
     url = os.environ["AIWS_JUDGE_URL"]
     model = os.environ["AIWS_JUDGE_MODEL"]
@@ -148,23 +248,44 @@ def _extract_text(payload):
     return None
 
 
-def parse_dimension_lines(model_text):
-    """Parse a model verdict into {dimension: 'PASS'|'FAIL'|'N/A'}.
+def parse_dimensions(model_text):
+    """Rich parse of a model verdict into per-dimension records.
 
-    Tolerates common model formatting: leading list markers ("- ", "* ", "1. ")
-    and **bold** around the dimension name are stripped before matching, so
-    "- **meaning_preserved**: PASS" parses the same as "meaning_preserved: PASS".
-    Both "N/A" and "NA" normalize to 'N/A' (a conditional dim the judge marks
-    not-applicable, e.g. payoff_clear when nothing was removed). IGNORES the model's
-    self-reported final 'VERDICT:' line — we recompute the verdict ourselves in
-    aggregate(). Returns {} when nothing parses.
+    Returns {dimension: {"verdict": 'PASS'|'FAIL'|'N/A',
+                         "evidence": <str or None>,
+                         "evidence_status": 'ok'|'missing'|'malformed',
+                         "evidence_missing": <bool>}}.
+
+    evidence_status is the finer read: 'ok' (a non-empty paired quote), 'missing'
+    (a graded verdict with no EVIDENCE segment), 'malformed' (an EVIDENCE tag whose
+    quote is unpaired or empty). evidence_missing stays as the back-compat coarse
+    flag — True whenever a graded (PASS/FAIL) dim's status is 'missing' OR
+    'malformed', so existing callers keep their one-bit warning. An N/A dim has
+    nothing to quote: evidence None, status 'ok', evidence_missing False.
+
+    Same line grammar as parse_dimension_lines (leading bullets/numbering and
+    **bold** stripped, "N/A"/"NA" normalized, the model's self-reported 'VERDICT:'
+    line ignored) PLUS the optional quoted-evidence segment the rubric now asks
+    for:
+
+        <dim>: PASS|FAIL — <one-line reason> | EVIDENCE: "<verbatim quote>"
+
+    A graded (PASS/FAIL) line carrying no parseable quote is still VALID but sets
+    evidence_missing=True — the judge is ADVISORY, so a quote-less verdict degrades
+    to a warning (see evidence_warnings), never a crash and never an auto-FAIL. N/A
+    lines describe a not-applicable dimension with nothing to quote, so they are
+    never flagged. Backward compatible: an old-format line with no EVIDENCE segment
+    parses exactly as before, just with evidence=None (evidence_missing True only if
+    it was graded). Evidence is read from the RAW line so its own punctuation
+    survives the bullet/bold cleaning applied to the verdict half.
     """
     out = {}
     if not isinstance(model_text, str):
         return out
     for raw in model_text.splitlines():
+        stripped = raw.strip()
         # Strip leading bullets/numbering and any ** bold markers, then match.
-        line = raw.strip().lstrip("-*0123456789. \t").replace("*", "")
+        line = stripped.lstrip("-*0123456789. \t").replace("*", "")
         m = _DIM_LINE.match(line)
         if not m:
             continue
@@ -172,8 +293,117 @@ def parse_dimension_lines(model_text):
         if dim == "verdict":  # never trust the model's self-reported overall line
             continue
         val = m.group(2).upper()
-        out[dim] = "N/A" if val in ("N/A", "NA") else val
+        verdict = "N/A" if val in ("N/A", "NA") else val
+        raw_evidence, raw_status = _extract_evidence(stripped)
+        if verdict == "N/A":
+            # Nothing to cite on a not-applicable dim — never flagged.
+            evidence, evidence_status, evidence_missing = None, "ok", False
+        elif raw_status == "ok":
+            evidence, evidence_status, evidence_missing = raw_evidence, "ok", False
+        else:  # graded but missing/malformed -> advisory flag, never fatal
+            evidence, evidence_status, evidence_missing = None, raw_status, True
+        out[dim] = {"verdict": verdict, "evidence": evidence,
+                    "evidence_status": evidence_status,
+                    "evidence_missing": evidence_missing}
     return out
+
+
+def parse_dimension_lines(model_text):
+    """Parse a model verdict into {dimension: 'PASS'|'FAIL'|'N/A'}.
+
+    Verdict-only projection of parse_dimensions() — this is the shape aggregate()
+    consumes, kept byte-for-byte compatible with the pre-evidence format (any
+    trailing '— reason | EVIDENCE: "..."' is ignored here; use parse_dimensions to
+    read the quote). Tolerates common model formatting: leading list markers
+    ("- ", "* ", "1. ") and **bold** around the dimension name. Both "N/A" and "NA"
+    normalize to 'N/A'. IGNORES the model's self-reported final 'VERDICT:' line.
+    Returns {} when nothing parses.
+    """
+    return {dim: rec["verdict"] for dim, rec in parse_dimensions(model_text).items()}
+
+
+def evidence_warnings(model_text):
+    """List dimensions whose graded (PASS/FAIL) verdict shipped no quoted evidence.
+
+    Advisory only: the rubric asks every PASS/FAIL to cite a verbatim snippet, but
+    a missing quote never changes a verdict or the exit code — it is surfaced so a
+    caller (e.g. run_fixtures.run_judge) can print a one-line warning. Returns [] on
+    a fully-cited verdict.
+    """
+    return [dim for dim, rec in parse_dimensions(model_text).items()
+            if rec["evidence_missing"]]
+
+
+def verify_evidence(parsed, before, after):
+    """Verbatim-check each usable evidence quote against the fixture's own text.
+
+    For every dim whose evidence_status is 'ok', assert the quote is a
+    whitespace-normalized substring of `before` OR `after` (the only two texts the
+    judge was shown). Returns {dim: 'ok'|'not_verbatim'} for THOSE dims only —
+    dims with no usable quote (missing/malformed/N/A) are omitted, since there is
+    nothing to verify. Pure: no env, no I/O.
+
+    This is the check that catches a fabricated quote the paired-quote parser
+    happily accepts: a well-formed `EVIDENCE: "..."` that appears nowhere in the
+    source. Advisory, like every evidence signal — the caller prints a warning.
+    """
+    nb, na = _normalize_ws(before), _normalize_ws(after)
+    out = {}
+    if not isinstance(parsed, dict):
+        return out
+    for dim, rec in parsed.items():
+        if rec.get("evidence_status") != "ok" or not rec.get("evidence"):
+            continue
+        needle = _normalize_ws(rec["evidence"])
+        out[dim] = "ok" if (needle in nb or needle in na) else "not_verbatim"
+    return out
+
+
+def model_family(model_id):
+    """Map a model id to a coarse vendor family for the self-preference check.
+
+    Tolerates a leading "provider/" segment (OpenRouter-style "anthropic/claude-…")
+    by matching the last path segment. Unrecognized -> "unknown" (never warned on).
+    Pure: no env, no I/O.
+    """
+    if not isinstance(model_id, str) or not model_id.strip():
+        return "unknown"
+    name = model_id.strip().lower().rsplit("/", 1)[-1]
+    for prefix, family in _FAMILY_PREFIXES:
+        if name.startswith(prefix):
+            return family
+    return "unknown"
+
+
+def same_family_warning(judge_model, rewriter_model):
+    """Return a one-line self-preference warning iff judge & rewriter share a KNOWN
+    family, else None. Pure (no env, no I/O). A missing/empty rewriter model or an
+    "unknown" family on either side -> None (check disabled, no false alarm).
+    """
+    if not judge_model or not rewriter_model:
+        return None
+    jf = model_family(judge_model)
+    rf = model_family(rewriter_model)
+    if jf == "unknown" or jf != rf:
+        return None
+    return (f"WARNING: judge model '{judge_model}' and rewriter model "
+            f"'{rewriter_model}' are the same family ({jf}) — known judge "
+            f"self-preference bias can inflate PASS rates. Point AIWS_JUDGE_MODEL "
+            f"at a different family for an independent verdict.")
+
+
+def _maybe_warn_same_family():
+    """Print the same-family warning to stderr at most once per process. Reads
+    AIWS_JUDGE_MODEL vs the optional AIWS_REWRITER_MODEL; advisory, never blocks.
+    """
+    global _FAMILY_WARNING_EMITTED
+    if _FAMILY_WARNING_EMITTED:
+        return
+    _FAMILY_WARNING_EMITTED = True  # mark before printing: warn once, even on retry
+    msg = same_family_warning(os.environ.get("AIWS_JUDGE_MODEL"),
+                              os.environ.get("AIWS_REWRITER_MODEL"))
+    if msg:
+        print(msg, file=sys.stderr)
 
 
 def majority_vote(per_rep_results):

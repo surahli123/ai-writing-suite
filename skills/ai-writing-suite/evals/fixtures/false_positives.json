@@ -1,0 +1,92 @@
+{
+  "_doc": "Adversarial false-positive suite for the mechanical detector. PROVENANCE: every sample here is SYNTHETIC, authored by hand for this suite as a false-positive guard rail (not mined from real users, not a held-out human corpus). The point is a REGRESSION FENCE against detector-rule regressions, NOT a benchmark and NOT evidence about how the detector treats real non-native or unusual-style writers — these are author-written pseudo-human samples, written with knowledge of the detector's tells, so they cannot measure the real-world false-positive rate. Establishing that (a de-identified, independently labeled held-out corpus of real writers across L1 backgrounds/genres/lengths) is an owner-gated follow-up, tracked separately; do not cite this suite as proof about real writers. PASS CRITERION: each `role: clean` sample models genuine human prose the detector MUST NOT flag, so it must score BELOW `flag_threshold`; each `role: control` sample is deliberate AI slop that proves the harness can detect at all, so it must score AT OR ABOVE `flag_threshold`. A run where any clean sample trips OR any control sample is missed FAILS (nonzero exit). WHY these particular clean samples: the motivating failure mode (rhythm-stylometric.md: 60-70% detector false-positive rates on non-native English writers, Liang et al. 2023 / Jabarian & Imas 2025) is that perplexity-style signals correlate with L1 fluency, not with authorship. So the suite over-weights the hard clean cases: several non-native-English-flavored samples (natural ESL grammar quirks + simpler vocabulary), stylistically unusual samples (terse fragments / parataxis, dense formal-academic register), plus ordinary professional prose across the suite's four genres (tweet/linkedin/readme/memo). `flag_threshold` MIRRORS fixtures.json's `baseline_threshold` (the naive-baseline flag semantics) ON PURPOSE — test_false_positives.py asserts the two stay equal so the FP guard and the calibration guard never drift to different notions of 'flagged'. Do NOT lower the threshold or delete a clean sample to make a run pass; a clean sample that starts tripping is a real detector regression to investigate, not noise to silence.",
+  "flag_threshold": 14,
+  "samples": [
+    {
+      "id": "fp-esl-01-tweet",
+      "role": "clean",
+      "genre": "tweet",
+      "flavor": "non-native",
+      "note": "ESL grammar quirks (missing plural/article, tense) + plain vocabulary. Zero AI-vocab tells; the FP mechanism this guards is treating ESL rhythm as machine output.",
+      "text": "Today I finish the migration for our search index. Took me two week because the old config was very messy. Now the queries run faster and the team is happy. Still I want to add more test before we ship to all users."
+    },
+    {
+      "id": "fp-esl-02-linkedin",
+      "role": "clean",
+      "genre": "linkedin",
+      "flavor": "non-native",
+      "note": "ESL tense/agreement quirks with fairly even sentence lengths, so it trips the stylometric 'uniformity' signal but stays far below threshold — the exact near-miss the 60-70% FP stat is about.",
+      "text": "Last month I join a new team that work on ranking models. In the beginning I was not sure how to help, because everyone already know the codebase very well. So I start by reading the old design docs and asking many question. After three weeks I ship my first change, a small fix that improve recall by two points. My manager was happy and I feel more confident now."
+    },
+    {
+      "id": "fp-esl-03-memo",
+      "role": "clean",
+      "genre": "memo",
+      "flavor": "non-native",
+      "note": "ESL preposition/verb-form quirks ('join in the new time', 'thank you for understand') in an ordinary logistics memo.",
+      "text": "To all the team. We decide to move the weekly sync from Monday to Wednesday, because many people have conflict on Monday morning. Please update your calendar before this week. If you cannot join in the new time, tell me and we find another slot. Thank you for understand."
+    },
+    {
+      "id": "fp-terse-04",
+      "role": "clean",
+      "genre": "tweet",
+      "flavor": "terse-parataxis",
+      "note": "Stylistically unusual: clipped fragments and parataxis, no connectives. Human incident-log voice that a burstiness detector could mistake for something odd.",
+      "text": "Deploy failed. Rolled back. Logs were empty. Tried again at midnight. Same error. Found it at 2am: a stale env var in the staging box. Fixed the config and it went green. Slept."
+    },
+    {
+      "id": "fp-academic-05",
+      "role": "clean",
+      "genre": "readme",
+      "flavor": "formal-academic",
+      "note": "Stylistically unusual: dense formal/academic register (contracts, invariants, semicolons). Shares surface features with AI prose but is genuine spec writing; must not flag.",
+      "text": "This document specifies the retrieval component's ranking contract. The scorer accepts a query and a candidate set, and returns an ordering. Callers must not assume stability across versions; the ordering is defined only up to the documented tie-break rule. Two properties hold. First, monotonicity: if a candidate's relevance features strictly dominate another's, its rank is at least as high. Second, determinism: given identical inputs and a fixed model hash, the output ordering is byte-identical. Violations of either property are defects, not tuning opportunities. The contract deliberately says nothing about latency, which is governed by a separate service-level objective. Downstream consumers that require a probability rather than an ordinal should call the calibration endpoint; the raw scores are not calibrated and their absolute magnitudes carry no meaning. We state these constraints because past incidents traced to consumers reading structure into the scores that the contract never promised."
+    },
+    {
+      "id": "fp-pro-tweet-06",
+      "role": "clean",
+      "genre": "tweet",
+      "flavor": "ordinary-professional",
+      "note": "Plain professional tweet with a concrete number and a flat, unhyped close.",
+      "text": "Shipped a small change to the autocomplete ranker this morning. Nothing fancy, just moved the popularity signal below the exact-match boost. Click-through on head queries went up about 3%. Sometimes the boring fix is the right one."
+    },
+    {
+      "id": "fp-pro-linkedin-07",
+      "role": "clean",
+      "genre": "linkedin",
+      "flavor": "ordinary-professional",
+      "note": "Ordinary reflective LinkedIn post grounded in specifics (40% of alerts, two pages); no vocabulary tells.",
+      "text": "Six months ago our on-call rotation was a mess. People dreaded their week, pages fired at 3am for things that could wait until morning, and nobody trusted the dashboards. We spent a quarter cleaning it up: deleted 40% of the alerts, rewrote the runbooks, and added a severity tier that actually maps to whether you should wake up. Last month we had two pages the entire rotation. The lesson for me was simple. Most alert fatigue is a design problem, not a discipline problem."
+    },
+    {
+      "id": "fp-pro-readme-08",
+      "role": "clean",
+      "genre": "readme",
+      "flavor": "ordinary-professional",
+      "note": "Plain project README setup section with commands and a real gotcha.",
+      "text": "## setup\n\nClone the repo and run `make dev`. This starts the API on port 8080 and a watcher that rebuilds on save. You need Go 1.22 or newer; older versions fail to compile the generics in the query package. If the build hangs, it is almost always a stale module cache, so run `go clean -modcache` and try again. Tests live next to the code they cover. Run `make test` for the fast suite or `make test-all` before opening a pull request."
+    },
+    {
+      "id": "fp-pro-memo-09",
+      "role": "clean",
+      "genre": "memo",
+      "flavor": "ordinary-professional",
+      "note": "Ordinary planning memo with dates and directives; blunt human register.",
+      "text": "Heads up on the Q3 planning timeline. Draft proposals are due to your leads by the 18th. Leads consolidate and send me the top three asks per team by the 25th. We will not be able to fund everything, so rank ruthlessly and say what breaks if a line item is cut. Final decisions go out the first week of the quarter. Questions to me directly, not the group thread."
+    },
+    {
+      "id": "fp-control-01-slop",
+      "role": "control",
+      "genre": "linkedin",
+      "note": "PLANTED POSITIVE. Dense AI-vocab slop (leverage, cutting-edge, revolutionize, robust, seamless, delve, game-changing, paradigm, empower) + transitions + a generic-conclusion closer. Must trip the detector; if it stops tripping the whole suite is vacuous.",
+      "text": "In today's ever-evolving digital landscape, it is important to note that leveraging cutting-edge solutions can revolutionize your workflow. Moreover, by fostering a robust and seamless ecosystem, organizations can unlock unprecedented value. Let's delve into how this game-changing paradigm empowers teams to navigate the complexities of modern business. The future looks bright!"
+    },
+    {
+      "id": "fp-control-02-slop",
+      "role": "control",
+      "genre": "memo",
+      "note": "PLANTED POSITIVE, different flavor: chatbot artifacts + cutoff disclaimer + reasoning-chain leak. Guards a different detector family than control-01 so a single-category regression can't silently make the whole planted-positive check pass.",
+      "text": "Certainly! I'd be happy to help you with that. As an AI language model, I don't have access to real-time data, but let me break this down step by step. First, let's consider the key factors. It's worth noting that this is a comprehensive and multifaceted topic. I hope this helps! Feel free to reach out if you need anything else."
+    }
+  ]
+}

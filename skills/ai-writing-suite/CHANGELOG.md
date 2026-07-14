@@ -9,6 +9,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [1.1.0] — 2026-07-13
+
+### Added (eval hardening — 2026-07-13, from the de-slop landscape research)
+- **Gold-FAIL fixture suite** (`evals/fixtures/fixtures_fail.json`, 4 bad-rewrite pairs:
+  fabricated number, over-corrected overstepping, payoff stub, dropped claim) so the LLM
+  judge is tested on discrimination, not just agreement; plus the O2 presumed-misconception
+  strawman fixture (`overstep-06-strawman-en`). Both excluded from the naive-baseline
+  calibration denominator (band stays 38%).
+- **Synthetic false-positive regression fence** (`evals/fixtures/false_positives.json` +
+  `run_false_positives.py`, wired as a `run_all.sh` step): hand-authored pseudo-human
+  clean samples (non-native ESL, terse-parataxis, formal-academic, and ordinary
+  professional prose across all four genres) the detector must NOT flag, plus planted
+  AI-slop controls it MUST catch; the run fails on any false positive, missed control,
+  or empty cohort. This is a guard against detector-rule regressions, NOT evidence about
+  real non-native writers — a de-identified real-writer corpus is an owner-gated follow-up.
+- **Quoted-evidence judge protocol**: per-dimension verdicts now require a verbatim
+  quoted snippet. Paired-quote parsing keeps contractions/apostrophes intact (the old
+  regex truncated `"We're behind"` to `We`); `verify_evidence()` checks each quote is a
+  whitespace-normalized substring of the before/after, so a well-formed but fabricated
+  quote is caught. Missing, malformed, and not-verbatim evidence surface as advisory
+  warnings (never blocks — the judge stays advisory). Added a judge/rewriter cross-family
+  self-preference warning via the optional `AIWS_REWRITER_MODEL` env var.
+
+### Changed
+- **Router seam fix**: `comms-polish` and `comms-draft` frontmatter descriptions each
+  gained one disambiguating clause so mixed "polish this AND add a section" requests
+  route to `comms-draft` (polishing never adds substance).
+
 ### Fixed
 - **Publishable installs across hosts** — the published repo was not actually
   installable: the plugin body was gitignored (only manifests reached the remote)

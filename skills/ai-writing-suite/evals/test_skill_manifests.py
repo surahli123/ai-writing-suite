@@ -110,3 +110,41 @@ class ReferencedSharedFilesExist(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class YamlSafeFrontmatter(unittest.TestCase):
+    """Frontmatter must parse under a STRICT YAML parser, not just a lenient one.
+
+    Root cause guard (2026-07-13, E2E packaging review): comms-draft's unquoted
+    description contained "[NEEDS: ...]" — the ": " inside a plain scalar is a
+    YAML mapping token, so strict parsers (Claude's plugin loader among them)
+    reject the whole block and the skill silently loads with EMPTY metadata,
+    making it undiscoverable on a fresh install. Lenient local parsers hid this
+    for a month. CI is stdlib-only, so instead of importing yaml we ban the
+    failure CLASS: an unquoted scalar value containing ": " (or starting with a
+    YAML flow/indicator character). Quoting the value is always the fix.
+    """
+
+    UNSAFE_LEAD = tuple("[{&*!|>%@`")
+
+    def test_scalar_values_are_yaml_safe(self):
+        for path in sorted(glob.glob(SKILLS_GLOB)) + [
+                os.path.join(os.path.dirname(SKILLS_GLOB.rsplit("skills", 1)[0]),
+                             "skills", "ai-writing-suite", "SKILL.md")]:
+            if not os.path.exists(path):
+                continue
+            for ln in _frontmatter(path):
+                if ":" not in ln or ln.lstrip() != ln:
+                    continue  # continuation/indented lines are out of scope
+                key, _, val = ln.partition(":")
+                v = val.strip()
+                if not v or v[0] in "'\"":
+                    continue  # empty or quoted — safe
+                self.assertFalse(
+                    ": " in v,
+                    f"{path}: unquoted '{key.strip()}' value contains ': ' — "
+                    f"strict YAML parsers reject this (quote the whole value)")
+                self.assertFalse(
+                    v.startswith(self.UNSAFE_LEAD),
+                    f"{path}: unquoted '{key.strip()}' value starts with a YAML "
+                    f"indicator character — quote the whole value")

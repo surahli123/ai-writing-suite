@@ -30,7 +30,7 @@ under `skills/ai-writing-suite/skills/`; the root `SKILL.md` is a documentation 
 ## Versioning / updates
 
 The two `plugin.json` files (`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`) are the
-**authoritative version** (currently `1.0.0`). `SKILL.md` carries no version field, so there is one
+**authoritative version** (currently `1.1.0`). `SKILL.md` carries no version field, so there is one
 version source per host and nothing to keep in lockstep with the body.
 
 1. On a release, bump `"version"` in **both** `plugin.json` files together (keep them in parity).
