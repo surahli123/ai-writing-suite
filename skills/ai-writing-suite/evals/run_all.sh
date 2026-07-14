@@ -8,19 +8,24 @@
 #   1. unit tests   — detector logic + fixture well-formedness (~23 tests)
 #   2. KB smoke     — end-to-end ingestion/retrieval over the seed KB (3 cases)
 #   3. fixtures     — deterministic detector bands + 30-40% baseline calibration assert
+#   4. report contract — audit-report OUTPUT-CONTRACT check (structure, not behavior)
 
 set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")"   # the evals/ directory
 
-echo "== [1/3] unit tests =="
+echo "== [1/4] unit tests =="
 python3 -m unittest discover -p 'test_*.py'
 
-echo "== [2/3] KB smoke =="
+echo "== [2/4] KB smoke =="
 python3 smoke_test.py
 
-echo "== [3/3] fixtures (deterministic + calibration) =="
+echo "== [3/4] fixtures (deterministic + calibration) =="
 python3 -m fixtures.run_fixtures
+
+echo
+echo "== [4/4] audit-report output-contract =="
+python3 -m audit_report.run_report_contract
 
 echo
 echo "ALL CHECKS PASSED"
