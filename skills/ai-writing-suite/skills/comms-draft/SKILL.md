@@ -73,22 +73,6 @@ If the brief is too thin to fix these criteria, ask **at most 2-3** targeted
 questions. After that, propose the criteria you inferred, state them, and
 proceed — do not stall on a fourth question.
 
-**Plan the document's shape here, before drafting a sentence.** The single new
-detection frontier is *narrative shape*: a piece can pass every word-level check
-and still read as machine-written because its arc is a tell (StoryScope classifies
-human-vs-AI at 93.2% from structure alone, and that signal survives lexical
-cleanup — you cannot prose-edit your way out of a structural fingerprint). So
-decide the arc *up front*, not in a post-hoc line edit. From the material the brief
-and KB actually supply, plan: **where the stakes peak** (don't pace every beat flat
-— uniform escalation is Claude's own fingerprint), **what stays open** (real
-residue the piece should keep, not every thread tied in a bow), **whether there's a
-competing reading** to hold rather than flatten, and a resolve **not** to state the
-moral the facts already carry. **Validity condition (load-bearing):** only shape
-what the material motivates — a genuinely simple update *should* resolve tidily and
-a single-outcome result *is* unambiguous. Do **not** manufacture ambiguity, fake
-loose ends, or an invented peak to look human; that injected complexity is a worse
-failure than the tell. See `_shared/patterns/narrative-shape.md`.
-
 ### 2. Load the inputs (KB, voice, preset, catalog)
 
 Run the suite's self-improvement ON START read (see below). Then: pull the
@@ -96,6 +80,27 @@ matching genre preset; read the relevant KB entries via `INDEX.md`; load the
 voice profile if present (otherwise infer the lightest voice that fits the
 reader); open the catalog categories the genre weights hardest. Note any absent
 input out loud — never block on a missing one.
+
+**Once these inputs are loaded, plan the document's shape here, before drafting a
+sentence.** The single new detection frontier is *narrative shape*: a piece can
+pass every word-level check and still read as machine-written because its arc is
+a tell (as reported in the StoryScope press coverage — narrative structure alone
+was reportedly enough to classify human-vs-AI writing, and that signal reportedly
+survives lexical cleanup — you cannot prose-edit your way out of a structural
+fingerprint; see `_shared/patterns/narrative-shape.md` for the citation hedge). So
+decide the arc *up front*, from the brief and KB you just loaded, not in a
+post-hoc line edit. Plan: **where the stakes peak** (don't pace every beat flat —
+uniform escalation is reportedly Claude's own fingerprint), **what stays open**
+(real residue the piece should keep, not every thread tied in a bow), **whether
+there's a competing reading** to hold rather than flatten, and a resolve **not**
+to state the moral the facts already carry. **Validity condition (load-bearing):**
+only shape what the material motivates — a genuinely simple update *should*
+resolve tidily and a single-outcome result *is* unambiguous. Do **not** manufacture
+ambiguity, fake loose ends, or an invented peak to look human; that injected
+complexity is a worse failure than the tell, and it must never invent a new fact,
+number, or source to make the residue/ambiguity look concrete — that trades the
+shape tell for a fabrication (Safety Rules). See
+`_shared/patterns/narrative-shape.md`.
 
 ### 3. Draft with the constraints applied at write time
 
@@ -137,18 +142,26 @@ its own rewrite. Drafting reintroduces tells — fixing one plants another. Remo
 any tell you find. Apply the catalog's guardrails: look for clusters, not
 isolated signals.
 
-Include a **document-shape** pass at this altitude (the step-1 plan, verified on
-the finished text): did the draft end up stating its own moral, tying every thread
-in a bow, pacing every beat flat, or admitting only one reading where the material
-had more? Reshape if so — but hold the validity condition: if the material is
-genuinely simple, a tidy, single-reading draft is correct and you must not bolt on
-fake ambiguity to dodge the tell (`_shared/patterns/narrative-shape.md`).
+Include a **document-shape** pass at this altitude (the step-2 shape plan,
+verified on the finished text): did the draft end up stating its own moral, tying
+every thread in a bow, pacing every beat flat, or admitting only one reading where
+the material had more? Reshape if so — but hold the validity condition: if the
+material is genuinely simple, a tidy, single-reading draft is correct and you must
+not bolt on fake ambiguity to dodge the tell (`_shared/patterns/narrative-shape.md`).
 
 ### 6. Check the draft against the acceptance criteria
 
 Re-read the draft against the step-1 criteria. List any dimension it does not
 meet (style / format / length / content integration / depth). An unmet criterion
 goes in the output's "unmet criteria" note — do not silently paper over it.
+
+**Also confirm the step-2 shape plan held.** This is a separate, judge-only/
+advisory check layered on top of the five criteria above (it never blocks
+delivery the way an unmet acceptance criterion does): does the finished draft
+still show a stated moral, a too-tidy resolution, a flat stakes curve, or a
+flattened reading the plan called for? If the step-5 document-shape pass already
+reshaped it, confirm that reshape didn't invent a new fact to manufacture the
+residue/ambiguity — the validity condition applies at this check too.
 
 ### 7. Hand off
 

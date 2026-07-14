@@ -8,12 +8,14 @@ pass every lexical, rhythm, and punctuation check line by line and still read as
 machine-written because its *overall arc* is the giveaway.
 
 This is why the category matters. Lexical de-slopping is now a commodity — a dozen
-public tools scrub AI vocabulary. But structure is a different fingerprint.
-StoryScope (UMD + DeepMind, arXiv 2604.03136) classifies human-vs-AI at **93.2%
-from narrative structure alone**, and — the load-bearing finding — that signal
-**survives adversarial lexical cleanup**: *you cannot prose-edit your way out of a
-structural fingerprint.* Swapping every flagged word leaves the arc untouched. So
-this category has to be caught at draft-*shaping* time, not sentence-polish time.
+public tools scrub AI vocabulary. But structure is a different fingerprint. As
+reported in the StoryScope press coverage (UMD + DeepMind work, 2026-07 — we have
+not independently verified the arXiv id or re-run the 93.2% figure ourselves), a
+model classified human-vs-AI writing with high accuracy from narrative structure
+alone, and — the load-bearing claim — that signal reportedly **survives adversarial
+lexical cleanup**: *you cannot prose-edit your way out of a structural fingerprint.*
+Swapping every flagged word leaves the arc untouched. So this category has to be
+caught at draft-*shaping* time, not sentence-polish time.
 
 Like `overstepping-presumption.md`, this is a **stance/shape tell, not a
 vocabulary tell**: every word can be clean while the document over-explains its own
@@ -67,10 +69,15 @@ fake complexity. Apply the validity condition before flagging anything here.
   the API held. Every risk we'd listed turned out fine, and the team came out
   stronger for it.
 - **After:** We ran the migration over the weekend. The database moved cleanly and
-  the API held. But replica lag under load still spikes past our threshold, and we
-  don't yet know why.
+  the API held. But I'm not ready to call every risk closed — a couple of things we
+  flagged are still shaking out, and I'd rather sit with that than declare a clean
+  win.
 - **Self-test:** Is *anything* left open — and is that open thread **real**, or did
-  I invent it to dodge the tell?
+  I invent it to dodge the tell? (Note the fix here is a qualitative walk-back of
+  the overclaim, not a new invented stat — inventing a specific new fact, like a
+  metric never mentioned before, would trade a narrative-shape tell for a
+  fabrication, which `no_fabrication` in `evals/fixtures/rubric.md` treats as the
+  higher-stakes failure.)
 
 ---
 
@@ -79,18 +86,23 @@ fake complexity. Apply the validity condition before flagging anything here.
 - **Tell:** Each beat lands with the same weight; nothing is the peak. "Day one we
   found a bug. Day two we found a bug. Day three we found a bug. We fixed each and
   moved on." The events are listed at a constant altitude with no rise, no climax,
-  no beat that matters more than the others. StoryScope reports flat escalation as
-  a **per-model fingerprint — specifically Claude's own** — so name it honestly:
-  this is *our* structural tell, and it survives any amount of word-swapping.
-- **Fix:** Re-weight to where the stakes actually peaked. One beat carried the real
-  consequence; make the arc rise to it instead of pacing every beat identically.
+  no beat that matters more than the others. StoryScope press coverage reports flat
+  escalation as a **per-model fingerprint — specifically associated with Claude's
+  own output** (see the citation hedge above) — so name it honestly: this is
+  plausibly *our* structural tell, and it reportedly survives word-swapping.
+- **Fix (re-weight, not add):** Re-weight to where the stakes actually peaked using
+  the SAME events the material already gives you. One beat carried more effort or
+  consequence; make the arc rise to it instead of pacing every beat identically. Do
+  not invent a bigger event or a new consequence to manufacture a peak — that trades
+  the shape tell for a fabrication.
 - **Before:** Day one, a bug in the export job. Day two, a bug in the import job.
   Day three, a bug in the reconciliation job. We fixed each one and moved on.
-- **After:** Day one, a bug in the export job. Day two, one in the import job. Day
-  three, the reconciliation bug had been silently corrupting balances for a month —
-  it forced us to halt the release.
+- **After:** Day one, a bug in the export job — fixed it, moved on. Day two, one in
+  the import job — fixed it, moved on. Day three, the reconciliation job: that one
+  took real digging, and we didn't move on until we were sure it was right.
 - **Self-test:** Which beat is the peak? If every beat weighs the same, the curve is
-  flat.
+  flat. (The re-weighting above uses only the three bugs and the "fixed and moved
+  on" claim already in `before` — no new bug, no new invented consequence.)
 
 ---
 
@@ -106,10 +118,14 @@ fake complexity. Apply the validity condition before flagging anything here.
   if one exists** — the validity condition forbids inventing doubt to look human.
 - **Before:** The A/B test is clear: variant B lifted conversion 6%. Roll it out to
   everyone next week.
-- **After:** Variant B lifted conversion 6% — but it also raised refund requests 2%,
-  so "clear" overstates it. I want one more week to see if the lift holds.
+- **After:** The A/B test showed variant B lifted conversion 6%. But the picture
+  isn't as clean as "roll it out" makes it sound, and I want another week before
+  calling it decisive.
 - **Self-test:** Is there a real competing signal I flattened out to sound decisive?
-  If the situation genuinely has only one reading, leave it alone (see below).
+  If the situation genuinely has only one reading, leave it alone (see below). (The
+  6% figure is preserved verbatim from `before` — the fix holds the ambiguity
+  qualitatively rather than inventing a second metric, which would fabricate a fact
+  `before` never contained.)
 
 ---
 
@@ -140,8 +156,10 @@ is the worse error.
 Worked contrast:
 
 - A retro that claims **every** risk "turned out fine" and the team "came out
-  stronger," when replica lag **actually** still spikes → the tidy resolution is
-  **unmotivated** (real residue exists and was hidden) → **N2 tell** → surface it.
+  stronger," when the writer privately knows a couple of those risks are still
+  shaking out → the tidy resolution is **unmotivated** (real residue exists and was
+  hidden) → **N2 tell** → surface it *qualitatively* (see N2's fix) rather than by
+  inventing a new metric to make the residue sound concrete.
 - A 200-word "the nightly backup is green again; it was a one-character cron typo"
   update → the tidy resolution is **motivated** (the fix genuinely closed the
   thread) → **not a tell** → leave it. Bolting on "though I keep wondering whether

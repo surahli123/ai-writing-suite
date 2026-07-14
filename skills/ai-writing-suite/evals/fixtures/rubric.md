@@ -88,15 +88,19 @@ the fix complete), not a general "is this sentence clear" check — it stays sco
 
 `narrative_shape_ok` is the one dimension scored at **document altitude**. Every
 other dimension reads sentences; this one reads the whole arc. It exists because
-lexical de-slopping is a commodity but structure is a separate fingerprint —
-StoryScope classifies human-vs-AI at 93.2% from narrative structure alone, and the
-signal **survives lexical cleanup**. A rewrite can pass `tells_removed`,
+lexical de-slopping is a commodity but structure is a separate fingerprint — as
+reported in the StoryScope press coverage (2026-07; we have not independently
+verified the arXiv id or re-run the reported accuracy figure), narrative structure
+alone was enough to classify human-vs-AI writing, and the signal reportedly
+**survives lexical cleanup**. A rewrite can pass `tells_removed`,
 `meaning_preserved`, and every vocabulary check while its shape stays machine-made.
 
 The judge weighs four sub-shapes: over-explained theme (states its own moral, N1),
 tidy single-track resolution (every thread closes with no residue, N2), flat
-escalation (uniform stakes curve — Claude's own StoryScope fingerprint, N3), and
-absent ambiguity (one reading where the material supports more, N4).
+escalation (uniform stakes curve — reportedly associated with Claude's own output
+per the same press coverage, N3), and absent ambiguity (one reading where the
+material supports more, N4). See `_shared/patterns/narrative-shape.md` for the full
+citation hedge.
 
 **The load-bearing rule is the same shape as over-stepping's validity condition:**
 

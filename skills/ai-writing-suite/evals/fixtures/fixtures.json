@@ -259,7 +259,7 @@
       "genre": "linkedin",
       "difficulty": "subtle",
       "before": "We ran the migration over the weekend. The database moved cleanly and the API held. Every risk we had listed beforehand turned out fine, and the team came out stronger for it.",
-      "after": "We ran the migration over the weekend. The database moved cleanly and the API held. But replica lag under load still spikes past our threshold, and we do not yet know why.",
+      "after": "We ran the migration over the weekend. The database moved cleanly and the API held. But I am not ready to call every risk closed -- a couple of things we flagged are still shaking out, and I would rather sit with that than declare a clean win.",
       "before_band_max": 10,
       "after_band_max": 10,
       "rubric_focus": [
@@ -269,7 +269,7 @@
       ],
       "expect_baseline": "miss",
       "detector_blind": true,
-      "subtle_tell": "Narrative-shape N2 (tidy single-track resolution): before closes every thread ('every risk turned out fine', 'came out stronger') with no residue. The two setup sentences are word-for-word identical in before/after; only the resolution sentence differs. The `after` surfaces a REAL open thread (replica lag) the tidy draft papered over -> motivated residue, not manufactured (validity condition). Detector scores 0 -> judge-only, ARC-level."
+      "subtle_tell": "Narrative-shape N2 (tidy single-track resolution): before closes every thread ('every risk turned out fine', 'came out stronger') with no residue. The two setup sentences are word-for-word identical in before/after; only the resolution sentence differs. The `after` walks back the premature victory-lap claim and surfaces REAL open residue WITHOUT inventing any new number, source, or quote (no_fabrication-safe: the hedge is qualitative, not a fabricated stat) -- motivated by the validity condition, not manufactured. Detector scores near 0 -> judge-only, ARC-level."
     },
     {
       "id": "narrshape-03-flat-escalation-en",
@@ -277,7 +277,7 @@
       "genre": "linkedin",
       "difficulty": "subtle",
       "before": "Day one, we found a bug in the export job. Day two, we found a bug in the import job. Day three, we found a bug in the reconciliation job. We fixed each one and moved on.",
-      "after": "Day one, we found a bug in the export job. Day two, one in the import job. Day three, the reconciliation bug had been silently corrupting balances for a month, and it forced us to halt the release.",
+      "after": "Day one, we found a bug in the export job -- fixed it, moved on. Day two, one in the import job -- fixed it, moved on. Day three, the reconciliation job: that one took real digging, and we did not move on until we were sure it was right.",
       "before_band_max": 10,
       "after_band_max": 10,
       "rubric_focus": [
@@ -287,7 +287,7 @@
       ],
       "expect_baseline": "miss",
       "detector_blind": true,
-      "subtle_tell": "Narrative-shape N3 (flat escalation): before paces three beats at identical weight ('we found a bug... we found a bug... we found a bug... fixed each and moved on') with no peak. StoryScope names flat escalation as Claude's OWN per-model fingerprint. The day-one clause is word-for-word identical in before/after; the `after` re-weights the arc to the beat that actually carried the consequence (reconciliation corrupting balances -> halted release). Detector scores 0 -> judge-only, ARC-level."
+      "subtle_tell": "Narrative-shape N3 (flat escalation): before paces three beats at identical weight ('we found a bug... we found a bug... we found a bug... fixed each and moved on') with no peak. StoryScope reports flat escalation as a per-model fingerprint associated with Claude's own output. The `after` re-weights the SAME three beats already in before (no new bug, no new consequence invented) toward the one that took more effort, while keeping before's 'fixed each one and moved on' claim intact for all three (no_fabrication-safe, meaning-preserving; re-weight, not add). Detector scores near 0 -> judge-only, ARC-level."
     },
     {
       "id": "narrshape-04-absent-ambiguity-en",
@@ -295,7 +295,7 @@
       "genre": "memo",
       "difficulty": "subtle",
       "before": "The A/B test is clear: variant B lifted conversion 6%. We should roll it out to everyone next week.",
-      "after": "The A/B test showed variant B lifted conversion 6%. But B also raised refund requests 2%, so calling it clear overstates it; I want one more week to see if the lift holds.",
+      "after": "The A/B test showed variant B lifted conversion 6%. But the picture is not as clean as \"roll it out\" makes it sound, and I want another week before calling it decisive.",
       "before_band_max": 10,
       "after_band_max": 10,
       "rubric_focus": [
@@ -305,7 +305,7 @@
       ],
       "expect_baseline": "miss",
       "detector_blind": true,
-      "subtle_tell": "Narrative-shape N4 (absent ambiguity): before admits exactly one reading and one action ('is clear... roll it out') with no competing signal. The 6%-lift clause is preserved in `after`; the `after` names a REAL competing signal (refunds up 2%) the decisive draft flattened away -> motivated ambiguity, not invented (validity condition). Its over-correction partner — manufacturing fake doubt on a genuinely simple update — lives in fixtures_fail.json. Detector scores 0 -> judge-only, ARC-level."
+      "subtle_tell": "Narrative-shape N4 (absent ambiguity): before admits exactly one reading and one action ('is clear... roll it out') with no competing signal. The 6%-lift clause (already present in before) is preserved verbatim in `after`; the `after` walks back the one-reading verdict and holds a real competing read WITHOUT inventing any new stat, source, or quote (no_fabrication-safe: the hedge is qualitative, not a fabricated refund figure) -- motivated ambiguity, not invented. Its over-correction partner -- manufacturing fake doubt on a genuinely simple update -- lives in fixtures_fail.json. Detector scores near 0 -> judge-only, ARC-level."
     }
   ]
 }
