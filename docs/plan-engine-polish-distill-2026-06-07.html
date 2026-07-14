@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engine-Polish Plan — AI Writing Suite (2026-06-07)</title>
+<style>
+  :root { --ink:#1a1a1a; --muted:#666; --line:#e2e2e2; --accent:#2d6cdf;
+          --warn:#b00020; --ok:#1a7f37; --bg:#fbfbfa; --card:#fff; }
+  * { box-sizing:border-box; }
+  body { font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+         color:var(--ink); background:var(--bg); margin:0; padding:0 16px; }
+  main { max-width:860px; margin:0 auto; padding:40px 0 80px; }
+  h1 { font-size:28px; margin:0 0 4px; line-height:1.25; }
+  .sub { color:var(--muted); margin:0 0 24px; font-size:14px; }
+  h2 { font-size:20px; margin:36px 0 8px; padding-top:16px; border-top:1px solid var(--line); }
+  h3 { font-size:16px; margin:20px 0 6px; }
+  p, li { margin:6px 0; }
+  code { background:#f0f0ee; padding:1px 5px; border-radius:4px; font-size:13.5px;
+         font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .callout { border-left:4px solid var(--warn); background:#fff5f5; padding:12px 16px;
+             border-radius:0 6px 6px 0; margin:16px 0; }
+  .callout.ok { border-color:var(--ok); background:#f2fbf4; }
+  .callout.note { border-color:var(--accent); background:#f3f7ff; }
+  .edit { background:var(--card); border:1px solid var(--line); border-radius:8px;
+          padding:14px 18px; margin:14px 0; box-shadow:0 1px 2px rgba(0,0,0,.03); }
+  .edit h3 { margin-top:0; display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+  .tag { font-size:12px; font-weight:600; padding:2px 8px; border-radius:20px; white-space:nowrap; }
+  .s { background:#e7f1ff; color:#15448f; }
+  .m { background:#fff0e0; color:#9a5b00; }
+  .opt { background:#eee; color:#555; }
+  .edit .why { color:var(--muted); font-size:14px; }
+  table { border-collapse:collapse; width:100%; margin:12px 0; font-size:14.5px; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f4f4f2; }
+  ol.dec { padding-left:22px; }
+  ol.dec li { margin:10px 0; }
+  .rec { color:var(--ok); font-weight:600; }
+  footer { color:var(--muted); font-size:13px; margin-top:40px; border-top:1px solid var(--line); padding-top:16px; }
+  .pill { display:inline-block; font-size:12px; background:#eef; color:#334; padding:2px 8px; border-radius:20px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Engine-Polish Workstream — Plan</h1>
+  <p class="sub">AI Writing Suite · distilled from 4 external writing skills · 2026-06-07 ·
+     <span class="pill">PLAN ONLY — awaiting go</span></p>
+
+  <div class="callout">
+    <strong>⚠️ Different from Phase 2a.</strong> Phase 2a edited <code>evals/</code> (dev-only,
+    not shipped). This workstream edits the <strong>shipped skill body</strong>
+    (<code>comms-polish</code>, <code>voice-onboard</code>, the pattern catalog, the
+    self-improvement hook) — consumer-facing on Claude / Codex / Cursor. So:
+    <strong>adversarial review before the PR</strong>, and a <strong>version-bump decision</strong>
+    (both <code>plugin.json</code> are <code>1.0.0</code>).
+  </div>
+
+  <h2>Scope</h2>
+  <p><strong>IS:</strong> 5 high-confidence, engine-appropriate enrichments — instruction-or-single-catalog
+     edits, no new skills, no deps, cross-surface-safe.</p>
+  <p><strong>IS NOT</strong> (adversarially rejected): building <code>comms-draft</code>/<code>comms-qa</code>
+     (v2), deepening the KB (fuel, not engine), wiring the Python detector at runtime
+     (breaks zero-dep / cross-surface).</p>
+
+  <h2>The 5 edits</h2>
+
+  <div class="edit">
+    <h3>#1 — Re-scan the output against the catalog <span class="tag s">S · comms-polish</span></h3>
+    <p><strong>File:</strong> <code>skills/comms-polish/SKILL.md</code>, "Rewrite Workflow" (lines 107–132).</p>
+    <p>Insert a <strong>step 8.5</strong>: treat the rewrite as a new draft and re-scan it against the
+       pattern catalog (the step-5 scan) before the final-pass checklist — rewriting reintroduces tells.</p>
+    <p class="why">Why: all 4 external skills independently shipped a mandatory output re-scan. Most
+       cross-validated gap; cheapest correctness win.</p>
+  </div>
+
+  <div class="edit">
+    <h3>#2 — Negative routing in frontmatter <span class="tag s">S · metadata</span></h3>
+    <p><strong>Files:</strong> <code>comms-polish/SKILL.md:3</code>, <code>voice-onboard/SKILL.md:3</code>
+       (light note on <code>comms-draft</code>/<code>comms-qa</code>).</p>
+    <p>Append explicit hand-offs/exclusions to each <code>description:</code> — e.g. comms-polish
+       "not for learning a voice → voice-onboard; not for source code"; voice-onboard "not for
+       rewriting → comms-polish".</p>
+    <p class="why">Why: our router is <em>not</em> a runtime interceptor on Claude/Codex/Cursor —
+       mis-routing is fixable only in the descriptions.</p>
+  </div>
+
+  <div class="edit">
+    <h3>#3 — Surface the replacement table into the catalog <span class="tag s">S · catalog</span></h3>
+    <p><strong>Files:</strong> read <code>evals/detector/patterns.py</code> <code>TIER1</code>
+       (17–58) + <code>TIER1_PHRASES</code>; write a word→swap table into
+       <code>_shared/patterns/lexical-tells.md</code> (after ~line 25).</p>
+    <p>e.g. <code>robust → strong/reliable/solid</code>, <code>leverage → use</code> — deterministic
+       swaps instead of bare word lists.</p>
+    <p class="why">Why: the detector already owns the suggestions; the catalog ships only bare lists.
+       Dedup of data we own. <strong>Add a provenance note</strong> so the two copies don't silently drift.</p>
+  </div>
+
+  <div class="edit">
+    <h3>#4 — Graduation / anti-bloat in self-improvement <span class="tag s">S · lifecycle</span></h3>
+    <p><strong>File:</strong> <code>_shared/self-improvement.md</code>.</p>
+    <p>Add a <strong>human-gated GRADUATION</strong> step: when an <code>active</code> learned rule is
+       stable (Layer-3 eval-passed), the <strong>maintainer</strong> folds it into the catalog and
+       retires its <code>learned-rules.md</code> entry — so the on-start read doesn't grow unbounded.</p>
+    <div class="callout ok"><strong>Fenced:</strong> the hook still <strong>NEVER auto-edits the catalog</strong>
+       (lines 97–105 preserved). Graduation is a maintainer action, not automation — the anti-drift
+       guarantee is intact.</div>
+  </div>
+
+  <div class="edit">
+    <h3>#5 — Layered final-pass gate <span class="tag m">M · comms-polish</span></h3>
+    <p><strong>File:</strong> <code>skills/comms-polish/references/final-pass-checklist.md</code>.</p>
+    <p>Keep all 13 items, <strong>re-bucket into layers</strong>: <strong>L1 mechanical floor</strong>
+       (facts/numbers/code/quotes unchanged — currently buried at line 25 — pulled to top as a hard,
+       non-tradeable gate); L2 style; L3 genre+voice cross-checks; L4 one subjective acceptance
+       question. The highest-stakes layer can't be traded off against polish.</p>
+    <p class="why">Why: mirrors <code>rubric.md</code>'s "no_fabrication always required" + the externals'
+       QA-pyramid. Editorial reorganization, not new content.</p>
+  </div>
+
+  <h3>Optional (defer unless cheap while in-file)</h3>
+  <p><span class="tag opt">#6</span> somatic-over-knowledge rewrite direction on the C9 emotional-flatline
+     entry (delete-only today). &nbsp; <span class="tag opt">#7</span> one-line design NOTE
+     (typology-gate + ask-don't-fabricate + human/AI input partition) in the
+     <code>comms-draft</code>/<code>comms-qa</code> stubs — records the v2 constraint, builds nothing.</p>
+
+  <h2>Sequencing &amp; verification</h2>
+  <table>
+    <tr><th>Step</th><th>Detail</th></tr>
+    <tr><td>1</td><td>Branch <code>feat/engine-polish-distill</code> off <code>main</code> (@ <code>0a4de7f</code>)</td></tr>
+    <tr><td>2</td><td>#1, #2, #3, #4 — one commit each (single-concern)</td></tr>
+    <tr><td>3</td><td>#5 — its own commit</td></tr>
+    <tr><td>4</td><td>Verify: <code>run_all.sh</code> still green (47 tests + calibration), frontmatter valid, catalog index coherent</td></tr>
+    <tr><td>5</td><td><strong>Adversarial review (Codex)</strong> on the diff → PR → your merge</td></tr>
+  </table>
+  <div class="callout note"><strong>Honest "done":</strong> these are prose/instruction changes — there is
+     no unit test for "the model follows step 8.5". The eval that would measure it is the
+     <strong>Phase 2b live end-to-end judge</strong> (noted, not built here). Done = loads on host +
+     coherent + review-passed.</div>
+
+  <h2>Owner decisions</h2>
+  <ol class="dec">
+    <li><strong>Scope:</strong> all of #1–#5, or a subset? <span class="rec">Rec: all 5 — cohesive and small.</span></li>
+    <li><strong>Optional #6/#7:</strong> now or defer? <span class="rec">Rec: defer #6; do the #7 note (near-zero cost).</span></li>
+    <li><strong>Version bump:</strong> bump both <code>plugin.json</code> to <code>1.1.0</code> now, or on next release?
+        <span class="rec">Rec: bump on release, not in this PR.</span></li>
+  </ol>
+
+  <h2>Risks</h2>
+  <ul>
+    <li><strong>Consumer-facing drift:</strong> edits change what installers get from <code>main</code>.
+        Mitigate: review gate; changes are additive/clarifying, not behavior-breaking.</li>
+    <li><strong>#3 catalog/detector drift:</strong> the new table mirrors <code>patterns.py</code> — provenance
+        note now; "generate it" is the v2 fix.</li>
+    <li><strong>#4 anti-drift:</strong> graduation stays human-gated; "never auto-edit the catalog" preserved.</li>
+  </ul>
+
+  <footer>
+    Source proposal: <code>docs/proposal-distill-writing-skills-2026-06-07.md</code> ·
+    workflow <code>wf_49f1178c-50b</code> (11 agents) · plan markdown:
+    <code>docs/plan-engine-polish-distill-2026-06-07.md</code>
+  </footer>
+</main>
+</body>
+</html>
