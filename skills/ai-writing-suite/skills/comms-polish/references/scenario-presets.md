@@ -15,7 +15,7 @@ README, memo**.
 
 Adapted from `weijt606/anti-vibe-writing` (`scenario-presets.md`, MIT). The
 original ships five Chinese-platform scenarios; this is the English subset mapped
-to the v1 genres. Bilingual presets are a v2 item (design §5, deferred list).
+to the v1 genres. Bilingual presets are a v2 item (deferred).
 
 ## How to use a preset
 
@@ -47,7 +47,9 @@ truth instead of re-listing patterns inline.
 - `structural-tells` — rule-of-three and "not X but Y" theatrics read as
   performance, not a person.
 - `significance-attribution` — "many / some / a lot": replace with the actual
-  number.
+  number **only when the source provides it**; otherwise flag the missing number
+  and leave the vague quantifier — never invent a figure (see *Cross-scenario
+  invariants*: don't invent facts, numbers are immutable).
 
 **Target tone/length:** punchy, one idea per tweet, leave a reason to read the
 next line. Inversion, fragments, and an incomplete sentence are fine here.
