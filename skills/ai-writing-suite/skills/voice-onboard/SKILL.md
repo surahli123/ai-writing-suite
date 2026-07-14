@@ -256,12 +256,5 @@ it. In short:
 - Bilingual (Chinese) extraction path.
 - Any programmatic/scripted sample ingestion.
 
-<!--
-  ATTRIBUTION
-  -----------
-  Flow + 10-dimension taxonomy adapted from weijt606/anti-vibe-writing
-  (references/learning-mode.md, assets/style-extraction-prompt.md, MIT), ported
-  from Chinese to English. Do's/Don'ts "Style DNA" framing from
-  donghuixin/AI-Vibe-Writing-Skills (1_style_extractor.md, MIT). Full copyright
-  lines in the suite NOTICE.md.
--->
+<!-- Attribution (source credit) moved out of this hot path to
+     references/attribution.md; canonical copyright lines in the suite NOTICE.md. -->
