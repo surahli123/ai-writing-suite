@@ -108,6 +108,41 @@
 - **Applies to:** [genres these samples cover]
 - **Re-calibrate for:** [genres not covered — flag so the reader doesn't misapply]
 
+## Measured Fingerprint
+
+<!--
+  QUANTITATIVE half of the profile. Produced by `_shared/stylometry.py`, NOT by
+  eyeballing. Every number here must be RECOMPUTABLE from the stated samples +
+  the constants in stylometry.py — that is what lets the eval assert on numbers
+  instead of on adjectives. A number with no provenance is worse than no number.
+
+  HARD RULES (both enforced by voice-onboard):
+    - PER GENRE. One `### <genre>` block per genre. NEVER pool genres into one
+      block — pooling a tweet and a report yields a mean/variance that describes
+      neither (see stylometry.py --demo). If samples span two genres, run two
+      blocks.
+    - 3+ samples. Below 3 samples the block still prints but every number is
+      marked indicative-only; do not present it as an established habit.
+    - CJK / non-whitespace scripts: stylometry.py emits NO numbers and writes an
+      UNSUPPORTED line instead. Never hand-fill numbers it refused to compute.
+
+  Copy the `### <genre>` block once per genre. The lines below mirror
+  `stylometry.py` output verbatim, so what the user confirmed is what is stored.
+-->
+
+### [genre — e.g. blog]
+
+- **Provenance:** genre=[genre], N=[sample count], [word count] words, confidence=[Insufficient(N<3) / Low / Medium / High]
+- **Sentence length:** mean=[x], variance=[x], burstiness(CV)=[x] over [n] sentences  <!-- variance is the rhythm signal, not the mean -->
+- **Punctuation /1k words:** em-dash=[x], semicolon=[x], ellipsis=[x], exclamation=[x]
+- **Testable numbers:** [x] per 100 words ([n] figures)
+- **AI-register words:** [n] hits across [n] terms checked  <!-- 0 is the strong signal; list offenders if nonzero -->
+- **Function-word deltas /1k (vs generic baseline):** over-uses [word +x, ...]; under-uses [word -x, ...]
+- **Char 3-gram top:** ['gram' freq, ...]
+
+<!-- For a CJK / unsupported genre, replace the block body with a single line:
+  - **UNSUPPORTED:** CJK / non-whitespace script — no stylometry numbers (v2). N=[n] -->
+
 ## Changelog
 
 - [YYYY-MM-DD] First created from N samples.

@@ -104,14 +104,60 @@ Two extraction principles to repeat to yourself:
 - **Don't average across genres.** Same person writes a tweet and a report
   differently. Mixed samples → split, don't flatten.
 
+#### The measurement pass (quantitative half — run alongside the 10 dimensions)
+
+The 10 dimensions above are qualitative adjectives about the voice. Run the
+deterministic stylometry pass to add the **measured** half: numbers a reader
+skill (and the eval) can verify against the samples instead of trusting prose.
+This is the differentiator — competitors derive voice from corpus statistics,
+not adjectives.
+
+Run the shipped module (stdlib-only, loads on every host) once **per genre**:
+
+```
+python3 <suite-root>/_shared/stylometry.py --genre <genre> <sample-file> [...]
+```
+
+or import `compute_per_genre({genre: [samples]})` if the samples are in memory.
+It prints, per genre: sentence-length mean AND variance/burstiness (variance is
+the rhythm signal, not the mean), punctuation density per 1k words, testable-
+number density per 100 words, AI-register word hits (0 is the strong signal),
+function-word deltas vs a generic baseline, and a char 3-gram profile.
+
+Rules the skill must honor — in what it computes AND what it is allowed to claim:
+
+- **Per genre, never pooled.** Run the module once per genre and store one
+  block per genre. Do NOT concatenate two genres into one run — pooling a tweet
+  and a report produces a mean/variance that describes neither (the module's
+  `--demo` proves this). This is the same "don't average across genres" rule,
+  now enforced numerically.
+- **3+ samples.** With fewer than 3 samples the module marks every number
+  indicative-only; say so out loud and do not call any figure a habit.
+- **CJK / non-whitespace scripts.** The module emits NO numbers for
+  predominantly-CJK samples (whitespace word-counting collapses on them) and
+  returns an UNSUPPORTED marker instead. Surface that marker verbatim; never
+  hand-fill numbers it refused to compute. Bilingual/CJK stylometry is v2.
+- **Every number carries provenance.** When you write a figure, it carries the
+  genre, the sample count, and a confidence note. A number with no provenance is
+  worse than no number.
+
 ### Step 3 — Fill the template, then show a draft
 
-Fill `host-profile-template.md` field by field with evidence. Then show the user
-the draft profile and name the 3 most distinctive features you found, e.g.:
+Fill `host-profile-template.md` field by field with evidence — both the 10
+qualitative dimensions AND the **Measured Fingerprint** section (one `### <genre>`
+block per genre, straight from the measurement pass). Then show the user the
+draft profile and name the 3 most distinctive features, backed by the measured
+numbers so "distinctive" is checkable, not vibes, e.g.:
 
-> "Draft profile ready. The three loudest signals: (1) period-heavy short
-> declaratives, (2) leads every post with a number, (3) never uses hype words
-> like 'unlock' or 'amazing'. Does this sound like you? Anything off?"
+> "Draft profile ready. The three loudest signals: (1) short, bursty rhythm —
+> mean 8.4 words/sentence but variance 41 (blog, N=6), so short punches next to
+> long qualifiers; (2) high testable-number density, 4.2 figures per 100 words;
+> (3) zero AI-register words across 55 checked. Every number here is recomputed
+> from your samples. Does this sound like you? Anything off?"
+
+Keep the flow human-gated: show the numbers, let the user confirm or correct;
+never write the profile before they approve (Step 4). If a genre came back
+UNSUPPORTED (CJK), say so plainly rather than inventing numbers.
 
 ### Step 4 — Confirm, then write the contract file
 
