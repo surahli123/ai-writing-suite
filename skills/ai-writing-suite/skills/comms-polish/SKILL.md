@@ -187,7 +187,9 @@ When neither exists, use the lightest voice that fits the context:
    body; legacy `_shared/voice-profile.md` on an empty directory, banner = no
    profile — see Voice Matching). No match → pasted sample or inferred voice, and
    degrade gracefully.
-4. Mark the factual anchors that must survive unchanged.
+4. Mark the factual anchors that must survive unchanged — **and the modality
+   anchors too**: each claim's observed-vs-inferred, possible-vs-certain, and
+   step-toward-vs-achieved status is an anchor, not free to strengthen.
 5. Scan against the pattern catalog, weighted by the preset, and remove the tells
    you find:
    - throat-clearing and filler
@@ -198,6 +200,12 @@ When neither exists, use the lightest voice that fits the context:
    - "not X but Y" theatrics
    - uniform sentence length
    - chatbot artifacts
+   Before editing on any tell you find here, run the **False-positive protection
+   gate** in `_shared/patterns/rhythm-stylometric.md` — any "yes" (inside a quote,
+   citation, code, command, or file path; an official term of art; present in the
+   voice profile; genre-normal per the preset; or a second-language construction)
+   makes the flag advisory only, not an edit. An all-"no" gate is not a mandate
+   either — the cluster guardrail still applies (signals, not proof).
 6. Make concrete details **already in the source** more prominent — surface the
    specific actor, action, example, or consequence the text already names, instead
    of leaving it buried under an abstraction. If the source has no such detail,
@@ -216,6 +224,16 @@ When neither exists, use the lightest voice that fits the context:
 
 - Do not change the author's position to make the prose smoother.
 - Do not add examples, numbers, citations, or claims that were not present.
+- **Preserve epistemic modality — a protected class alongside facts, numbers, and
+  quotes.** Keep each claim's modal status exactly as written: observed stays
+  observed (not inferred), possible stays possible (not certain), "a step toward
+  X" stays a step (not "X achieved"), an estimate stays an estimate (not a
+  measurement). A smoothing pass that hardens a hedge into a fact changes the
+  meaning as surely as changing a number. (This exact defect — "step toward
+  improving" strengthened to "improves" — was caught by adversarial review in this
+  repo on 2026-07-13.)
+- Do not resolve a correlation into a cause, or a projection into a result, to
+  make a sentence read cleaner.
 - Do not remove caveats that carry real uncertainty.
 - Do not polish away legal, medical, financial, or safety warnings.
 - Do not rewrite quoted text unless the user asks.
