@@ -24,11 +24,14 @@ import sys
 
 # evals/ -> suite root, so `import aiws` resolves to the sibling aiws/ package.
 _HERE = os.path.dirname(os.path.abspath(__file__))
+HERE = _HERE  # drop-in compat: this module's own dir, as before the move
 _SUITE_ROOT = os.path.normpath(os.path.join(_HERE, ".."))
 if _SUITE_ROOT not in sys.path:
     sys.path.insert(0, _SUITE_ROOT)
 
-from aiws.kb.retrieval import tokens, load_index, retrieve  # noqa: E402
+from aiws.kb.retrieval import (  # noqa: E402
+    tokens, load_index, retrieve, STOPWORDS,
+)
 
 KB = os.path.normpath(os.path.join(_HERE, "..", "_shared", "knowledge"))
 INDEX_PATH = os.path.join(KB, "INDEX.md")

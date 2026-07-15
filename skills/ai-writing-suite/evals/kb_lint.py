@@ -13,10 +13,12 @@ Run:  python3 kb_lint.py [path-to-knowledge-dir]   (exit 0 = all checks pass)
 """
 
 import os
+import re  # noqa: F401  (drop-in compat: this module used to define regexes with it)
 import sys
 
 # evals/ -> suite root, so `import aiws` resolves to the sibling aiws/ package.
 _HERE = os.path.dirname(os.path.abspath(__file__))
+HERE = _HERE  # drop-in compat: this module's own dir, as before the move
 _SUITE_ROOT = os.path.normpath(os.path.join(_HERE, ".."))
 if _SUITE_ROOT not in sys.path:
     sys.path.insert(0, _SUITE_ROOT)
