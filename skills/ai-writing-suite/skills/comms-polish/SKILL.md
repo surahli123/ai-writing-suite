@@ -201,10 +201,11 @@ When neither exists, use the lightest voice that fits the context:
    - uniform sentence length
    - chatbot artifacts
    Before editing on any tell you find here, run the **False-positive protection
-   gate** in `_shared/patterns/rhythm-stylometric.md` — any "yes" (in a
-   quote/code, an official term of art, present in the voice profile, genre-normal
-   per the preset, or a second-language construction) makes the flag advisory
-   only, not an edit.
+   gate** in `_shared/patterns/rhythm-stylometric.md` — any "yes" (inside a quote,
+   citation, code, command, or file path; an official term of art; present in the
+   voice profile; genre-normal per the preset; or a second-language construction)
+   makes the flag advisory only, not an edit. An all-"no" gate is not a mandate
+   either — the cluster guardrail still applies (signals, not proof).
 6. Make concrete details **already in the source** more prominent — surface the
    specific actor, action, example, or consequence the text already names, instead
    of leaving it buried under an abstraction. If the source has no such detail,

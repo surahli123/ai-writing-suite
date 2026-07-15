@@ -149,10 +149,11 @@ priority to fix in any professional or factual document.
   (known AI vocabulary): those catch *established* filler words; this catches a
   *novel* term that sounds authoritative yet carries no agreed meaning. Reported
   independently for English, Polish, and Mandarin.
-- **Fix:** Replace with the plain established term the field actually uses. If the
-  concept is real but genuinely lacks a standard term, define it in plain words on
-  first use. If neither is possible, flag it for removal — do not invent a
-  definition to justify the coinage.
+- **Fix (applies only once the validity condition below holds and the suite's
+  cluster rule warrants acting):** replace with the plain established term the
+  field actually uses. If the concept is real but genuinely lacks a standard term,
+  define it in plain words on first use. If neither is possible, flag it for
+  removal — do not invent a definition to justify the coinage.
 - **Validity condition (both must hold — advisory, judge-only):** flag only when
   the term is BOTH (a) absent from the domain's standard usage AND (b) something
   the writer could not define plainly if asked. A real term of art the field uses,
