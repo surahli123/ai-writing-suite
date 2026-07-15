@@ -504,8 +504,8 @@ class JudgeResult:
 
     configured  is_configured() at call time — the spend-gate state, so a caller can
                 branch offline vs online without re-probing the env.
-    raw         the model's raw text (None when not configured OR the 200 carried no
-                extractable text — the caller treats both as "no verdict").
+    raw         the model's raw text, or None when not configured OR the 200 carried
+                no extractable text — the caller treats both as "no verdict".
     parsed      parse_dimensions(raw): per-dimension verdict + evidence records ({}
                 when raw is None).
     verified    verify_evidence(parsed, before, after): {dim: 'ok'|'not_verbatim'}
@@ -513,17 +513,19 @@ class JudgeResult:
     verdict     the Python-recomputed overall 'PASS'|'FAIL', or None to SKIP (no
                 complete rep / not configured / no raw) — never a fabricated PASS.
     warnings    evidence_warnings(raw): graded dims that shipped no usable quote
-                (advisory; never gates).
+                (advisory; never gates). This IS the source of truth _report_evidence
+                consults for its missing/malformed branch — no second copy of that
+                membership test lives in the runner.
 
     Transport/auth failure is NOT a field: score() raises JudgeError and evaluate()
     lets it propagate, so a dead provider stays LOUD (caller exits nonzero) instead
     of being laundered into a quiet result — identical to the pre-façade runners.
     """
     configured: bool
-    raw: str
+    raw: str | None
     parsed: dict = field(default_factory=dict)
     verified: dict = field(default_factory=dict)
-    verdict: str = None
+    verdict: str | None = None
     warnings: list = field(default_factory=list)
 
 

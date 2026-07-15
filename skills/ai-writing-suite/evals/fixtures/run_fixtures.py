@@ -352,15 +352,17 @@ def _report_evidence(fixture, result):
     read what the judge cited), plus a [warn] line when a quote is missing,
     malformed, or well-formed-but-not-verbatim (appears nowhere in before/after —
     a fabricated quote the parser alone can't catch). Purely advisory: it never
-    changes the verdict or the exit code. Reads the parsed dims + verbatim check the
-    façade already computed on this fixture's before/after (JudgeResult).
+    changes the verdict or the exit code. Reads the parsed dims, the verbatim check,
+    and the missing/malformed dim list the façade already computed on this fixture
+    (JudgeResult.parsed/verified/warnings) — the missing/malformed test is NOT
+    re-derived here, it consults result.warnings (== evidence_warnings(raw)).
     """
     parsed = result.parsed
     verified = result.verified
     fid = fixture["id"]
     for dim, rec in parsed.items():
         ev = rec.get("evidence")
-        if rec.get("evidence_missing"):
+        if dim in result.warnings:
             why = ("malformed EVIDENCE quote (unpaired/empty)"
                    if rec.get("evidence_status") == "malformed"
                    else "verdict missing EVIDENCE quote")

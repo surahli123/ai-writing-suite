@@ -4,7 +4,15 @@ Pins the façade to the EXACT pre-refactor lifecycle the runners used to inline:
 score() -> parse_dimensions() -> verify_evidence() -> aggregate(). A JudgeResult
 must carry byte-identical parsed / verified / verdict / warnings structures to what
 the four module-level functions produce on the same raw text — that equality is the
-whole safety net for moving run_fixtures / run_draft_cases behind one call.
+whole safety net for moving run_fixtures / run_draft_cases behind one call. It
+catches drift in the CALL SEQUENCE (a dropped step, a wrong argument to aggregate,
+a stale rubric_focus) and in raw/parsed/verdict wiring.
+
+Scope note: it does NOT and CANNOT catch a before/after argument swap inside
+evaluate()'s call to verify_evidence — verify_evidence is provably symmetric in
+its two text arguments (`needle in nb or needle in na`), so swapping before/after
+is both undetectable by an equality check AND harmless by design, not a gap in
+this test.
 
 Also pins the two load-bearing invariants the review calls out:
   - the AIWS_JUDGE_RUN=1 spend gate is checked BEFORE any network touch, so a stray
