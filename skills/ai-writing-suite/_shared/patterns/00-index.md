@@ -50,6 +50,12 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 
 ## Inventory (entry counts)
 
+> **Generated block — do not edit by hand.** Projected from the catalog by
+> `aiws/catalog.py`; regenerate with `python3 -m aiws.catalog`.
+> `evals/test_catalog_projection.py` fails CI if it drifts (Q5 lockfile model,
+> `docs/decisions-2026-07-13.md`).
+
+<!-- BEGIN GENERATED: inventory (aiws/catalog.py) -->
 | File | Entries |
 | --- | --- |
 | [`lexical-tells.md`](lexical-tells.md) | 6 (L1–L6) |
@@ -62,8 +68,99 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 | [`overstepping-presumption.md`](overstepping-presumption.md) | 4 (O1–O4) |
 | [`narrative-shape.md`](narrative-shape.md) | 4 (N1–N4) |
 | **Total** | **72** |
+<!-- END GENERATED: inventory -->
 
 (Plus L1's three vocabulary tiers in `lexical-tells.md`.)
+
+## Registry (generated)
+
+> **Generated block — do not edit by hand.** Machine-readable projection of every
+> tell's id, name, severity (editorial harm), and enforcement (mechanism),
+> rendered from the per-entry metadata tables by `aiws/catalog.py`. Regenerate
+> with `python3 -m aiws.catalog`; `evals/test_catalog_projection.py` fails CI if
+> it drifts from the catalog.
+
+<!-- BEGIN GENERATED: registry (aiws/catalog.py) -->
+| ID | Name | Severity | Enforcement |
+| --- | --- | --- | --- |
+| L1 | AI vocabulary words (tiered) | medium | regex |
+| L2 | Copula avoidance | low | judge |
+| L3 | Synonym / noun-phrase cycling (elegant variation) | medium | judge |
+| L4 | False ranges | medium | judge |
+| L5 | Hyphenated-pair overuse | low | judge |
+| L6 | Hollow / "real-actual" intensifiers | low | regex |
+| S1 | Significance inflation | high | regex |
+| S2 | Symbolic gloss / meaning-telling | medium | judge |
+| S3 | Novelty inflation | high | regex |
+| S4 | Vague attribution / weasel words | high | regex |
+| S5 | Notability name-dropping / source-listing as content | high | judge |
+| S6 | Promotional / advertisement language | medium | judge |
+| S7 | Superficial -ing analyses | medium | judge |
+| S8 | Speculative gap-filling | high | judge |
+| S9 | Consultant-speak / business jargon | medium | judge |
+| S10 | Invented jargon / coined pseudo-terms | medium | advisory |
+| T1 | Rule of three | low | judge |
+| T2 | Negative parallelism / tailing negation | low | judge |
+| T3 | Formulaic challenges section | medium | regex |
+| T4 | False concession structure | medium | regex |
+| T5 | Excessive / decorative structure | medium | judge |
+| T6 | Inline-header vertical lists | low | judge |
+| T7 | Bullet lists of bare noun phrases | low | regex |
+| T8 | Numbered-list inflation | low | judge |
+| T9 | Paragraph-reshuffle immunity | medium | judge |
+| T10 | Treadmill effect (low information density) | medium | judge |
+| T11 | Fragmented headers | low | judge |
+| T12 | Diff-anchored writing | low | judge |
+| H1 | Filler phrases | medium | regex |
+| H2 | Excessive / stacked hedging | medium | regex |
+| H3 | Generic positive conclusions | medium | regex |
+| H4 | Generic future-narrative closers | medium | regex |
+| H5 | Confidence-calibration phrases | medium | regex |
+| H6 | Self-labeling significance | low | judge |
+| H7 | Signposting / announcements | medium | regex |
+| H8 | "Let's" false-collaborative openers | low | regex |
+| H9 | Vague endorsement ("worth [verb]ing") | low | judge |
+| H10 | Vague abstraction | medium | judge |
+| F1 | Em / en dashes | low | regex |
+| F2 | Bold overuse / erratic inline bolding | medium | regex |
+| F3 | Emoji / icon dressing in headers | low | judge |
+| F4 | Curly quotes & typographic signatures | low | judge |
+| F5 | Title case in headings | low | regex |
+| F6 | Markdown bleeding | medium | judge |
+| F7 | Hashtag stuffing | medium | regex |
+| F8 | Unfilled placeholders | high | regex |
+| F9 | Chatbot citation-markup leaks (fingerprint) | high | regex |
+| F10 | AI-tool URL parameters (fingerprint) | high | regex |
+| C1 | Chatbot artifacts | high | regex |
+| C2 | Collaborative-framing leaks | high | regex |
+| C3 | Sycophantic tone | high | regex |
+| C4 | Acknowledgment loops | medium | regex |
+| C5 | Cutoff disclaimers | high | regex |
+| C6 | Reasoning-chain artifacts | high | regex |
+| C7 | Infomercial engagement hooks | medium | judge |
+| C8 | Rhetorical-question openers | medium | regex |
+| C9 | Emotional flatline | medium | regex |
+| C10 | Parenthetical hedging | low | judge |
+| C11 | Register / style shift (mixed authorship) | low | advisory |
+| R1 | Sentence-length uniformity (low burstiness) | medium | regex |
+| R2 | Paragraph-length uniformity | low | judge |
+| R3 | Low vocabulary diversity (low TTR) | low | regex |
+| R4 | Low perplexity (predictable word choice) | low | judge |
+| R5 | Missing first-person / no stance | medium | judge |
+| O1 | Presumed cognition (manufactured prior) | medium | advisory |
+| O2 | Presumed-misconception strawman | medium | advisory |
+| O3 | Presumed mental image | medium | advisory |
+| O4 | Self-Q&A as judge | medium | advisory |
+| N1 | Over-explained theme (states its own moral) | medium | advisory |
+| N2 | Tidy single-track resolution (every thread closes, no residue) | medium | advisory |
+| N3 | Flat escalation (uniform stakes curve) | medium | advisory |
+| N4 | Absent ambiguity (no competing reading, no unresolved tension) | medium | advisory |
+<!-- END GENERATED: registry -->
+
+Severity ∈ {high, medium, low} is editorial harm; enforcement ∈ {regex (a
+`evals/detector/` pattern flags it), judge (LLM-judge decidable), advisory
+(judge-only, never auto-edited/CI-gated)}. Detection *confidence* is not here — it
+stays in the detector's tier weights (owner ruling Q1).
 
 ## Source legend (for `Sources` tags)
 

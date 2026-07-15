@@ -8,6 +8,10 @@ written feel.
 
 ### H1 — Filler phrases
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
+
 - **Tell:** Mechanical padding that adds words without meaning: "It is important
   to note that," "In order to," "Due to the fact that," "At this point in time,"
   "In the event that," "The system has the ability to," "In terms of," "The
@@ -19,6 +23,10 @@ written feel.
 ---
 
 ### H2 — Excessive / stacked hedging
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
 
 - **Tell:** Over-qualifying: "could potentially possibly," "it might perhaps be
   argued." And hedge-stacked predictions where a modal piles on a hedge adverb:
@@ -34,6 +42,10 @@ written feel.
 
 ### H3 — Generic positive conclusions
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
+
 - **Tell:** Vague upbeat endings: "The future looks bright," "Exciting times lie
   ahead," "continues its journey toward excellence," "a step in the right
   direction," "As we move forward," "Only time will tell."
@@ -46,6 +58,10 @@ written feel.
 
 ### H4 — Generic future-narrative closers
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
+
 - **Tell:** A closer that's grammatically a prediction but contains no testable
   content: modal (may / could / will / is poised to) + "become" + "one of the
   most [adjective]" + (narrative / story / trend / chapter / movement). "May
@@ -57,6 +73,10 @@ written feel.
 ---
 
 ### H5 — Confidence-calibration phrases
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
 
 - **Tell:** Telling the reader how to feel about a fact instead of letting it
   speak: "It's worth noting that," "Interestingly," "Surprisingly," "Notably,"
@@ -72,6 +92,10 @@ written feel.
 
 ### H6 — Self-labeling significance
 
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
+
 - **Tell:** After a list, pointing back at one item to label it
   clever/contrarian/surprising/key: "That last move is the contrarian one," "This
   is the interesting part," "Here's where it gets clever." The label does the work
@@ -83,6 +107,10 @@ written feel.
 ---
 
 ### H7 — Signposting / announcements
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
 
 - **Tell:** Announcing what the text is about to do instead of doing it: "Let's
   dive in," "Let's explore," "Here's what you need to know," "Now let's look at,"
@@ -104,6 +132,10 @@ written feel.
 
 ### H8 — "Let's" false-collaborative openers
 
+| Severity | Enforcement |
+| --- | --- |
+| low | regex |
+
 - **Tell:** "Let's + verb" used as a transition rather than a genuine invitation:
   "Let's take a look," "Let's break this down," "Let's examine." A false-
   collaborative ease-in that delays the point.
@@ -116,6 +148,10 @@ written feel.
 
 ### H9 — Vague endorsement ("worth [verb]ing")
 
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
+
 - **Tell:** A generic thumbs-up substituting for a specific reason: "worth
   reading," "worth paying attention to," "worth a look," "worth your time."
 - **Fix:** Say *why* it matters instead.
@@ -124,6 +160,10 @@ written feel.
 ---
 
 ### H10 — Vague abstraction
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
 
 - **Tell:** Abstract wording where a concrete fact belongs: "improve
   collaboration across stakeholders," "enhance strategic alignment," "deliver

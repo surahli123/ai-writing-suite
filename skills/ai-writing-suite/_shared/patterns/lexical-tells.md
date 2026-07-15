@@ -8,6 +8,10 @@ paragraph of delve + leverage + robust + tapestry is a confession.
 
 ### L1 — AI vocabulary words (tiered)
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
+
 - **Tell:** A small set of words appears 5-20x more often in post-2023 model
   output than in human prose, and tends to cluster.
 - **Fix:** Replace with the plain word. Flag by tier, not on sight, to cut
@@ -98,6 +102,10 @@ what works · `in order to` → to · `due to the fact that` → because · `ser
 
 ### L2 — Copula avoidance
 
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
+
 - **Tell:** The model dodges plain "is" / "are" / "has" with fancier verbs to
   sound sophisticated: serves as, stands as, marks, represents, boasts,
   features, offers, presents.
@@ -109,6 +117,10 @@ what works · `in order to` → to · `due to the fact that` → because · `ser
 ---
 
 ### L3 — Synonym / noun-phrase cycling (elegant variation)
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
 
 - **Tell:** Repetition-penalty training makes models rename the same thing to
   avoid repeating a word: "the protagonist… the main character… the central
@@ -126,6 +138,10 @@ what works · `in order to` → to · `due to the fact that` → because · `ser
 
 ### L4 — False ranges
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
+
 - **Tell:** "From X to Y" where X and Y are not on a real spectrum, faking
   breadth: "from the Big Bang to dark matter," "from onboarding to billing."
 - **Fix:** List the actual items, or pick the one that matters. Don't fake a
@@ -135,6 +151,10 @@ what works · `in order to` → to · `due to the fact that` → because · `ser
 ---
 
 ### L5 — Hyphenated-pair overuse
+
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
 
 - **Tell:** Two problems. (a) Density: stacking compound modifiers on one noun
   ("a high-quality, well-architected, future-proof solution"). (b) The
@@ -148,6 +168,10 @@ what works · `in order to` → to · `due to the fact that` → because · `ser
 ---
 
 ### L6 — Hollow / "real-actual" intensifiers
+
+| Severity | Enforcement |
+| --- | --- |
+| low | regex |
 
 - **Tell:** Empty intensifiers padding a claim: genuine, real, truly, quite
   frankly, to be honest. Plus the noun-modifier form where real / actual /

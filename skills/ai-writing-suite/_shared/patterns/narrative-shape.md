@@ -36,6 +36,10 @@ fake complexity. Apply the validity condition before flagging anything here.
 
 ### N1 — Over-explained theme (states its own moral)
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | advisory |
+
 - **Tell:** The piece names its own lesson instead of letting the material carry
   it: "The real lesson here is…," "This just goes to show…," "a reminder that
   impact rarely comes from the big launches." A human writer trusts the reader to
@@ -55,6 +59,10 @@ fake complexity. Apply the validity condition before flagging anything here.
 ---
 
 ### N2 — Tidy single-track resolution (every thread closes, no residue)
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | advisory |
 
 - **Tell:** Every thread the piece opened is closed by the end, every risk "turned
   out fine," and the writer "came out stronger." Real accounts leave residue — an
@@ -83,6 +91,10 @@ fake complexity. Apply the validity condition before flagging anything here.
 
 ### N3 — Flat escalation (uniform stakes curve)
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | advisory |
+
 - **Tell:** Each beat lands with the same weight; nothing is the peak. "Day one we
   found a bug. Day two we found a bug. Day three we found a bug. We fixed each and
   moved on." The events are listed at a constant altitude with no rise, no climax,
@@ -107,6 +119,10 @@ fake complexity. Apply the validity condition before flagging anything here.
 ---
 
 ### N4 — Absent ambiguity (no competing reading, no unresolved tension)
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | advisory |
 
 - **Tell:** The document admits exactly one reading and one recommended action, with
   no competing signal, no tension the writer is still holding. "The test is clear:

@@ -10,6 +10,10 @@ only count in clusters.
 
 ### F1 — Em / en dashes
 
+| Severity | Enforcement |
+| --- | --- |
+| low | regex |
+
 - **Tell:** Overuse of em dashes (—) and en dashes (–), mimicking punchy
   sales/editorial rhythm. One of the most reliable single AI formatting tells.
   Catch spaced em dashes ( — ) and double-hyphen substitutes ( -- ) too.
@@ -24,6 +28,10 @@ only count in clusters.
 
 ### F2 — Bold overuse / erratic inline bolding
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
+
 - **Tell:** Two shapes. (a) Mechanical bold on every other phrase or term. (b)
   Patternless bold mid-paragraph — the model decided some words felt important
   with no consistent rule.
@@ -37,6 +45,10 @@ only count in clusters.
 
 ### F3 — Emoji / icon dressing in headers
 
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
+
 - **Tell:** Decorative emoji on headings or bullets: "🚀 Launch Phase," "💡 Key
   Insight," "✨ Key Features." Adds template feel, not energy.
 - **Fix:** Remove. **Exception:** social posts may use one or two sparingly, at
@@ -47,6 +59,10 @@ only count in clusters.
 ---
 
 ### F4 — Curly quotes & typographic signatures
+
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
 
 - **Tell:** ChatGPT emits curly quotes (" " ' ') where the target context would
   use straight ones; consistent Oxford commas.
@@ -62,6 +78,10 @@ only count in clusters.
 
 ### F5 — Title case in headings
 
+| Severity | Enforcement |
+| --- | --- |
+| low | regex |
+
 - **Tell:** Capitalizing all main words: "Strategic Negotiations And Global
   Partnerships."
 - **Fix:** Sentence case for subheadings: "Strategic negotiations and global
@@ -72,6 +92,10 @@ only count in clusters.
 
 ### F6 — Markdown bleeding
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
+
 - **Tell:** Markdown syntax appearing where it won't render: `**bold**` in emails,
   social posts, or Word docs.
 - **Fix:** Strip the markup for the target medium.
@@ -80,6 +104,10 @@ only count in clusters.
 ---
 
 ### F7 — Hashtag stuffing
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
 
 - **Tell:** Long trailing hashtag blocks (6+ on a short post) mixing a project
   tag with broad category tags (#AI #Crypto #Web3 #Innovation #FutureTech). Near-
@@ -93,6 +121,10 @@ only count in clusters.
 
 ### F8 — Unfilled placeholders
 
+| Severity | Enforcement |
+| --- | --- |
+| high | regex |
+
 - **Tell:** Bracketed slot-fillers shipped without replacement: `[Your Name]`,
   `[INSERT SOURCE URL]`, `[Describe the specific section]`, `2025-XX-XX`,
   `<!-- Add citation if available -->`. Near-definitive evidence of pasted
@@ -104,6 +136,10 @@ only count in clusters.
 ---
 
 ### F9 — Chatbot citation-markup leaks (fingerprint)
+
+| Severity | Enforcement |
+| --- | --- |
+| high | regex |
 
 - **Tell:** Internal citation tokens that survive copy-paste from chat UIs:
   `citeturn0search0`, `contentReference[oaicite:0]{index=0}`, `oai_citation`,
@@ -117,6 +153,10 @@ only count in clusters.
 ---
 
 ### F10 — AI-tool URL parameters (fingerprint)
+
+| Severity | Enforcement |
+| --- | --- |
+| high | regex |
 
 - **Tell:** Tracking params AI tools auto-append to generated URLs:
   `utm_source=chatgpt.com`, `utm_source=copilot.com`, `utm_source=openai`,

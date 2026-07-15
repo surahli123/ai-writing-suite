@@ -9,6 +9,10 @@ immediately.
 
 ### C1 — Chatbot artifacts
 
+| Severity | Enforcement |
+| --- | --- |
+| high | regex |
+
 - **Tell:** Conversational tics from the chat UI: "I hope this helps," "Of
   course!," "Certainly!," "Feel free to reach out," "Let me know if you need
   anything else," "Here is a…," "Would you like me to…"
@@ -18,6 +22,10 @@ immediately.
 ---
 
 ### C2 — Collaborative-framing leaks
+
+| Severity | Enforcement |
+| --- | --- |
+| high | regex |
 
 - **Tell:** Instructional framing meant for the user leaking into published
   output: "In this article, we will explore," "Let me walk you through," "Here's
@@ -39,6 +47,10 @@ immediately.
 
 ### C3 — Sycophantic tone
 
+| Severity | Enforcement |
+| --- | --- |
+| high | regex |
+
 - **Tell:** Conversational rewards validating the reader: "Great question!,"
   "Excellent point!," "You're absolutely right!," "That's a really insightful
   observation."
@@ -51,6 +63,10 @@ immediately.
 
 ### C4 — Acknowledgment loops
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
+
 - **Tell:** Restating the prompt before answering: "You're asking about," "To
   answer your question," "The question of whether…," "That's a great question. The
   …" Also opening a section by summarizing the previous one.
@@ -60,6 +76,10 @@ immediately.
 ---
 
 ### C5 — Cutoff disclaimers
+
+| Severity | Enforcement |
+| --- | --- |
+| high | regex |
 
 - **Tell:** Model limitations leaking into prose: "As of my last update," "Up to
   my last training update," "While specific details are limited based on available
@@ -74,6 +94,10 @@ immediately.
 
 ### C6 — Reasoning-chain artifacts
 
+| Severity | Enforcement |
+| --- | --- |
+| high | regex |
+
 - **Tell:** Chain-of-thought scaffolding leaking into published prose: "Let me
   think step by step," "Breaking this down," "To approach this systematically,"
   "Step 1:," "First, let's consider," "Working through this logically." Plus
@@ -85,6 +109,10 @@ immediately.
 ---
 
 ### C7 — Infomercial engagement hooks
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
 
 - **Tell:** Punchy fragment-hooks teeing up a reveal: "The catch?," "The
   kicker?," "Here's the thing.," "But here's the kicker:," "The best part?,"
@@ -99,6 +127,10 @@ immediately.
 
 ### C8 — Rhetorical-question openers
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
+
 - **Tell:** Rhetorical questions used to stall before the point, dropped as
   section transitions: "But what does this mean for developers?," "So why should
   you care?," "What's next?" Also FAQ-style question headings: "What makes X
@@ -111,6 +143,10 @@ immediately.
 ---
 
 ### C9 — Emotional flatline
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
 
 - **Tell:** Claiming an emotion as a structural crutch without conveying it:
   "What surprised me most," "I was fascinated to discover," "What struck me was,"
@@ -126,6 +162,10 @@ immediately.
 
 ### C10 — Parenthetical hedging
 
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
+
 - **Tell:** Parenthetical asides that sound nuanced without committing: "(and,
   increasingly, Z)," "(or, more precisely, Y)," "(and perhaps more importantly,
   W)."
@@ -135,6 +175,10 @@ immediately.
 ---
 
 ### C11 — Register / style shift (mixed authorship)
+
+| Severity | Enforcement |
+| --- | --- |
+| low | advisory |
 
 This is the single **canonical** entry for register shift. The false-positive
 guardrail in `rhythm-stylometric.md` ("Mixed casual/formal register") points here
