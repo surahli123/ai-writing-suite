@@ -563,17 +563,15 @@ def run_judge(data, matrix=None):
                 print(f"[SKIP] {label:38} (gold={gold})  prompt[0]: {head[:52]}...")
                 continue
 
-            raw = judge.score(prompt)  # raises JudgeError on transport/auth (loud)
-            parsed = judge.parse_dimensions(raw) if raw is not None else {}
+            result = judge.evaluate(judge.JudgeRequest(
+                prompt=prompt, before=case.get("brief", ""), after=case[role],
+                rubric_focus=JUDGE_FOCUS))  # raises JudgeError on transport (loud)
+            parsed, verdict = result.parsed, result.verdict
             if parsed:
-                verified = judge.verify_evidence(parsed, case.get("brief", ""),
-                                                 case[role])
-                for dim, status in verified.items():
+                for dim, status in result.verified.items():
                     if status == "not_verbatim":
                         print(f'  [warn] {label}/{dim}: EVIDENCE not verbatim in '
                               f'brief/draft — "{parsed[dim]["evidence"]}"')
-            verdict = (judge.aggregate([judge.parse_dimension_lines(raw)], JUDGE_FOCUS)
-                       if raw is not None else None)
             record_verdict(matrix, gold, verdict)
             if verdict is None:
                 skipped += 1
