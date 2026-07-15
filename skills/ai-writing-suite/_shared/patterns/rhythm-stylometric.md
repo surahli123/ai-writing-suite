@@ -14,6 +14,10 @@ personality chasing clean prose.
 
 ### R1 — Sentence-length uniformity (low burstiness)
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
+
 - **Tell:** Detectors measure "burstiness" — sentence-length variance. Human
   writing has high burstiness; AI has low. If most sentences run 15-25 words with
   no short punches and no long flowing thoughts, it reads robotic.
@@ -31,6 +35,10 @@ personality chasing clean prose.
 
 ### R2 — Paragraph-length uniformity
 
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
+
 - **Tell:** Every paragraph 3-5 sentences and roughly the same size.
 - **Fix:** Vary deliberately. Some paragraphs one sentence. Some longer.
 - **Sources:** avoid-ai (paragraph length uniformity), anti-vibe.
@@ -38,6 +46,10 @@ personality chasing clean prose.
 ---
 
 ### R3 — Low vocabulary diversity (low TTR)
+
+| Severity | Enforcement |
+| --- | --- |
+| low | regex |
 
 - **Tell:** Type-token ratio (distinct word types / total tokens) is a classical
   stylometric signal readable by eye. Human prose at 200+ words usually lands
@@ -53,6 +65,10 @@ personality chasing clean prose.
 
 ### R4 — Low perplexity (predictable word choice)
 
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
+
 - **Tell:** Detectors also measure "perplexity" — how predictable each word is. AI
   text is low-perplexity (it picks the most statistically likely next word); human
   text is higher (more surprising choices).
@@ -64,6 +80,10 @@ personality chasing clean prose.
 ---
 
 ### R5 — Missing first-person / no stance
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
 
 - **Tell:** Relentlessly neutral where the genre expects a voice. No "I think," no
   stated preference, no reaction. The absence is itself a tell in opinion / blog /

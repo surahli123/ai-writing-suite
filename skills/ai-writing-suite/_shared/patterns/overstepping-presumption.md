@@ -17,6 +17,10 @@ flagging anything here.
 
 ### O1 — Presumed cognition (manufactured prior)
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | advisory |
+
 - **Tell:** Asserting what the reader thinks, then correcting it — where the
   presumed belief is invented, not one the reader actually holds: "You probably
   assume more data always means a better model, but…," "很多人以为 X，其实 Y." The
@@ -32,6 +36,10 @@ flagging anything here.
 
 ### O2 — Presumed-misconception strawman
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | advisory |
+
 - **Tell:** Framing a setup as a widely-held misconception that the writer alone
   sees through: "Most people get this wrong…," "Contrary to popular belief…,"
   "大家都以为 X 是错的." The "popular belief" is asserted, never evidenced, and is
@@ -44,6 +52,10 @@ flagging anything here.
 ---
 
 ### O3 — Presumed mental image
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | advisory |
 
 - **Tell:** Painting a thought into the reader's head, then correcting it: "When
   you hear X, you picture Y. In reality…," "你脑子里浮现的是 Y，其实是 Z." The
@@ -58,6 +70,10 @@ flagging anything here.
 ---
 
 ### O4 — Self-Q&A as judge
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | advisory |
 
 - **Tell:** Asking a rhetorical question on the reader's behalf and immediately
   answering it, then ruling on the reader's expected reaction: "Can you set this
