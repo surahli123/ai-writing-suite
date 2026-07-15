@@ -138,3 +138,27 @@ priority to fix in any professional or factual document.
   lever, future-proof, actionable insights, holistic approach) and the Chinese
   buzzwords (赋能 / 打通 / 闭环 / 抓手 / 链路).
 - **Sources:** anti-vibe (consultant tone + Chinese buzzwords), avoid-ai.
+
+---
+
+### S10 — Invented jargon / coined pseudo-terms
+
+- **Tell:** A domain-sounding term the model appears to have coined — it reads as
+  sophisticated but has no established meaning in the field, or is an alien-syntax
+  calque of a real term. Distinct from S9 (known consultant buzzwords) and L1
+  (known AI vocabulary): those catch *established* filler words; this catches a
+  *novel* term that sounds authoritative yet carries no agreed meaning. Reported
+  independently for English, Polish, and Mandarin.
+- **Fix:** Replace with the plain established term the field actually uses. If the
+  concept is real but genuinely lacks a standard term, define it in plain words on
+  first use. If neither is possible, flag it for removal — do not invent a
+  definition to justify the coinage.
+- **Validity condition (both must hold — advisory, judge-only):** flag only when
+  the term is BOTH (a) absent from the domain's standard usage AND (b) something
+  the writer could not define plainly if asked. A real term of art the field uses,
+  a deliberate new coinage the author defines, or a clearly intentional nonce word
+  are NOT this tell — real fields have real jargon. When you cannot check the
+  domain's usage, keep this advisory: note it, do not force an edit. No detector
+  regex backs this entry; it is a quality-first, judge-only signal.
+- **Sources:** Shreya Shankar thread (@sh_reya), cross-confirmed for English,
+  Polish, and Mandarin by three independent repliers (research 2026-07-14).

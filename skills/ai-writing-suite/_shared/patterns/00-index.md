@@ -39,7 +39,7 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 | File | Category | What it covers |
 | --- | --- | --- |
 | [`lexical-tells.md`](lexical-tells.md) | Word-level tells | AI vocabulary, copula avoidance, synonym cycling, false ranges, hyphen-pair overuse |
-| [`significance-attribution.md`](significance-attribution.md) | Inflation & sourcing | Significance/novelty inflation, vague attribution, promotional language, name-dropping, superficial -ing, speculative gap-filling |
+| [`significance-attribution.md`](significance-attribution.md) | Inflation & sourcing | Significance/novelty inflation, vague attribution, promotional language, name-dropping, superficial -ing, speculative gap-filling, invented jargon / coined pseudo-terms |
 | [`structural-tells.md`](structural-tells.md) | Structure & shape | Rule of three, negative parallelism, formulaic challenges, over-structure, inline-header lists, reshuffle immunity, treadmill effect, false concession |
 | [`hedging-filler.md`](hedging-filler.md) | Hedging & filler | Filler phrases, excessive/stacked hedging, generic conclusions, future-narrative closers, confidence-calibration phrases, signposting, "let's" openers |
 | [`punctuation-formatting.md`](punctuation-formatting.md) | Punctuation & formatting | Em/en dashes, bold overuse, emoji headers, curly quotes, title case, hashtag stuffing, placeholders, citation-markup leaks, UTM params |
@@ -53,7 +53,7 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 | File | Entries |
 | --- | --- |
 | [`lexical-tells.md`](lexical-tells.md) | 6 (L1–L6) |
-| [`significance-attribution.md`](significance-attribution.md) | 9 (S1–S9) |
+| [`significance-attribution.md`](significance-attribution.md) | 10 (S1–S10) |
 | [`structural-tells.md`](structural-tells.md) | 12 (T1–T12) |
 | [`hedging-filler.md`](hedging-filler.md) | 10 (H1–H10) |
 | [`punctuation-formatting.md`](punctuation-formatting.md) | 10 (F1–F10) |
@@ -61,7 +61,7 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 | [`rhythm-stylometric.md`](rhythm-stylometric.md) | 5 (R1–R5) |
 | [`overstepping-presumption.md`](overstepping-presumption.md) | 4 (O1–O4) |
 | [`narrative-shape.md`](narrative-shape.md) | 4 (N1–N4) |
-| **Total** | **71** |
+| **Total** | **72** |
 
 (Plus L1's three vocabulary tiers in `lexical-tells.md`.)
 
