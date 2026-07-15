@@ -31,6 +31,12 @@ matter how good the prose reads. This layer is never traded off against style.
 - The prose sounds written, not assembled.
 - Necessary nuance is carried in the sentence, not bolted on as a hedge.
 - The result is shorter or sharper, not just different.
+- **Deletion-first density:** for each sentence, would deleting it lose a fact,
+  reason, condition, consequence, exception, or decision? If nothing is lost, cut
+  it — have you deleted every sentence that earns nothing? (Density is
+  genre-sensitive and never the sole goal: a reference doc or a careful caveat may
+  *need* the extra sentence. This is a question you answer per sentence, never a
+  hard length target. Adapted from Hamel Husain's writing recipe.)
 
 **L3 — Genre + voice fit.** Run the cross-checks in the next section.
 
