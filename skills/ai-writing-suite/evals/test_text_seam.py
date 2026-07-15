@@ -138,5 +138,24 @@ class SegmentContract(unittest.TestCase):
         self.assertEqual(partial.support_status, "partial script")
 
 
+class StylometrySyncPin(unittest.TestCase):
+    """stylometry.py stays self-contained for portability (it ships inside
+    _shared/ to end users, stdlib-only, zero intra-repo imports), so it keeps
+    its own copy of the sentence splitter instead of importing the seam.
+    This pin makes silent drift impossible: if either copy changes, the other
+    must change with it (or this test goes red and forces the conversation)."""
+
+    def test_sent_split_pattern_identical_to_stylometry(self):
+        import os, sys
+        shared = os.path.join(os.path.dirname(__file__), "..", "_shared")
+        sys.path.insert(0, os.path.abspath(shared))
+        try:
+            import stylometry
+        finally:
+            sys.path.pop(0)
+        from aiws.text import SENT_SPLIT
+        self.assertEqual(SENT_SPLIT.pattern, stylometry._SENT_SPLIT.pattern)
+
+
 if __name__ == "__main__":
     unittest.main()

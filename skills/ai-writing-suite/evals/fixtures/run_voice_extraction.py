@@ -45,6 +45,17 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 CORPUS_PATH = os.path.join(HERE, "voice_corpus.json")
 
+# evals/fixtures/ -> evals/ -> <suite-root>, so `import aiws` resolves to
+# the sibling aiws/ package (same convention as evals/audit_report/check_report.py).
+SUITE_ROOT = os.path.dirname(os.path.dirname(HERE))
+if SUITE_ROOT not in sys.path:
+    sys.path.insert(0, SUITE_ROOT)
+
+from aiws.text import (  # noqa: E402  (path set above)
+    VOICE_TOKEN as _TOKEN,
+    CLAUSE_SPLIT as _CLAUSE_SPLIT,
+)
+
 # The 10 headers comms-polish reads (same contract test_voice_contract.py guards on
 # the template). Every artifact must satisfy it — which is exactly why passing it
 # proves nothing about voice quality.
@@ -102,8 +113,6 @@ _NEGATIONS = {
 }
 # Clause boundaries: sentence stops, semicolons, and dash separators. NOT the hyphen
 # inside "em-dash" — only a SPACED hyphen or a real en/em dash separates clauses.
-_CLAUSE_SPLIT = re.compile(r"[.;]|—|–|\s-\s")
-_TOKEN = re.compile(r"[a-z0-9'’]+")
 
 
 # --------------------------------------------------------------------------
