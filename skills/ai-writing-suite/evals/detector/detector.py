@@ -23,26 +23,39 @@ is v2 (see voice-onboard + scenario-presets, which scope bilingual to v2).
 """
 
 import math
+import os
 import re
+import sys
+
+# evals/detector/ -> evals/ -> <suite-root>, so `import aiws` resolves to
+# the sibling aiws/ package (same convention as evals/audit_report/check_report.py).
+HERE = os.path.dirname(os.path.abspath(__file__))
+SUITE_ROOT = os.path.dirname(os.path.dirname(HERE))
+if SUITE_ROOT not in sys.path:
+    sys.path.insert(0, SUITE_ROOT)
+
+from aiws.text import (  # noqa: E402  (path set above)
+    WORD_RE as _WORD_RE,
+    TOKEN_RE as _TOKEN_RE,
+    tokenize,
+    count_words,
+    split_paragraphs,
+)
 
 from . import patterns as P
 
 MAX_WORDS = 10000  # bail above this rather than regex-scanning a pasted novel
 
-_WORD_RE = re.compile(r"\S+")
-_TOKEN_RE = re.compile(r"[\w'-]+")
-
-
 def _tokenize(text):
-    return _TOKEN_RE.findall(text.lower())
+    return tokenize(text)
 
 
 def _count_words(text):
-    return len(_WORD_RE.findall(text))
+    return count_words(text)
 
 
 def _paragraphs(text):
-    return [p for p in re.split(r"\n\s*\n", text) if p.strip()]
+    return split_paragraphs(text)
 
 
 def _sentences(text):
