@@ -96,15 +96,18 @@ Voice has three sources, in priority order:
      — normalize the run's genre preset and each filename slug the same way
      (lowercase, spaces→hyphens) and match by string equality, no fuzzy/prefix/alias
      (`formal-report` ≠ `report`); (3) **single-profile fallback** — exactly one
-     file exists → use it; (4) **no match** → make the Q8 offer once, then degrade
-     (below): offer to create the named/needed genre (shares the one offer budget),
-     and if profiles exist but none match, the degraded note lists which genres DO
-     exist so the user can redirect.
+     file exists → use it; (4) **no match** → degrade (below). IF the user explicitly
+     asked for their own voice, make the Q8 offer once (offer to create the
+     named/needed genre; shares the one offer budget) then degrade; OTHERWISE
+     degrade silently — inferred voice with no question asked. Either way, if
+     profiles exist but none match, the degraded note lists which genres DO exist
+     so the user can redirect.
    - **Read** the full body of the one selected file only.
    - **Directory absent or empty** → fall back to the legacy single file
      `_shared/voice-profile.md`, still gated by the `> SAMPLE PROFILE.` banner: a
      file carrying that banner counts as **no profile** (the shipped sample) →
-     degrade + Q8 offer. A profile is valid only with the banner absent.
+     degrade per rule 4 (Q8 offer only on an explicit my-voice request). A profile
+     is valid only with the banner absent.
    It is loose coupling: comms-polish does not create or own these files — it reads
    whatever fields are present in the selected profile and biases edits toward them.
    The profile's header set is the **canonical ordered list at the top of
@@ -127,10 +130,12 @@ still wins over a profile preference. Any "no profile found" mention here is
 polished `rewrite` text. (The one exception to text-only output is the
 degraded-voice note in the explicit my-voice case below.)
 
-**Voice-onboard offer budget: at most ONE offer per session, total.** The two
-triggers below share a single budget — make the offer once, then do not re-offer
-this session, whichever trigger fires. An offer is always offer-only: never
-auto-run `voice-onboard`, never block the deliverable on it.
+**Voice-onboard offer budget: at most ONE offer per session, SUITE-WIDE.** The
+budget is shared across the whole suite, not just this skill — an offer already
+made by `comms-polish`, `comms-draft`, or the router spends it. Check the
+conversation for a prior voice-onboard offer before making one; the two triggers
+below also share this single budget. An offer is always offer-only: never auto-run
+`voice-onboard`, never block the deliverable on it.
 
 - **Pre-run — "in my voice" with no matching profile (Q8).** When the user
   explicitly asks for *their own* voice ("in my voice", "match how I write") and the
@@ -315,9 +320,9 @@ it. In short:
   and apply any entry whose `status: active` and whose scope is `comms-polish` or
   `all`. Degrade gracefully if the file is absent.
 - **On end:** if a repeatable polish correction surfaced this session, **propose**
-  one candidate rule (rule + session-grounded rationale + scope) and **wait for
-  explicit approval** before appending it to `learned-rules.md`. Propose nothing
-  if nothing repeatable surfaced.
+  one candidate rule (rule + session-grounded rationale + scope `comms-polish`) and
+  **wait for explicit approval** before appending it to `learned-rules.md`. Propose
+  nothing if nothing repeatable surfaced.
 - **Never** auto-edit this SKILL.md or the pattern catalog — approved rules live
   only in `learned-rules.md` (append-only). Each rule is eval-measured in Layer 3
   before it is trusted.
@@ -325,11 +330,18 @@ it. In short:
 ## Output
 
 - For `rewrite`: return the polished text only unless the user asks for notes.
-  **Narrow sanctioned exception (Q8):** when the user asked for *their own* voice
-  but no profile was found and you degraded to inferred voice, append a single
-  one-line note saying so — e.g. `Note: no voice profile found — inferred voice
-  used; run voice-onboard to capture yours.` That one degraded-voice line is the
-  only voice-related addition allowed to `rewrite` output.
+  Two narrow additions are sanctioned, both appended *after* the polished text,
+  never woven into it:
+  - **Degraded-voice line (Q8).** When the user asked for *their own* voice but no
+    profile was found and you degraded to inferred voice, append a single one-line
+    note — e.g. `Note: no voice profile found — inferred voice used; run
+    voice-onboard to capture yours.` This is the only voice-related addition allowed.
+  - **`Notes:` block for evidence flags (finding 9).** When step 6 preserved an
+    abstraction for lack of a source, or step 10 found a claim still needing
+    evidence, append an optional `Notes:` block listing only those
+    missing-evidence / unsupported-claim flags — nothing else. Omit the block when
+    there are none. (Conversational voice-onboard offers stay outside the output
+    block entirely, per Voice Matching — do not fold them in here.)
 - For `detect` or `review`: follow the **Audit Report Contract** below.
 - For `edit`: summarize changed files, what improved, verification, and any preserved uncertainty.
 
