@@ -105,3 +105,31 @@ confession.
 >
 > Sources for this section: aboudjem (detection guidance), avoid-ai (what this
 > skill is and isn't).
+
+## False-positive protection gate (run before acting on ANY flagged tell)
+
+Before you *edit* on the strength of a flagged tell — from any catalog entry, not
+just the rhythm ones above — run this 5-question gate. **Any "yes" makes the flag
+advisory only: note it if useful, never edit on it.** This operationalizes the
+suite's "provenance-only signals stay advisory" ruling and the non-native-writer
+bias evidence above; it is a brake on *acting*, not a new tell.
+
+1. **In a quote, citation, or code?** The snippet sits inside quoted text, a
+   citation, a code block, a command, or a file path → never edit it.
+2. **An official term of art?** It is the field's required or standard term (a
+   spec keyword, a legal/medical/financial term, an API name) → keep it verbatim.
+3. **In the author's voice profile?** The construction appears in the loaded voice
+   profile's samples or fields → it is *their* voice, not a tell.
+4. **Genre-normal here?** The scenario preset for this genre lists it under *leave
+   alone*, or it is native to the genre → not a tell in this context.
+5. **A second-language author's construction?** It reads as a non-native or
+   dialect construction rather than an AI tell → detectors false-positive 60%+ on
+   non-native English writers (see the note above); do not edit on this alone.
+
+None of the five is a standalone verdict; together they stop a legitimate
+construction from being edited as though it were a tell. Advisory throughout —
+this gate withholds edits, it never mandates one.
+
+> Source for this gate: jpcaparas/skills better-writing "False-positive protection
+> checklist" (citing Liang et al. on detector bias); adapted to the suite's
+> advisory-only stance (research 2026-07-14).
