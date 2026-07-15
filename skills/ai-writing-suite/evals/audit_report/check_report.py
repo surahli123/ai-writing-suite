@@ -27,19 +27,23 @@ Stdlib only. No network, no key. Importable and runnable
 
 import os
 import re
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-# evals/audit_report/ -> evals/ -> <suite-root>/_shared/patterns
+# evals/audit_report/ -> evals/ -> <suite-root>, so `import aiws` resolves to
+# the sibling aiws/ package (same convention as evals/kb_lint.py, smoke_test.py).
 SUITE_ROOT = os.path.dirname(os.path.dirname(HERE))
-PATTERNS_DIR = os.path.join(SUITE_ROOT, "_shared", "patterns")
+if SUITE_ROOT not in sys.path:
+    sys.path.insert(0, SUITE_ROOT)
+
+# The catalog registry is parsed in ONE place — aiws.catalog. This module's own
+# `_CATALOG_HEADER`/`load_catalog_ids` were folded into it (architecture review
+# 2026-07-13, item 2); re-exported here so importers of check_report still work.
+from aiws.catalog import load_catalog_ids  # noqa: E402  (path set above)
 
 TIERS = ("Critical", "Moderate", "Minor")
 FIELD_ORDER = ("Quote", "Tell", "Why", "Fix")
 
-# `### S1 — Significance inflation` -> id "S1". The em-dash separator matches the
-# catalog's own header shape (00-index.md documents `### <id> — <name>`).
-_CATALOG_HEADER = re.compile(r"^###\s+([A-Za-z]+\d+)\s+[—-]\s+(.+)$")
-_H3 = re.compile(r"^###\s+(.*)$")
 # One finding's required field line: `**Quote:** ...`, `**Tell:** ...`, etc.
 # Only the four contract fields are captured — any other bold line (extra
 # commentary) is invisible to this regex and doesn't perturb the ordering check.
@@ -82,47 +86,6 @@ def _has_shown_replacement(value):
     code span — not merely a prose description of what to do."""
     v = value.strip()
     return bool(_FENCE.search(v)) or _contains_quote_pair(v)
-
-
-def load_catalog_ids(patterns_dir=PATTERNS_DIR):
-    """Return {id: source_filename} for every tell declared in
-    _shared/patterns/*.md.
-
-    Raises ValueError if:
-      - any H3 heading in a catalog file (other than 00-index.md, which
-        documents the `### <id> — <name>` schema rather than instantiating it)
-        fails that schema — a malformed pattern heading is a broken catalog
-        entry, not a silently-skipped one;
-      - a tell id is declared more than once, anywhere in the catalog.
-
-    This makes catalog drift LOUD: a bad heading edit or a duplicate id breaks
-    load_catalog_ids itself instead of silently shrinking a `set()` behind a
-    low floor assert.
-    """
-    ids = {}
-    for name in sorted(os.listdir(patterns_dir)):
-        if not name.endswith(".md"):
-            continue
-        path = os.path.join(patterns_dir, name)
-        with open(path, encoding="utf-8") as fh:
-            for lineno, raw in enumerate(fh, 1):
-                line = raw.rstrip("\n")
-                if not _H3.match(line):
-                    continue
-                if name == "00-index.md":
-                    continue  # documents the schema; not itself a catalog entry
-                m = _CATALOG_HEADER.match(line)
-                if not m:
-                    raise ValueError(
-                        f"{name}:{lineno}: H3 heading does not match the "
-                        f"'### <id> — <name>' catalog schema: {line!r}")
-                tid = m.group(1)
-                if tid in ids:
-                    raise ValueError(
-                        f"{name}:{lineno}: duplicate tell id {tid!r} "
-                        f"(already declared in {ids[tid]!r})")
-                ids[tid] = name
-    return ids
 
 
 def extract_fenced_report(text):
