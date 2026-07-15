@@ -1,0 +1,142 @@
+"""Parity and contract tests for the item-3 text-analysis seam.
+
+The parity oracles below locally recompile the original consumer regexes.  They
+must not import those patterns from ``aiws.text``: a seam test that compares a
+primitive with itself would pass after a behavior-changing edit.
+"""
+
+import json
+import os
+import re
+import sys
+import unittest
+
+
+# evals/ -> <suite-root>, so ``import aiws`` resolves to the sibling package.
+_SUITE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _SUITE_ROOT not in sys.path:
+    sys.path.insert(0, _SUITE_ROOT)
+
+from aiws.text import (  # noqa: E402  (path set above)
+    CLAUSE_SPLIT,
+    SENT_SPLIT,
+    TOKEN_RE,
+    VOICE_TOKEN,
+    WORD_RE,
+    count_words,
+    segment,
+    split_paragraphs,
+    split_sentences,
+    tokenize,
+)
+
+
+FIXTURES = os.path.join(_SUITE_ROOT, "evals", "fixtures", "fixtures.json")
+CJK_SAMPLE = "这是一个中文测试。它没有用空格分词。"
+
+# Original detector.py patterns and splitters.
+ORIGINAL_WORD_RE = re.compile(r"\S+")
+ORIGINAL_TOKEN_RE = re.compile(r"[\w'-]+")
+
+# Original run_voice_extraction.py patterns.
+ORIGINAL_VOICE_TOKEN = re.compile(r"[a-z0-9'’]+")
+ORIGINAL_CLAUSE_SPLIT = re.compile(r"[.;]|—|–|\s-\s")
+
+# Original _shared/stylometry.py sentence splitter.
+ORIGINAL_SENT_SPLIT = re.compile(r"[.!?]+(?:\s+|$)")
+
+
+def _original_tokenize(text):
+    return ORIGINAL_TOKEN_RE.findall(text.lower())
+
+
+def _original_count_words(text):
+    return len(ORIGINAL_WORD_RE.findall(text))
+
+
+def _original_split_paragraphs(text):
+    return [p for p in re.split(r"\n\s*\n", text) if p.strip()]
+
+
+def _original_split_sentences(text):
+    return [s for s in re.split(r"[.!?]+", text) if len(s.strip()) > 5]
+
+
+class TextPrimitiveParity(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        with open(FIXTURES, encoding="utf-8") as fh:
+            fixture_data = json.load(fh)["fixtures"]
+        # Four repo fixtures provide eight before/after samples across tweet and
+        # LinkedIn prose; the explicit CJK case exercises Unicode behavior too.
+        cls.corpus = [
+            text
+            for fixture in fixture_data[:4]
+            for text in (fixture["before"], fixture["after"])
+        ] + [CJK_SAMPLE]
+
+    def test_detector_primitives_match_originals(self):
+        for text in self.corpus:
+            with self.subTest(text=text[:50]):
+                self.assertEqual(WORD_RE.findall(text),
+                                 ORIGINAL_WORD_RE.findall(text))
+                self.assertEqual(TOKEN_RE.findall(text),
+                                 ORIGINAL_TOKEN_RE.findall(text))
+                self.assertEqual(tokenize(text), _original_tokenize(text))
+                self.assertEqual(count_words(text),
+                                 _original_count_words(text))
+                self.assertEqual(split_paragraphs(text),
+                                 _original_split_paragraphs(text))
+                self.assertEqual(split_sentences(text),
+                                 _original_split_sentences(text))
+
+    def test_voice_extraction_primitives_match_originals(self):
+        for text in self.corpus:
+            with self.subTest(text=text[:50]):
+                self.assertEqual(VOICE_TOKEN.findall(text),
+                                 ORIGINAL_VOICE_TOKEN.findall(text))
+                self.assertEqual(CLAUSE_SPLIT.split(text),
+                                 ORIGINAL_CLAUSE_SPLIT.split(text))
+
+    def test_stylometry_sentence_splitter_matches_original(self):
+        for text in self.corpus:
+            with self.subTest(text=text[:50]):
+                self.assertEqual(SENT_SPLIT.split(text),
+                                 ORIGINAL_SENT_SPLIT.split(text))
+
+
+class SegmentContract(unittest.TestCase):
+    def test_segment_uses_detector_counts(self):
+        text = ("One short line. Another longer line!\n\n"
+                "Third paragraph here?")
+        document = segment(text)
+
+        self.assertEqual(document.script_class, "Latin")
+        self.assertEqual(document.support_status, "supported")
+        self.assertEqual(document.tokens, _original_tokenize(text))
+        self.assertEqual(document.words, 9)
+        self.assertEqual(len(document.sentences), 3)
+        self.assertEqual(len(document.paragraphs), 2)
+
+    def test_cjk_dominant_text_is_explicitly_unsupported(self):
+        document = segment(CJK_SAMPLE)
+
+        self.assertEqual(document.script_class, "CJK")
+        self.assertEqual(document.support_status, "unsupported script")
+        self.assertEqual(document.tokens, [])
+        self.assertEqual(document.sentences, [])
+        self.assertEqual(document.words, 0)
+        self.assertEqual(document.paragraphs, [])
+
+    def test_cjk_refusal_boundary_matches_stylometry(self):
+        # One CJK letter among five alphabetic characters is exactly 20% and
+        # must refuse; one among six remains the explicit partial-script path.
+        self.assertEqual(segment("界abcd").support_status,
+                         "unsupported script")
+        partial = segment("界abcde")
+        self.assertEqual(partial.script_class, "mixed Latin/CJK")
+        self.assertEqual(partial.support_status, "partial script")
+
+
+if __name__ == "__main__":
+    unittest.main()
