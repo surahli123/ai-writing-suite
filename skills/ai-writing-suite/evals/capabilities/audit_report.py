@@ -11,7 +11,7 @@ SPEC = {
     "name": "audit-report output contract",
     "kind": "batch",
     "needs_model": False,
-    "depends_on": [],
+    "depends_on": ["unit_tests"],
 }
 
 

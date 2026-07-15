@@ -10,7 +10,7 @@ SPEC = {
     "name": "voice-onboard extraction",
     "kind": "batch",
     "needs_model": False,
-    "depends_on": [],
+    "depends_on": ["unit_tests"],
 }
 
 

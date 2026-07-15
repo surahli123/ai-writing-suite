@@ -68,7 +68,16 @@ def discover_capabilities() -> List[Capability]:
         spec = getattr(module, "SPEC", None)
         run_fn = getattr(module, "run", None)
         if spec is None or run_fn is None:
-            continue
+            # capabilities/ holds only descriptors + __init__.py by convention (see
+            # package docstring); a module missing SPEC/run here is a defect, not
+            # an optional file to skip past. Fail loudly so a broken descriptor
+            # can never silently vanish from the run the way ordinal renumbering
+            # used to drop steps.
+            raise RuntimeError(
+                f"capability module {caps_pkg_name}.{mod_info.name!r} is missing "
+                f"SPEC and/or run() — every module under capabilities/ must be a "
+                f"valid descriptor (see capabilities/__init__.py)"
+            )
         found.append(
             Capability(
                 id=spec["id"],
@@ -83,7 +92,14 @@ def discover_capabilities() -> List[Capability]:
 
 
 def order_capabilities(caps: List[Capability]) -> List[Capability]:
-    """Stable topological sort by depends_on; ties broken by id."""
+    """Stable topological sort by depends_on; ties broken by id.
+
+    F3 (2026-07-15 review round): kept the cycle guard as-is — six real SPECs now
+    carry depends_on=["unit_tests"], so `visit`'s traversal/seen-tracking is live
+    code exercised on every run, not unused machinery; the 2-line cycle check
+    riding on that same path is cheap insurance against a future typo'd
+    self/mutual dependency, not standalone gold-plating.
+    """
     by_id = {c.id: c for c in caps}
     ordered: List[Capability] = []
     placed = set()
