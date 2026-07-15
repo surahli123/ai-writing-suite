@@ -5,6 +5,7 @@ must not import those patterns from ``aiws.text``: a seam test that compares a
 primitive with itself would pass after a behavior-changing edit.
 """
 
+import importlib
 import json
 import os
 import re
@@ -104,6 +105,21 @@ class TextPrimitiveParity(unittest.TestCase):
                 self.assertEqual(SENT_SPLIT.split(text),
                                  ORIGINAL_SENT_SPLIT.split(text))
 
+    def test_compiled_primitives_identical_to_originals(self):
+        primitives = (
+            ("WORD_RE", WORD_RE, ORIGINAL_WORD_RE),
+            ("TOKEN_RE", TOKEN_RE, ORIGINAL_TOKEN_RE),
+            ("VOICE_TOKEN", VOICE_TOKEN, ORIGINAL_VOICE_TOKEN),
+            ("CLAUSE_SPLIT", CLAUSE_SPLIT, ORIGINAL_CLAUSE_SPLIT),
+            ("SENT_SPLIT", SENT_SPLIT, ORIGINAL_SENT_SPLIT),
+        )
+        for name, compiled, original in primitives:
+            with self.subTest(primitive=name):
+                self.assertEqual(
+                    (compiled.pattern, compiled.flags),
+                    (original.pattern, original.flags),
+                )
+
 
 class SegmentContract(unittest.TestCase):
     def test_segment_uses_detector_counts(self):
@@ -145,7 +161,7 @@ class StylometrySyncPin(unittest.TestCase):
     This pin makes silent drift impossible: if either copy changes, the other
     must change with it (or this test goes red and forces the conversation)."""
 
-    def test_sent_split_pattern_identical_to_stylometry(self):
+    def test_sent_split_pattern_and_flags_identical_to_stylometry(self):
         import os, sys
         shared = os.path.join(os.path.dirname(__file__), "..", "_shared")
         sys.path.insert(0, os.path.abspath(shared))
@@ -154,7 +170,33 @@ class StylometrySyncPin(unittest.TestCase):
         finally:
             sys.path.pop(0)
         from aiws.text import SENT_SPLIT
-        self.assertEqual(SENT_SPLIT.pattern, stylometry._SENT_SPLIT.pattern)
+        self.assertEqual(
+            (SENT_SPLIT.pattern, SENT_SPLIT.flags),
+            (stylometry._SENT_SPLIT.pattern, stylometry._SENT_SPLIT.flags),
+        )
+
+
+class DetectorImportSmoke(unittest.TestCase):
+    def test_run_all_supported_import_paths(self):
+        evals_root = os.path.join(_SUITE_ROOT, "evals")
+        added_evals_root = evals_root not in sys.path
+        if added_evals_root:
+            # run_all.sh changes into evals/, which makes this import spelling
+            # available through the working-directory entry on sys.path.
+            sys.path.insert(0, evals_root)
+        try:
+            direct = importlib.import_module("detector.detector")
+        finally:
+            if added_evals_root:
+                sys.path.pop(0)
+
+        # evals/ has no __init__.py, but it is a supported implicit namespace
+        # package because _SUITE_ROOT is on sys.path.
+        packaged = importlib.import_module("evals.detector.detector")
+
+        self.assertTrue(callable(direct.analyze))
+        self.assertTrue(callable(packaged.analyze))
+        self.assertEqual(direct.__file__, packaged.__file__)
 
 
 if __name__ == "__main__":
