@@ -218,3 +218,35 @@ Notable ideas:
 Owner-gated question surfaced by this research: the 'docs consumed by AI agents, not humans'
 pushback (Orosz thread, ~1/3 of engaged replies) — whether this suite wants an agent-audience
 scenario preset with rhythm/voice de-weighted. Flagged as a scope decision, not built.
+
+## Addendum (same day): Hamel Husain thread
+
+### https://x.com/HamelHusain/status/2077057604245999972
+
+Post (2026-07-14, 77 likes / 15 replies at read time): AI slop on the timeline is "pouring
+pollutants into a river" — a selfish act that transfers cognitive load to readers via low
+information density, unnecessary poetry/rhythm/negative contrasts/fluff, and AI-mediated
+style that hides who the author is. All three named tells are already in our catalog
+(hedging-filler; structural-tells theatrics; the "not X but Y" negative-contrast entry).
+
+**Sentiment** (15 genuine replies read; ads/timeline injections excluded): ~77% agree /
+~23% substantive pushback (3 of 13 substantive replies).
+
+Agree themes: slop = empathy failure / editing-burden transfer onto the reader (Avi Hacker,
+McHoy); it works anyway — viral slop wins engagement, devrel pressure is real and
+conflicted (Nakul Arora, Rachel Nabors); satire agreement ("bots liking bot content" —
+LeverCRO; "You're absolutely right!" as AI-tell meta-joke — heyneighbor).
+
+Pushback themes: information density is not the purpose of good writing (samzliu); "poetry
+is always necessary" (Corey Quinn); consistency challenge — does the same standard apply to
+AI code/art? (prathyvsh).
+
+**Technique extracted — Hamel's own de-slop recipe** (reply to @HanchungLee): 1. delete at
+least half; 2. proofread repeatedly — every sentence must be needed, transitions/devices
+must earn their place; 3. delete more. "Deleting is the main way to make human writing
+better too."
+
+**New adaptation candidate (B-tier):** deletion-first / information-density question in
+final-pass-checklist.md (effort S). Guardrail baked in from the pushback: density is
+genre-sensitive and not the sole goal of good prose (samzliu) — a density check stays a
+question, never a hard length target.
