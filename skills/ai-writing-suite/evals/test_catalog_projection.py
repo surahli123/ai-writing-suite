@@ -65,5 +65,43 @@ class CatalogProjectionFreshness(unittest.TestCase):
         self.assertEqual(unrated, [], f"entries missing metadata: {unrated}")
 
 
+class MetadataValidation(unittest.TestCase):
+    """The metadata table's Severity/Enforcement values are closed vocabularies
+    (VALID_SEVERITY / VALID_ENFORCEMENT). A typo must break the loader loudly —
+    the same way a malformed heading or duplicate id does — not pass through
+    silently into the projection as a bogus rating."""
+
+    def test_unknown_severity_raises(self):
+        text = ("### S1 — Significance inflation\n"
+                "| Severity | Enforcement |\n"
+                "| --- | --- |\n"
+                "| bogussev | regex |\n")
+        with self.assertRaises(ValueError) as ctx:
+            catalog._parse_entries("fake.md", text)
+        self.assertIn("unknown severity", str(ctx.exception))
+        self.assertIn("bogussev", str(ctx.exception))
+
+    def test_unknown_enforcement_raises(self):
+        text = ("### S1 — Significance inflation\n"
+                "| Severity | Enforcement |\n"
+                "| --- | --- |\n"
+                "| high | nonsense |\n")
+        with self.assertRaises(ValueError) as ctx:
+            catalog._parse_entries("fake.md", text)
+        self.assertIn("unknown enforcement", str(ctx.exception))
+        self.assertIn("nonsense", str(ctx.exception))
+
+    def test_valid_values_pass(self):
+        for sev in sorted(catalog.VALID_SEVERITY):
+            for enf in sorted(catalog.VALID_ENFORCEMENT):
+                text = (f"### S1 — Significance inflation\n"
+                        f"| Severity | Enforcement |\n"
+                        f"| --- | --- |\n"
+                        f"| {sev} | {enf} |\n")
+                entries = catalog._parse_entries("fake.md", text)
+                self.assertEqual((entries[0].severity, entries[0].enforcement),
+                                 (sev, enf))
+
+
 if __name__ == "__main__":
     unittest.main()

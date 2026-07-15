@@ -62,6 +62,12 @@ _META_ROW = re.compile(r"^\|\s*([\w-]+)\s*\|\s*([\w-]+)\s*\|\s*$")
 
 UNRATED = "unrated"
 
+# Q1: severity = editorial harm, enforcement = mechanism. Closed vocabularies —
+# an entry's metadata table value must be one of these or the loader raises
+# (see _parse_entries) rather than silently accepting a typo like "hgih".
+VALID_SEVERITY = {"high", "medium", "low", UNRATED}
+VALID_ENFORCEMENT = {"regex", "judge", "advisory", UNRATED}
+
 # The L1 replace-on-sight table header (lexical-tells.md). The table is parsed
 # into {word: swap} and pinned against detector `TIER1` by test_catalog_sync.
 _REPLACE_HEADER = "| AI word | Plain swap |"
@@ -152,6 +158,11 @@ def _parse_entries(name, text):
     span; absent -> both fields UNRATED. Scoping to the entry's own span keeps
     an entry's table from being read as a neighbour's (and keeps the L1
     replace-on-sight table, which is NOT a metadata table, invisible here).
+
+    Raises ValueError if a metadata value falls outside VALID_SEVERITY /
+    VALID_ENFORCEMENT — a typo (e.g. 'hgih') must break the loader loudly, the
+    same way a malformed heading or duplicate id does, not silently pass
+    through into the projection as a bogus rating.
     """
     lines = text.splitlines()
     heads = [(i, m) for i, ln in enumerate(lines)
@@ -159,6 +170,7 @@ def _parse_entries(name, text):
     entries = []
     for idx, (start, m) in enumerate(heads):
         end = heads[idx + 1][0] if idx + 1 < len(heads) else len(lines)
+        tid = m.group(1)
         severity, enforcement = UNRATED, UNRATED
         j = start + 1
         while j < end:
@@ -168,9 +180,17 @@ def _parse_entries(name, text):
                 rm = _META_ROW.match(row)
                 if rm:
                     severity, enforcement = rm.group(1).lower(), rm.group(2).lower()
+                    if severity not in VALID_SEVERITY:
+                        raise ValueError(
+                            f"{tid}: unknown severity {severity!r} "
+                            f"(want one of {sorted(VALID_SEVERITY)})")
+                    if enforcement not in VALID_ENFORCEMENT:
+                        raise ValueError(
+                            f"{tid}: unknown enforcement {enforcement!r} "
+                            f"(want one of {sorted(VALID_ENFORCEMENT)})")
                 break
             j += 1
-        entries.append(CatalogEntry(m.group(1), m.group(2).strip(),
+        entries.append(CatalogEntry(tid, m.group(2).strip(),
                                     severity, enforcement, name))
     return entries
 
@@ -236,12 +256,22 @@ REGISTRY_END = "<!-- END GENERATED: registry -->"
 _EN_DASH = "–"  # – : matches the existing "L1–L6" ranges
 
 
+def _file_order(patterns_dir):
+    """FILE_ORDER, then any catalog file not in it (e.g. a fork-added pattern
+    file) appended in directory-listing order. This is the SAME file set/order
+    load_catalog() and render_registry() use, so a fork-added file shows up in
+    both projections consistently instead of undercounting the inventory Total
+    while still appearing in the registry."""
+    extra = [n for n in _catalog_files(patterns_dir) if n not in FILE_ORDER]
+    return list(FILE_ORDER) + extra
+
+
 def render_inventory(patterns_dir=DEFAULT_PATTERNS_DIR):
     """Per-file entry-count table + total, derived from the live catalog."""
     entries = load_catalog(patterns_dir)
     rows = ["| File | Entries |", "| --- | --- |"]
     total = 0
-    for name in FILE_ORDER:
+    for name in _file_order(patterns_dir):
         file_entries = _by_id_number([e for e in entries if e.source_file == name])
         if not file_entries:
             continue
