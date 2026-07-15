@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Writing Suite — 研究结果与 v2 决策报告 · 2026-06-09</title>
+<style>
+  :root {
+    --ink: #1a1d23;
+    --muted: #5c6470;
+    --line: #e3e6ea;
+    --accent: #0a6e5c;
+    --accent-soft: #e8f3f0;
+    --warn: #9a5b00;
+    --warn-soft: #fdf3e3;
+    --kill: #8c2f39;
+    --kill-soft: #f9ecee;
+    --card: #fafbfc;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, sans-serif;
+    color: var(--ink);
+    background: #fff;
+    line-height: 1.75;
+    font-size: 16px;
+  }
+  .page { max-width: 880px; margin: 0 auto; padding: 48px 32px 96px; }
+
+  header { border-bottom: 3px solid var(--ink); padding-bottom: 24px; margin-bottom: 36px; }
+  .kicker { font-size: 13px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  h1 { font-size: 30px; line-height: 1.3; font-weight: 700; }
+  .meta { color: var(--muted); font-size: 14px; margin-top: 10px; }
+
+  h2 { font-size: 21px; margin: 48px 0 16px; padding-left: 12px; border-left: 4px solid var(--accent); }
+  h3 { font-size: 16px; margin: 20px 0 8px; }
+  p { margin-bottom: 12px; }
+
+  .hero {
+    background: var(--accent-soft);
+    border: 1px solid #c6e0d9;
+    border-radius: 8px;
+    padding: 22px 26px;
+    font-size: 17px;
+    margin-bottom: 8px;
+  }
+  .hero strong { color: var(--accent); }
+
+  .storyline { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 6px; font-size: 13.5px; }
+  .storyline span { background: var(--card); border: 1px solid var(--line); border-radius: 99px; padding: 4px 14px; color: var(--muted); }
+  .storyline .arrow { border: none; background: none; padding: 4px 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 6px; font-size: 14.5px; }
+  th { text-align: left; font-size: 13px; letter-spacing: 1px; color: var(--muted); border-bottom: 2px solid var(--ink); padding: 8px 10px; }
+  td { border-bottom: 1px solid var(--line); padding: 10px; vertical-align: top; }
+
+  .finding { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
+  .finding .head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .badge { font-size: 11.5px; font-weight: 600; padding: 2px 10px; border-radius: 99px; white-space: nowrap; }
+  .high { background: var(--accent-soft); color: var(--accent); }
+  .medium { background: var(--warn-soft); color: var(--warn); }
+  .killed-badge { background: var(--kill-soft); color: var(--kill); }
+  .finding .title { font-weight: 650; }
+  .finding .body { font-size: 14.5px; color: #3a414b; }
+  .src { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+  .src a { color: var(--muted); }
+
+  .callout { border-left: 4px solid var(--warn); background: var(--warn-soft); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 14.5px; }
+  .callout.kill { border-color: var(--kill); background: var(--kill-soft); }
+
+  .phase { border: 1px solid var(--line); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+  .phase .ph-head { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: var(--card); border-bottom: 1px solid var(--line); }
+  .ph-tag { font-weight: 700; color: #fff; background: var(--accent); border-radius: 6px; padding: 2px 10px; font-size: 13px; }
+  .ph-tag.dim { background: #8a93a0; }
+  .ph-title { font-weight: 650; }
+  .ph-size { margin-left: auto; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  .phase .ph-body { padding: 12px 18px; font-size: 14.5px; color: #3a414b; }
+  .accept { font-size: 13.5px; color: var(--accent); margin-top: 6px; }
+
+  .decision { border: 2px solid var(--ink); border-radius: 10px; padding: 20px 24px; margin: 18px 0; }
+  .decision h3 { margin-top: 0; }
+  .decision ol { margin: 8px 0 0 22px; }
+  .decision li { margin-bottom: 14px; }
+  .rec { display: inline-block; background: var(--ink); color: #fff; font-size: 12px; border-radius: 4px; padding: 1px 8px; margin-left: 6px; vertical-align: middle; }
+
+  .telemetry { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; text-align: center; }
+  .stat .num { font-size: 22px; font-weight: 700; }
+  .stat .lbl { font-size: 12px; color: var(--muted); }
+
+  footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+  code { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="kicker">AI Writing Suite · 决策报告</div>
+  <h1>研究结果 + v2 提案：让套件真正干活</h1>
+  <div class="meta">2026-06-09 · 来源：deep-research-tiered（102 agents, 15 来源, 21 条确认）+ 本地代码诊断 · 状态：<strong>待你批准</strong></div>
+  <div class="storyline">
+    <span>公司电脑发现 2 个症状</span><span class="arrow">→</span>
+    <span>代码诊断定位根因</span><span class="arrow">→</span>
+    <span>深度研究定义"什么算好"</span><span class="arrow">→</span>
+    <span>v2 分期提案</span><span class="arrow">→</span>
+    <span><strong>3 个决定等你拍板</strong></span>
+  </div>
+</header>
+
+<div class="hero">
+  核心结论：<strong>"好产出" ≠ 骗过 AI 检测器</strong>。那个目标既做不到也不重要 ——
+  可达成的目标是关闭让 AI 文本"既可检测又不被人偏好"的<strong>五个具体差距</strong>：
+  具体性 · 文化/个人细节 · 句法变化（burstiness）· 真实经验情感 · 词汇原创性。
+  评测必须<strong>盲评</strong>、用<strong>逐任务动态标准</strong>、judge 先对人类标注<strong>标定</strong>。
+</div>
+
+<!-- ===================== 诊断 ===================== -->
+<h2>一、你报告的两个症状，根因都找到了</h2>
+<table>
+  <tr><th style="width:30%">你的症状</th><th style="width:38%">根因（代码证据）</th><th>性质</th></tr>
+  <tr>
+    <td>子技能加载不到 knowledge</td>
+    <td>① v1 里<strong>没有任何可用技能</strong>读 <code>_shared/knowledge/</code> —— 只有两个 v2 占位符引用它（grep 全树验证）；② 子技能用 <code>../../_shared/</code> 相对路径，RovoDev 手动安装下按会话目录解析 → 静默断链</td>
+    <td>① 是 v1 范围缺口（油管没接）<br>② 是移植性缺陷</td>
+  </tr>
+  <tr>
+    <td>初稿不像人写的</td>
+    <td><code>comms-draft</code> 整个是 13 行占位符，<strong>没有任何起草逻辑</strong> —— RovoDev 大概率无视占位符、用裸模型起草了</td>
+    <td>预期内：v1 只有事后 polish，没有起草能力</td>
+  </tr>
+</table>
+<p style="font-size:14px;color:var(--muted)">完整诊断：<code>notes/diagnosis-kb-loading-rovodev-2026-06-09.md</code></p>
+
+<!-- ===================== 研究发现 ===================== -->
+<h2>二、研究发现（14 条，按可操作性分组）</h2>
+
+<h3>① 目标定义 —— 别追错靶子</h3>
+<div class="finding">
+  <div class="head"><span class="badge high">HIGH</span><span class="title">"像人" = 关闭具体差距，不是躲检测器</span></div>
+  <div class="body">让 AI 文本既可检测又不被偏好的主要差距：具体性、文化细节、多样性。这是对套件最可操作的一条。</div>
+  <div class="src"><a href="https://arxiv.org/pdf/2502.11614">arxiv 2502.11614</a></div>
+</div>
+<div class="finding">
+  <div class="head"><span class="badge high">HIGH</span><span class="title">检测准确率与人类偏好是解耦的</span></div>
+  <div class="body">人类大规模识别 AI 文本准确率 ~87.6%（16 数据集/9 语言/9 领域），但人类<strong>并不稳定偏好人写文本</strong>。优化方向应是质量/偏好，不是 fooling detector。</div>
+  <div class="src"><a href="https://arxiv.org/pdf/2502.11614">arxiv 2502.11614</a></div>
+</div>
+<div class="finding">
+  <div class="head"><span class="badge high">HIGH</span><span class="title">来源标签主导评分 —— 评测的头号陷阱</span></div>
+  <div class="body">同一文本标 "Human" vs "AI"，偏好摆动 <strong>&gt;30 个百分点</strong>；错标可完全反转偏好（68.4% vs 51.2%）。→ 任何人评环节必须对来源盲评，否则量的是标签不是文笔。</div>
+  <div class="src"><a href="https://arxiv.org/html/2410.03723v2">arxiv 2410.03723v2</a></div>
+</div>
+<div class="finding">
+  <div class="head"><span class="badge medium">MEDIUM</span><span class="title">盲评下人类区分 AI/人写接近随机（~50%）</span></div>
+  <div class="body">与 87.6% 表面矛盾，实际是条件差异：大规模多域累积 tells vs 短文本单任务盲评。两者都支持同一策略：补差距 + 盲评。（跨源张力已标记）</div>
+  <div class="src"><a href="https://arxiv.org/html/2410.03723v2">2410.03723v2</a> · <a href="https://arxiv.org/pdf/2502.11614">2502.11614</a></div>
+</div>
+
+<h3>② 评测方法 —— Phase 2b 怎么做才可信</h3>
+<div class="finding">
+  <div class="head"><span class="badge high">HIGH</span><span class="title">逐任务动态标准 84% vs 固定 rubric 58-67%</span></div>
+  <div class="body">五维 per-query 标准（style / format / length / content-integration / depth）与人类判断一致率 84%，固定 rubric 仅 58-67%。同一篇"好"在 tweet 和 memo 里定义不同。</div>
+  <div class="src"><a href="https://arxiv.org/abs/2503.05244">arxiv 2503.05244</a></div>
+</div>
+<div class="finding">
+  <div class="head"><span class="badge high">HIGH</span><span class="title">LLM-as-judge 必须先对人类标注标定</span></div>
+  <div class="body">未标定的 judge 系统性偏离人类偏好。<strong>印证了 Phase 2b 既有的 "calibrate vs human labels FIRST" 设计</strong> —— 这条路线被研究背书，保持。</div>
+  <div class="src"><a href="https://arxiv.org/pdf/2501.00274">arxiv 2501.00274</a></div>
+</div>
+<div class="finding">
+  <div class="head"><span class="badge high">HIGH</span><span class="title">自动评测有天花板 = 标注者间一致性</span></div>
+  <div class="body">人类彼此都不完全同意 —— 任何 "human-sounding" grader 不可能超过这个上限。设现实目标，把分歧当信号。另：领域特定（DS/comms）验收标准应进 KB，通用写作分衡量不了。</div>
+  <div class="src"><a href="https://arxiv.org/pdf/2501.00274">2501.00274</a> · <a href="https://arxiv.org/abs/2503.05244">2503.05244</a></div>
+</div>
+<div class="finding">
+  <div class="head"><span class="badge high">HIGH</span><span class="title">detector 分数永远不当质量 KPI</span></div>
+  <div class="body">检测器对轻度 AI 润色的人写文本大量误报，把光谱当二元，且越强的模型越难检测（移动靶）。套件现有 detector 降级为<strong>回归信号</strong>，不是质量金标准。</div>
+  <div class="src"><a href="https://arxiv.org/pdf/2502.15666">2502.15666</a> · <a href="https://arxiv.org/pdf/2310.05030">2310.05030</a></div>
+</div>
+
+<h3>③ 架构模式 —— 直接喂给 comms-draft / comms-polish 设计</h3>
+<div class="finding">
+  <div class="head"><span class="badge high">HIGH</span><span class="title">强制句法变化与 burstiness</span></div>
+  <div class="body">AI 文本句法僵硬、句长方差低；人类为修辞效果变换句法。draft 和 polish 都应显式多样化句长与结构。（patterns 的 rhythm-stylometric 已有此类 guardrails —— 引擎方向是对的）</div>
+  <div class="src"><a href="https://arxiv.org/html/2505.01800v1">arxiv 2505.01800v1</a></div>
+</div>
+<div class="finding">
+  <div class="head"><span class="badge high">HIGH</span><span class="title">KB / voice profile 注入具体细节与真实经验 —— 起效机制本身</span></div>
+  <div class="body">AI 情感是统计平均（扁平/刻板），人类情感锚定在经验上；AI 偏好高概率词序所以平庸。这正是"在<strong>起草时</strong>注入 KB 具体内容 + 个人声音"能让文本像人的原理。</div>
+  <div class="src"><a href="https://arxiv.org/html/2505.01800v1">arxiv 2505.01800v1</a></div>
+</div>
+<div class="finding">
+  <div class="head"><span class="badge high">HIGH</span><span class="title">不要过度抛光 —— 需要 vary/roughen 步骤</span></div>
+  <div class="body">人写文本的停顿、修订、风格波动是"认知负载标记"，读者拿它识别真人。把 polish 推到极致会磨掉这些信号。管线里要有刻意的"粗糙化/变化"步骤，不只 smooth。</div>
+  <div class="src"><a href="https://arxiv.org/html/2505.01800v1">arxiv 2505.01800v1</a></div>
+</div>
+<div class="finding">
+  <div class="head"><span class="badge medium">MEDIUM</span><span class="title">perplexity / burstiness 是诊断信号，不是分类器</span></div>
+  <div class="body">可用于自检与回归监控，单独不能下结论。</div>
+  <div class="src"><a href="https://medium.com/@jhanwarsid/human-contentanalysing-perplexity-and-burstiness-in-ai-vs-human-text-df70fdcc5525">medium (jhanwarsid)</a></div>
+</div>
+
+<div class="callout kill">
+  <strong>被 Opus 仲裁否掉的 4 条论断</strong>（未确证，不要引用）：多维 rubric "RMS&lt;0.5 / 2x 改进"；
+  "LLM 风格指纹跨指令稳定存在"；"指纹因训练确定性跨场景稳定"；"集成分类器 0.9988 精度检测主流 LLM"。
+  → 三条"AI 必然可检测"方向的强论断<strong>全部没活下来</strong>，与"检测是移动靶"的结论一致。
+</div>
+
+<h3>Telemetry（诚实披露）</h3>
+<div class="telemetry">
+  <div class="stat"><div class="num">5 / 15</div><div class="lbl">搜索角度 / 来源（零丢失）</div></div>
+  <div class="stat"><div class="num">68 → 25</div><div class="lbl">提取 → 送验论断</div></div>
+  <div class="stat"><div class="num">21 / 4</div><div class="lbl">确认 / 否决</div></div>
+  <div class="stat"><div class="num">E = 0.64</div><div class="lbl">Opus 升级率（偏贵）</div></div>
+</div>
+<p style="font-size:14px;color:var(--muted)">升级率远高于 20-30% 的省钱区间（检测器文献争议多，16/25 条需 Opus 仲裁）：约 18 Opus + 70 Sonnet agents。比全 Opus 便宜，但这次没省到位。</p>
+
+<!-- ===================== 提案 ===================== -->
+<h2>三、v2 提案：四期，逐期审批</h2>
+
+<div class="phase">
+  <div class="ph-head"><span class="ph-tag">P0</span><span class="ph-title">路径自愈</span><span class="ph-size">小 · ~1 PR · 修症状 1 的断链</span></div>
+  <div class="ph-body">所有子技能从 <code>../../_shared/</code> 改为"套件根定位协议"（先找到含 <code>_shared/</code> 的目录，再用根相对路径）—— 四个宿主一套语义。
+  <div class="accept">验收：58 tests 不回归；公司电脑复测 patterns 可加载。</div></div>
+</div>
+<div class="phase">
+  <div class="ph-head"><span class="ph-tag">P1</span><span class="ph-title">comms-draft 真实实现</span><span class="ph-size">核心 · ~2-3 PR · 修症状 2</span></div>
+  <div class="ph-body">playbook 引导起草：起草前读 KB + voice profile + 场景 preset；<strong>起草时</strong>就约束（具体细节注入、句长/句法变化、patterns 作负面清单）；自带 vary/roughen 步骤；起草后自扫。
+  <div class="accept">验收：新 eval fixtures（用 calibration.py 选可校准 n）；盲评 before/after 演示；全绿。</div></div>
+</div>
+<div class="phase">
+  <div class="ph-head"><span class="ph-tag dim">P2</span><span class="ph-title">comms-qa mini-RAG</span><span class="ph-size">~1-2 PR · 症状 1 的问答面</span></div>
+  <div class="ph-body">zero-dep markdown 检索（INDEX.md 导航）。<div class="accept">验收：真实问答路径 smoke；引用落到具体 KB 文件。</div></div>
+</div>
+<div class="phase">
+  <div class="ph-head"><span class="ph-tag dim">P3</span><span class="ph-title">评测升级（并入 Phase 2b）</span><span class="ph-size">仍 blocked：等你收集真实草稿</span></div>
+  <div class="ph-body">盲评协议进 rubric；逐任务动态验收标准（五维）；judge 对人类标注标定（既有设计保持）；detector 降级为回归信号。<div class="accept">前置：你在企业电脑收集 ~16-24 份真实 AI 风草稿（n=24 → 8 misses）。</div></div>
+</div>
+
+<p style="font-size:14px"><strong>围栏（我不会做的）：</strong>不动 main（branch → PR，每次先给你看 staged files）；CI 保持 stdlib-only + key-free（judge 永不进 CI）；不重新引入 generate-and-sync 打包；不伪造评测数据；AI slop/死代码审计挂起待 v2 落地后再排。</p>
+
+<!-- ===================== 决策 ===================== -->
+<div class="decision">
+  <h3>四、等你拍板的 3 个决定</h3>
+  <ol>
+    <li><strong>分期范围：</strong>批准全部 P0→P3，还是先只做 P0+P1？<span class="rec">我建议 P0+P1 先行</span><br>
+        <span style="font-size:14px;color:var(--muted)">理由：直接命中你的两个症状；P2 价值更低，P3 反正 blocked 在草稿收集上。</span></li>
+    <li><strong>comms-draft 的设计依据：</strong>OSS 版先用通用 5 篇种子 KB 设计模板，公司 fork 自然继承？<span class="rec">我建议是 —— 不阻塞</span><br>
+        <span style="font-size:14px;color:var(--muted)">备选：等你提供公司 playbook 的结构信息再设计（更准但要等你）。</span></li>
+    <li><strong>公司电脑三个确认点</strong>（有则修得更准，没有也能开工）：当时调用的子技能 + 原始 prompt？"加载不到"是报错还是静默？playbook 是否已放进 <code>_shared/knowledge/</code>？</li>
+  </ol>
+</div>
+
+<footer>
+  源文件：<code>notes/research-good-ai-writing-outcome-2026-06-09.md</code>（研究全文）·
+  <code>docs/plan-v2-make-it-really-work-2026-06-09.md</code>（提案全文）·
+  <code>notes/diagnosis-kb-loading-rovodev-2026-06-09.md</code>（诊断）<br>
+  研究管线：deep-research-tiered run <code>wf_cc8f728c-2bf</code> · 本报告未提交 git（repo hook 阻止 plan 类文件入库）
+</footer>
+
+</div>
+</body>
+</html>

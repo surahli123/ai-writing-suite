@@ -1,0 +1,252 @@
+# Research — AI-writing skills landscape (3 X threads + 2 GitHub skills), 2026-07-14
+
+Produced by a 6-agent Sonnet workflow (run `wf_729eaa9b-838`): per-source fetch (twitter CLI
+`tweet` subcommand for X threads incl. replies; `gh api` for repos) -> synthesis against this
+suite's catalog/skills. All 5 sources fetched successfully (no invented content; MainzOnX URL
+resolves to a reply-in-thread with only 2 visible replies — summarized as such).
+
+## Community sentiment digest
+
+Across the three X threads, replies converge on AI writing having a real, widely-felt cost: it erases personal voice/brand (Shreya thread — every reply agrees), and readers report an immediate, hard-to-articulate 'AI smell' that kills their interest before they even finish reading (Michael Bromley, Orosz thread). Two under-discussed failure modes get independent, cross-language validation: model-invented jargon that sounds sophisticated but is often meaningless or produces alien syntax (confirmed separately for English, Polish, and Mandarin in the Shreya thread), and a self-aware complicity where people ship the model's first draft unedited and then blame the model (Sean T, Shreya thread). The strongest pushback (roughly a third of engaged replies on the Orosz thread) is that the human-readability frame itself may be dated for one specific case — technical docs increasingly get consumed by other AI agents rather than humans, so prose-craft complaints may not fully apply there; a smaller, unrelated thread (Mainz) shows a case the community explicitly endorsed as 'AI-assisted, not slop' precisely because the author fed his own notes and wording into AI for reorganization rather than letting AI originate the prose. Net consensus across all three: humans should stay the source of facts and wording while AI assists with structure/editing, not origination — which directly validates our suite's brief-and-KB-only fabrication rule and voice-profile-first design, though the agent-readership counterargument is a live tension our human-readability-only assumption doesn't yet address (see gaps/contradicts). All three X-thread fetches succeeded (fetch_failed: false); no source needs a guessing caveat here.
+
+## Per-source notes
+
+### https://github.com/plannotator/write-better
+
+An agent skill (installable via npx/Claude Code/Codex plugin) that gives AI agents a prose style guide for drafting, rewriting, or reviewing writing so it reads clear, direct, and human rather than "AI-sounding." Mechanically it is a single SKILL.md of 25 numbered rules plus a 5-pass internal editing checklist (meaning → structure → language → rhetoric → rhythm/punctuation → reader test) that the agent runs silently before returning only the final revised text.
+
+Techniques:
+- **Lead with the useful part** — Open with the request/decision/conclusion/result/problem/relevant fact in the first 1-2 sentences; context comes after, except when needed upfront to correctly interpret sensitive/legal/safety/surprising info.
+- **Every sentence earns its place** — Each sentence must add a fact, reason, evidence, condition, consequence, exception, decision, or action; delete sentences that only announce, emphasize, or restate a point already made (with a banned filler-phrase list).
+- **Preserve information, not length** — Cut/merge/reorder freely to remove padding, but keep all original facts, requirements, qualifications, and necessary examples — a padded 5-paragraph draft may become 2.
+- **Plain language substitutions** — Swap utilize/leverage/facilitate/enhance-type words for use/help/improve; flags a warning list (delve, robust, seamless, streamline, holistic, crucial, essential, pivotal, significantly, etc.) to remove unless used with precise technical meaning.
+- **Be concrete** — Replace abstract nouns/phrases with names, dates, numbers, owners, and observable actions (e.g. 'conduct an evaluation of' -> 'evaluate').
+- **Actions in usable form** — Every request should specify who acts, what they do, when it's due, and what done looks like; prefer one main outcome per message, number multi-step actions.
+- **Match the genre** — Different rules for documentation (describe current behavior, no promotional tone) vs workplace messages (brief politeness, clear ask) vs essays/personal writing (preserve genuine opinion/humor, don't manufacture quirks).
+- **Preserve author's voice** — When a writing sample exists, study sentence length, vocabulary, paragraph openings, punctuation, formality, transition habits, humor, recurring phrases, and keep meaningful irregularities instead of imposing generic casual style.
+- **Avoid rhetorical packaging** — Ban slogan formulas like 'It is not X. It is Y,' 'X is the language of Y,' 'The future of X is Y'; use corrective contrast only when the reader plausibly holds the wrong belief and it affects their actions.
+- **No manufactured emphasis** — Don't assert something is 'crucial'/'significant'/'transformative' — state the concrete consequence instead and let facts carry the weight.
+- **Control metadiscourse** — Limit phrases that narrate the writing itself ('This means...', 'It is worth noting...', 'Let us explore...'); check paragraph openings starting with 'This/That' actually advance the explanation rather than just renaming the prior point.
+- **Avoid semantic repetition** — A restatement must add precision, an example, a consequence, a limit, or an exception — otherwise delete paraphrase chains that repeat the same claim in different words.
+- **Lists only when structural** — Use lists for comparison/steps/requirements/scanning; don't force items into groups of three or pad a third item for rhythm; prefer sentences/tables over bold-labeled lists when simpler.
+- **Sentence rhythm follows information** — Avoid uniform medium-length sentences AND forced short/long alternation; don't add fragments for drama. Read aloud and revise if every sentence has the same shape, clauses arrive in threes, or each paragraph ends on a punchline.
+- **Direct subjects and verbs** — Name the actor when responsibility matters ('The security team rejected it' vs 'a decision was made'); passive voice is fine when the actor is unknown/irrelevant/already understood.
+- **No synonym cycling** — Repeat the same term for the same referent (e.g. always 'customer', not customer/user/account holder) rather than varying vocabulary for elegance, especially in technical writing.
+- **Remove fake depth** — Distrust participial phrases that assert unearned interpretation (highlighting, underscoring, reflecting, symbolizing, fostering, ensuring) — cite an actual source for claimed intent/symbolism instead of inferring it.
+- **Avoid vague authority** — Ban unsourced appeals like 'Experts say...' / 'Research shows...' — name the actual source, study, and finding, or state the uncertainty plainly if no source exists.
+- **Avoid promotional language** — Banned puffery list (groundbreaking, vibrant, world-class, powerful and intuitive, rich history, exciting journey) replaced with observable, falsifiable details.
+- **Plain punctuation / no em dashes** — Explicitly bans em dashes; replace with period, comma, colon, or parentheses depending on the relationship; preserve en dashes only if house style requires them for ranges.
+- **Keep formatting functional** — Avoid mechanical bolding, emojis in professional headings, title-case-everywhere, decorative callouts, headings that just repeat the following sentence, and repeated 'Key takeaway' boxes.
+- **Proportionate politeness** — Bans stock courtesy filler ('I hope this finds you well', 'Please do not hesitate to reach out', 'Great question!'); one greeting and one thanks is usually enough.
+- **Handle uncertainty honestly** — State what's known/unknown and what would resolve it; use the narrowest accurate hedge (may/probably/appears to) instead of stacked hedging ('could potentially possibly').
+- **Describe current state, not history** — Docs/comments should describe how the system works now, not narrate how it changed — reserve change-narration for changelogs, release notes, migration guides, incident reports.
+- **End when the work is done** — No generic conclusions ('In conclusion...', 'I hope this helps', 'Exciting times lie ahead') — stop at the result, decision, deadline, or next action.
+
+Notable ideas:
+- Structured as a single agent-skill file (SKILL.md) with YAML frontmatter (name + trigger description) so it's auto-invoked by coding-agent harnesses (Claude Code / Codex / npx skills) rather than read as a human style guide — packaging is the delivery mechanism, not just content.
+- Prescribes a hidden 5-pass internal editing pipeline the agent must run silently (meaning -> structure -> language -> rhetoric -> rhythm/punctuation) ending in an explicit 8-question reader-test checklist, then instructs the agent to return ONLY the final text and suppress drafts/self-critique unless the user asks — i.e. it gates process behind output, mirroring a hidden chain-of-thought/critique-then-answer pattern baked into a style guide rather than a reasoning task.
+- Explicitly cites its own lineage: 'incorporates ideas from the Humanizer pattern catalog and Wikipedia's Signs of AI writing' — positions itself as a curated synthesis of known AI-tell taxonomies rather than an original list.
+- Frames passive voice, hedging, and lists as conditionally acceptable rather than flatly banned — repeatedly distinguishes the underlying failure (unclear responsibility, unsupported certainty, forced structure) from the surface feature (passive grammar, hedge words, list format) so the rule targets the actual defect instead of pattern-matching syntax.
+- Draws a genre-dependent boundary for voice preservation: essays/personal writing should keep genuine irregularities and NOT have quirks manufactured to fake humanness, while documentation should have no personality at all — treats 'sounding human' and 'having personality' as separable goals rather than synonyms.
+- Very small repo (single skill, one SKILL.md ~ everything) — no eval harness, no test suite, no examples corpus; the entire mechanism is one long rule list plus a checklist, distributed as a plugin manifest (plugin.json / skills.sh.json / openai.yaml) for cross-tool installability.
+
+### https://x.com/sh_reya/status/2077054372098552081
+
+Shreya Shankar (quote-tweeting Gergely Orosz's complaint about AI-written OpenAI docs) argues AI-assisted writing/communication is one of the most important problems to work on. She gives three reasons slop is bad: (1) it strips personal branding/voice — using AI to write for you erases who you are; (2) AI embellishes everything, so embellishment as a device loses its signaling value and readers can't tell what's actually important; (3) AI invents excessive jargon, which may be efficient for model training/reasoning but is bad for human communication — and as long as companies optimize for coding-agent benchmarks over writing quality, she has little faith communication tooling will improve. She frames it as a global phenomenon, not a dig at any one company/person.
+
+**Sentiment** (9 replies read): positive - every reply obtained agrees with or extends the original post; zero pushback or disagreement present
+
+Agree themes: AI writing erases personal voice/brand; AI-invented jargon is a real, under-discussed problem (echoed for English, Polish, and Mandarin specifically); Self-aware complicity: humans ship the first AI draft unedited and blame the AI; AI-generated text is 'obvious' / has recognizable tells even when hard to articulate why
+
+Notable replies:
+- [agree/extends] We blame AI for slop but ship its first draft untouched, self included some weeks. (Sean T (@ShokhzodjonT))
+- [agree] Totally agree, it's obvious most of the time and people don't even try to hide it (jokingly notes his own reply might be AI-written). (Anas (@anas_build_))
+- [agree/extends] Same problem in Polish — AI output is literal English calques with alien syntax, 'looks like Polish but isn't.' (Dominik Kaznowski (@dkaznowski))
+- [agree/extends] We really don't talk about the insane jargon AI invents enough. (William Wolf (@willium))
+- [agree/extends] Jargon-invention point resonates hard in Mandarin too — model output reads like an obscure invented classical dialect, worse than modern Mandarin. (Aurora Zhang (@AuroraZhangYY))
+- [agree + self-promo] Agrees it's hard to pin down exactly why something reads as AI-written; plugs their report/tool on AI writing tells. (NaturallyWritten (@natwrittenai))
+- [agree/extends with proposed fix] Theory: slop starts when the model has to guess what you meant; it should flag vague/buried parts and leave the rewrite to the human. (Zack Swafford (@zswaff))
+- [agree/extends with technique] Suggests using Claude Opus to draft and Codex to do an adversarial review as a useful combo for docs. (Fabio Pauli (@fabioivsantos))
+
+Techniques mentioned: Draft with Claude Opus, then adversarial-review with Codex (for docs) — Fabio Pauli; Model should flag vague/ambiguous or under-specified parts of a prompt and leave the actual rewrite to the human, rather than filling gaps itself — Zack Swafford; AI-writing-tells detection report/tool (naturallywritten.ai) aiming to identify specifically why text reads as AI-generated — NaturallyWritten
+
+### https://x.com/MainzOnX/status/2076771581112770706
+
+This URL resolves to a reply-within-a-thread by Adam Mainz (@MainzOnX), not the root article tweet. Responding to a question about how he uses AI in his writing, Mainz explains: "Secret was I used AI to edit and make nice photos. I was learning for a few weeks before starting at Google so I had a ton of notes I was studying from :) I basically had AI take all my writing sections in my own words and moved it into nicer sections + made it actually coherent. I think edits and refinement with AI when done well and not just copy and pasted isn't really AI fully anyway. I actually have a template specifically for the images but starting to use a new one ie in my latest post the video is obviously AI and comes from my new template I'm going to use for my next article!" This is in the context of his long-form technical article "From SIMT to Systolic: A Foundation for GPU and TPU Architecture."
+
+**Sentiment** (2 replies read): positive - the single respondent visible in this small thread praises the writing quality and frames his question as coming from respect, not skepticism; no pushback appears
+
+Agree themes: writing is coherent, well-narrated, and reads as high quality despite AI involvement; seen as a good example of 'non-slop' AI-assisted writing; the AI-editing-of-own-words approach (not pure AI drafting) is viewed as legitimate/not really 'AI' in the slop sense
+
+Notable replies:
+- [curious/neutral (this is the question the target post replies to, so technically precedes it, not a reply to it)] you've used ai, but the post reads well, doesn't insult user and delivers value.. what's the secret? (Venkat Raman (@venkat_systems))
+- [agree/positive, extends the discussion] recognized AI 'tone' sprinkled in from having used LLMs to study a jax-scaling book, but says narration/flow/coherency/concepts are 'top notch'; calls the posts clear examples of writing non-slop articles with AI; clarifies the question was asked respectfully, and that he wasn't asking about the (obviously AI-generated) images (Venkat Raman (@venkat_systems))
+- [extends/author follow-up] clarifies he isn't making images himself; fed his notes and own writings into AI with clear prompts and a desired flow, using his own writing for wording/tone, and it 'blended really well'; considers writing a post about the process or open-sourcing the skill files (Adam Mainz (@MainzOnX))
+
+Techniques mentioned: Feeding personal notes + own prior writing into AI with explicit prompts and a desired structural flow, rather than asking AI to draft from scratch; Using AI to reorganize/polish the author's own words into coherent sections (editing/refinement, not copy-paste generation); A reusable AI image-generation template for post visuals; A new AI-video-generation template being introduced for a future article; Possible open-sourcing of 'skill files' documenting the writing workflow (not yet published); Using an LLM to aid comprehension of a technical reference (jax-scaling book) as a separate, reader-side technique mentioned by a commenter
+
+### https://x.com/GergelyOrosz/status/2076959410941792548
+
+Gergely Orosz posts a screenshot of OpenAI's Codex docs and says the AI-generated writing "makes me sick" — filler sentences, mannerisms no human would write, and doubts a human even reviewed it. He predicts this style will spread and degrade how everyone writes. In follow-ups (same thread) he singles out Anthropic's docs as a counter-example with no "AI smells," and OpenAI's VB (Vaibhav Srivastav) replies directly, calling the criticism valid and committing to raise the docs quality bar (Codex is used to draft a first pass). Note: three other Gergely tweets from the prior day (X Ads complaint, a Grok/GPT-6 writing-style test, and the Grok-CLI/SpaceX privacy story) surfaced in the raw fetch but are unrelated tweets from his timeline, not part of this thread, and are excluded from this summary.
+
+**Sentiment** (37 replies read): predominantly agree with Orosz's core complaint (AI docs read as formulaic slop), but with a vocal and substantive pushback minority arguing docs are increasingly consumed by AI agents rather than humans, making prose style less important
+
+Agree themes: AI-written docs feel formulaic — full of filler ('it is worth noting that'...) and mannerisms no human would naturally write; Worry that AI prose style is bleeding into human writing/speech and will degrade a generation's sense of 'good writing'; Anthropic's docs are repeatedly cited as the counter-example: clean, no detectable 'AI smell'; OpenAI's own team (via VB's reply) conceded the criticism was valid and pledged to fix it — read by several repliers as the post 'working'
+
+Pushback themes: Docs are increasingly read/queried by AI agents rather than humans, so prose quality matters less than it used to (Petko Petkov, Michael Bleigh, Scott); False binary: sloppy-but-current AI docs vs. stale/incomplete human-maintained docs, implicitly needling Claude's docs (Ritwick); AI's consistent style is preferred by some readers over dealing with everyone's individual human writing quirks (Matthias Georgi); A few argue long-form AI writing is now better than most humans', and real 'AI slop' is bot replies on X, not docs (Petra); Framed as a minor issue relative to other incidents, e.g. jailbreak content once found embedded in AI docs elsewhere (Zack Fitch)
+
+Notable replies:
+- [extends] Concedes the point is valid, says Codex is used for a first draft of docs but that's no excuse for sloppy output, commits to raising the quality bar. (Vaibhav (VB) Srivastav, reach_vb — OpenAI staff)
+- [pushback] Asks whether Orosz would prefer sloppy docs or the stale/incomplete docs Claude is 'infamous for' — implicit jab at the Anthropic comparison. (Ritwick, ritwickdsouza)
+- [agree] Sympathizes — writing has gotten hard to do well at the speed/scale AI products demand, across docs and internal papers, but has no fix to propose. (Dmitry Lyalin, LyalinDotCom)
+- [agree] Fears a whole generation will grow up thinking 'it is worth noting that' is just how sentences start, from reading AI-slop docs. (Makaroni, SlopToSignal)
+- [agree] Says he now hears the LLM 'tell' everywhere (even in human YouTube commentary) and loses interest immediately once something reads as AI-written — he's interested in people and ideas, not a word-prediction machine's output. (Michael Bromley, michlbrmly)
+- [pushback] Points out a lot of docs today are consumed by other AI agents, not humans, so the 'a human should read this' framing may be outdated. (Petko D. Petkov, pdp)
+- [pushback] Downplays the slop-docs issue, noting Anthropic previously had a worse problem — literal jailbreak instructions embedded in a docs callout box telling agents how to bypass sandbox permissions. (Zack Fitch, Jzfitch1)
+- [pushback] Argues writing docs with AI is actually the ideal use case since no human reads them anyway and they mostly get consumed by AI. (Scott, scottstts)
+
+Techniques mentioned: OpenAI discloses using Codex to generate a first draft of docs before human editing (per VB's reply); 'AI smell' detection heuristic — spotting filler phrases (e.g. 'it is worth noting that'), hedging, and unnatural mannerisms as tells of unedited AI writing (Orosz, Makaroni); Pointing an AI agent at raw docs to extract only what's needed instead of reading the prose (Michael Bleigh); Asking ChatGPT to summarize an AI-slop article/doc in 20 words or less as a workaround (Daniel Lee); Benchmarking an AI-assisted technical blog post against a known high-quality example to judge writing quality (Rishi R comparing a PrimeIntellect post unfavorably to a Thinking Machines OPD explainer); Gergely's own recurring style-transfer eval: feed a model a batch of his interviews on a topic and ask it to write the article in his voice, to test if it captures understanding vs. just producing words (mentioned in an adjacent, non-thread tweet from the same author)
+
+### https://github.com/jpcaparas/skills/tree/main/skills/better-writing
+
+A "production-grade" agent skill (v2.0.0, by JP Caparas, dated July 2026) for drafting, rewriting, reviewing, humanising, and adapting prose while preserving facts, exact literals, uncertainty, and the writer's own voice. Mechanically it is a routed, staged pipeline: SKILL.md is the canonical entry point that routes a request into one of six jobs, then walks an 8-step workflow (contract → diagnosis → shape → paragraph/sentence clarity → voice restoration → optional AI-tell "humanisation" pass backed by a 50-pattern regex/metric corpus and Python scanner → genre calibration → 8 named quality gates), pulling in 11 topic-specific reference docs only as needed.
+
+Techniques:
+- **Job router (6 jobs)** — Classifies every request as Draft / Rewrite / Line edit / Review / Humanise / Adapt before touching prose, each mapped to its primary reference docs; mixed requests can combine jobs but scope stays fenced (e.g. this skill owns wording, not a code diagnosis).
+- **One-sentence writing contract** — Template: "Create/revise [deliverable] for [reader] so they can [outcome], using [source authority], while preserving [protected material]" — forces the 5 questions (what/who/what-changes/authority/edit-freedom) to be answered or explicitly marked unknown before editing.
+- **Edit-freedom ladder** — Seven named levels (Proofread, Line edit, Copy edit, Rewrite, Developmental edit, Draft, Review), each with an explicit 'allowed work' vs 'protected by default' column, so a request to 'polish' is never silently escalated into a rewrite.
+- **Preservation ledger** — Before editing an existing draft, record four protected buckets: exact literals (commands, code, quotes, URLs, identifiers — byte-for-byte unless authorised), factual invariants (names/dates/numbers/causal direction/scope words like 'all'/'only'), epistemic invariants (observed vs inferred, possible vs certain, correlation vs causation, estimate vs measurement), and voice anchors (odd-but-accurate metaphors, candid reversals, characteristic rhythm, regional expressions).
+- **Source-authority hierarchy** — A fixed precedence order for resolving conflicting truth claims: user-supplied facts > verified primary sources > repo/org policy > house style > general editorial judgement; explicitly bans using a revision pass as an excuse to add new claims from memory.
+- **Scale-diagnosis before rewriting** — Names the failure at the smallest responsible layer — whole-piece (genre/audience/order/thesis), section (missing step/evidence/turn), paragraph (mixed jobs, buried point), sentence (unclear actor, abstraction, drag), or surface (grammar/formatting) — so a good edit doesn't 'demonstrate every sentence can be changed.'
+- **Reverse outline** — Before sentence work, write one short line per paragraph describing its job, then reorder/merge/cut at that outline level rather than polishing prose that's in the wrong order.
+- **Revision pass stack (Pass 0–8)** — A strict, loopback-aware edit order: Preserve/diagnose → whole-piece shape → paragraph architecture → sentence clarity → evidence/epistemics → voice/cadence → genericity/humanisation → genre/delivery calibration → final proof. Each pass states a completion test ('Pass when: …') and a symptom→loopback table (e.g. 'clear sentences, wrong page → return to Pass 1') so a small defect doesn't trigger restarting the whole stack.
+- **Genre-mode library (12 shapes)** — A 'quick chooser' table mapping reader task to page shape (guide/tutorial/runbook, reference docs, explanation/deep-dive, PR description, product brief/spec, decision record, memo, report/analysis, essay/reflection, landing page, UI copy/error, email, release note), each with its own required shape, ending job, and named 'red flags' (e.g. for a memo: 'scene-setting before the point').
+- **Specificity ladder** — A 5-rung escalation for vague claims — category → behaviour → count → situation → consequence (e.g. 'customers were confused' → 'six of eight testers opened the old settings page first' → 'support added a manual redirect') — with the explicit rule to never fabricate a lower rung than the evidence supports.
+- **Value-fog interrogation** — Instead of banning words like 'robust', 'seamless', 'innovative', 'transformative', it asks the word to 'cash out' (robust against what failure? transformative from what state to what state?); if the source only supports the foggy claim, remove it or flag the gap rather than inventing specifics.
+- **Generic-authority repair (4 honest moves)** — For phrases like 'experts say' / 'research shows' / 'users want': name and cite the source, describe the writer's own bounded observation, quantify the sample, or remove the authority claim and state it as analysis — never invent the missing source during revision.
+- **Voice-anchor protection** — Explicitly marks lines that carry a writer's identity (an odd accurate metaphor, precise domain term, candid admission, characteristic rhythm, regional expression, working fragment/joke) before line editing, because a consistency pass will otherwise erase them.
+- **Read-aloud protocol** — Read the opening, densest paragraph, and ending aloud; mark where breath runs out for syntactic (not intentional) reasons, where the voice mechanically resets each sentence, where stress lands on empty words, or where a transition sounds like a slide-deck presenter — then fix only the smallest unit causing the stumble.
+- **Style calibration from samples, not imitation** — When asked to write 'like' a named living author, explicitly forbids copying signature phrasing/syntax; instead translates the request into abstract traits (directness, evidence density, technical depth, narrative distance, pace) and states the translation back to the user.
+- **Nine named voice families + blend table** — Technical teacher, Maintainer/reviewer, Product owner, Operator analyst, Reported analyst, Essay/reflection, Product/conversion copy, Support/UI — each with 'habits' and 'avoid' lists, plus a table of legitimate two-family blends (e.g. Technical teacher + maintainer) and the rule not to blend more modes than the page can hold.
+- **Personal style sheet template** — A structured intake document (templates/personal-style-sheet.md) that extracts a writer's real habits from 3+ samples — stance, sentence movement, diction, openings/endings, humour, voice-anchor quotes, and explicit 'never imitate' boundaries — used before smoothing a draft toward generic prose.
+- **12-part AI-ism signal taxonomy** — Categorises AI-like writing into 12 diagnosable levels beyond vocabulary: lexical over-representation, significance/authority frames, reveal-and-contrast templates ('not X, not Y, just Z'), teacher/presenter scaffolds, service/chat residue, corporate/marketing glaze, formatting residue (bold-label bullets, generic headings), cadence/punctuation regularity, discourse/stance regularity, semantic echo/over-explanation, missing human signal, and narrative flattening — each with a named repair move.
+- **Severity × confidence × cluster scoring** — Every AI-ism match is scored on independent axes (severity of damage to the passage, confidence the match is real, whether it's isolated or repeated, evidence tier, confound risk from genre/dialect/translation) rather than collapsed into one score; a single weak signal never gates, only repeated high-confidence clusters do.
+- **False-positive protection checklist** — Before changing any flagged match, check whether it's inside code/quote/citation, an official required term, established in the writer's own samples, normal for the genre or accessibility level, part of deliberate parallelism, or the voice of a second-language author — and if so, keep it or revise around it without corrupting the source.
+- **Evidence-tier corpus acceptance gate (A–D)** — New entries in the AI-ism corpus must pass 6 gates (recurrence, generality, testability, repairability, calibration, safety) and are tagged by evidence tier: A = replicated multi-domain research, B = one controlled study, C = repeated editorial observation, D = single anecdote (not yet addable) — with a mandated re-test/retirement cadence as models and usage drift.
+- **scan_aiisms.py deterministic scanner** — A schema-validated Python scanner (regex + metric pattern kinds, dataclasses for Pattern/Signal/Cluster) that reads assets/aiisms.json and reports clustered hits with --format json and a --gate flag for CI-style revision gating; explicitly documented as producing 'review signals,' never an authorship verdict.
+- **8 named quality gates + severity table** — Fidelity, Logic & evidence, Clarity & cadence, Voice & humanisation, Genre & reader task, Mechanics & accessibility, Review integrity, Final proof — each with pass/fail bullet criteria, plus a severity table mapping finding types (fidelity breach, invented fact/quote/citation, unsafe instruction) to a hard 'block handoff' decision, distinguishing those from 'minor style preference: fix only if it clearly improves.'
+- **Explicit stop condition / anti-overpolishing** — Quality-gates doc states an endless polish loop is itself a quality failure: stop when every applicable gate passes and remaining edits would be 'taste-equivalent or trade one strength for another' — save the strongest passing version rather than continuing to iterate.
+- **Gotchas/recovery playbook** — A symptom→cause→recovery reference (references/gotchas.md) cataloguing specific failure modes of the revision process itself — e.g. 'the edit changed the facts,' 'the humanisation pass became detector chasing,' 'the draft became clipped,' 'the review rewrote without permission' — each with a named recovery procedure, plus a general 'Recovery principle: restore first, then make the smallest corrective pass' rather than layering another style pass on a damaged edit.
+- **probe_better_writing.py request router + test suite** — A regex-based router script that maps trigger phrases (prose actions × prose scope, minus code-only/fact-check-only/docs-question carve-outs) to the correct reference file, with a companion TestCase suite (e.g. 'humanise_mixed_docs_scope') asserting expected vs forbidden reference loads — i.e. the skill's own routing logic is unit-tested.
+
+Notable ideas:
+- Explicit epistemic stance on AI-detection: the skill's own research-notes.md cites peer-reviewed evidence (OpenAI's classifier withdrawal at 26% recall/9% false-positive rate; Liang et al. on bias against non-native English writers; Stanford HAI) to argue authorship detection is scientifically unsafe, and hard-codes that position into the skill's non-negotiables ('Never use a phrase list or detector score as proof of authorship') — the corpus is explicitly named a 'Conservative revision-prompt corpus,' not a detector.
+- Non-negotiables list (7 rules) sits at the very end of SKILL.md as absolute constraints that override everything else: never improve style by changing facts, never convert uncertainty to confidence, never invent experience/quotes/citations, never mimic a living writer's exact signature, never treat a phrase list/detector score as authorship proof, never sand away dialect/accessibility/second-language identity to look statistically 'human', never keep editing once gates pass and options are taste-equivalent.
+- Anti-camouflage principle for 'humanisation': explicitly forbids adding fake typos, random slang, decorative swearing, invented anecdotes, or forced informality to look more human — human signal must come only from judgement, selection, detail, and position, restored from what the source material actually supports (never fabricated to fill the specificity ladder).
+- Separation of review vs rewrite as a first-class distinction, with its own quality gate ('Gate 7: Review integrity') and its own gotcha ('the review rewrote without permission') — treats silently converting a diagnosis request into a replacement draft as a named failure mode, not just sloppiness.
+- The package treats itself as software: metadata.json carries a version, org, and 6 academic citations as an 'abstract'; scripts/validate.py and scripts/test_skill.py exist alongside a scanner; evals/evals.json (behavioral) and evals/trigger-evals.json (routing, 'should_trigger' true/false pairs) exist as a release-grade eval suite — the skill is built and versioned like a shippable product, not a one-off prompt.
+- Extensibility is designed-in and constrained: assets/aiisms.json is explicitly meant to be community-extended, but only through a 6-gate acceptance bar (recurrence, generality, testability, repairability, calibration, safety) plus a mandatory 'last_reviewed' date and evidence tier per entry, with a stated policy to retire patterns that no longer discriminate a real problem — i.e. it treats a heuristic corpus as a decaying asset requiring maintenance, not a static blacklist.
+- Loopback table in revision-pass-stack.md (symptom → which pass to return to) is a lightweight state-machine for editing: it explicitly forbids restarting the whole 8-pass stack after a small correction, only re-entering the pass whose contract broke, then re-running final proof.
+
+## Already covered by this suite (14)
+
+- AI-vocabulary / filler / hedging / promotional-language tells ('it is worth noting that', 'delve', 'leverage', 'robust', 'seamless') — _shared/patterns/lexical-tells.md, hedging-filler.md, significance-attribution.md
+- Em-dash / punctuation-tell scanning — _shared/patterns/punctuation-formatting.md (treated as one advisory signal among many, not a flat ban)
+- Synonym cycling / no-synonym-cycling rule — _shared/patterns/lexical-tells.md (L-series)
+- Vague/unsourced authority ('experts say', 'research shows') — _shared/patterns/significance-attribution.md (vague attribution)
+- Fake depth / unearned interpretive verbs (highlighting, underscoring, fostering) — _shared/patterns/significance-attribution.md (superficial -ing)
+- Rule-of-three / forced structure / signposting — _shared/patterns/structural-tells.md, hedging-filler.md
+- Detector-score-is-not-authorship-proof stance (matches jpcaparas's cited OpenAI-classifier / Liang-et-al. research) — comms-polish Scoring section ('Do not claim detector certainty') and the 'judge-only, advisory' framing on overstepping-presumption.md / narrative-shape.md
+- Cluster-not-isolated-signal guardrail (jpcaparas's severity×confidence×cluster idea, partial) — _shared/patterns/rhythm-stylometric.md guardrails, referenced from every comms-polish scan step
+- Review vs rewrite kept as separate, differently-gated outputs (jpcaparas's 'review integrity' gate) — comms-polish's detect/review Audit Report Contract vs rewrite/edit output contract
+- Model should flag gaps rather than silently filling them (Zack Swafford, Shreya thread) — comms-draft's `[NEEDS: ...]` placeholder mechanic is exactly this, already the suite's hardest rule
+- Own-wording-in, AI-reorganizes-out as the legitimate pattern (Adam Mainz thread) — comms-draft's 'brief + KB are the only fact sources' and voice-onboard's 'user's own edits are the strongest signal' rule
+- Personal style sheet from writing samples (jpcaparas) / preserve-author's-voice-from-samples (write-better) — voice-onboard's 10-dimension fingerprint + stylometry.py measured pass is a stricter, quantitative superset of both
+- Hidden edit pipeline, return-final-text-only (write-better's 5-pass silent pipeline) — comms-polish Output rule: return polished text only unless notes/scores requested
+- Genre-dependent voice/personality boundary (write-better: docs get no personality, essays keep genuine irregularities) — comms-polish/comms-draft scenario-presets.md per-genre weighting
+
+## Gaps (candidate sharpening items)
+
+### Preservation ledger with an explicit epistemic-invariants bucket (observed vs inferred, possible vs certain, correlation vs causation, estimate vs measurement) — not just facts/numbers/quotes but the modal status of claims
+- Source: jpcaparas/skills better-writing — 'Preservation ledger' technique · Effort: S
+- Why: Our Safety Rules already protect facts/numbers/citations/quotes and one Before/After example implicitly protects modality ('step toward improving' vs 'improves'), but nothing names epistemic modality as its own protected category the way it names factual invariants. This is exactly the class of error a smoothing pass causes without anyone noticing — hedged uncertainty silently becoming a stated fact — and it sits squarely inside our 'no fabrication, no meaning change' hardest rule, so making it an explicit named check (not just an implicit example) closes a real hole with almost no new machinery.
+- Recommendation: adopt — add an 'epistemic anchors' bullet to comms-polish's Safety Rules and step-4 (mark factual anchors) alongside the existing fact/number/quote protections; no new file needed.
+
+### False-positive protection checklist before acting on any flagged tell: is it inside a quote/citation/code, an official required term, established in the writer's own voice-profile samples, genre-normal, deliberate parallelism, or the voice of a second-language/non-native author
+- Source: jpcaparas/skills better-writing — 'False-positive protection checklist', citing Liang et al. on detector bias against non-native English writers · Effort: S/M
+- Why: This is the single most concrete way to operationalize our own 'provenance-only signals stay advisory' ruling — right now the rule exists (rhythm-stylometric.md guardrails, cluster-not-isolated) but there's no explicit second-language/dialect override, and that's precisely the bias risk jpcaparas cites peer-reviewed evidence for. Skipping this is a fairness and quality gap our own philosophy already commits us to closing, not new scope.
+- Recommendation: adapt — fold into rhythm-stylometric.md's existing 'what NOT to flag' guardrails as a named checklist (quote/code, official term, in-voice-profile, genre-normal, second-language) rather than a new file; keep it advisory per our existing ruling, don't make it a hard gate.
+
+### Invented-jargon as a distinct catalog entry — model-coined domain-sounding terms that carry no real meaning or produce alien-syntax calques, separate from the existing 'known AI vocabulary' tiers
+- Source: Shreya Shankar thread (@sh_reya) — independently confirmed for English, Polish, and Mandarin by three separate repliers · Effort: S
+- Why: Our lexical-tells.md vocabulary tiers catch known AI buzzwords (leverage, delve) and significance-attribution.md's consultant-speak (S9) is adjacent, but neither catches a *novel* term the model invented that sounds sophisticated yet is undefined or meaningless in the domain — a distinct phenomenon, cross-lingually validated by three independent commenters in one thread, which is stronger evidence than most single-source catalog entries we already carry.
+- Recommendation: adopt — one new pattern entry (e.g. lexical-tells.md L7 or a new significance-attribution.md entry): 'Tell: a domain-sounding term the writer could not define plainly or that does not appear in the domain's standard usage. Fix: replace with the plain established term or flag for removal.'
+
+### Explicit anti-overpolishing stop condition — an endless polish loop is itself a quality failure; stop once every applicable gate passes and remaining edits are 'taste-equivalent or trade one strength for another'
+- Source: jpcaparas/skills better-writing — 'Explicit stop condition / anti-overpolishing' · Effort: S
+- Why: final-pass-checklist.md defines when a pass is done but nothing currently tells the model when to stop *iterating* across multiple passes/re-runs — a real risk given comms-polish's own step 8 instruction to re-scan the rewrite (which could recurse indefinitely without a stated exit).
+- Recommendation: adopt — one sentence added to final-pass-checklist.md or the rewrite workflow: stop when all applicable gates pass and remaining changes are stylistic preference, not a caught tell.
+
+### Gotchas/recovery playbook for failures of the revision process itself (edit changed the facts, humanization became detector-chasing, draft got clipped, review silently became a rewrite) with a 'restore first, then smallest corrective pass' principle
+- Source: jpcaparas/skills better-writing — 'Gotchas/recovery playbook' · Effort: M
+- Why: We prevent these failure modes via Safety Rules but have no documented recovery path for when one happens anyway mid-session (e.g., the user reports the rewrite changed a number). Right now there's no stated protocol beyond 'don't do that' — a short recovery reference would give both the model and the user a consistent way to back out of a bad edit instead of layering another fix on top of a damaged one.
+- Recommendation: adapt — a short references/recovery-playbook.md under comms-polish with 4-5 named symptom→recovery entries, scoped to failures we've actually seen (fabricated evidence flag skipped, voice profile ignored), not a wholesale import of jpcaparas's 11-entry version.
+
+### 12-genre library with named per-genre 'red flags' (vs our current 4 presets: tweet/LinkedIn/README/memo)
+- Source: jpcaparas/skills better-writing — 'Genre-mode library (12 shapes)' · Effort: M
+- Why: Our scenario-presets.md covers 4 genres; real usage (PR descriptions, decision records, release notes, product briefs) will fall through to 'scan the catalog evenly,' losing the per-genre weighting that's the whole point of the preset system. This is a coverage gap, not a design flaw.
+- Recommendation: adapt — extend scenario-presets.md with the genres actually requested in practice (start with PR description and release note, the two most likely for a DS/eng audience) rather than importing all 12 speculatively.
+
+### A genre carve-out for text primarily consumed by AI agents rather than human readers, where prose-craft tells (rhythm/burstiness, voice) may not apply the same way
+- Source: Orosz thread pushback (Petko Petkov, Michael Bleigh, Scott — ~35% of engaged replies) · Effort: M
+- Why: This is a live, contested idea from the community, not a settled technique — but it's a real tension with our current default that every deliverable should read as human-authored. Worth a deliberate decision rather than an accidental default, especially since our suite's target genres (README, docs) are exactly the disputed case.
+- Recommendation: adapt cautiously — flag this to the owner as a scope question rather than silently building it; if adopted, it's a new scenario-preset with rhythm/voice de-weighted, not a change to the core catalog's advisory status.
+
+## Contradicts our philosophy (do NOT adopt as-is)
+
+- write-better's flat, unconditional bans (e.g. 'no em dashes, ever', banned-word lists to be removed 'unless used with precise technical meaning') clash with our quality-first catalog ruling that provenance-only stylistic signals (em dashes, individual word choices) stay advisory and are weighed in clusters per-genre, never auto-removed on a single hit — adopting a hard ban would be a philosophy regression, not a sharpening.
+- jpcaparas's scan_aiisms.py is a scripted, JSON-corpus-backed Python detector shipped as part of the skill's mechanism (with a --gate flag for CI-style hard gating). A CI-gating detector is in tension with our 'provenance-only signals stay advisory, never a hard gate' ruling — if any part of this is adopted, it must stay non-gating and stdlib-only (as our existing stylometry.py already is) rather than becoming a pass/fail CI check.
+- None of the fetched sources propose a dense-RAG or host-specific-tool dependency for the KB itself — no item here conflicts with the zero-dep portability constraint outright; flagging only the two items above as the actual tensions found.
+
+## Top 3 recommendations
+
+1. Adopt an explicit epistemic-invariants check (observed/inferred, possible/certain) inside Safety Rules — closes a real hole in our hardest rule (no meaning change) for near-zero cost, validated by jpcaparas's preservation-ledger pattern.
+2. Add a false-positive protection checklist (quote/code, official term, in-voice-profile, genre-normal, second-language author) to rhythm-stylometric.md's guardrails — operationalizes our own 'advisory not proof' ruling and directly addresses the non-native-writer bias risk the community and cited research both flag.
+3. Add an invented-jargon pattern entry, independently validated across English/Polish/Mandarin in the Shreya thread — a real, cross-lingually confirmed gap our current vocabulary-tier catalog doesn't catch, one new entry, low effort.
+
+---
+Owner-gated question surfaced by this research: the 'docs consumed by AI agents, not humans'
+pushback (Orosz thread, ~1/3 of engaged replies) — whether this suite wants an agent-audience
+scenario preset with rhythm/voice de-weighted. Flagged as a scope decision, not built.
+
+## Addendum (same day): Hamel Husain thread
+
+### https://x.com/HamelHusain/status/2077057604245999972
+
+Post (2026-07-14, 77 likes / 15 replies at read time): AI slop on the timeline is "pouring
+pollutants into a river" — a selfish act that transfers cognitive load to readers via low
+information density, unnecessary poetry/rhythm/negative contrasts/fluff, and AI-mediated
+style that hides who the author is. All three named tells are already in our catalog
+(hedging-filler; structural-tells theatrics; the "not X but Y" negative-contrast entry).
+
+**Sentiment** (15 genuine replies read; ads/timeline injections excluded): ~77% agree /
+~23% substantive pushback (3 of 13 substantive replies).
+
+Agree themes: slop = empathy failure / editing-burden transfer onto the reader (Avi Hacker,
+McHoy); it works anyway — viral slop wins engagement, devrel pressure is real and
+conflicted (Nakul Arora, Rachel Nabors); satire agreement ("bots liking bot content" —
+LeverCRO; "You're absolutely right!" as AI-tell meta-joke — heyneighbor).
+
+Pushback themes: information density is not the purpose of good writing (samzliu); "poetry
+is always necessary" (Corey Quinn); consistency challenge — does the same standard apply to
+AI code/art? (prathyvsh).
+
+**Technique extracted — Hamel's own de-slop recipe** (reply to @HanchungLee): 1. delete at
+least half; 2. proofread repeatedly — every sentence must be needed, transitions/devices
+must earn their place; 3. delete more. "Deleting is the main way to make human writing
+better too."
+
+**New adaptation candidate (B-tier):** deletion-first / information-density question in
+final-pass-checklist.md (effort S). Guardrail baked in from the pushback: density is
+genre-sensitive and not the sole goal of good prose (samzliu) — a density check stays a
+question, never a hard length target.

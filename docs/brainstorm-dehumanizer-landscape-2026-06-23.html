@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>去AI味 · 头脑风暴全过程与提案 · AI Writing Suite</title>
+<style>
+  :root{
+    --ink:#1f2430; --muted:#5b6472; --soft:#828b99;
+    --accent:#4f46e5; --accent2:#0ea5e9; --accentbg:#eef0ff;
+    --good:#16a34a; --warn:#d97706; --bad:#dc2626;
+    --goodbg:#e9f7ef; --warnbg:#fdf3e3; --badbg:#fbeaea;
+    --bg:#f6f7f9; --card:#ffffff; --line:#e6e8ec; --line2:#f0f1f4;
+    --radius:14px; --shadow:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.75; font-size:16px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px; margin:0 auto; padding:0 22px 90px}
+  /* hero */
+  .hero{
+    background:linear-gradient(135deg,#4f46e5 0%,#6366f1 45%,#0ea5e9 100%);
+    color:#fff; padding:54px 22px 46px; margin-bottom:34px;
+  }
+  .hero .inner{max-width:1040px; margin:0 auto}
+  .kick{font-size:13px; letter-spacing:.16em; text-transform:uppercase; opacity:.85; font-weight:600}
+  .hero h1{font-size:30px; line-height:1.35; margin:12px 0 10px; font-weight:800}
+  .hero p{font-size:17px; margin:0; max-width:760px; opacity:.96}
+  .hero .meta{margin-top:22px; display:flex; flex-wrap:wrap; gap:10px}
+  .pill{background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.28); padding:5px 12px; border-radius:999px; font-size:13px; font-weight:600}
+  /* sections */
+  section{margin:38px 0}
+  h2{font-size:23px; font-weight:800; margin:0 0 6px; display:flex; align-items:center; gap:10px}
+  h2 .n{display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; background:var(--accentbg); color:var(--accent); font-size:15px; font-weight:800; flex:none}
+  .lead{color:var(--muted); margin:0 0 18px; font-size:15.5px}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px 24px}
+  .analogy{background:var(--card); border:1px solid var(--line); border-left:5px solid var(--accent); border-radius:var(--radius); padding:20px 24px; box-shadow:var(--shadow)}
+  .analogy b{color:var(--accent)}
+  .en{color:var(--soft); font-size:.9em; font-weight:500}
+  /* pipeline */
+  .flow{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:6px}
+  .stage{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px 16px 18px; box-shadow:var(--shadow); position:relative}
+  .stage .tag{font-size:12px; font-weight:700; letter-spacing:.05em; color:var(--accent); text-transform:uppercase}
+  .stage h3{margin:6px 0 4px; font-size:16px}
+  .stage .zh{font-weight:800}
+  .stage p{margin:6px 0 0; font-size:13.5px; color:var(--muted); line-height:1.6}
+  .stage .num{margin-top:12px; font-size:13px; font-weight:700; color:var(--ink); background:var(--line2); border-radius:8px; padding:5px 9px; display:inline-block}
+  .stage::after{content:"→"; position:absolute; right:-12px; top:50%; transform:translateY(-50%); color:var(--soft); font-weight:800; font-size:18px; z-index:2}
+  .stage:last-child::after{display:none}
+  .funnel{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:18px; font-weight:700}
+  .fn{padding:8px 14px; border-radius:10px; background:var(--accentbg); color:var(--accent)}
+  .fn.cut{background:var(--badbg); color:var(--bad)}
+  .fn.win{background:var(--goodbg); color:var(--good)}
+  .fnarr{color:var(--soft)}
+  /* landscape */
+  table{width:100%; border-collapse:collapse; font-size:14px; background:var(--card); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow)}
+  th,td{text-align:left; padding:10px 13px; border-bottom:1px solid var(--line2); vertical-align:top}
+  th{background:#fbfbfc; font-size:12.5px; letter-spacing:.04em; color:var(--muted); text-transform:uppercase; font-weight:700}
+  tr:last-child td{border-bottom:none}
+  .yes{color:var(--good); font-weight:700}
+  .no{color:var(--bad); font-weight:700}
+  .takeaway{margin-top:14px; background:var(--warnbg); border:1px solid #f3dca8; border-radius:var(--radius); padding:16px 20px}
+  .takeaway b{color:#b45309}
+  /* big idea */
+  .twocol{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px}
+  .box{border-radius:12px; padding:16px 18px; border:1px solid var(--line)}
+  .box.bad{background:var(--badbg); border-color:#f1c9c9}
+  .box.good{background:var(--goodbg); border-color:#bfe6cd}
+  .box h4{margin:0 0 8px; font-size:14px; letter-spacing:.03em}
+  .box.bad h4{color:var(--bad)} .box.good h4{color:var(--good)}
+  .box ul{margin:0; padding-left:18px} .box li{margin:4px 0; font-size:14.5px}
+  .qs{margin-top:14px; display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .qs div{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 14px; font-size:14px}
+  .qs .qn{color:var(--accent); font-weight:800; margin-right:6px}
+  /* idea cards */
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:6px}
+  .idea{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow)}
+  .idea.flag{border-color:#c7c2f7; box-shadow:0 0 0 2px var(--accentbg), var(--shadow)}
+  .idea .top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px}
+  .idea h4{margin:0 0 6px; font-size:15.5px; line-height:1.45}
+  .idea p{margin:0; font-size:14px; color:var(--muted)}
+  .badges{display:flex; gap:6px; flex:none; flex-wrap:wrap; justify-content:flex-end}
+  .b{font-size:11.5px; font-weight:800; padding:3px 8px; border-radius:999px; white-space:nowrap}
+  .b.low{background:var(--goodbg); color:var(--good)} .b.med{background:var(--warnbg); color:var(--warn)} .b.high{background:var(--badbg); color:var(--bad)}
+  .b.flagb{background:var(--accent); color:#fff}
+  .grouphdr{margin:22px 0 4px; font-weight:800; font-size:15px; color:var(--ink); display:flex; align-items:center; gap:8px}
+  .grouphdr .dot{width:9px; height:9px; border-radius:50%; background:var(--accent)}
+  .donts{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px}
+  .dont{background:var(--badbg); border:1px solid #f1c9c9; border-radius:11px; padding:12px 15px; font-size:14px}
+  .dont b{color:var(--bad)}
+  details{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:4px 18px; margin-top:10px}
+  summary{cursor:pointer; font-weight:700; padding:10px 0; font-size:14.5px}
+  details[open] summary{border-bottom:1px solid var(--line2); margin-bottom:10px}
+  .footer{margin-top:46px; padding-top:20px; border-top:1px solid var(--line); color:var(--soft); font-size:13px}
+  .note{background:var(--accentbg); border:1px solid #d3d0f7; border-radius:10px; padding:6px 12px; font-size:13px; color:#3730a3; display:inline-block; font-weight:600}
+  @media(max-width:780px){
+    .flow{grid-template-columns:1fr 1fr} .stage::after{display:none}
+    .grid,.twocol,.qs,.donts{grid-template-columns:1fr} .hero h1{font-size:24px}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="inner">
+    <div class="kick">AI Writing Suite · 头脑风暴 Brainstorm</div>
+    <h1>怎样让我们的「去 AI 味」skill 更强？<br>—— 一次多智能体头脑风暴的全过程 + 提案</h1>
+    <p>素材来源：@noahduck283 的「中英文去AI味 skill 合集」推文 + 长文解析（一张 9 个竞品的地图）。这一页讲清楚两件事：<b>我是怎么一步步想的</b>，以及<b>我建议你做什么</b>。</p>
+    <div class="meta">
+      <span class="pill">📅 2026-06-23</span>
+      <span class="pill">🤖 18 个 agent</span>
+      <span class="pill">💡 35 个候选想法</span>
+      <span class="pill">✅ 10 个近期 / 5 个远期</span>
+      <span class="pill">🧭 仅头脑风暴 · 未改任何代码</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 0. analogy -->
+  <section>
+    <div class="analogy">
+      <p style="margin-top:0"><b>用你最熟的语言来理解这次头脑风暴 —— 它就是一条搜索排序流水线：</b></p>
+      <ul style="margin:0; padding-left:20px">
+        <li><b>召回 Recall</b>（理解 + 发想）：先把「语料」读全 —— 我们自己的 skill ＋ 9 个竞品；再用 4 个不同「查询角度」生成候选 → <b>35 个想法</b>。</li>
+        <li><b>排序 Ranking</b>（评审）：3 个评审员（数据严谨 / 架构契合 / 产品价值）给<b>每一个</b>候选打分，像 3 个相关性标注员投票。</li>
+        <li><b>重排 + 截断 Re-rank & top-k</b>（综合）：滤掉违反设计原则的、低分的 → 留下近期可做的 <b>top 10</b>。</li>
+        <li><b>人来拍板</b>：最后由你（产品负责人）决定哪些值得花工时。我只发想、排序、整理，不替你拍板。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 1. pipeline -->
+  <section>
+    <h2><span class="n">1</span>我是怎么一步步想的</h2>
+    <p class="lead">不是「一个模型拍脑袋」，而是 4 个阶段、18 个 agent 并行协作，且<b>「发想」和「评审」严格分两拨人</b>做（避免自己夸自己）。</p>
+    <div class="flow">
+      <div class="stage">
+        <div class="tag">Step 1 · Understand</div>
+        <h3><span class="zh">理解现状</span> <span class="en">map</span></h3>
+        <p>10 个 reader 并行读：我们自己的 skill（已覆盖哪些 AI 味）＋ 9 个竞品各自的招式。</p>
+        <span class="num">10 个并行 reader</span>
+      </div>
+      <div class="stage">
+        <div class="tag">Step 2 · Ideate</div>
+        <h3><span class="zh">发想候选</span> <span class="en">recall</span></h3>
+        <p>4 个角度各自发想：① 缺的招式 ② 流程改造 ③ 怎么度量 ④ 差异化定位。</p>
+        <span class="num">4 角度 → 35 候选</span>
+      </div>
+      <div class="stage">
+        <div class="tag">Step 3 · Critique</div>
+        <h3><span class="zh">对抗评审</span> <span class="en">rank</span></h3>
+        <p>3 个挑刺评审员各自给 35 个候选逐一打分（影响力 / 契合度 / 风险 / 是否违规）。</p>
+        <span class="num">3 评审 × 35 候选</span>
+      </div>
+      <div class="stage">
+        <div class="tag">Step 4 · Synthesize</div>
+        <h3><span class="zh">综合定稿</span> <span class="en">top-k</span></h3>
+        <p>只留「≥2 个评审说留 + 不违反任何设计原则」的，分成近期 / 远期 / 不要做。</p>
+        <span class="num">→ 10 近期 + 5 远期</span>
+      </div>
+    </div>
+    <div class="funnel">
+      <span class="fn">35 个候选</span>
+      <span class="fnarr">→ 3 评审打分 →</span>
+      <span class="fn win">10 个近期 (v1.2)</span>
+      <span class="fn win">5 个远期 (v2)</span>
+      <span class="fn cut">6 条「明确不要做」</span>
+    </div>
+  </section>
+
+  <!-- 2. landscape -->
+  <section>
+    <h2><span class="n">2</span>竞品地图：这 9 个「去 AI 味」skill</h2>
+    <p class="lead">推文说是 9 个，但读完发现 <b>有 2 个根本不是去 AI 味工具</b>（nuwa 是人设蒸馏、taste 是前端 UI），真正的同类其实是 7 个。</p>
+    <table>
+      <tr><th>#</th><th>Skill</th><th>读到</th><th>它的做法 / 最值得借鉴的点</th></tr>
+      <tr><td>1</td><td><code>blader/humanizer</code></td><td class="yes">✓</td><td>维基百科来源的 33 条特征清单；草稿→自查「还像 AI 的句子」→定稿，<b>三步带一个明确的自审步</b>。</td></tr>
+      <tr><td>2</td><td><code>Aboudjem/humanizer-skill</code></td><td class="yes">✓</td><td>43 条编号特征（P1–P43）＋ 0-100 评分。可借鉴：<b>编号可引用的特征目录</b>。</td></tr>
+      <tr><td>3</td><td><code>brandonwise/humanizer</code></td><td class="yes">✓</td><td>28 个特征检测器＋ 4 个统计信号（burstiness 等）＋ 0-100 分。</td></tr>
+      <tr><td>4</td><td><code>hardikpandya/stop-slop</code></td><td class="yes">✓</td><td>禁用词＋结构套话清单。亮点：<b>「假能动性」检测</b>（无生命主语做人类动作）。</td></tr>
+      <tr><td>5</td><td><code>op7418/Humanizer-zh</code></td><td class="yes">✓</td><td>中文版（译自 blader+stop-slop）。亮点：<b>中文 AI 词黑名单</b>（此外、格局、织锦…）。</td></tr>
+      <tr><td>6</td><td><code>alchaincyf/nuwa-skill</code></td><td class="no">✗ 非同类</td><td>人设蒸馏流水线，不是去 AI 味工具 —— 与我们零重叠。</td></tr>
+      <tr><td>7</td><td><code>leonxlnx/taste-skill</code></td><td class="no">✗ 非同类</td><td>前端落地页 / UI 设计 skill —— 跟文本去味无关。</td></tr>
+      <tr><td>8</td><td><code>dongbeixiaohuo/writing-agent</code></td><td class="yes">✓</td><td>中文公众号写作全流水线（14 步 SOP）。亮点：中文 AI 味<b>「致命黑名单」</b>。</td></tr>
+      <tr><td>9</td><td><code>Hello-SimpleAI/...detection</code></td><td class="yes">✓</td><td>学术检测研究（HC3 数据集），不是改写器。可借鉴：检测特征思路。</td></tr>
+    </table>
+    <div class="takeaway">
+      <b>最关键的发现（护城河）：</b>7 个真·同类里，<b>有 8 成都给一个 0-100「AI 味分数」让模型往低了改</b>。这正是 Goodhart 定律 —— <i>一旦把度量当成目标，它就不再是好度量</i>（一篇文章可以 AI 分 4/100，却照样编造事实、读着像机器）。<b>我们这套 skill 坚持「不把分数当目标」，这本身就是别人抄不走的差异化。</b>
+    </div>
+  </section>
+
+  <!-- 3. big idea -->
+  <section>
+    <h2><span class="n">3</span>最大的一个想法：「越位感 / 反代入式表达」</h2>
+    <p class="lead">3 个评审都给了 <b>影响力 5/5、契合度 5/5</b>。而且我核对过：<b>我们的目录里没有、9 个竞品里也都没有</b> —— 这是我们唯一一个真正新、且别人难抄的资产。</p>
+    <div class="card">
+      <p style="margin-top:0"><b>用大白话讲：</b>AI 最招人烦的，<u>不是写得平庸，而是「越位」</u> —— 它替你思考、先假设你心里有个误区、再居高临下地纠正你。读完会不舒服，但常常说不清为什么。</p>
+      <div class="twocol">
+        <div class="box bad">
+          <h4>✗ 少写（越位 / 替读者下判断）</h4>
+          <ul>
+            <li>「你以为 X，其实是 Y」</li>
+            <li>「很多人觉得…实际上…」</li>
+            <li>「你可能会认为…但真正关键是…」</li>
+            <li>「问题不在 A，而在 B」<span class="en">（A 不是读者真有的认知 = 先造靶子再打）</span></li>
+          </ul>
+        </div>
+        <div class="box good">
+          <h4>✓ 多写（平等陈述我的判断）</h4>
+          <ul>
+            <li>「更关键的是 Y」</li>
+            <li>「真正起作用的是 Y」</li>
+            <li>「这里的核心变量是 Y」</li>
+            <li>「我更认同 Y 这个解释」</li>
+          </ul>
+        </div>
+      </div>
+      <div class="qs">
+        <div><span class="qn">自检①</span>我是不是在替读者想？</div>
+        <div><span class="qn">自检②</span>这个误区，真的是读者会有的吗？</div>
+        <div><span class="qn">自检③</span>这句是在传递内容，还是在表演洞见？</div>
+        <div><span class="qn">自检④</span>去掉「你以为」之后，这句还成立吗？</div>
+      </div>
+      <p style="margin-bottom:0; margin-top:16px"><b>为什么必须用「目录＋自检＋顾问式判官」而不是正则？</b>因为越位句<u>每个词都是干净的</u>，正则抓不到「站位」。所以它落地为：①一条特征目录条目 ②写作/打磨时的自检清单 ③一个<b>仅供参考、绝不卡 CI</b> 的 LLM 判官维度。</p>
+    </div>
+  </section>
+
+  <!-- 4. proposals -->
+  <section>
+    <h2><span class="n">4</span>我的提案：近期该做什么</h2>
+    <p class="lead">下面 10 条是「≥2 个评审说留、且不违反任何设计原则」筛出来的。<span class="note">绿=低成本　橙=中等　红=高</span></p>
+
+    <div class="grouphdr"><span class="dot"></span>A 组 · 旗舰（越位感，这是重点）</div>
+    <div class="grid">
+      <div class="idea flag">
+        <div class="top"><h4>① 越位感特征目录 ＋ 4 问自检</h4><div class="badges"><span class="b flagb">旗舰</span><span class="b med">中</span></div></div>
+        <p>新增一条目录（含 4 种子型 + 少写/多写对照表），并把 4 个自检问题接进 comms-polish / comms-draft。只做目录＋清单，<b>不做正则</b>。</p>
+      </div>
+      <div class="idea flag">
+        <div class="top"><h4>② 越位感作为「顾问式」LLM 判官维度</h4><div class="badges"><span class="b flagb">旗舰</span><span class="b med">中</span></div></div>
+        <p>给评测加一个 PASS/FAIL 维度（仅供参考、不卡 CI）。这是让旗舰功能<b>可被度量</b>的唯一办法 —— 否则「我们能抓越位」是句无法证伪的空话。</p>
+      </div>
+      <div class="idea">
+        <div class="top"><h4>③「不是 X 而是 Y」的真假纠偏判据</h4><div class="badges"><span class="b low">低</span></div></div>
+        <p>给现有规则加条件：只有当 X 是真实、普遍的旧认知，这句式才有效；否则就是伪纠偏，直接说 Y。这是<b>给一条过度激进的旧规则收口</b>。</p>
+      </div>
+    </div>
+
+    <div class="grouphdr"><span class="dot"></span>B 组 · 便宜的高价值流程改造（全是低成本）</div>
+    <div class="grid">
+      <div class="idea"><div class="top"><h4>⑥ 先分类、后动笔</h4><div class="badges"><span class="b low">低</span></div></div><p>把 polish 里「边扫边改」的步骤拆开：先出一份分类检测报告（不动笔），再改。</p></div>
+      <div class="idea"><div class="top"><h4>⑦ 软压缩：删掉「正确但没信息量」的句子</h4><div class="badges"><span class="b low">低</span></div></div><p>加一个 ~20% 的软删减步 —— 文章说这一步性价比最高，AI 味的根源常是「水分」而非「用词」。</p></div>
+      <div class="idea"><div class="top"><h4>⑧ 写作前补 3 个问题</h4><div class="badges"><span class="b low">低</span></div></div><p>动笔前先问清楚：意图 / 语气 / 素材出处（哪些是真经历、哪些是推测）。信息不全，AI 只能套模板。</p></div>
+      <div class="idea"><div class="top"><h4>⑨「别过度修改」止损闸</h4><div class="badges"><span class="b low">低</span></div></div><p>明确一条：本来就干净的稿子可以原样交付。<b>装人味（硬塞语气词/错别字）比 AI 味更尴尬。</b></p></div>
+      <div class="idea"><div class="top"><h4>⑩ 命名的「第二遍自审」闸</h4><div class="badges"><span class="b low">低</span></div></div><p>把现有的「再扫一遍」升级成会说出残留 AI 味在哪的明确步骤（第一遍修明显错，第二遍专找残留）。</p></div>
+      <div class="idea"><div class="top"><h4>⑤ 正向「人味信号」保护清单</h4><div class="badges"><span class="b low">低</span></div></div><p>列一份「该保留、别被磨平」的东西（明确立场、长句、口头禅），防止去味去成「另一种通用模板」。</p></div>
+    </div>
+
+    <div class="grouphdr"><span class="dot"></span>C 组 · 双语（诚实地够到中文）</div>
+    <div class="grid">
+      <div class="idea"><div class="top"><h4>④ 通用中文 AI 词表（仅目录，不接检测器）</h4><div class="badges"><span class="b med">中</span></div></div><p>加一份通用中文 AI 味词表（赋能/认知升级/底层逻辑…）＋翻译腔连接词。<b>检测器仍然只对英文打分、中文明确「不打分」—— 绝不伪造一个中文分数。</b></p></div>
+    </div>
+  </section>
+
+  <!-- 5. v2 + donts -->
+  <section>
+    <h2><span class="n">5</span>远期（v2）＆ 明确不要做</h2>
+    <details>
+      <summary>📈 远期 5 项（更大、需要更多投入）</summary>
+      <ul style="margin:0; padding-left:20px">
+        <li><b>中文真打分的检测器</b>（按字/词的分词器，给中文一个真分数）— 高成本</li>
+        <li><b>draft/polish/voice-onboard 的中英双语操作文案对齐</b> — 高成本</li>
+        <li><b>按体裁/意图加权的打分</b>（用一个发散性测试证明它有效）— 中</li>
+        <li><b>「推测性填空」判官维度</b>（扩展现有的「编造陷阱」）— 低</li>
+        <li><b>engine-vs-fuel 加固</b>：README 讲清＋CONTRIBUTING 规则＋「只放通用 KB」的 lint — 中</li>
+      </ul>
+    </details>
+    <div style="margin-top:16px"></div>
+    <div class="grouphdr"><span class="dot" style="background:var(--bad)"></span>明确「不要做」（避免掉进竞品的坑）</div>
+    <div class="donts">
+      <div class="dont"><b>✗ 不做</b> 面向用户的 0-100「AI 味分数」当闸门或优化目标（= Goodhart 陷阱）。</div>
+      <div class="dont"><b>✗ 不做</b> 反复改写到「零特征」的 --iterate 收敛循环（会改出另一种模板感）。</div>
+      <div class="dont"><b>✗ 不做</b> 向量/embedding RAG，或检测器端的困惑度/分类器特征（破坏零依赖、可移植）。</div>
+      <div class="dont"><b>✗ 不做</b> 常驻的「永不输出 AI 味」系统提示词人格植入。</div>
+      <div class="dont"><b>✗ 不做</b> 传播/裂变机器（公众号社交压力测试、分享地图、开头锦标赛）。</div>
+      <div class="dont"><b>✗ 不做</b> 重造「哪些不该标」的 false-positive 列表（已有）。</div>
+    </div>
+  </section>
+
+  <!-- 6. owner decisions -->
+  <section>
+    <h2><span class="n">6</span>需要你拍板的事</h2>
+    <p class="lead">这些是只有你（产品负责人）能定的，我不替你猜。</p>
+    <div class="qs" style="grid-template-columns:1fr">
+      <div><span class="qn">①</span><b>旗舰功能需要你手工标注：</b>越位感判官只能靠你提供的 2-3 个「改前/改后」例子来校验。要不要从这里起步？</div>
+      <div><span class="qn">②</span><b>双语排期：</b>v1.2 先上「仅目录」的中文词表（LLM skill 会读，检测器不读、中文不打分）。这个范围 OK 吗？</div>
+      <div><span class="qn">③</span><b>体裁加权（v2）：</b>需要决定「哪种体裁里哪些特征更重要」的权重表。要做吗？</div>
+      <div><span class="qn">④</span><b>20% 软压缩：</b>确认是「软下限、可解释豁免」而非硬性删够 20%？</div>
+      <div><span class="qn">⑤</span><b>voice-memory 定位（v2）：</b><code>learned-rules.md</code> 目前是空的（架子搭好、还没积累规则）。要不要主推这个差异化？</div>
+      <div><span class="qn">⑥</span><b>engine-vs-fuel 的 CI lint：</b>要不要加一个「只放通用 KB」的检查（在 KB PR 里拦截机密标签/内部链接）？</div>
+    </div>
+  </section>
+
+  <div class="footer">
+    <p><span class="note">仅头脑风暴 · 未改任何代码</span>　仓库在 <code>main</code>，有一个无关的未提交文件（learned-rules.md），我没有提交任何东西。</p>
+    <p>完整文字版（含 35 个候选清单、评审打分表、各竞品技术细节）：<code>docs/brainstorm-dehumanizer-landscape-2026-06-23.md</code><br>
+    素材来源：@noahduck283 推文 + 长文解析（2026-06-22/23）。流程：18 个 agent，约 14 分钟，理解→发想→评审→综合。</p>
+  </div>
+
+</div>
+</body>
+</html>
