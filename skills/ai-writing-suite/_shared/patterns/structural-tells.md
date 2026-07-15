@@ -8,6 +8,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 
 ### T1 — Rule of three
 
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
+
 - **Tell:** Forcing ideas into groups of three to sound authoritative:
   "innovation, inspiration, and industry insights." Humans don't always think in
   triads.
@@ -18,6 +22,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 ---
 
 ### T2 — Negative parallelism / tailing negation
+
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
 
 - **Tell:** "Not only X but Y," "It's not just about X, it's Y," used as a
   reflex. Also clipped tailing negations tacked on: "no guessing," "no wasted
@@ -31,6 +39,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 ---
 
 ### T3 — Formulaic challenges section
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
 
 - **Tell:** A "challenges" block generated from nothing: "Despite [good thing],
   [vague problems]. Despite these challenges, [optimistic platitude]." Also the
@@ -46,6 +58,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 
 ### T4 — False concession structure
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | regex |
+
 - **Tell:** "While X is impressive, Y remains a challenge," "Although X has made
   strides, Y is still an open question." Sounds balanced without weighing
   anything; both halves stay vague.
@@ -56,6 +72,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 ---
 
 ### T5 — Excessive / decorative structure
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
 
 - **Tell:** Visible structure standing in for clear thinking: a heading for every
   paragraph, more than 3 headings in under 300 words, 8+ bullets in under 200
@@ -72,6 +92,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 
 ### T6 — Inline-header vertical lists
 
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
+
 - **Tell:** Bullets where each item starts with a bold header that repeats
   itself: "**Performance:** Performance improved by…," "**Security:** Security
   has been strengthened…"
@@ -87,6 +111,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 
 ### T7 — Bullet lists of bare noun phrases
 
+| Severity | Enforcement |
+| --- | --- |
+| low | regex |
+
 - **Tell:** 5+ consecutive bullets, each a short (≤6-word) adjective+noun phrase
   with no verb and nothing checkable: "Stable mining efficiency / Reliable pool
   connectivity / Optimized RandomX performance." The tell is the *symmetry* —
@@ -100,6 +128,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 
 ### T8 — Numbered-list inflation
 
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
+
 - **Tell:** "Three key takeaways," "Five things to know," "Here are the top
   seven." Numbered lists are structurally safe, so the model defaults to them even
   when the content isn't that many discrete parallel items.
@@ -110,6 +142,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 ---
 
 ### T9 — Paragraph-reshuffle immunity
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
 
 - **Tell:** The model writes parallel self-contained blocks instead of an
   unfolding argument. Test: can you swap paragraph 2 and paragraph 4 without
@@ -128,6 +164,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 
 ### T10 — Treadmill effect (low information density)
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
+
 - **Tell:** A 500-word section carrying 100 words of new information and 400 of
   restatement. Humans advance; AI circles. Inside-paragraph markers: "In other
   words," "Put simply," "Essentially," "That is to say."
@@ -140,6 +180,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 
 ### T11 — Fragmented headers
 
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
+
 - **Tell:** A heading followed by a one-line paragraph that just restates the
   heading before the real content starts. ("## Performance" → "Speed matters.")
 - **Fix:** Cut the warm-up line; let the real content follow the heading.
@@ -148,6 +192,10 @@ every flagged word while leaving the shape untouched still reads as AI.
 ---
 
 ### T12 — Diff-anchored writing
+
+| Severity | Enforcement |
+| --- | --- |
+| low | judge |
 
 - **Tell:** Documentation written as if narrating a change rather than describing
   the thing as it is: "This function was added to replace the previous approach…,"

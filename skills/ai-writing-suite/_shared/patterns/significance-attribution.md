@@ -8,6 +8,10 @@ priority to fix in any professional or factual document.
 
 ### S1 — Significance inflation
 
+| Severity | Enforcement |
+| --- | --- |
+| high | regex |
+
 - **Tell:** Puffing routine facts into history-making ones: "marking a pivotal
   moment in the evolution of…," "a watershed moment for the industry," "stands as
   a testament to," "underscores the importance of," "represents a shift."
@@ -26,6 +30,10 @@ priority to fix in any professional or factual document.
 ---
 
 ### S2 — Symbolic gloss / meaning-telling
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
 
 - **Tell:** Narrating the *meaning* of a mundane fact instead of trusting the
   fact: "this represents a broader shift," "the decision symbolizes a commitment
@@ -49,6 +57,10 @@ priority to fix in any professional or factual document.
 
 ### S3 — Novelty inflation
 
+| Severity | Enforcement |
+| --- | --- |
+| high | regex |
+
 - **Tell:** Treating an established concept as if the subject invented it: "he
   coined the term," "a failure mode nobody talks about," "the insight everyone's
   missing." Factually risky (the idea often already has a Wikipedia page) and
@@ -60,6 +72,10 @@ priority to fix in any professional or factual document.
 ---
 
 ### S4 — Vague attribution / weasel words
+
+| Severity | Enforcement |
+| --- | --- |
+| high | regex |
 
 - **Tell:** Phantom authorities give opinions weight: "Experts believe,"
   "Studies show," "Research suggests," "Industry leaders agree," "several
@@ -75,6 +91,10 @@ priority to fix in any professional or factual document.
 
 ### S5 — Notability name-dropping / source-listing as content
 
+| Severity | Enforcement |
+| --- | --- |
+| high | judge |
+
 - **Tell:** Proving importance by listing coverage instead of saying what the
   coverage reported: "cited in NYT, BBC, FT, and The Hindu," "maintains an active
   social media presence."
@@ -89,6 +109,10 @@ priority to fix in any professional or factual document.
 
 ### S6 — Promotional / advertisement language
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
+
 - **Tell:** Tourism-brochure prose: "nestled within the breathtaking foothills,"
   "a vibrant hub of innovation," "a thriving ecosystem," "rich cultural
   heritage," "must-visit," "world-class."
@@ -100,6 +124,10 @@ priority to fix in any professional or factual document.
 
 ### S7 — Superficial -ing analyses
 
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
+
 - **Tell:** Present-participle phrases tacked on to fake depth: "…symbolizing the
   region's commitment to progress, reflecting decades of investment, and
   showcasing a new era." The written equivalent of nodding while saying nothing.
@@ -110,6 +138,10 @@ priority to fix in any professional or factual document.
 ---
 
 ### S8 — Speculative gap-filling
+
+| Severity | Enforcement |
+| --- | --- |
+| high | judge |
 
 - **Tell:** When the model lacks a fact, it fills the gap with hedged
   speculation dressed as background: "maintains a relatively low public profile,"
@@ -123,6 +155,10 @@ priority to fix in any professional or factual document.
 ---
 
 ### S9 — Consultant-speak / business jargon
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
 
 - **Tell:** Polished-but-evasive language that signals work without carrying it:
   best-in-class, value-add, key learnings, actionable insights, holistic
@@ -142,6 +178,10 @@ priority to fix in any professional or factual document.
 ---
 
 ### S10 — Invented jargon / coined pseudo-terms
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | advisory |
 
 - **Tell:** A domain-sounding term the model appears to have coined — it reads as
   sophisticated but has no established meaning in the field, or is an alien-syntax
