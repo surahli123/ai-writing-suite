@@ -120,6 +120,13 @@ Voice has three sources, in priority order:
 2. **A writing sample the user pastes** in this request — match it directly.
 3. **Inferred voice** from the draft itself, when neither of the above exists.
 
+**Voice precedence over the catalog (C3 ruling, 2026-07-15).** When a construction
+is both a learned voice habit (in the loaded profile's samples or fields) and a
+listed catalog tell, **the voice profile wins in that author's own writing**: it is
+their voice by definition, so the tell may be noted as advisory, never auto-edited.
+This is the same outcome the false-positive gate's question 3 enforces per flag —
+stated here as policy so no future catalog entry overrides it.
+
 **Graceful degradation:** if the source #1 lookup yields no profile (empty
 `_shared/voice-profiles/` and no valid legacy file — see source #1), do not error
 and do not block. Polish
