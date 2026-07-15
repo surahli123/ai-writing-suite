@@ -34,6 +34,7 @@
 ## Meta
 
 - **Author:** [name / id]
+- **Genre:** [genre-slug, matching this file's name, e.g. blog / linkedin / formal-report]  <!-- self-description; the FILENAME is the source of truth on conflict -->
 - **Extracted:** [YYYY-MM-DD]
 - **Sample count:** [N]
 - **Sample sources:** [blog / LinkedIn / X / internal memos / other]

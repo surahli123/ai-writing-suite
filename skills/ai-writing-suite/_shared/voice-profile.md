@@ -54,7 +54,14 @@
   rather than inventing a trait. A profile built on guesses is worse than no
   profile, because `comms-polish` will trust it.
 
-  STATUS OF THIS FILE: example only. Replace via `voice-onboard`.
+  WHERE REAL PROFILES LIVE
+  ------------------------
+  Real per-genre profiles are written to `_shared/voice-profiles/<genre>.md`
+  (one file per genre) by `voice-onboard`. This single file remains only as the
+  shipped SAMPLE and as a legacy single-file fallback when that directory is
+  absent or empty. Do not rename or delete it.
+
+  STATUS OF THIS FILE: example only. Real profiles live in `_shared/voice-profiles/`.
 ================================================================================
 -->
 
@@ -71,6 +78,7 @@
 ## Meta
 
 - **Author:** Sam (example)
+- **Genre:** blog  <!-- self-description; the FILENAME is the source of truth on conflict -->
 - **Extracted:** 2026-06-06
 - **Sample count:** 7
 - **Sample sources:** personal blog posts, internal memos

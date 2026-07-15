@@ -46,18 +46,23 @@ Read what is present; degrade gracefully on anything absent (see Safety Rules).
   audience, tone, revision) and — in a company fork — the playbook's structure,
   terminology, and house facts. Quote/apply the relevant passage; cite the entry
   filename when a draft choice came from it.
-- **The voice profile** (optional) at `_shared/voice-profile.md`, produced by
-  `voice-onboard`. Read it only if it is a *valid* profile — present AND not the
-  shipped sample. The shipped file is a filled example carrying a
-  `> SAMPLE PROFILE.` banner blockquote near the top; if that banner is present,
-  treat it as **no profile** (infer voice and make the Q8 offer, below). For a
-  valid profile, bias the draft toward its fields. The profile's header set is the
-  **canonical ordered list at the top of `_shared/voice-profile.md`** (the single
-  source of truth — do not restate a divergent subset here); use every header
-  present that carries voice guidance — Tone, Sentence Length, Vocabulary Don't,
-  and every other header on the canonical list that carries voice guidance,
-  **including Measured Fingerprint** (quantitative targets). Read what is there;
-  ignore what is not.
+- **The voice profile** (optional) under `_shared/voice-profiles/`, produced by
+  `voice-onboard` — one file per genre, filename is the genre key. Look it up
+  cheaply: **list** `_shared/voice-profiles/*.md` (one directory read, filenames
+  only); **select one file** by precedence, first match wins — (1) explicit user
+  request (named genre → that file; absent → drop to rule 4), (2) normalized-exact
+  preset/genre match (lowercase, spaces→hyphens, string equality; no fuzzy/prefix/
+  alias — `formal-report` ≠ `report`), (3) single-profile fallback (exactly one
+  file → use it), (4) no match → Q8 offer once then infer (below); **read** the
+  full body of that one file only. If the directory is absent/empty, fall back to
+  the legacy `_shared/voice-profile.md`, gated by the `> SAMPLE PROFILE.` banner
+  (banner present = no profile → infer + Q8 offer). For a valid profile, bias the
+  draft toward its fields. The profile's header set is the **canonical ordered list
+  at the top of `_shared/voice-profile.md`** (the single source of truth — do not
+  restate a divergent subset here); use every header present that carries voice
+  guidance — Tone, Sentence Length, Vocabulary Don't, and every other header on
+  that list, **including Measured Fingerprint** (quantitative targets). Read what
+  is there; ignore what is not.
 - **Genre presets** via `skills/comms-polish/references/scenario-presets.md`
   (suite-root-relative). Reuse comms-polish's presets — do not duplicate them.
   A preset tells you the genre's hard form constraints (a tweet's 280-char limit,
@@ -112,19 +117,22 @@ proceed — do not stall on a fourth question.
 ### 2. Load the inputs (KB, voice, preset, catalog)
 
 Run the suite's self-improvement ON START read (see below). Then: pull the
-matching genre preset; read the relevant KB entries via `INDEX.md`; load the
-voice profile if valid — present and not the shipped sample (the `> SAMPLE
-PROFILE.` banner means treat it as absent), otherwise infer the lightest voice
-that fits the reader; open the catalog categories the genre weights hardest. Note
-any absent input out loud — never block on a missing one.
+matching genre preset; read the relevant KB entries via `INDEX.md`; select and
+load the voice profile via the `_shared/voice-profiles/` lookup (see Inputs — list,
+pick one file by precedence, read that one body; legacy file on an empty directory,
+banner = no profile), otherwise infer the lightest voice that fits the reader; open
+the catalog categories the genre weights hardest. Note any absent input out loud —
+never block on a missing one.
 
-**"In my voice" with no valid profile (Q8).** If the user explicitly asked for
-*their own* voice and no valid `_shared/voice-profile.md` exists (absent, or still
-the shipped sample), offer `voice-onboard` once ("I can learn your voice from a few
-samples first, or infer it from the brief — which?"). **The question never
-blocks:** if declined or unanswered this turn, infer the voice and record in the
-Inputs note (Output) that no profile was used. Offer at most once per session;
-never auto-run `voice-onboard`, never block the draft on it.
+**"In my voice" with no matching profile (Q8).** If the user explicitly asked for
+*their own* voice and the lookup found no matching profile (empty
+`_shared/voice-profiles/`, or profiles exist but none match this genre), offer
+`voice-onboard` once ("I can learn your voice from a few samples first, or infer it
+from the brief — which?") — offering to create the named/needed genre. If profiles
+exist but none match, say which genres DO exist so the user can redirect. **The
+question never blocks:** if declined or unanswered this turn, infer the voice and
+record in the Inputs note (Output) that no profile was used. Offer at most once per
+session; never auto-run `voice-onboard`, never block the draft on it.
 
 **Once these inputs are loaded, plan the document's shape here, before drafting a
 sentence.** The single new detection frontier is *narrative shape*: a piece can

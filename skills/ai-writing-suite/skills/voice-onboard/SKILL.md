@@ -1,6 +1,6 @@
 ---
 name: voice-onboard
-description: Interview an author and distill their historical writing into a reusable voice profile that comms-polish reads for voice matching. Ingests local files or pasted samples, extracts a 10-dimension style fingerprint with sample evidence, and writes _shared/voice-profile.md. Use when the user says "learn my voice", "match how I write", or before a series of posts that must stay on-voice. Not for rewriting or polishing text - that is comms-polish; this skill only profiles.
+description: Interview an author and distill their historical writing into reusable per-genre voice profiles that comms-polish and comms-draft read for voice matching. Ingests local files or pasted samples, extracts a 10-dimension style fingerprint with sample evidence, and writes one file per genre to _shared/voice-profiles/ (a blog file, a linkedin file, and so on). Use when the user says "learn my voice", "match how I write", or before a series of posts that must stay on-voice. Not for rewriting or polishing text - that is comms-polish; this skill only profiles.
 ---
 
 # voice-onboard
@@ -8,10 +8,10 @@ description: Interview an author and distill their historical writing into a reu
 Learn how *you* write, so the rest of the suite stops sounding like a clean
 generic robot and starts sounding like you.
 
-The job is narrow: read your real writing, distill a **voice profile**, and write
-it to a file `comms-polish` reads before any rewrite (and `comms-draft` before
-drafting). This skill does NOT draft or rewrite anything — it only listens and
-profiles.
+The job is narrow: read your real writing, distill a **voice profile per genre**,
+and write each to its own file `comms-polish` reads before any rewrite (and
+`comms-draft` before drafting). This skill does NOT draft or rewrite anything — it
+only listens and profiles.
 
 ## Locating shared assets (suite root)
 
@@ -28,8 +28,10 @@ Think of it like building a feature table for a ranking model:
 
 - Your **writing samples** = raw training data.
 - The **10 style dimensions** below = the feature schema.
-- **`_shared/voice-profile.md`** = the published feature table.
-- **`comms-polish`** = the model that reads that table at serving time.
+- **`_shared/voice-profiles/<genre>.md`** = one published feature table per genre
+  (a blog voice, a linkedin voice); the filename is the genre key a consumer
+  looks up.
+- **`comms-polish`** = the model that reads the matching table at serving time.
 
 If the table is empty or guessed, the model falls back to a generic baseline.
 So the whole point of this skill is: produce an honest, evidence-backed table.
@@ -40,9 +42,15 @@ So the whole point of this skill is: produce an honest, evidence-backed table.
   paste inline. (A Confluence-page link as a voice source is **v2** — note it to
   the user, do not attempt to fetch it. No programmatic ingestion in v1.)
 - **Fills in:** `_shared/host-profile-template.md` (the blank form).
-- **Writes:** `_shared/voice-profile.md` (the contract file). The field
-  names there are stable — keep every `## H2` header, because `comms-polish`
-  reads by header. Renaming a header silently breaks voice matching.
+- **Writes:** one file per genre under `_shared/voice-profiles/`, named
+  `<genre-slug>.md` where the slug is `[a-z0-9-]+` (lowercase, spaces→hyphens),
+  e.g. `_shared/voice-profiles/<genre>.md` for slugs like `blog` or `formal-report`.
+  The **filename is the contract**: it encodes the genre, so a consumer's
+  directory listing alone answers "which genres do I have" without reading a body.
+  The field names inside are stable — keep every `## H2` header, because
+  `comms-polish` reads by header. Renaming a header silently breaks voice matching.
+  (The legacy shipped `_shared/voice-profile.md` stays only as the sample + a
+  single-file fallback; write real profiles to the `voice-profiles/` directory.)
 
 ## How to run it (walk the user through, keep them in control)
 
@@ -56,13 +64,12 @@ Ask the user for samples. State plainly what makes a good sample:
 
 - **3 minimum, 5-10 ideal.** Fewer than 3 → tell them confidence will be Low and
   the profile will be conservative. Don't force-extract from thin data.
-- **Same genre as the target.** Learning their LinkedIn voice → ask for LinkedIn
-  posts, not academic papers. **One genre per run.** The current build stores a
-  single `_shared/voice-profile.md`, so if the samples span genres, pick the one
-  target genre for this run rather than averaging them into a blur — don't promise
-  a second stored profile the build can't hold. (Storing a separate profile per
-  genre, with IDs and selection, is a designed follow-up, not yet available; note
-  it to the user rather than acting on it.)
+- **Grouped by genre.** Learning their LinkedIn voice → ask for LinkedIn posts,
+  not academic papers. **One profile file per genre** (this build stores each
+  genre separately under `_shared/voice-profiles/`). If the samples span genres,
+  do NOT average them into a blur — group them by genre and write one file per
+  genre in the same run (mixed samples → N files). Confirm the split with the user
+  before writing.
 - **Their own words, not AI-polished.** A draft Claude already cleaned teaches
   the clean robot's voice, not theirs.
 - **Recent (last ~6 months).** Voice drifts; recent samples track current style.
@@ -78,9 +85,9 @@ How they can hand samples over:
 
 Confirm what you received before extracting: "Got 6 blog posts — that's Medium
 confidence for your blog voice. Extract now, or add more first?" If the samples
-span genres, say so and ask which ONE to profile this run: "These are 4 blog posts
-and 2 memos — different voices. Which should I profile this run? (One genre per
-run; the other can be a separate run.)"
+span genres, say so and confirm the split — one file per genre: "These are 4 blog
+posts and 2 memos — different voices. I'll profile them as two files,
+`voice-profiles/blog.md` and `voice-profiles/memo.md`. Good?"
 
 ### Step 2 — Extract the style fingerprint
 
@@ -118,10 +125,9 @@ Two extraction principles to repeat to yourself:
 - **Strip content, keep style.** They wrote about search ranking → that's the
   topic, not the voice. Look at rhythm, word choice, structure — not subject.
 - **Don't average across genres.** Same person writes a tweet and a report
-  differently. Mixed samples → pick the target genre for this run and profile
-  that one; do not pool them into a single blurred profile. (Storing a distinct
-  profile per genre is the designed follow-up above — today one genre is profiled
-  and stored per run.)
+  differently. Mixed samples → group by genre and write one file per genre; do not
+  pool them into a single blurred profile. Each genre gets its own
+  `_shared/voice-profiles/<genre>.md`.
 
 #### The measurement pass (quantitative half — run alongside the 10 dimensions)
 
@@ -180,19 +186,22 @@ UNSUPPORTED (CJK), say so plainly rather than inventing numbers.
 
 ### Step 4 — Confirm, then write the contract file
 
-Only after the user confirms, write the profile to
-`_shared/voice-profile.md`, preserving every `## H2` header. If a profile
-already exists, show what changed before overwriting — don't silently replace
-their previous one.
+Only after the user confirms, write each genre's profile to its own file at
+`_shared/voice-profiles/<genre-slug>.md`, preserving every `## H2` header. Mixed
+samples → write N files, one per genre, each named for its genre. If a file for
+that exact genre already exists, show what changed in **that one file** before
+overwriting it — don't silently replace their previous one, and don't touch the
+other genres' files.
 
 **A real profile must NOT carry the `> SAMPLE PROFILE.` banner** the shipped
-example uses. Overwrite that banner and Sam's example content entirely — consumers
-(`comms-polish`, `comms-draft`) detect the un-replaced sample by that banner and
-treat it as *no profile*, so leaving the banner in place would make your real
-profile invisible. A real profile is defined by the banner's absence.
+example uses. The files you write under `voice-profiles/` are real profiles, so
+they never carry the banner — consumers (`comms-polish`, `comms-draft`) treat any
+file carrying that banner as *no profile*, so a real profile is defined by the
+banner's absence. (The legacy `_shared/voice-profile.md` keeps its banner; leave
+it alone — it is the shipped sample and single-file fallback, not where you write.)
 
-Tell the user where it landed and that `comms-polish` will now read it
-automatically (before any rewrite).
+Tell the user which files landed (one per genre) and that `comms-polish` and
+`comms-draft` will now read the matching one automatically (before any rewrite).
 
 ### Step 5 — Leave a calibration loop open
 

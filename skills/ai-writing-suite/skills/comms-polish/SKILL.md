@@ -20,8 +20,9 @@ Three enrichments sit alongside the catalog:
   alone.
 - `references/final-pass-checklist.md` — the pre-ship sweep run before returning
   any rewrite.
-- `_shared/voice-profile.md` — the user's learned voice, read when present
-  so rewrites bias toward how *they* write (see Voice Matching).
+- `_shared/voice-profiles/` — the user's learned per-genre voices (one file per
+  genre); the matching one is read when present so rewrites bias toward how *they*
+  write (see Voice Matching). Legacy single-file fallback: `_shared/voice-profile.md`.
 
 ## Locating shared assets (suite root)
 
@@ -84,28 +85,41 @@ Pick the mode from the user's request. If unclear, use `rewrite`.
 
 Voice has three sources, in priority order:
 
-1. **A valid learned voice profile** at `_shared/voice-profile.md`, produced by
-   the `voice-onboard` sub-skill.
-   **Before any rewrite, check for a *valid* profile: the file must exist AND not
-   be the shipped sample.** The shipped file is a filled example (fictional "Sam")
-   carrying a `> SAMPLE PROFILE.` banner blockquote near the top. If that banner is
-   present, the profile is **not real** — do not load Sam's voice; treat it as no
-   profile and fall through to graceful degradation and the Q8 offer below. Only a
-   file with no such banner counts as a valid profile.
-   It is loose coupling: comms-polish does not create or own that file — it reads
-   whatever fields are present in a valid profile and biases edits toward them. The
-   profile's header set is the **canonical ordered list at the top of
+1. **A learned per-genre voice profile** under `_shared/voice-profiles/`, produced
+   by `voice-onboard` — one file per genre, the filename is the genre key. Look it
+   up cheaply, before any rewrite:
+   - **List** `_shared/voice-profiles/*.md` — one directory read, filenames only,
+     no body parsing.
+   - **Select one file** by this precedence, first match wins: (1) **explicit user
+     request** — user named a genre ("use my LinkedIn voice") → that file; if it is
+     absent, say so and drop to rule 4; (2) **normalized-exact preset/genre match**
+     — normalize the run's genre preset and each filename slug the same way
+     (lowercase, spaces→hyphens) and match by string equality, no fuzzy/prefix/alias
+     (`formal-report` ≠ `report`); (3) **single-profile fallback** — exactly one
+     file exists → use it; (4) **no match** → make the Q8 offer once, then degrade
+     (below): offer to create the named/needed genre (shares the one offer budget),
+     and if profiles exist but none match, the degraded note lists which genres DO
+     exist so the user can redirect.
+   - **Read** the full body of the one selected file only.
+   - **Directory absent or empty** → fall back to the legacy single file
+     `_shared/voice-profile.md`, still gated by the `> SAMPLE PROFILE.` banner: a
+     file carrying that banner counts as **no profile** (the shipped sample) →
+     degrade + Q8 offer. A profile is valid only with the banner absent.
+   It is loose coupling: comms-polish does not create or own these files — it reads
+   whatever fields are present in the selected profile and biases edits toward them.
+   The profile's header set is the **canonical ordered list at the top of
    `_shared/voice-profile.md`** (the single source of truth; do not restate a
    divergent subset here). Use every header present that carries voice guidance —
    Tone, Sentence Length, Vocabulary Don't (the strongest signal), and every other
-   header on the canonical list that carries voice guidance, **including Measured
-   Fingerprint** (the quantitative rhythm/punctuation targets). Read what's there;
-   ignore what isn't — never fail on a missing section.
+   header on that list, **including Measured Fingerprint** (the quantitative rhythm/
+   punctuation targets). Read what's there; ignore what isn't — never fail on a
+   missing section.
 2. **A writing sample the user pastes** in this request — match it directly.
 3. **Inferred voice** from the draft itself, when neither of the above exists.
 
-**Graceful degradation:** if there is no valid `_shared/voice-profile.md` (absent,
-or still the shipped sample — see source #1), do not error and do not block. Polish
+**Graceful degradation:** if the source #1 lookup yields no profile (empty
+`_shared/voice-profiles/` and no valid legacy file — see source #1), do not error
+and do not block. Polish
 normally using a pasted sample or inferred voice. The profile is a bias signal,
 never a hard dependency. A hard genre constraint (e.g. a tweet's 280-char limit)
 still wins over a profile preference. Any "no profile found" mention here is
@@ -118,20 +132,26 @@ triggers below share a single budget — make the offer once, then do not re-off
 this session, whichever trigger fires. An offer is always offer-only: never
 auto-run `voice-onboard`, never block the deliverable on it.
 
-- **Pre-run — "in my voice" with no valid profile (Q8).** When the user explicitly
-  asks for *their own* voice ("in my voice", "match how I write") and no valid
-  profile exists, offer `voice-onboard` once — e.g. "I can learn your voice from a
-  few samples first (more accurate), or infer it from this draft. Which?" **The
-  question never blocks:** if the user does not answer in this turn, proceed with
-  inferred voice and add the one-line degraded-voice note to the output (see
-  Output — the sole text-only exception). Spends the shared offer budget.
-- **Post-run / visible manual edits (owner rider).** After a polish run with no
-  valid profile — *especially* when the user's **manual edits** to a previous
-  output are visible in the session — offer to capture their voice with
-  `voice-onboard`, noting that the delta between what you returned and what they
-  changed by hand is the strongest voice signal there is. This offer is
-  **conversational: it lives after the output block, not inside the polished
-  text.** Skip it if the shared offer budget is already spent.
+- **Pre-run — "in my voice" with no matching profile (Q8).** When the user
+  explicitly asks for *their own* voice ("in my voice", "match how I write") and the
+  source #1 lookup found no matching profile, offer `voice-onboard` once — e.g. "I
+  can learn your voice from a few samples first (more accurate), or infer it from
+  this draft. Which?" — offering to create the named/needed genre. If profiles exist
+  but none match, say which genres DO exist so the user can redirect. **The question
+  never blocks:** if the user does not answer in this turn, proceed with inferred
+  voice and add the one-line degraded-voice note to the output (see Output — the
+  sole text-only exception). Spends the shared offer budget.
+- **Post-run / visible manual edits (owner rider).** After a polish run —
+  *especially* when the user's **manual edits** to a previous output are visible in
+  the session — offer to capture their voice with `voice-onboard`, noting that the
+  delta between what you returned and what they changed by hand is the strongest
+  voice signal there is. Which file the capture updates depends on this run: if a
+  profile *resolved* (source #1), the capture updates **that genre's file**; if the
+  run was degraded/inferred (no profile matched), the capture creates a **new
+  `_shared/voice-profiles/<genre>.md`** for this run's genre — the edit delta seeds
+  a file that did not exist. This offer is **conversational: it lives after the
+  output block, not inside the polished text.** Skip it if the shared offer budget
+  is already spent.
 
 When a profile or sample exists, match:
 
@@ -157,10 +177,11 @@ When neither exists, use the lightest voice that fits the context:
    `references/scenario-presets.md` (tweet / LinkedIn / README / memo). It tells
    you which catalog categories to weight harder and what to leave alone in this
    genre. If no preset fits, scan the catalog evenly.
-3. **Load the voice profile if valid.** Check for `_shared/voice-profile.md` and
-   read it only if it is a *valid* profile — present and not the shipped sample
-   (the `> SAMPLE PROFILE.` banner means treat as absent; see Voice Matching).
-   Otherwise use a pasted sample or inferred voice and degrade gracefully.
+3. **Select and load the voice profile.** Run the source #1 lookup (list
+   `_shared/voice-profiles/*.md`, pick one file by the precedence, read that one
+   body; legacy `_shared/voice-profile.md` on an empty directory, banner = no
+   profile — see Voice Matching). No match → pasted sample or inferred voice, and
+   degrade gracefully.
 4. Mark the factual anchors that must survive unchanged.
 5. Scan against the pattern catalog, weighted by the preset, and remove the tells
    you find:
