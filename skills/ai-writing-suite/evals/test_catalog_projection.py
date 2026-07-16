@@ -23,6 +23,7 @@ if _SUITE_ROOT not in sys.path:
 from aiws import catalog  # noqa: E402  (path set above)
 
 INDEX = os.path.join(_SUITE_ROOT, "_shared", "patterns", "00-index.md")
+COMMS_POLISH = os.path.join(_SUITE_ROOT, "skills", "comms-polish", "SKILL.md")
 _STALE = ("00-index.md projection is STALE — regenerate with "
           "`python3 -m aiws.catalog` and commit the result.")
 
@@ -63,6 +64,37 @@ class CatalogProjectionFreshness(unittest.TestCase):
         unrated = [e.id for e in entries
                    if catalog.UNRATED in (e.severity, e.enforcement)]
         self.assertEqual(unrated, [], f"entries missing metadata: {unrated}")
+
+
+class CatalogConsumerContract(unittest.TestCase):
+    """comms-polish discovers catalog files from the generated inventory.
+
+    A second filename list in SKILL.md goes stale whenever a category is added;
+    the generated inventory is already freshness-gated against the live catalog.
+    """
+
+    def test_comms_polish_does_not_duplicate_the_catalog_file_list(self):
+        with open(COMMS_POLISH, encoding="utf-8") as fh:
+            text = fh.read()
+        start = text.index("## Pattern catalog")
+        end = text.index("## Boundary", start)
+        section = text[start:end]
+
+        self.assertIn("_shared/patterns/00-index.md", section)
+        self.assertIn("generated inventory", section.lower())
+        self.assertIn("every category file", section.lower())
+
+        manual_entries = [
+            line for line in section.splitlines()
+            if line.startswith("- `_shared/patterns/")
+            and "00-index.md" not in line
+        ]
+        self.assertEqual(
+            manual_entries,
+            [],
+            "comms-polish must not maintain a second catalog filename list; "
+            "discover category files from 00-index.md's generated inventory",
+        )
 
 
 class MetadataValidation(unittest.TestCase):

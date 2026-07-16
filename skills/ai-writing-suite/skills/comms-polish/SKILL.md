@@ -35,18 +35,15 @@ install path — do not guess or silently skip the shared assets.
 
 ## Pattern catalog
 
-Before scanning or rewriting, load the consolidated catalog. Read the index first
-to see what's where, then the category files relevant to the draft:
+Before scanning or rewriting, load the consolidated catalog. Start with:
 
-- `_shared/patterns/00-index.md` — index + how to read entries
-- `_shared/patterns/lexical-tells.md` — AI vocabulary (tiered), copula avoidance, synonym cycling, false ranges, hyphen pairs, hollow intensifiers
-- `_shared/patterns/significance-attribution.md` — significance/novelty inflation, vague attribution, name-dropping, promotional language, superficial -ing, speculative gap-filling, consultant-speak
-- `_shared/patterns/structural-tells.md` — rule of three, negative parallelism, formulaic challenges, over-structure, inline-header lists, reshuffle immunity, treadmill effect
-- `_shared/patterns/hedging-filler.md` — filler, stacked hedging, generic/future-narrative closers, confidence-calibration phrases, signposting
-- `_shared/patterns/punctuation-formatting.md` — em dashes, bold overuse, emoji headers, curly quotes, title case, hashtag stuffing, placeholders, citation/UTM fingerprints
-- `_shared/patterns/communication-artifacts.md` — chatbot tics, sycophancy, acknowledgment loops, cutoff disclaimers, reasoning-chain leaks, engagement hooks, emotional flatline
-- `_shared/patterns/rhythm-stylometric.md` — sentence/paragraph uniformity (burstiness), low TTR, perplexity, register shift, **and the what-NOT-to-flag guardrails**
-- `_shared/patterns/overstepping-presumption.md` — over-stepping (反代入式越位感): presumed cognition, strawman misconception, projected mental image, self-Q&A-as-judge. Self-scan: does the draft think *for* the reader ("you assume X / 你以为 X / Can you…? Yes —")? Flag only when the presumed prior is a **manufactured** strawman; keep it when X is a real, widespread belief (the validity condition). Judge-only — preserve legitimate contrasts.
+- `_shared/patterns/00-index.md` — index, entry format, category descriptions,
+  and the generated inventory of current category files.
+
+Treat that generated inventory as the authoritative file list. For a targeted
+rewrite, read the category files whose descriptions match the draft. For a
+detect/review request or other comprehensive scan, read every category file
+listed in the generated inventory. Do not maintain a second filename list here.
 
 Always apply the guardrails in `_shared/patterns/rhythm-stylometric.md`: look for
 clusters, not isolated tells. These are signals, not proof.
