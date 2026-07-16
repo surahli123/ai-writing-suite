@@ -66,7 +66,7 @@ Polish prose and detect AI tells.
 
 **Features:**
 - Consolidated AI-tell pattern catalog (seven deduplicated sources, each pattern source-tagged for attribution).
-- Scenario presets (tweet, LinkedIn, README, memo).
+- Scenario presets (tweet, LinkedIn, README, memo, PR description, release note).
 - Final-pass checklist before publishing.
 - Voice matching (reads `_shared/voice-profile.md` to calibrate tone and style if present).
 - 0–100 AI-tell density score for before/after comparison.
