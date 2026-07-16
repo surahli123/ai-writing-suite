@@ -116,8 +116,9 @@ priority to fix in any professional or factual document.
 - **Tell:** Tourism-brochure prose: "nestled within the breathtaking foothills,"
   "a vibrant hub of innovation," "a thriving ecosystem," "rich cultural
   heritage," "must-visit," "world-class."
-- **Fix:** Plain description. "is a town in the Gonder region," "has 12
-  startups." If you wouldn't say it in conversation, cut it.
+- **Fix:** Replace the praise with a concrete description in natural sentences:
+  "The town is in the Gonder region." "Twelve startups operate there." Keep the
+  writer's ordinary voice; the goal is credible prose, not clipped fact fragments.
 - **Sources:** blader (P4), aboudjem (§4), avoid-ai, anti-vibe (consultant tone).
 
 ---
