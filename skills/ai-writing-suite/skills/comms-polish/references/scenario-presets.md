@@ -2,8 +2,8 @@
 
 Different writing scenarios carry different hard constraints — length, structure,
 whether emoji belong, the scale of reader attention. This file pins down those
-constraints for the four genres comms-polish targets in v1: **tweet / X, LinkedIn,
-README, memo**.
+constraints for six current genres: **tweet / X, LinkedIn, README, memo, PR
+description, and release note**.
 
 > Why presets exist: the AI-tell catalog under `_shared/patterns/` (suite-root-relative;
 > resolved per the comms-polish "Locating shared assets" protocol) says
@@ -13,9 +13,10 @@ README, memo**.
 > when they don't conflict; when they do, voice loses to a hard form constraint
 > (a tweet's 280-char limit beats a profile's love of long sentences).
 
-Adapted from `weijt606/anti-vibe-writing` (`scenario-presets.md`, MIT). The
-original ships five Chinese-platform scenarios; this is the English subset mapped
-to the v1 genres. Bilingual presets are a v2 item (deferred).
+The first four presets are adapted from `weijt606/anti-vibe-writing`
+(`scenario-presets.md`, MIT). The two engineering presets extend the same contract
+for this suite's PR and changelog workflows. Bilingual presets are a v2 item
+(deferred).
 
 ## How to use a preset
 
@@ -157,6 +158,80 @@ what was chosen, what was dropped, and why.
 that refuses to judge — the recommendation must follow from the memo's own
 analysis; don't manufacture a branch, decision, or next step the content doesn't
 support (see *Cross-scenario invariants*).
+
+---
+
+## 5. PR Description
+
+**Form constraints:**
+- Lead with why the change exists and the behavior or decision a reviewer should
+  understand. Do not open with a file inventory.
+- Match the structure to the change. A small PR may need two paragraphs; a larger
+  one may need Summary, Verification, and Risk sections. Follow any required
+  repository template rather than replacing or padding it.
+- Preserve issue numbers, commands, paths, API names, test counts, and quoted
+  output exactly. Separate verified behavior, known gaps, and follow-up work.
+
+**Weight these tells harder:**
+- `structural-tells` — template theater, redundant What / Summary / Overview
+  sections, and exhaustive file-by-file narration that hides the review boundary.
+- `significance-attribution` — "comprehensive", "robust", "seamless", and impact
+  claims not supported by the diff or verification.
+- `hedging-filler` — runway such as "this PR aims to" or "it is worth noting" when
+  the description can state the decision directly.
+
+**Target tone/length:** reviewer-facing and evidence-led. State why the behavior
+changed, what is in scope, how it was verified, and where the reviewer should
+spend attention. Include only detail that helps someone assess correctness or
+risk.
+
+**Leave alone:**
+- Required repository template headings, checklists, and compliance fields.
+- Exact verification commands and results, even when they are visually dense.
+- Technical detail that explains a non-obvious constraint, risk, migration, or
+  rejected alternative.
+
+**Endings that work:** the verification result, a known risk, or one specific
+reviewer decision. Do not add "ready for review" or "feedback welcome" after the
+description has already done its job, and never claim a check that was not run.
+
+---
+
+## 6. Release Note
+
+**Form constraints:**
+- Describe the user-visible difference from the prior release. Do not turn the
+  commit log or merged-PR list into prose.
+- Put breaking changes and required action first. Group Added / Changed / Fixed /
+  Removed items only when those headings help readers scan the release.
+- Preserve version numbers, dates, feature flags, commands, compatibility claims,
+  and migration steps exactly. Do not infer support or impact the source does not
+  establish.
+
+**Weight these tells harder:**
+- `significance-attribution` — "exciting", "major milestone", "game-changing",
+  and other launch hype that replaces the actual user-visible change.
+- `structural-tells` — one bullet per commit, repeated mini-summaries, and empty
+  sections kept only because a changelog template contains them.
+- `communication-artifacts` — celebration, thanks, and engagement prompts that
+  obscure upgrade impact or required action.
+
+**Target tone/length:** concise, scan-friendly, and written for the person deciding
+whether or how to upgrade. Lead with what changed for them, then the minimum
+evidence or context needed to use it safely.
+
+**Leave alone:**
+- Conventional changelog headings and bullets when they improve scanning.
+- Exact product names, versions, CVE identifiers, deprecation dates, commands,
+  and compatibility boundaries.
+- Contributor acknowledgments and required legal or security notices when they
+  are part of the release record rather than decorative thanks.
+- A concise internal-change note when it explains a real operational effect such
+  as performance, reliability, or deployment behavior.
+
+**Endings that work:** a source-backed upgrade or migration action, or a link to
+authoritative instructions already supplied in the draft. If no action is needed,
+stop after the last user-visible change; do not append a marketing conclusion.
 
 ---
 

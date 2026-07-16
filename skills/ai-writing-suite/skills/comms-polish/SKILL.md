@@ -16,8 +16,8 @@ does not carry its own pattern list — it reads the consolidated catalog under
 Three enrichments sit alongside the catalog:
 
 - `references/scenario-presets.md` — per-genre weighting (tweet / LinkedIn /
-  README / memo): which tells matter most here, target tone/length, what to leave
-  alone.
+  README / memo / PR description / release note): which tells matter most here,
+  target tone/length, what to leave alone.
 - `references/final-pass-checklist.md` — the pre-ship sweep run before returning
   any rewrite.
 - `_shared/voice-profiles/` — the user's learned per-genre voices (one file per
@@ -183,9 +183,10 @@ When neither exists, use the lightest voice that fits the context:
 
 1. Identify the audience, purpose, and required structure.
 2. **Pick the genre preset.** Match the draft to a preset in
-   `references/scenario-presets.md` (tweet / LinkedIn / README / memo). It tells
-   you which catalog categories to weight harder and what to leave alone in this
-   genre. If no preset fits, scan the catalog evenly.
+   `references/scenario-presets.md` (tweet / LinkedIn / README / memo / PR
+   description / release note). It tells you which catalog categories to weight
+   harder and what to leave alone in this genre. If no preset fits, scan the
+   catalog evenly.
 3. **Select and load the voice profile.** Run the source #1 lookup (list
    `_shared/voice-profiles/*.md`, pick one file by the precedence, read that one
    body; legacy `_shared/voice-profile.md` on an empty directory, banner = no
