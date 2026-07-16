@@ -16,14 +16,21 @@ Arbitrated NO-CHANGE: O/N-series advisory markers live at category level — val
 prose basis, Q1 does not demand per-entry restatement (Codex concern declined).
 Freshness normalized-equality acceptable — whole-file idempotence check covers it.
 
-OWNER-REVIEW LIST (ratings kept as derived; confirm or amend, no silent churn):
-- Executor low-confidence severity calls: S2, S6, T5, T9, R5, C11.
-- Reviewer axis question: R3, R4, F4 rated severity=low where prose stresses
-  weak-signal/false-positive risk — confirm the intent is editorial harm (severity)
-  and not detection confidence leaking into the wrong axis.
+OWNER REVIEW RESOLVED 2026-07-15 (interactive prose-by-prose pass):
+- Confirmed severity=medium: S2, S6, T5, T9, R5.
+- Confirmed severity=low: C11, R3, R4, F4.
+- Axis resolution: R3, R4, and F4 remain low because their valid editorial harm
+  is minor, not because detection confidence is weak. Detection confidence stays
+  outside the severity axis.
+- Prose amendment: S6's fix now targets concrete, natural sentences rather than
+  clipped fact fragments. Enforcement values are unchanged.
 
 Post-fix verification: ALL CHECKS PASSED · 72 ids · 3/8 = 38% · 357 tests (350→354
 projections, →357 rejection) · packaging OK. SKILL.md de-enumeration deferred
 (follow-up; stale collision reason, harmless).
+
+Post-owner-review verification: `python3 -m aiws.catalog` reported projections
+already fresh; discovery-ordered `bash evals/run_all.sh` reported ALL CHECKS
+PASSED · 366 tests · 72 ids · exactly 3/8 = 38%; packaging validation OK.
 
 VERIFIED_AGAINST: refactor/pattern-registry @ 9d528e5
