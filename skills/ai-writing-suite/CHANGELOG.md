@@ -10,6 +10,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Multi-genre voice profiles (Q10)** — per-genre files at `_shared/voice-profiles/<genre-slug>.md`
+  (filename is the contract); deterministic consumer lookup (explicit request > normalized-exact
+  preset match > single-profile fallback > offer-then-degrade); legacy `voice-profile.md` kept as
+  shipped sample + fallback, gated by the `> SAMPLE PROFILE.` banner (a valid-profile predicate —
+  fresh installs no longer load the fictional Sam voice).
+- **S10 invented-jargon tell** — judge-only/advisory catalog entry for model-coined pseudo-terms
+  (conjunction validity condition; cross-validated EN/PL/ZH); catalog registry 71 → 72.
+- **False-positive protection gate** — a named 5-question brake (quote/code · term of art ·
+  in voice profile · genre-normal · second-language construction) run before acting on any
+  flagged tell; any yes = advisory only, all-no is still not a mandate (cluster rule).
+- **Epistemic modality as a protected class** — comms-polish Safety Rules now pin
+  observed/inferred, possible/certain, step-toward/achieved; smoothing may never harden a hedge.
+- **Deletion-first density question** in the final-pass checklist (genre-sensitive, never a
+  length target; adapted from Hamel Husain's recipe).
+- **Machine-readable pattern registry** — every catalog entry carries a Severity/Enforcement
+  metadata table (Q1 two-fields); `aiws/catalog.py` is the sole parser (check_report +
+  catalog_sync fold in); 00-index inventory + full registry are checked-in, freshness-gated
+  projections (Q5); unknown metadata values raise loudly.
+- **Capability-runner discovery** — eval checks are self-registering descriptors under
+  `evals/capabilities/` discovered by `evals/run.py` (unit-tests-first via depends_on;
+  SPEC-less modules fail loudly); `run_all.sh` is a thin wrapper — adding a check no longer
+  renumbers anything.
+- **Text-analysis seam** — `aiws/text.py` hosts `segment()` plus the consumers' tokenization
+  primitives verbatim (deliberately not unified); detector + voice-extraction rewired with
+  zero band movement; stylometry stays self-contained for portability with a (pattern, flags)
+  sync-pin test.
+- **aiws/kb product package** — KB index/retrieval/validation logic moved out of eval
+  scaffolding; tools are thin entrypoints; the tools→evals dependency reversal is complete.
+- **judge evaluate() facade** — one deep-module entry over the score→parse→verify→aggregate
+  lifecycle; spend gate checked before any network path; characterization tests pin
+  byte-identical behavior.
+
+### Changed
+- **Q7 full-document mixed mode** — mixed polish-plus-add requests route to comms-draft, which
+  treats existing text as immutable source, returns the whole revised document, and runs the
+  polish final-pass itself; the suite router now executes classify-and-load when invoked.
+- **Q8 voice fallback** — one suite-wide voice-onboard offer per session (offer-then-degrade,
+  never blocking), plus post-run / manual-edit voice-capture offers (edit delta = strongest
+  signal); degraded-voice note is the sole in-output exception.
+- **Q9 comms-qa** — KB answers are source-locked; "Outside the playbook" extras stay separately
+  labeled; strict KB-only mode is user-requestable per invocation (stop is per sub-question).
+- **C3 voice precedence** — a learned voice habit that is also a catalog tell stays advisory in
+  that author's own writing; the profile wins (policy in Voice Matching; enforced per-flag by
+  the FP gate).
+
+### Fixed
+- comms-polish worked examples are now provably zero-new-facts (including claim-strength
+  modality); scenario-preset "actual number"/endings guidance is source-locked; voice-profile
+  header schema has one canonical 14-header list; stale router/status prose and dead refs
+  removed; producer/consumer and template/sample destination claims reconciled post-Q10.
+
+### Added
 - **Document/narrative-shape tell category (#9)** — the first document-altitude
   category (`narrative-shape.md`, N1–N4): over-explained themes, tidy single-track
   resolution, flat escalation, absent ambiguity, each with a validity condition so
