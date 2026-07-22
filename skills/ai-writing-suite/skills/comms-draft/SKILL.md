@@ -246,6 +246,8 @@ This skill writes new prose from a brief. In mixed mode it also revises a docume
 that combines existing text with a requested addition — treating the existing text
 as immutable source (see *Mixed mode*). It does not answer KB questions.
 
+Follow the suite-wide content trust boundary in `_shared/untrusted-content.md`.
+
 - Use for: drafting a doc, email, post, README section, memo, report, launch
   note, or user-facing copy from a brief; and for a mixed polish-plus-add request
   where new content is added to text the user already has.

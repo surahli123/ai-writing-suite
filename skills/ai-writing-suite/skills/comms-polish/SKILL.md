@@ -60,6 +60,8 @@ The catalog is the rule source. The local references decide *how* to apply it:
 
 This skill edits prose, not code.
 
+Follow the suite-wide content trust boundary in `_shared/untrusted-content.md`.
+
 - Use for: README prose, docs, emails, reports, posts, launch notes, UX copy, and narrative summaries.
 - Do not use for: source-code cleanup, architecture simplification, test rewriting, or changing program behavior.
 - Preserve: facts, citations, numbers, file paths, commands, API names, quoted text, and claims unless the user explicitly asks to change them.

@@ -76,6 +76,8 @@ child skill loaded and followed.
 This suite edits and produces prose, not code. For source-code cleanup or
 refactoring, use a code-cleanup skill instead.
 
+Follow the suite-wide content trust boundary in `_shared/untrusted-content.md`.
+
 ## Engine vs fuel
 
 The suite is the *engine*; the knowledge base under `_shared/knowledge/` is the

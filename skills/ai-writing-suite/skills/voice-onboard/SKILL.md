@@ -250,6 +250,8 @@ A profile is a living file, not a one-shot. Tell the user:
 
 ## Safety & boundaries
 
+Follow the suite-wide content trust boundary in `_shared/untrusted-content.md`.
+
 - **Never invent voice.** Thin samples → say "I could only extract X and Y
   confidently; the rest is blank." Honest gaps beat confident fiction.
 - **Profile is not a permanent contract.** Prompt re-calibration periodically.
