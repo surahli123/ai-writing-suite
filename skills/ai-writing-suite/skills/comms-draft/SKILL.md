@@ -27,6 +27,9 @@ directory. To find the root: start from this SKILL.md's own location and walk up
 directory contains `_shared/`. If you cannot find it, say so and ask for the suite's
 install path — do not guess or silently skip the shared assets.
 
+Resolve all mutable profile and learned-rules paths through
+`_shared/state-location.md`; reference that resolver, never copy its rules here.
+
 ## Inputs
 
 **Two inputs are REQUIRED; the rest are OPTIONAL.** Required: the **brief** and
@@ -51,9 +54,9 @@ never block on a missing optional input.
   audience, tone, revision) and — in a company fork — the playbook's structure,
   terminology, and house facts. Quote/apply the relevant passage; cite the entry
   filename when a draft choice came from it.
-- **The voice profile** (optional) under `_shared/voice-profiles/`, produced by
+- **The voice profile** (optional) under resolved `<state>/voice-profiles/`, produced by
   `voice-onboard` — one file per genre, filename is the genre key. Look it up
-  cheaply: **list** `_shared/voice-profiles/*.md` (one directory read, filenames
+  cheaply: **list** `<state>/voice-profiles/*.md` (one directory read, filenames
   only); **select one file** by precedence, first match wins — (1) explicit user
   request (named genre → that file; absent → drop to rule 4), (2) normalized-exact
   preset/genre match (lowercase, spaces→hyphens, string equality; no fuzzy/prefix/
@@ -126,7 +129,7 @@ proceed — do not stall on a fourth question.
 
 Run the suite's self-improvement ON START read (see below). Then: pull the
 matching genre preset; read the relevant KB entries via `INDEX.md`; select and
-load the voice profile via the `_shared/voice-profiles/` lookup (see Inputs — list,
+load the voice profile via the resolved `<state>/voice-profiles/` lookup (see Inputs — list,
 pick one file by precedence, read that one body; legacy file on an empty directory,
 banner = no profile), otherwise infer the lightest voice that fits the reader; open
 the catalog categories the genre weights hardest. Note any absent input out loud —
@@ -134,7 +137,7 @@ never block on a missing one.
 
 **"In my voice" with no matching profile (Q8).** If the user explicitly asked for
 *their own* voice and the lookup found no matching profile (empty
-`_shared/voice-profiles/`, or profiles exist but none match this genre), offer
+resolved `<state>/voice-profiles/`, or profiles exist but none match this genre), offer
 `voice-onboard` once ("I can learn your voice from a few samples first, or infer it
 from the brief — which?") — offering to create the named/needed genre. If profiles
 exist but none match, say which genres DO exist so the user can redirect. **The
@@ -276,16 +279,16 @@ This skill participates in the suite's human-gated self-improvement loop. The
 full protocol is in `_shared/self-improvement.md`; follow it, do not restate it.
 In short:
 
-- **On start:** read `_shared/learned-rules.md` (alongside the voice profile) and
+- **On start:** read resolved `<state>/learned-rules.md` (alongside the voice profile) and
   apply any entry whose `status: active` and whose scope is `comms-draft` or
   `all`. Degrade gracefully if the file is absent.
 - **On end:** if a repeatable drafting correction surfaced this session
   (a structure the user always wants, a phrasing they keep cutting), **propose**
   one candidate rule (rule + session-grounded rationale + scope `comms-draft`)
-  and **wait for explicit approval** before it is appended to `learned-rules.md`.
+  and **wait for explicit approval** before it is appended to resolved `<state>/learned-rules.md`.
   Propose nothing if nothing repeatable surfaced.
 - **Never** auto-edit this SKILL.md or the pattern catalog — approved rules live
-  only in `learned-rules.md` (append-only). Each rule is eval-measured in Layer 3
+  only in resolved `<state>/learned-rules.md` (append-only). Each rule is eval-measured in Layer 3
   before it is trusted.
 
 ## Output

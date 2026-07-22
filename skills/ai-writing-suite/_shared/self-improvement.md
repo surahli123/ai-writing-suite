@@ -15,8 +15,9 @@
     1. READ side files at the start of a session (voice-profile + learned-rules).
     2. PROPOSE candidate rules at the end of a session.
   It MUST NOT write anything until the user explicitly approves. Approved rules
-  go to ONE place: `learned-rules.md` (append-only). Core SKILL.md logic is NEVER
-  auto-edited. This is the anti-drift guarantee — see plan §6 (D6) and risk R3.
+  go to ONE user-state file resolved through `state-location.md` (append-only).
+  Core SKILL.md logic is NEVER auto-edited. This is the anti-drift guarantee —
+  see plan §6 (D6) and risk R3.
 
   WHY (product-owner framing)
   ---------------------------
@@ -34,6 +35,9 @@
 This is the shared spec for the suite's self-improvement hook. Sub-skills point
 here instead of restating it, so the gate behaves identically everywhere.
 
+Resolve mutable profile and learned-rules paths through `_shared/state-location.md`;
+reference that resolver, never copy its rules here.
+
 ## The contract in one line
 
 Read learned rules on start. Propose new ones on end. Append only what the
@@ -45,9 +49,11 @@ user explicitly approves. Never auto-edit core skill logic.
 
 Before doing the sub-skill's actual work, read these two files if they exist:
 
-1. `_shared/voice-profile.md` — the learned voice (owned by `voice-onboard`).
-2. `_shared/learned-rules.md` — approved, human-gated improvements (this file's
-   sibling). Apply any rule whose `status: active` and whose scope matches the
+1. The matching profile under resolved `<state>/voice-profiles/` (owned by
+   `voice-onboard`), with the legacy shipped `_shared/voice-profile.md` sample
+   fallback used by the consumer skills.
+2. Resolved `<state>/learned-rules.md` — approved, human-gated improvements.
+   Apply any rule whose `status: active` and whose scope matches the
    current task (e.g. a rule scoped to `comms-polish` is ignored by
    `voice-onboard`).
 
@@ -69,7 +75,7 @@ If nothing repeatable surfaced, say so and propose nothing. Do not manufacture a
 rule to look productive — a noisy rule log is worse than a short one.
 
 If a candidate exists, **present it to the user** in the proposed-rule shape
-(see `learned-rules.md` for the field schema) with:
+(see resolved `<state>/learned-rules.md` for the field schema) with:
 
 - the proposed rule text,
 - a one-line rationale grounded in *this* session (cite what happened),
@@ -84,13 +90,13 @@ Then **stop and wait.** This is the gate.
 
 Only on an explicit "yes" / "approve" / "add it" from the user:
 
-- Append ONE entry to `_shared/learned-rules.md` using the documented format
+- Append ONE entry to resolved `<state>/learned-rules.md` using the documented format
   (id, rule, rationale, scope, date, status, source).
 - Set `status: proposed` until Layer 3's eval has measured it; the user may say
   "make it active" to promote a rule they trust without waiting.
 - Stamp the date and a short source-session note so the log stays auditable.
 - Do NOT touch any SKILL.md, the pattern catalog, or the voice profile schema.
-  Approved rules live ONLY in `learned-rules.md`.
+  Approved rules live ONLY in resolved `<state>/learned-rules.md`.
 
 If the user says no, or edits the wording, follow their version exactly. Never
 append a rule they did not approve. Never append more than they approved.
@@ -116,7 +122,7 @@ responsible for it:
 
 ### GRADUATION — fold stable rules into the catalog (human-gated, maintainer-run)
 
-`learned-rules.md` is append-only, so its on-start read cost grows with every approved
+Resolved `<state>/learned-rules.md` is append-only, so its on-start read cost grows with every approved
 rule. Graduation keeps the log small WITHOUT weakening the anti-drift gate:
 
 - **Who:** the maintainer (a human), never this hook autonomously. The hook proposes and
@@ -125,7 +131,7 @@ rule. Graduation keeps the log small WITHOUT weakening the anti-drift gate:
   passed its eval.
 - **What:** the maintainer folds the rule's substance into the right catalog file
   (`_shared/patterns/...`) or sub-skill reference by hand — the same way any catalog edit is
-  made — then sets the `learned-rules.md` entry to `status: graduated` (a status edit on its
+  made — then sets the resolved `<state>/learned-rules.md` entry to `status: graduated` (a status edit on its
   own line, noting where it landed). The rule now lives in the catalog; the log entry is a
   tombstone, not an active rule the hook re-applies on start.
 - **Why it's safe:** the "never auto-edit the catalog" rule (below) is untouched. Graduation
@@ -150,12 +156,12 @@ Bash/Grep, no Skill tool). This protocol is built to survive that:
 - **No auto-trigger needed.** The hook is plain instructions inside a SKILL.md,
   not an event listener. ON START / ON END run whenever the sub-skill runs,
   however the sub-skill was invoked (explicit invocation on RovoDev).
-- **File-read only on start.** Reading `voice-profile.md` + `learned-rules.md`
+- **File-read only on start.** Reading the resolved profile + learned-rules files
   uses Read/Grep — available everywhere. No MCP, no special tooling.
-- **Append uses Edit/Write.** Adding one entry to `learned-rules.md` needs only
+- **Append uses Edit/Write.** Adding one entry to resolved `<state>/learned-rules.md` needs only
   Edit (or Write) — both present on RovoDev.
 - **The gate is conversational, not tool-based.** "Propose → user says yes →
   append" works in any chat loop and needs no Skill/Task/Agent machinery.
 - If even file writes are unavailable, degrade to: print the proposed rule entry
-  and ask the user to paste it into `learned-rules.md` themselves. The gate and
+  and ask the user to paste it into resolved `<state>/learned-rules.md` themselves. The gate and
   the append-only discipline still hold.

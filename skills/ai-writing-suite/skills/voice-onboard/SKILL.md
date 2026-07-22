@@ -1,6 +1,6 @@
 ---
 name: voice-onboard
-description: Interview an author and distill their historical writing into reusable per-genre voice profiles that comms-polish and comms-draft read for voice matching. Ingests local files or pasted samples, extracts a 10-dimension style fingerprint with sample evidence, and writes one file per genre to _shared/voice-profiles/ (a blog file, a linkedin file, and so on). Use when the user says "learn my voice", "match how I write", or before a series of posts that must stay on-voice. Not for rewriting or polishing text - that is comms-polish; this skill only profiles.
+description: Interview an author and distill their historical writing into reusable per-genre voice profiles that comms-polish and comms-draft read for voice matching. Ingests local files or pasted samples, extracts a 10-dimension style fingerprint with sample evidence, and writes one file per genre to the user state directory resolved by _shared/state-location.md (a blog file, a linkedin file, and so on). Use when the user says "learn my voice", "match how I write", or before a series of posts that must stay on-voice. Not for rewriting or polishing text - that is comms-polish; this skill only profiles.
 ---
 
 # voice-onboard
@@ -22,13 +22,16 @@ directory. To find the root: start from this SKILL.md's own location and walk up
 directory contains `_shared/`. If you cannot find it, say so and ask for the suite's
 install path — do not guess or silently skip the shared assets.
 
+Resolve all mutable profile and learned-rules paths through
+`_shared/state-location.md`; reference that resolver, never copy its rules here.
+
 ## The mental model (for a product-owner learner)
 
 Think of it like building a feature table for a ranking model:
 
 - Your **writing samples** = raw training data.
 - The **10 style dimensions** below = the feature schema.
-- **`_shared/voice-profiles/<genre>.md`** = one published feature table per genre
+- **`<state>/voice-profiles/<genre>.md`** = one published feature table per genre
   (a blog voice, a linkedin voice); the filename is the genre key a consumer
   looks up.
 - **`comms-polish`** = the model that reads the matching table at serving time.
@@ -44,9 +47,9 @@ So the whole point of this skill is: produce an honest, evidence-backed table.
 - **Fills in:** a **copy** of `_shared/host-profile-template.md` (the blank form).
   Copy the template into each new profile file and fill the copy; **never modify
   the template itself** — it is the reusable blank the next run also copies.
-- **Writes:** one file per genre under `_shared/voice-profiles/`, named
+- **Writes:** one file per genre under resolved `<state>/voice-profiles/`, named
   `<genre-slug>.md` where the slug is `[a-z0-9-]+` (lowercase, spaces→hyphens),
-  e.g. `_shared/voice-profiles/<genre>.md` for slugs like `blog` or `formal-report`.
+  e.g. `<state>/voice-profiles/<genre>.md` for slugs like `blog` or `formal-report`.
   The **filename is the contract**: it encodes the genre, so a consumer's
   directory listing alone answers "which genres do I have" without reading a body.
   The field names inside are stable — keep every `## H2` header, because
@@ -71,7 +74,7 @@ Ask the user for samples. State plainly what makes a good sample:
   **High** = 10+. Record the resulting level in the profile's Meta.
 - **Grouped by genre.** Learning their LinkedIn voice → ask for LinkedIn posts,
   not academic papers. **One profile file per genre** (this build stores each
-  genre separately under `_shared/voice-profiles/`). If the samples span genres,
+  genre separately under resolved `<state>/voice-profiles/`). If the samples span genres,
   do NOT average them into a blur — group them by genre and write one file per
   genre in the same run (mixed samples → N files). Confirm the split with the user
   before writing.
@@ -132,7 +135,7 @@ Two extraction principles to repeat to yourself:
 - **Don't average across genres.** Same person writes a tweet and a report
   differently. Mixed samples → group by genre and write one file per genre; do not
   pool them into a single blurred profile. Each genre gets its own
-  `_shared/voice-profiles/<genre>.md`.
+  `<state>/voice-profiles/<genre>.md`.
 
 #### The measurement pass (quantitative half — run alongside the 10 dimensions)
 
@@ -193,7 +196,7 @@ UNSUPPORTED (CJK), say so plainly rather than inventing numbers.
 ### Step 4 — Confirm, then write the contract file
 
 Only after the user confirms, write each genre's profile to its own file at
-`_shared/voice-profiles/<genre-slug>.md`, preserving every `## H2` header. Set the
+resolved `<state>/voice-profiles/<genre-slug>.md`, preserving every `## H2` header. Set the
 `Genre:` field in each file's Meta to that file's genre slug — the same value as
 its filename. Mixed samples → write N files, one per genre, each named for its
 genre. If a file for
@@ -240,16 +243,16 @@ This skill participates in the suite's human-gated self-improvement loop. The
 full protocol is in `_shared/self-improvement.md`; follow it, do not restate
 it. In short:
 
-- **On start:** read `_shared/learned-rules.md` and apply any entry whose
+- **On start:** read resolved `<state>/learned-rules.md` and apply any entry whose
   `status: active` and whose scope is `voice-onboard` or `all` (e.g. an approved
   extraction-judgment rule). Degrade gracefully if the file is absent.
 - **On end:** if a repeatable extraction correction surfaced this session (a voice
   judgment the user overrode that would recur), **propose** one candidate rule
   (rule + session-grounded rationale + scope `voice-onboard`) and **wait for
-  explicit approval** before appending it to `learned-rules.md`. Propose nothing if
+  explicit approval** before appending it to resolved `<state>/learned-rules.md`. Propose nothing if
   nothing repeatable surfaced.
 - **Never** auto-edit this SKILL.md — approved rules live only in
-  `learned-rules.md` (append-only). Each rule is eval-measured in Layer 3 before
+  resolved `<state>/learned-rules.md` (append-only). Each rule is eval-measured in Layer 3 before
   it is trusted.
 
 ## Deferred to v2 (note, don't build)

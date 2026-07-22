@@ -20,7 +20,7 @@ Three enrichments sit alongside the catalog:
   target tone/length, what to leave alone.
 - `references/final-pass-checklist.md` — the pre-ship sweep run before returning
   any rewrite.
-- `_shared/voice-profiles/` — the user's learned per-genre voices (one file per
+- resolved `<state>/voice-profiles/` — the user's learned per-genre voices (one file per
   genre); the matching one is read when present so rewrites bias toward how *they*
   write (see Voice Matching). Legacy single-file fallback: `_shared/voice-profile.md`.
 
@@ -32,6 +32,9 @@ installed directory that directly contains `_shared/` and the suite's router `SK
 directory. To find the root: start from this SKILL.md's own location and walk up until a
 directory contains `_shared/`. If you cannot find it, say so and ask for the suite's
 install path — do not guess or silently skip the shared assets.
+
+Resolve all mutable profile and learned-rules paths through
+`_shared/state-location.md`; reference that resolver, never copy its rules here.
 
 ## Pattern catalog
 
@@ -82,10 +85,10 @@ Pick the mode from the user's request. If unclear, use `rewrite`.
 
 Voice has three sources, in priority order:
 
-1. **A learned per-genre voice profile** under `_shared/voice-profiles/`, produced
+1. **A learned per-genre voice profile** under resolved `<state>/voice-profiles/`, produced
    by `voice-onboard` — one file per genre, the filename is the genre key. Look it
    up cheaply, before any rewrite:
-   - **List** `_shared/voice-profiles/*.md` — one directory read, filenames only,
+   - **List** `<state>/voice-profiles/*.md` — one directory read, filenames only,
      no body parsing.
    - **Select one file** by this precedence, first match wins: (1) **explicit user
      request** — user named a genre ("use my LinkedIn voice") → that file; if it is
@@ -125,7 +128,7 @@ This is the same outcome the false-positive gate's question 3 enforces per flag 
 stated here as policy so no future catalog entry overrides it.
 
 **Graceful degradation:** if the source #1 lookup yields no profile (empty
-`_shared/voice-profiles/` and no valid legacy file — see source #1), do not error
+resolved `<state>/voice-profiles/` and no valid legacy file — see source #1), do not error
 and do not block. Polish
 normally using a pasted sample or inferred voice. The profile is a bias signal,
 never a hard dependency. A hard genre constraint (e.g. a tweet's 280-char limit)
@@ -157,7 +160,7 @@ below also share this single budget. An offer is always offer-only: never auto-r
   voice signal there is. Which file the capture updates depends on this run: if a
   profile *resolved* (source #1), the capture updates **that genre's file**; if the
   run was degraded/inferred (no profile matched), the capture creates a **new
-  `_shared/voice-profiles/<genre>.md`** for this run's genre — the edit delta seeds
+  `<state>/voice-profiles/<genre>.md`** for this run's genre — the edit delta seeds
   a file that did not exist. This offer is **conversational: it lives after the
   output block, not inside the polished text.** Skip it if the shared offer budget
   is already spent.
@@ -188,7 +191,7 @@ When neither exists, use the lightest voice that fits the context:
    harder and what to leave alone in this genre. If no preset fits, scan the
    catalog evenly.
 3. **Select and load the voice profile.** Run the source #1 lookup (list
-   `_shared/voice-profiles/*.md`, pick one file by the precedence, read that one
+   `<state>/voice-profiles/*.md`, pick one file by the precedence, read that one
    body; legacy `_shared/voice-profile.md` on an empty directory, banner = no
    profile — see Voice Matching). No match → pasted sample or inferred voice, and
    degrade gracefully.
@@ -339,15 +342,15 @@ This skill participates in the suite's human-gated self-improvement loop. The
 full protocol is in `_shared/self-improvement.md`; follow it, do not restate
 it. In short:
 
-- **On start:** read `_shared/learned-rules.md` (alongside the voice profile)
+- **On start:** read resolved `<state>/learned-rules.md` (alongside the voice profile)
   and apply any entry whose `status: active` and whose scope is `comms-polish` or
   `all`. Degrade gracefully if the file is absent.
 - **On end:** if a repeatable polish correction surfaced this session, **propose**
   one candidate rule (rule + session-grounded rationale + scope `comms-polish`) and
-  **wait for explicit approval** before appending it to `learned-rules.md`. Propose
+  **wait for explicit approval** before appending it to resolved `<state>/learned-rules.md`. Propose
   nothing if nothing repeatable surfaced.
 - **Never** auto-edit this SKILL.md or the pattern catalog — approved rules live
-  only in `learned-rules.md` (append-only). Each rule is eval-measured in Layer 3
+  only in resolved `<state>/learned-rules.md` (append-only). Each rule is eval-measured in Layer 3
   before it is trusted.
 
 ## Output
