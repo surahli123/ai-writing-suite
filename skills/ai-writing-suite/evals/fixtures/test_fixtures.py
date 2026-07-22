@@ -7,12 +7,16 @@ These tests assert the fixture SUITE is well-formed and stays calibrated:
   - the LLM-judge prompt builds for every fixture (the SKIP path is sound)
 """
 
+import contextlib
+import copy
+import io
 import unittest
 
 from detector.detector import analyze
 from fixtures import judge
 from fixtures.run_fixtures import (
-    load_fixtures, load_fail_fixtures, build_judge_prompt, _extract_judge_template)
+    load_fixtures, load_fail_fixtures, build_judge_prompt, run_deterministic,
+    _extract_judge_template)
 
 REQUIRED = {"id", "genre", "difficulty", "before", "after",
             "rubric_focus", "expect_baseline"}
@@ -42,6 +46,33 @@ class ScoreBands(unittest.TestCase):
                                      f"{f['id']} before={before}")
             self.assertLessEqual(after, f["after_band_max"],
                                  f"{f['id']} after={after}")
+
+
+class MustPreserve(unittest.TestCase):
+    @staticmethod
+    def _data_with_protected_literal():
+        data = copy.deepcopy(load_fixtures())
+        fixture = next(f for f in data["fixtures"]
+                       if f["id"] == "tweet-01-obvious")
+        fixture["must_preserve"] = ["11 steps to 3"]
+        return data, fixture
+
+    def test_present_literal_passes(self):
+        data, _ = self._data_with_protected_literal()
+        with contextlib.redirect_stdout(io.StringIO()):
+            _, fails = run_deterministic(data)
+        self.assertEqual(fails, 0)
+
+    def test_dropped_literal_fails(self):
+        data, fixture = self._data_with_protected_literal()
+        fixture["after"] = fixture["after"].replace(
+            "11 steps to 3", "eleven steps to three")
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            _, fails = run_deterministic(data)
+        self.assertEqual(fails, 1)
+        self.assertIn("[FAIL] tweet-01-obvious dropped '11 steps to 3'",
+                      output.getvalue())
 
 
 class Calibration(unittest.TestCase):
