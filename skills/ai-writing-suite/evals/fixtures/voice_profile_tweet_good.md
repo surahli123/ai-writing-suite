@@ -95,6 +95,12 @@ both would describe neither genre.
 
 ## Things To Avoid
 
+### Self-report Divergence
+
+- **Stated:** the author reported using exclamation marks frequently.
+- **Measured contradiction:** 0 exclamation marks across the 5 tweet samples; this
+  contradicts the self-report, so the feature is not learned as a tweet trait.
+
 - Marketing register and hype adjectives — absent from every tweet.
 - kaleidoscope — 2 occurrences in this genre, under the 3+ bar. It is an accident of
   two posts, not a signature word; do not write it back into her voice.
