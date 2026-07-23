@@ -88,28 +88,9 @@ Pick the mode from the user's request. If unclear, use `rewrite`.
 Voice has three sources, in priority order:
 
 1. **A learned per-genre voice profile** under resolved `<state>/voice-profiles/`, produced
-   by `voice-onboard` — one file per genre, the filename is the genre key. Look it
-   up cheaply, before any rewrite:
-   - **List** `<state>/voice-profiles/*.md` — one directory read, filenames only,
-     no body parsing.
-   - **Select one file** by this precedence, first match wins: (1) **explicit user
-     request** — user named a genre ("use my LinkedIn voice") → that file; if it is
-     absent, say so and drop to rule 4; (2) **normalized-exact preset/genre match**
-     — normalize the run's genre preset and each filename slug the same way
-     (lowercase, spaces→hyphens) and match by string equality, no fuzzy/prefix/alias
-     (`formal-report` ≠ `report`); (3) **single-profile fallback** — exactly one
-     file exists → use it; (4) **no match** → degrade (below). IF the user explicitly
-     asked for their own voice, make the Q8 offer once (offer to create the
-     named/needed genre; shares the one offer budget) then degrade; OTHERWISE
-     degrade silently — inferred voice with no question asked. Either way, if
-     profiles exist but none match, the degraded note lists which genres DO exist
-     so the user can redirect.
-   - **Read** the full body of the one selected file only.
-   - **Directory absent or empty** → fall back to the legacy single file
-     `_shared/voice-profile.md`, still gated by the `> SAMPLE PROFILE.` banner: a
-     file carrying that banner counts as **no profile** (the shipped sample) →
-     degrade per rule 4 (Q8 offer only on an explicit my-voice request). A profile
-     is valid only with the banner absent.
+   by `voice-onboard` — one file per genre, the filename is the genre key. Before
+   any rewrite, follow the canonical lookup, fallback, banner-rejection,
+   graceful-degradation, and Q8 offer rules in `_shared/voice-lookup.md`.
    It is loose coupling: comms-polish does not create or own these files — it reads
    whatever fields are present in the selected profile and biases edits toward them.
    The profile's header set is the **canonical ordered list at the top of
@@ -193,10 +174,8 @@ When neither exists, use the lightest voice that fits the context:
    harder and what to leave alone in this genre. If no preset fits, scan the
    catalog evenly.
 3. **Select and load the voice profile.** Run the source #1 lookup (list
-   `<state>/voice-profiles/*.md`, pick one file by the precedence, read that one
-   body; legacy `_shared/voice-profile.md` on an empty directory, banner = no
-   profile — see Voice Matching). No match → pasted sample or inferred voice, and
-   degrade gracefully.
+   and select through `_shared/voice-lookup.md`, then read only the selected
+   body). No match → pasted sample or inferred voice, and degrade gracefully.
 4. Mark the factual anchors that must survive unchanged — **and the modality
    anchors too**: each claim's observed-vs-inferred, possible-vs-certain, and
    step-toward-vs-achieved status is an anchor, not free to strengthen.
