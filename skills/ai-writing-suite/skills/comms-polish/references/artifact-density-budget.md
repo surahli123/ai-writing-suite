@@ -9,5 +9,6 @@ budget as a blocking acceptance failure.
 This ruling is limited to the artifact edit lane. Plain Markdown, email, and
 other prose lanes keep the deletion-first rule in
 `references/final-pass-checklist.md`: density is judged sentence by sentence
-and is never a hard length target. The artifact budget does not override that
-default outside a rendered, space-constrained surface.
+and, as `references/final-pass-checklist.md` puts it, is "never a hard length
+target." The artifact budget does not override that default outside a rendered,
+space-constrained surface.

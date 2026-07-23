@@ -70,6 +70,31 @@ class RetrievalProtocol(unittest.TestCase):
         self.assertEqual(retrieve("gamma delta", entries),
                          (None, (0, 0)))
 
+    def test_zero_overlap_return_shape_is_two_tuple(self):
+        entries = [
+            {
+                "file": "first.md",
+                "summary": "alpha",
+                "keywords": {"alpha"},
+                "summary_kw": {"alpha"},
+            },
+        ]
+
+        result = retrieve("gamma", entries)
+
+        self.assertIsInstance(result, tuple)
+        self.assertEqual(len(result), 2)
+        self.assertIsNone(result[0])
+        self.assertEqual(result[1], (0, 0))
+
+    def test_empty_entries_list_returns_none_with_sentinel_score(self):
+        # Structurally distinct negative: with no entries the scoring loop never
+        # runs, so the guard sees the sentinel (-1, -1) rather than a computed
+        # (0, 0) - a different code path AND a different returned score value.
+        result = retrieve("any query at all", [])
+
+        self.assertEqual(result, (None, (-1, -1)))
+
     def test_no_match_after_stopword_normalization_returns_none(self):
         entries = [
             {
