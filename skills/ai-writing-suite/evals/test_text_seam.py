@@ -175,6 +175,20 @@ class StylometrySyncPin(unittest.TestCase):
             (stylometry._SENT_SPLIT.pattern, stylometry._SENT_SPLIT.flags),
         )
 
+    def test_cjk_pattern_and_flags_identical_to_stylometry(self):
+        import os, sys
+        shared = os.path.join(os.path.dirname(__file__), "..", "_shared")
+        sys.path.insert(0, os.path.abspath(shared))
+        try:
+            import stylometry
+        finally:
+            sys.path.pop(0)
+        from aiws.text import _CJK_RE
+        self.assertEqual(
+            (_CJK_RE.pattern, _CJK_RE.flags),
+            (stylometry._CJK_RE.pattern, stylometry._CJK_RE.flags),
+        )
+
 
 class DetectorImportSmoke(unittest.TestCase):
     def test_run_all_supported_import_paths(self):
