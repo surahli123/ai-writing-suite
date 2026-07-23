@@ -19,11 +19,21 @@ SUPPLEMENTAL_LABEL = "SUPPLEMENTAL PUBLIC SET — NOT A REAL-WRITER BENCHMARK"
 
 
 class KnownHumanMachinery(unittest.TestCase):
-    def make_manifest(self, root, genre_proxies=("letter",), omit=None, sha256=None):
+    def make_manifest(
+        self,
+        root,
+        genre_proxies=("letter",),
+        omit=None,
+        sha256=None,
+        rights_basis=None,
+        sample_bytes=None,
+    ):
         sample_dir = root / "samples"
         sample_dir.mkdir()
         sample_path = sample_dir / "sample.txt"
-        sample_bytes = b"A plain synthetic sentence written for a machinery test.\n"
+        sample_bytes = sample_bytes or (
+            b"A plain synthetic sentence written for a machinery test.\n"
+        )
         sample_path.write_bytes(sample_bytes)
 
         record = {
@@ -32,12 +42,14 @@ class KnownHumanMachinery(unittest.TestCase):
             "publication_date": "1900",
             "source_url": "https://example.test/synthetic",
             "retrieval_date": "2026-07-22",
-            "rights_basis": (
+            "rights_basis": rights_basis or (
                 "Public domain in the United States jurisdiction; synthetic "
                 "test text created solely for this temporary fixture."
             ),
             "attribution": None,
-            "excerpt_boundary": "Entire temporary sample, bytes 0-56.",
+            "excerpt_boundary": (
+                f"Entire temporary sample, bytes 0-{len(sample_bytes) - 1}."
+            ),
             "genre_proxy": genre_proxies[0],
             "language": "en",
             "sha256": sha256 or hashlib.sha256(sample_bytes).hexdigest(),
@@ -76,6 +88,13 @@ class KnownHumanMachinery(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("false positives: 0", result.stdout)
         self.assertIn("eligible samples: 1", result.stdout)
+        self.assertIn("FP rate: 0/1", result.stdout)
+        self.assertIn("score distribution (min/median/max):", result.stdout)
+        self.assertIn("95% Wilson interval:", result.stdout)
+        self.assertIn("[genre_proxy=letter]", result.stdout)
+        self.assertIn(
+            "[overall evidence_role=supplemental_public]", result.stdout
+        )
 
     def test_missing_provenance_field_is_ineligible_and_nonzero(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -93,6 +112,18 @@ class KnownHumanMachinery(unittest.TestCase):
             )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("checksum mismatch", result.stdout)
+
+    def test_bare_url_is_not_item_level_rights_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result = self.run_manifest(
+                self.make_manifest(
+                    Path(tmp),
+                    rights_basis="https://example.test/license",
+                )
+            )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("rights_basis", result.stdout)
+        self.assertIn("not a bare URL", result.stdout)
 
     def test_empty_required_cohort_is_loud_and_nonzero(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -120,6 +151,21 @@ class KnownHumanMachinery(unittest.TestCase):
         low, high = wilson_interval(0, 8)
         self.assertEqual(round(low, 4), 0.0000)
         self.assertEqual(round(high, 4), 0.3244)
+
+    def test_max_fp_ceiling_is_enforced(self):
+        slop = (
+            b"In today's ever-evolving digital landscape, it is important to "
+            b"leverage cutting-edge solutions and delve into a robust, seamless, "
+            b"game-changing paradigm that empowers every stakeholder."
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            result = self.run_manifest(
+                self.make_manifest(Path(tmp), sample_bytes=slop),
+                "--max-fp",
+                "0",
+            )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("false-positive ceiling exceeded", result.stdout)
 
     def test_committed_manifest_is_empty_and_declares_public_strata(self):
         manifest = json.loads(PUBLIC_MANIFEST.read_text(encoding="utf-8"))

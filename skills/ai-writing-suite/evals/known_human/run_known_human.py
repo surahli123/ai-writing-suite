@@ -180,6 +180,7 @@ def validate_and_score(manifest, manifest_path):
 
         eligible.append(
             {
+                "sample_index": index,
                 "genre_proxy": record["genre_proxy"],
                 "score": score,
             }
@@ -309,6 +310,15 @@ def main(argv=None):
     eligible, errors = validate_and_score(manifest, manifest_path)
     for error in errors:
         print(f"ERROR: {error}")
+
+    if eligible:
+        print("\n[sample scores; text and direct identifiers withheld]")
+        for sample in eligible:
+            print(
+                f"sample[{sample['sample_index']}] "
+                f"genre_proxy={sample['genre_proxy']} "
+                f"score={_display_number(sample['score'])}"
+            )
 
     empty_cohorts = []
     for genre in manifest["genre_proxies"]:
