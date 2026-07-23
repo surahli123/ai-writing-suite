@@ -252,6 +252,12 @@ above vocabulary hits — structure is the harder signal to mask.
 
 For `edit` mode:
 
+When the target is a rendered artifact — a component or page whose visible copy
+comes from a static file, template, generated output, JS render, sidecar, or
+deploy copy — read `references/artifact-preflight.md` and
+`references/artifact-density-budget.md` first. Plain Markdown and email keep the
+lightweight path below.
+
 1. Read the file first.
 2. Preserve frontmatter, headings, tables, links, code blocks, commands, and citations.
 3. Make targeted prose edits only; leave already-human passages untouched.

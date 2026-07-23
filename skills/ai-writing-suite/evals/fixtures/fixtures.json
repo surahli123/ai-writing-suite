@@ -345,6 +345,28 @@
       "expect_baseline": "miss",
       "detector_blind": true,
       "subtle_tell": "Narrative-shape N4 (absent ambiguity): before admits exactly one reading and one action ('is clear... roll it out') with no competing signal. The 6%-lift clause (already present in before) is preserved verbatim in `after`; the `after` walks back the one-reading verdict and holds a real competing read WITHOUT inventing any new stat, source, or quote (no_fabrication-safe: the hedge is qualitative, not a fabricated refund figure) -- motivated ambiguity, not invented. Its over-correction partner -- manufacturing fake doubt on a genuinely simple update -- lives in fixtures_fail.json. Detector scores near 0 -> judge-only, ARC-level."
+    },
+    {
+      "id": "artifact-01-status-card-en",
+      "expected_verdict": "PASS",
+      "genre": "readme",
+      "difficulty": "subtle",
+      "before": "## Status card\n\nRelease v2.4.1 deploys July 31. Health checks run at `/healthz`. This status card gives everyone the information they need about the release and its health check endpoint.",
+      "after": "## Status card\n\nv2.4.1 deploys July 31. Health checks: `/healthz`.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "must_preserve": [
+        "v2.4.1",
+        "July 31",
+        "/healthz"
+      ],
+      "subtle_tell": "Artifact-editing slice: compact a rendered status-card hotspot without dropping its release, date, or endpoint. Every must_preserve literal appears verbatim in both before and after, so the edit removes only redundant framing and invents no text. The fixture is detector_blind because it gates fact preservation rather than detector calibration; it must stay outside the 3/8 denominator."
     }
   ]
 }
