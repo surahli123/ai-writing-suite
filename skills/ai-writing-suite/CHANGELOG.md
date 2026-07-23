@@ -41,27 +41,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **judge evaluate() facade** — one deep-module entry over the score→parse→verify→aggregate
   lifecycle; spend gate checked before any network path; characterization tests pin
   byte-identical behavior.
-
-### Changed
-- **Q7 full-document mixed mode** — mixed polish-plus-add requests route to comms-draft, which
-  treats existing text as immutable source, returns the whole revised document, and runs the
-  polish final-pass itself; the suite router now executes classify-and-load when invoked.
-- **Q8 voice fallback** — one suite-wide voice-onboard offer per session (offer-then-degrade,
-  never blocking), plus post-run / manual-edit voice-capture offers (edit delta = strongest
-  signal); degraded-voice note is the sole in-output exception.
-- **Q9 comms-qa** — KB answers are source-locked; "Outside the playbook" extras stay separately
-  labeled; strict KB-only mode is user-requestable per invocation (stop is per sub-question).
-- **C3 voice precedence** — a learned voice habit that is also a catalog tell stays advisory in
-  that author's own writing; the profile wins (policy in Voice Matching; enforced per-flag by
-  the FP gate).
-
-### Fixed
-- comms-polish worked examples are now provably zero-new-facts (including claim-strength
-  modality); scenario-preset "actual number"/endings guidance is source-locked; voice-profile
-  header schema has one canonical 14-header list; stale router/status prose and dead refs
-  removed; producer/consumer and template/sample destination claims reconciled post-Q10.
-
-### Added
+- **Per-user state boundary (#47)** — mutable voice profiles and learned rules resolve through
+  `$AIWS_STATE_DIR` or `~/.aiws/`; shipped package assets remain immutable.
+- **Honest fabrication gate (#43)** — comms-draft checks typed numeric, named-entity, and
+  closed-set verb-claim classes against the brief and KB, while declared gaps remain explicit
+  markers.
+- **Versioned calibration-policy note (#44)** — the 30–40% detector band, n=8 knife-edge, and
+  owner-gated expansion procedure are recorded without treating the detector as a KPI.
+- **`must_preserve` fact checks (#46)** — fixtures declare numbers, dates, URLs, and labels
+  that rewrites must retain, with regression coverage for substring traps.
+- **Self-report-vs-corpus divergence loop (#49)** — voice extraction runs blind-first, compares
+  stated habits with measured per-genre evidence, and surfaces contradictions without learning
+  them.
+- **Verbatim voice anchors (#50)** — each genre profile carries three source-backed lines whose
+  provenance is checked against the declared sample corpus.
+- **Stage-scoped `_shared` precedence policy (#48)** — measured evidence wins during extraction,
+  while the existing profile-over-catalog rule remains authoritative during rewriting.
+- **Shared untrusted-content contract (#51)** — drafts, KB entries, and voice samples are treated
+  as data rather than instructions across every suite entry point.
 - **Document/narrative-shape tell category (#9)** — the first document-altitude
   category (`narrative-shape.md`, N1–N4): over-explained themes, tidy single-track
   resolution, flat escalation, absent ambiguity, each with a validity condition so
@@ -89,7 +86,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   pre-authored good/bad artifact discrimination with white-box mutant families
   (must-catch floors) and a black-box holdout adversary corpus.
 
+### Changed
+- **Q7 full-document mixed mode** — mixed polish-plus-add requests route to comms-draft, which
+  treats existing text as immutable source, returns the whole revised document, and runs the
+  polish final-pass itself; the suite router now executes classify-and-load when invoked.
+- **Q8 voice fallback** — one suite-wide voice-onboard offer per session (offer-then-degrade,
+  never blocking), plus post-run / manual-edit voice-capture offers (edit delta = strongest
+  signal); degraded-voice note is the sole in-output exception.
+- **Q9 comms-qa** — KB answers are source-locked; "Outside the playbook" extras stay separately
+  labeled; strict KB-only mode is user-requestable per invocation (stop is per sub-question).
+- **C3 voice precedence** — a learned voice habit that is also a catalog tell stays advisory in
+  that author's own writing; the profile wins (policy in Voice Matching; enforced per-flag by
+  the FP gate).
+- **Genre scenario presets (#41)** — weighting now covers tweet/X, LinkedIn, README, memo,
+  PR-description, and release-note constraints.
+- **KB retriever tie-set protocol (#42)** — full primary/summary-score ties return every matched
+  entry in stable INDEX order, with exact-set smoke assertions.
+
 ### Fixed
+- comms-polish worked examples are now provably zero-new-facts (including claim-strength
+  modality); scenario-preset "actual number"/endings guidance is source-locked; voice-profile
+  header schema has one canonical 14-header list; stale router/status prose and dead refs
+  removed; producer/consumer and template/sample destination claims reconciled post-Q10.
+- **CJK refusal routing (#45)** — declared CJK fixtures now follow the detector's unsupported
+  result instead of being mislabeled as clean score-zero prose.
 - **Pattern-catalog contradictions** — register shift consolidated to one canonical
   entry with a validity condition; C2/H7/H8 and S9/L1 duplicates resolved via
   canonical/alias precedence; the R1→C8 rhetorical-question fix-loop closed; validity
