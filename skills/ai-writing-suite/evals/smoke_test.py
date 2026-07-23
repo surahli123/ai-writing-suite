@@ -21,6 +21,7 @@ Run:  python3 smoke_test.py     (exit 0 = all cases pass)
 import os
 import re
 import sys
+import unittest
 
 # evals/ -> suite root, so `import aiws` resolves to the sibling aiws/ package.
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -40,13 +41,13 @@ SMOKE_PATH = os.path.join(KB, "SMOKE-TEST.md")
 
 # ── Parse SMOKE-TEST.md TEST CASE blocks ──────────────────────────────────
 def load_cases():
-    """Extract (query, expected_entry, expected_passage) from the smoke doc.
+    """Extract query, expected entry/files, and passage from the smoke doc.
 
     The doc has two case shapes: the labelled 'TEST CASE' block and the
     'second case' block. Both carry a Query blockquote, an 'Expected entry'
-    line, and an 'Expected passage' blockquote. We parse on those anchors
-    rather than on heading text so a reworded heading doesn't silently drop
-    a case.
+    line, an 'Expected files' line, and an 'Expected passage' blockquote. We
+    parse on those anchors rather than on heading text so a reworded heading
+    doesn't silently drop a case.
     """
     with open(SMOKE_PATH, encoding="utf-8") as fh:
         text = fh.read()
@@ -68,7 +69,20 @@ def load_cases():
         p_match = re.search(
             r"\*\*Expected passage[^*]*:\*\*\s*\n((?:>\s?.*\n?)+)", after)
         passage = None
+        expected_files = []
         if p_match:
+            files_match = re.search(
+                r"^\*\*Expected files:\*\*\s*(.+?)\s*$",
+                after[:p_match.start()],
+                re.M,
+            )
+            if files_match:
+                expected_files = [
+                    filename.strip("` \t")
+                    for filename in files_match.group(1).split(",")
+                    if filename.strip("` \t")
+                ]
+
             # Strip leading "> " from each quoted line, join, collapse spaces.
             raw = p_match.group(1)
             passage = " ".join(
@@ -76,8 +90,13 @@ def load_cases():
                 for ln in raw.splitlines() if ln.strip())
             passage = re.sub(r"\s+", " ", passage).strip()
 
-        if query and entry and passage:
-            cases.append({"query": query, "entry": entry, "passage": passage})
+        if query and entry and expected_files and passage:
+            cases.append({
+                "query": query,
+                "entry": entry,
+                "expected_files": expected_files,
+                "passage": passage,
+            })
     return cases
 
 
@@ -102,12 +121,8 @@ def run():
     print(f"KB smoke test — {len(cases)} case(s), {len(entries)} index entries\n")
     for i, c in enumerate(cases, 1):
         files, overlap = retrieve(c["query"], entries)
-        expected_files = (["clarity.md", "revision.md"]
-                          if i == 1 else [c["entry"]])
-        if i == 1:
-            entry_ok = sorted(files or []) == sorted(expected_files)
-        else:
-            entry_ok = files == expected_files
+        expected_files = c["expected_files"]
+        entry_ok = sorted(files or []) == sorted(expected_files)
 
         # A full tie means every returned entry is opened. The expected passage
         # must appear in the expected entry among those retrieved files.
@@ -141,6 +156,11 @@ def run():
         return 1
     print(f"All {len(cases)} case(s) passed.")
     return 0
+
+
+class SmokeTest(unittest.TestCase):
+    def test_documented_cases(self):
+        self.assertEqual(run(), 0)
 
 
 if __name__ == "__main__":

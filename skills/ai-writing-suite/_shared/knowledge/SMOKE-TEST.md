@@ -69,6 +69,7 @@ exact alias.
 > "My sentences are too long and try to say too much at once — how do I fix that?"
 
 **Expected entry retrieved:** `clarity.md` (must be among the results)
+**Expected files:** `clarity.md`, `revision.md`
 
 - *Why:* canonical token scoring produces a genuine two-way tie. The query token
   `say` overlaps `clarity.md`'s Summary, giving it `(total, summary) = (1, 1)`.
@@ -100,6 +101,7 @@ failure even if the prose answer sounds reasonable.
 > "Who am I even writing this for? It feels like it's aimed at no one."
 
 **Expected entry:** `audience.md`
+**Expected files:** `audience.md`
 **Expected passage:**
 > State the reader and their job before drafting. "An on-call engineer who needs
 > to decide whether to roll back." That sentence fixes tone, length, and jargon level.
@@ -120,6 +122,7 @@ truly exercised (review finding m1). This case fixes that: the query hits BOTH
 > "Who is the reader for this? It sounds too technical and a bit corporate."
 
 **Expected entry:** `audience.md`
+**Expected files:** `audience.md`
 **Expected passage:**
 > State the reader and their job before drafting. "An on-call engineer who needs
 > to decide whether to roll back." That sentence fixes tone, length, and jargon level.
@@ -141,6 +144,7 @@ open X?"). This case represents that path: a real question a user would ask the 
 > "How should I open a status update for an exec — where do I put the main point?"
 
 **Expected entry:** `structure.md`
+**Expected files:** `structure.md`
 **Expected passage:**
 > BLUF — bottom line up front. Open with the decision, result, or ask.
 
@@ -161,6 +165,7 @@ question `audience.md` exists to answer.
 > "Who is the target reader I should be writing this for — a stakeholder or an engineer?"
 
 **Expected entry:** `audience.md`
+**Expected files:** `audience.md`
 **Expected passage:**
 > State the reader and their job before drafting. "An on-call engineer who needs
 > to decide whether to roll back." That sentence fixes tone, length, and jargon level.
