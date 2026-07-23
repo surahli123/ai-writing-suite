@@ -101,30 +101,33 @@ def run():
     failures = 0
     print(f"KB smoke test — {len(cases)} case(s), {len(entries)} index entries\n")
     for i, c in enumerate(cases, 1):
-        got, overlap = retrieve(c["query"], entries)
-        entry_ok = (got == c["entry"])
+        files, overlap = retrieve(c["query"], entries)
+        entry_ok = files is not None and c["entry"] in files
 
-        # Passage check: the expected passage must appear in the retrieved file.
-        passage_ok = False
-        entry_path = os.path.join(KB, got) if got else None
-        if entry_path and os.path.exists(entry_path):
+        # A full tie means every returned entry is opened. The expected passage
+        # must appear in the expected entry among those retrieved files.
+        retrieved_bodies = {}
+        for filename in files or []:
+            entry_path = os.path.join(KB, filename)
+            if not os.path.exists(entry_path):
+                continue
             with open(entry_path, encoding="utf-8") as fh:
-                body = normalize(fh.read())
-            # Match on the first sentence of the expected passage so trailing
-            # editorial parentheticals in the smoke doc don't break the assert.
-            needle = normalize(c["passage"].split(".")[0])
-            passage_ok = needle in body
+                retrieved_bodies[filename] = normalize(fh.read())
+        # Match on the first sentence of the expected passage so trailing
+        # editorial parentheticals in the smoke doc don't break the assert.
+        needle = normalize(c["passage"].split(".")[0])
+        passage_ok = needle in retrieved_bodies.get(c["entry"], "")
 
         ok = entry_ok and passage_ok
         if not ok:
             failures += 1
         mark = "PASS" if ok else "FAIL"
-        print(f"[{mark}] Case {i}: query -> {got} "
+        print(f"[{mark}] Case {i}: query -> {files} "
               f"(expected {c['entry']}, overlap={overlap})")
         if not entry_ok:
-            print(f"       entry mismatch: got {got}, expected {c['entry']}")
+            print(f"       entry mismatch: got {files}, expected {c['entry']}")
         if entry_ok and not passage_ok:
-            print(f"       passage not found in {got}: "
+            print(f"       passage not found in {c['entry']}: "
                   f"\"{c['passage'][:60]}...\"")
 
     print()
