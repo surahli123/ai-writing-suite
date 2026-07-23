@@ -77,7 +77,8 @@ exact alias.
   opens both `clarity.md` and `revision.md`; `clarity.md` remains required because
   it contains the within-sentence guidance and expected passage. The earlier
   narrative claim that "No other entry carries within-sentence-overload signal"
-  predates the addition of `revision.md` to the KB.
+  was an overlooked token collision in the original hand computation —
+  `revision.md` and this smoke case entered the KB in the same commit.
 
 **Expected passage quoted:**
 > **One idea per sentence.** If you find an "and" joining two full claims, make
