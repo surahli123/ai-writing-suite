@@ -11,9 +11,10 @@ that gap. It runs in CI (.github/workflows/ci.yml) and locally:
 Checks:
   1. Every packaging *.json manifest parses as JSON.
   2. The `name` field agrees across all manifests (marketplace root, marketplace
-     plugin entry, Claude plugin.json, Codex plugin.json).
+     plugin entries, Claude plugin.json, Codex plugin.json).
   3. The `version` field agrees across the versioned manifests (Claude + Codex).
-  4. Every skills/*/SKILL.md frontmatter passes the frontmatter contract:
+  4. Both root marketplace plugin sources resolve to skills/ai-writing-suite.
+  5. Every skills/*/SKILL.md frontmatter passes the frontmatter contract:
      a well-formed `---` block with non-empty `name:` and single-line
      `description:`, and no unquoted YAML flow-indicator at the start of a value.
 
@@ -48,6 +49,9 @@ def _fail(errors, msg):
 def check_manifests(errors):
     manifests = {
         "marketplace": os.path.join(ROOT, ".claude-plugin", "marketplace.json"),
+        "agents-marketplace": os.path.join(
+            ROOT, ".agents", "plugins", "marketplace.json"
+        ),
         "claude-plugin": os.path.join(SUITE, ".claude-plugin", "plugin.json"),
         "codex-plugin": os.path.join(SUITE, ".codex-plugin", "plugin.json"),
     }
@@ -70,13 +74,19 @@ def check_manifests(errors):
         plugins = m.get("plugins") or []
         if plugins:
             names["marketplace.plugins[0].name"] = plugins[0].get("name")
+    if "agents-marketplace" in parsed:
+        m = parsed["agents-marketplace"]
+        names["agents-marketplace.name"] = m.get("name")
+        plugins = m.get("plugins") or []
+        if plugins:
+            names["agents-marketplace.plugins[0].name"] = plugins[0].get("name")
     if "claude-plugin" in parsed:
         names["claude-plugin.name"] = parsed["claude-plugin"].get("name")
     if "codex-plugin" in parsed:
         names["codex-plugin.name"] = parsed["codex-plugin"].get("name")
     distinct_names = set(v for v in names.values() if v)
-    if len(names) < 4:
-        _fail(errors, f"expected >=4 name fields, found {sorted(names)}")
+    if len(names) < 6:
+        _fail(errors, f"expected >=6 name fields, found {sorted(names)}")
     if len(distinct_names) > 1:
         _fail(errors, f"manifest name mismatch: {names}")
 
@@ -90,6 +100,42 @@ def check_manifests(errors):
         _fail(errors, f"expected 2 versioned manifests, found {sorted(versions)}")
     if len(distinct_versions) > 1:
         _fail(errors, f"manifest version mismatch: {versions}")
+
+    # Each host's root marketplace must route to the shared suite tree.
+    expected_suite = os.path.realpath(SUITE)
+    for label in ("marketplace", "agents-marketplace"):
+        if label not in parsed:
+            continue
+        manifest_rel = os.path.relpath(manifests[label], ROOT)
+        plugins = parsed[label].get("plugins")
+        if not isinstance(plugins, list) or not plugins:
+            _fail(errors, f"{manifest_rel}: expected non-empty 'plugins' list")
+            continue
+        for index, plugin in enumerate(plugins):
+            field = f"{manifest_rel}: plugins[{index}].source"
+            if not isinstance(plugin, dict):
+                _fail(errors, f"{field}: plugin entry must be an object")
+                continue
+            source = plugin.get("source")
+            if label == "marketplace":
+                if not isinstance(source, str) or not source:
+                    _fail(errors, f"{field}: expected a non-empty local path string")
+                    continue
+                source_path = source
+            else:
+                if not isinstance(source, dict) or source.get("source") != "local":
+                    _fail(errors, f"{field}: expected a local source object")
+                    continue
+                source_path = source.get("path")
+                if not isinstance(source_path, str) or not source_path:
+                    _fail(errors, f"{field}.path: expected a non-empty local path")
+                    continue
+            resolved = os.path.realpath(os.path.join(ROOT, source_path))
+            if not os.path.isdir(resolved):
+                _fail(errors, f"{field}: source path does not exist: {source_path!r}")
+            elif resolved != expected_suite:
+                _fail(errors, f"{field}: source path does not resolve to suite tree: "
+                              f"{source_path!r}")
 
 
 def check_frontmatter(errors):
@@ -127,7 +173,7 @@ def main():
             print(f"  - {e}")
         return 1
     print("packaging validation OK: manifests parse, name/version agree, "
-          "all SKILL.md frontmatter valid")
+          "root sources resolve, all SKILL.md frontmatter valid")
     return 0
 
 
