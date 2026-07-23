@@ -87,6 +87,14 @@ class RetrievalProtocol(unittest.TestCase):
         self.assertIsNone(result[0])
         self.assertEqual(result[1], (0, 0))
 
+    def test_empty_entries_list_returns_none_with_sentinel_score(self):
+        # Structurally distinct negative: with no entries the scoring loop never
+        # runs, so the guard sees the sentinel (-1, -1) rather than a computed
+        # (0, 0) - a different code path AND a different returned score value.
+        result = retrieve("any query at all", [])
+
+        self.assertEqual(result, (None, (-1, -1)))
+
     def test_no_match_after_stopword_normalization_returns_none(self):
         entries = [
             {
