@@ -154,6 +154,21 @@ class GroundTruth(unittest.TestCase):
         _, errors = rve.verify_ground_truth(corpus)
         self.assertTrue(any("expected_unknown_sections" in e for e in errors))
 
+    def test_planted_self_report_recomputes_to_a_real_divergence(self):
+        recomputed, errors = rve.verify_ground_truth(self.corpus)
+        self.assertEqual(errors, [])
+        report = self.corpus["ground_truth"]["self_report"]
+        self.assertTrue(report["asserted_present"])
+        for genre in rve.genres_of(self.corpus):
+            self.assertEqual(
+                recomputed["genres"][genre][f"self-report {report['feature']}"], 0)
+
+    def test_drifted_self_report_count_is_caught(self):
+        corpus = json.loads(json.dumps(self.corpus))
+        corpus["ground_truth"]["self_report"]["genre_counts"]["tweet"] = 1
+        _, errors = rve.verify_ground_truth(corpus)
+        self.assertTrue(any("tweet.self_report" in error for error in errors))
+
 
 class GoodProfilesPass(unittest.TestCase):
     def setUp(self):
@@ -225,6 +240,9 @@ class BadProfilesFailEachDeclaredMode(unittest.TestCase):
 
     def test_claims_to_cover_every_genre(self):
         self._assert_trips("scope_declared")
+
+    def test_adopts_false_self_report_without_surfacing_divergence(self):
+        self._assert_trips("self_report_divergence")
 
     def test_still_satisfies_the_header_contract(self):
         # It must be wrong on CONTENT only. If it broke a header, test_voice_contract.py
@@ -356,6 +374,32 @@ class ReviewerEvasions(unittest.TestCase):
             ok, _ = rve.CHECKS["honest_gap"](md, self.corpus, genre)
             self.assertFalse(ok, f"[{genre}] the phrase parked in a convenient section "
                                  f"satisfied the check")
+
+    def test_substring_only_fake_that_adopts_false_trait_is_caught(self):
+        for genre, good, spec in self._each_genre():
+            family = {mid: (md, klass) for mid, md, klass
+                      in mv.family_self_report_divergence(
+                          good, spec, self.corpus, genre)}
+            md, klass = family["substring-only-plus-adoption"]
+            self.assertEqual(klass, "must")
+            self.assertIn("Self-report Divergence", md)
+            ok, detail = rve.CHECKS["self_report_divergence"](
+                md, self.corpus, genre)
+            self.assertFalse(ok, f"[{genre}] substring-only fake escaped")
+            self.assertIn("ADOPTED", detail)
+
+    def test_full_divergence_note_cannot_hide_adopted_false_trait(self):
+        for genre, good, spec in self._each_genre():
+            family = {mid: md for mid, md, _klass
+                      in mv.family_self_report_divergence(
+                          good, spec, self.corpus, genre)}
+            md = family["surfaced-plus-adoption"]
+            body = rve.parse_subsection(
+                md, "Things To Avoid", rve.SELF_REPORT_SUBSECTION)
+            self.assertIn("Measured contradiction", body)
+            ok, _ = rve.CHECKS["self_report_divergence"](
+                md, self.corpus, genre)
+            self.assertFalse(ok)
 
     # --- FIX 2 (audit): feature lexicon + scoped polarity ---------------------
 

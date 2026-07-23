@@ -89,6 +89,27 @@ def append_to_section(md, name, body):
     return _rebuild(blocks)
 
 
+def set_subsection(md, section, subsection, body):
+    """Replace one H3 body inside an H2 section while preserving all other content."""
+    out = []
+    target = rve.normalize(subsection)
+    for header, lines in _split_sections(md):
+        if not _header_is(header, section):
+            out.append((header, lines))
+            continue
+        start = next((i for i, line in enumerate(lines)
+                      if re.match(r"^###\s+", line)
+                      and rve.normalize(line[3:].strip()) == target), None)
+        if start is None:
+            lines = lines + [f"### {subsection}"] + body.splitlines()
+        else:
+            end = next((i for i in range(start + 1, len(lines))
+                        if re.match(r"^###\s+", lines[i])), len(lines))
+            lines = lines[:start + 1] + body.splitlines() + lines[end:]
+        out.append((header, lines))
+    return _rebuild(out)
+
+
 def edit_claim_lines(md, fn):
     """Apply fn(line) to every non-blockquote line of every POSITIVE section."""
     absent = {rve.normalize(h) for h in rve.ABSENCE_SECTIONS}
@@ -232,6 +253,32 @@ def family_honest_gap(good, spec, corpus, genre):
     return out
 
 
+def family_self_report_divergence(good, spec, corpus, genre):
+    report = corpus["ground_truth"]["self_report"]
+    feature = report["feature"]
+    actual = report["genre_counts"][genre]
+    generic_only = set_subsection(
+        good, "Things To Avoid", rve.SELF_REPORT_SUBSECTION,
+        "\n- Self-report divergence.\n")
+    return [
+        ("omitted", set_subsection(
+            good, "Things To Avoid", rve.SELF_REPORT_SUBSECTION,
+            "\n- No self-report mismatches recorded.\n"), "must"),
+        ("generic-substring-only", generic_only, "must"),
+        ("wrong-measured-count", set_subsection(
+            good, "Things To Avoid", rve.SELF_REPORT_SUBSECTION, (
+                f"\n- **Stated:** the author reported frequent {feature}.\n"
+                f"- **Measured:** {actual + 1} {feature} in the {genre} corpus; "
+                "this contradicts the self-report.\n")), "must"),
+        ("substring-only-plus-adoption", append_to_section(
+            generic_only, "Punctuation & Formatting",
+            f"\n- Frequent {feature} are a learned habit.\n"), "must"),
+        ("surfaced-plus-adoption", append_to_section(
+            good, "Punctuation & Formatting",
+            f"\n- Frequent {feature} are a learned habit.\n"), "must"),
+    ]
+
+
 FAMILIES = {
     "scope_declared": family_scope_declared,
     "learns_habit_word": family_learns_habit_word,
@@ -240,6 +287,7 @@ FAMILIES = {
     "no_invented_traits": family_no_invented_traits,
     "genre_scoped_rhythm": family_genre_scoped_rhythm,
     "honest_gap": family_honest_gap,
+    "self_report_divergence": family_self_report_divergence,
 }
 
 

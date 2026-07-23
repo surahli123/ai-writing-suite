@@ -14,7 +14,8 @@
       "SUB-THRESHOLD DECOYS: 'boring' 2x in memos, 'forecast' 1x in tweets. Both have NON-ZERO corpus support, so a checker that only asks 'does this word occur at all' waves them through. The 3+ rule says they are noise, so a positive claim on either is a failure (check: no_subthreshold_claims).",
       "ABSENT words 'delve' and 'leverage': 0x in both genres -> per the SKILL, absences are the strongest signal -> a correct profile mines them into Vocabulary Don't.",
       "BOUNDARY DECOYS: 'ledgers' 1x in tweets must not inflate 'ledger'; 'dashboard' (singular) 1x in memos must not inflate 'dashboards'.",
-      "GENRE RHYTHM: terse tweets vs long memos, mean words/sentence separated by >= min_genre_mean_gap_words -> a profile that reports the BLENDED mean for its genre is detectably wrong (check: genre_scoped_rhythm)."
+      "GENRE RHYTHM: terse tweets vs long memos, mean words/sentence separated by >= min_genre_mean_gap_words -> a profile that reports the BLENDED mean for its genre is detectably wrong (check: genre_scoped_rhythm).",
+      "PLANTED-FALSE SELF-REPORT: the fictional author says she uses exclamation marks frequently, but each genre contains 0. The runtime recomputes both counts and requires the contradiction to remain real (check: self_report_divergence)."
     ],
 
     "ground_truth_discipline": "The counts below are DECLARED. run_voice_extraction.py RECOMPUTES every one of them, per genre, at runtime, and fails loudly on any disagreement. If they ever disagree, fix the SAMPLES, never the declared number — a fixture whose own ground truth has drifted is worse than no fixture."
@@ -30,6 +31,15 @@
   "ground_truth": {
     "min_habit_occurrences": 3,
     "min_genre_mean_gap_words": 10,
+
+    "self_report": {
+      "claim": "I use exclamation marks frequently.",
+      "dimension": "Punctuation & Formatting",
+      "feature": "exclamation marks",
+      "asserted_present": true,
+      "genre_counts": {"tweet": 0, "memo": 0},
+      "rule": "The stated positive feature is false in each genre. A profile must surface the contradiction with the recomputed genre count and must not learn the stated feature."
+    },
 
     "genres": {
       "tweet": {
