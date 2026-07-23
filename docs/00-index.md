@@ -12,7 +12,7 @@ may describe superseded decisions; follow any historical banner in the file itse
 - [`code-review-v1-2026-06-06.md`](code-review-v1-2026-06-06.md) — Independent code review of the v1 implementation.
 - [`decisions-2026-07-13.md`](decisions-2026-07-13.md) — Verbatim owner decisions for the July 13 product lanes.
 - [`decisions-2026-07-15.md`](decisions-2026-07-15.md) — Owner decisions for the architecture-train work.
-- [`design-ai-writing-suite-v1-2026-06-06.md`](design-ai-writing-suite-v1-2026-06-06.md) — Historical v1 design rationale with superseded packaging and scope notes.
+- [`design-ai-writing-suite-v1-2026-06-06.md`](design-ai-writing-suite-v1-2026-06-06.md) — v1 design rationale; packaging and scope notes superseded (see banner).
 - [`design-q10-voice-profile-contract-2026-07-13.md`](design-q10-voice-profile-contract-2026-07-13.md) — Design contract for multi-genre voice profiles.
 - [`discussion-ogilvy-deslop-2026-07-03.md`](discussion-ogilvy-deslop-2026-07-03.md) — Discussion of applying Ogilvy-inspired rules to the de-slop engine.
 - [`implementation-plan-wave1-2026-07-21.md`](implementation-plan-wave1-2026-07-21.md) — Reviewed execution plan for the ten-lane Wave-1 train.
