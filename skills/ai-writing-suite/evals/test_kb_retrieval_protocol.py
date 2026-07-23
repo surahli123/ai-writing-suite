@@ -70,6 +70,23 @@ class RetrievalProtocol(unittest.TestCase):
         self.assertEqual(retrieve("gamma delta", entries),
                          (None, (0, 0)))
 
+    def test_zero_overlap_return_shape_is_two_tuple(self):
+        entries = [
+            {
+                "file": "first.md",
+                "summary": "alpha",
+                "keywords": {"alpha"},
+                "summary_kw": {"alpha"},
+            },
+        ]
+
+        result = retrieve("gamma", entries)
+
+        self.assertIsInstance(result, tuple)
+        self.assertEqual(len(result), 2)
+        self.assertIsNone(result[0])
+        self.assertEqual(result[1], (0, 0))
+
     def test_no_match_after_stopword_normalization_returns_none(self):
         entries = [
             {
