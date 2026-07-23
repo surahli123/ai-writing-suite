@@ -16,7 +16,10 @@ The existing contract is load-bearing:
 - the filename remains the genre key;
 - `_shared/voice-profile.md` defines exactly 15 ordered H2 headers;
 - `voice-onboard` writes those headers;
-- `comms-polish` and `comms-draft` select one genre file and read it by header.
+- `comms-polish` and `comms-draft` select one genre file and read it by header;
+- `_shared/stylometry.py` writes the quantitative Measured Fingerprint block;
+- `evals/test_voice_contract.py::MeasuredNumbersAreRecomputable` guards that
+  the fingerprint's stated numbers can be recomputed from its declared corpus.
 
 Register conditioning must be an optional, sparse layer inside that contract. It
 must not create a second competing profile schema or make existing profiles
@@ -73,20 +76,37 @@ or reordered. The `Meta` body lists available register slugs:
 register has its own evidence. `Changelog` records overlay additions and
 recalibrations.
 
-The exact H3 grammar is `### Register: <slug>`. A future parser rejects duplicate
-slugs within one H2 and rejects a slug not declared in `Meta`. The baseline is
-the H2 content before the first register H3.
+The exact overlay H3 grammar is `### Register: <slug>`. A register-overlay
+parser matches that `Register:` prefix only. Existing `### <genre>` blocks under
+`## Measured Fingerprint` are genre-scoped measured output, never register
+overlays, and must remain available to `_shared/stylometry.py` and
+`test_voice_contract.py::MeasuredNumbersAreRecomputable`.
+
+A future parser rejects duplicate register slugs within one H2 and rejects a
+slug not declared in `Meta`. For ordinary H2s, the baseline is the H2 content
+before the first `### Register:` H3. That baseline rule does not apply to
+`Measured Fingerprint`: it has no baseline prose and is entirely composed of
+genre H3 blocks. Its effective baseline is the selected `### <genre>` measured
+block; an optional `### Register: <slug>` measured block is a separately
+recomputable delta generated from that register's declared corpus. Stylometry
+must continue to produce the genre block, and the measured-numbers test must be
+extended to recompute any register-specific measured block rather than treating
+its figures as unguarded prose.
 
 Existing files with no register H3s remain byte-for-byte valid. Existing
 consumers must not encounter overlay-bearing files until they can parse the H3
 grammar; otherwise reading the whole H2 could blend every register. The rollout
 order is therefore binding:
 
-1. teach both consumers to read the baseline plus at most one selected overlay,
-   while verifying unchanged behavior on current profiles;
-2. update the profile-contract eval and template to allow the optional H3 shape;
-3. teach `voice-onboard` to write overlays;
-4. only then create the first overlay-bearing real profile.
+1. teach `comms-polish` and `comms-draft` to read the baseline plus at most one
+   selected overlay, while verifying unchanged behavior on current profiles;
+2. update the profile-contract eval and template to allow the optional H3 shape,
+   preserving the existing `### <genre>` Measured Fingerprint grammar;
+3. update `_shared/stylometry.py` and
+   `test_voice_contract.py::MeasuredNumbersAreRecomputable` together so
+   register-specific measured output is written and independently recomputable;
+4. teach `voice-onboard` to write overlays;
+5. only then create the first overlay-bearing real profile.
 
 This is a compatibility migration, not a producer-only format change.
 
@@ -156,16 +176,21 @@ conditioning occurred.
   before.
 - Optional overlays use only `### Register: <slug>` blocks inside existing H2s;
   no sixteenth H2 or parallel profile schema is introduced.
+- `### <genre>` blocks in Measured Fingerprint are never parsed as register
+  overlays; only the `### Register:` prefix activates register parsing.
 - The baseline is always readable without a register, and one run applies at
   most one normalized-exact overlay.
 - An absent or ambiguous register falls back to baseline without fuzzy matching
   or invented traits.
 - Overlay claims meet the same evidence, honest-gap, and provenance rules as the
   baseline and are sparse deltas rather than copied profiles.
-- Both by-header consumers gain parsing support and regression coverage before
-  `voice-onboard` can emit an overlay-bearing file.
+- Both by-header consumers, `_shared/stylometry.py`, and
+  `test_voice_contract.py::MeasuredNumbersAreRecomputable` gain compatible
+  overlay handling and regression coverage before `voice-onboard` can emit an
+  overlay-bearing file.
 - Contract tests cover legacy profiles, one valid overlay, missing-register
-  fallback, duplicate/undeclared slugs, and preservation of all 15 headers.
+  fallback, duplicate/undeclared slugs, preservation of all 15 headers, and
+  independent recomputation of genre and register Measured Fingerprint blocks.
 
 **Falsifiable next step:** Using at least 10 consented samples each for one
 author's `slack-peer` and `pr-review` contexts within a single genre, derive

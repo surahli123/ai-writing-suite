@@ -33,6 +33,14 @@ ISO date `Reviewed` to its existing metadata table:
 | medium | regex | 3 | 2026-07-22 |
 ```
 
+This is a schema replacement, not two columns appended to a permissive parser.
+`aiws/catalog.py`'s `_META_HEADER` and `_META_ROW` regexes
+(`catalog.py:60-61`) are hard-pinned to exactly
+`| Severity | Enforcement |` plus a two-value row. The current parser rejects
+the four-column table above, so a future implementation must change both regexes
+and their validation tests in the same change before any catalog entry adopts
+the new shape.
+
 The addressable revision is `L1@3`. The bare ID still means "the active revision
 of L1", so existing audit reports and by-ID consumers do not break.
 
@@ -120,9 +128,18 @@ denominator.
 
 ## Stdlib implementation shape
 
-A future change can extend `CatalogEntry` with `version` and `reviewed`, extend
-the existing metadata-table parser, and render those fields in the generated
-registry. A small `aiws.catalog_decay` module can:
+A future change can extend `CatalogEntry` with `version` and `reviewed`, replace
+the two-column `_META_HEADER`/`_META_ROW` parser pin with the four-column schema,
+and render those fields in the generated registry. Changing `render_registry()`
+also changes the marker-bounded GENERATED registry block in
+`_shared/patterns/00-index.md`. `evals/test_catalog_projection.py` regenerates
+that block and diffs it byte-for-byte, so `python3 -m aiws.catalog` regeneration
+of `00-index.md` must land in the same change or the projection test goes red.
+The separate `evals/test_catalog_sync.py` guard remains untouched: it pins only
+the L1 replace-on-sight table against detector `TIER1`, not catalog metadata or
+the generated registry.
+
+A small `aiws.catalog_decay` module can:
 
 - load entries through `aiws.catalog`;
 - parse dates with `datetime.date.fromisoformat`;
@@ -154,6 +171,12 @@ Wall-clock time never decides a fixture's result.
   denominator.
 - Stable IDs and unique H3 entries remain compatible with current by-ID
   consumers and `00-index.md` projection.
+- The implementation changes the exact two-column metadata regex pin before
+  accepting four-column entries; it does not treat the new fields as a
+  parser-compatible append.
+- The `render_registry()` change and regenerated marker-bounded registry in
+  `00-index.md` land together and keep `evals/test_catalog_projection.py` green,
+  while the independent L1/`TIER1` `test_catalog_sync.py` contract is unchanged.
 
 **Falsifiable next step:** Prototype the parser and lint on a temporary two-entry
 catalog, then evaluate it with `--as-of 2026-04-02`; a regex entry reviewed on
