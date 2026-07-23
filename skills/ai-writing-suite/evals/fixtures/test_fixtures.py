@@ -76,7 +76,7 @@ class ScoreBands(unittest.TestCase):
         with contextlib.redirect_stdout(output):
             passes, fails = run_deterministic(load_fixtures())
 
-        self.assertEqual((passes, fails), (18, 0))
+        self.assertEqual((passes, fails), (19, 0))
         self.assertIn(
             "[PASS] overstep-04-selfqa-zh refusal: as declared",
             output.getvalue(),
@@ -135,6 +135,36 @@ class MustPreserve(unittest.TestCase):
         self.assertEqual(fails, 1)
         self.assertIn("[FAIL] tweet-01-obvious dropped '11 steps to 3'",
                       output.getvalue())
+
+
+class ArtifactMustKeep(unittest.TestCase):
+    @staticmethod
+    def _data_with_artifact_fixture():
+        data = copy.deepcopy(load_fixtures())
+        fixture = next(f for f in data["fixtures"]
+                       if f["id"] == "artifact-01-status-card-en")
+        return data, fixture
+
+    def test_artifact_must_keep_literals_present(self):
+        data, fixture = self._data_with_artifact_fixture()
+        for literal in fixture["must_preserve"]:
+            self.assertIn(literal, fixture["after"])
+        with contextlib.redirect_stdout(io.StringIO()):
+            _, fails = run_deterministic(data)
+        self.assertEqual(fails, 0)
+
+    def test_artifact_dropped_must_keep_literal_fails(self):
+        data, fixture = self._data_with_artifact_fixture()
+        dropped = fixture["must_preserve"][0]
+        fixture["after"] = fixture["after"].replace(dropped, "the release")
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            _, fails = run_deterministic(data)
+        self.assertEqual(fails, 1)
+        self.assertIn(
+            f"[FAIL] artifact-01-status-card-en dropped '{dropped}'",
+            output.getvalue(),
+        )
 
 
 class Calibration(unittest.TestCase):
@@ -923,7 +953,7 @@ class CombinedConfusionMatrix(unittest.TestCase):
         self.n_pass = len(self.pass_fixtures)
         self.n_fail = len(self.fail_fixtures)
         # Premise guard: the cohort sizes the hand-computed numbers below assume.
-        self.assertEqual((self.n_pass, self.n_fail), (18, 5))
+        self.assertEqual((self.n_pass, self.n_fail), (19, 5))
 
     def _reply(self, verdicts):
         """verdicts: {dim: 'PASS'|'FAIL'} defaults PASS for every other dim."""
@@ -1001,11 +1031,11 @@ class CombinedConfusionMatrix(unittest.TestCase):
     def test_mixed_realistic_judge_matches_hand_computed_numbers(self):
         # FAILs the first 3 gold-PASS fixtures (3 false positives) and the first 2
         # gold-FAIL fixtures (2 true positives); PASSes everything else.
-        # Hand-computed for the post-narrative cohorts (18 PASS / 5 FAIL):
-        # TP=2 FN=3 TN=15 FP=3
+        # Hand-computed for the artifact-lane cohorts (19 PASS / 5 FAIL):
+        # TP=2 FN=3 TN=16 FP=3
         #   sensitivity = 2/5   = 0.40
-        #   specificity = 15/18 = 0.8333...
-        #   balanced    = (0.4 + 15/18) / 2 = 0.61666...
+        #   specificity = 16/19 = 0.8421...
+        #   balanced    = (0.4 + 16/19) / 2 = 0.62105...
         all_fail = {d: "FAIL" for d in self.ALL_DIMS}
 
         def reply(i):
@@ -1018,11 +1048,11 @@ class CombinedConfusionMatrix(unittest.TestCase):
             return self._reply({})                      # last 3 gold-FAIL -> FN
         matrix, out = self._run_both(self._ordered_stub(reply))
         self.assertEqual((matrix["tp"], matrix["fn"], matrix["tn"], matrix["fp"]),
-                         (2, 3, 15, 3))
+                         (2, 3, 16, 3))
         sens, spec, bal = self._metrics(matrix)
         self.assertAlmostEqual(sens, 2 / 5)
-        self.assertAlmostEqual(spec, 15 / 18)
-        self.assertAlmostEqual(bal, (2 / 5 + 15 / 18) / 2)
+        self.assertAlmostEqual(spec, 16 / 19)
+        self.assertAlmostEqual(bal, (2 / 5 + 16 / 19) / 2)
         self.assertIn("balanced accuracy = 0.62", out)
 
     def test_unparseable_rep_is_skipped_not_folded_into_a_cell(self):
