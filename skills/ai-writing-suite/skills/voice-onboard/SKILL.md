@@ -130,6 +130,12 @@ keep every header exactly; do not restate a divergent subset. The 10 dimensions:
 10. **Things To Avoid** — author-specific anti-patterns (marketing register,
     false balance, over-explaining to experts).
 
+Separately from those 10 dimensions, extract **exactly 3 Verbatim Anchors** for
+each genre profile. Copy each quoted line verbatim from a declared sample for that
+genre (it must remain a whitespace-normalized substring of the sample), then tag it
+with the single habit it proves. This block is fidelity evidence, not an eleventh
+style dimension.
+
 Two extraction principles to repeat to yourself:
 
 - **Strip content, keep style.** They wrote about search ranking → that's the

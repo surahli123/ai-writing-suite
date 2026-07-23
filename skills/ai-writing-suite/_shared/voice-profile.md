@@ -6,9 +6,10 @@
   WHAT THIS IS
   ------------
   This is a SAMPLE/EXAMPLE voice profile. It is shipped filled-in so you can see
-  the shape. Real profiles are created by `voice-onboard` under
-  `_shared/voice-profiles/<genre>.md` (one file per genre) — this file is NOT the
-  write target; it stays as the shipped sample and the legacy single-file fallback.
+  the shape. Real profiles are created by `voice-onboard` under resolved
+  `<state>/voice-profiles/<genre>.md` (one file per genre), following
+  `_shared/state-location.md`. This file is NOT the write target; it stays as the
+  shipped sample and the legacy single-file fallback.
 
   WHY IT EXISTS (the contract)
   ----------------------------
@@ -44,8 +45,9 @@
     10. Uncertainty Style
     11. Things To Avoid
     12. Scope & Calibration
-    13. Measured Fingerprint
-    14. Changelog
+    13. Verbatim Anchors
+    14. Measured Fingerprint
+    15. Changelog
 
   Note: `Vocabulary` (the descriptive header) AND `Scope & Calibration` are BOTH
   in the contract — earlier drafts of the skills each dropped one; the fix is that
@@ -57,12 +59,13 @@
 
   WHERE REAL PROFILES LIVE
   ------------------------
-  Real per-genre profiles are written to `_shared/voice-profiles/<genre>.md`
-  (one file per genre) by `voice-onboard`. This single file remains only as the
+  Real per-genre profiles are written to resolved
+  `<state>/voice-profiles/<genre>.md` (one file per genre) by `voice-onboard`,
+  following `_shared/state-location.md`. This single file remains only as the
   shipped SAMPLE and as a legacy single-file fallback when that directory is
   absent or empty. Do not rename or delete it.
 
-  STATUS OF THIS FILE: example only. Real profiles live in `_shared/voice-profiles/`.
+  STATUS OF THIS FILE: example only. Real profiles live in resolved user state.
 ================================================================================
 -->
 
@@ -70,9 +73,9 @@
 
 > SAMPLE PROFILE. Replace by running `voice-onboard`. The example below is a
 > fictional author ("Sam, a data-scientist who blogs about search ranking") so
-> the field shapes are concrete. Your real profiles live at
-> `_shared/voice-profiles/<genre>.md` — run `voice-onboard` to create them; this
-> sample file is never the write target.
+> the field shapes are concrete. Your real profiles live at resolved
+> `<state>/voice-profiles/<genre>.md` per `_shared/state-location.md` — run
+> `voice-onboard` to create them; this sample file is never the write target.
 > **Consumers (`comms-polish`, `comms-draft`) must treat any file carrying this
 > `> SAMPLE PROFILE.` banner as NO profile** — degrade to inferred voice and make
 > the Q8 voice-onboard offer, exactly as if the file were absent. A real profile
@@ -175,6 +178,12 @@ practitioner explaining a tradeoff to a peer, not a brand talking to a market.
      fresh pass, so comms-polish doesn't misapply blog voice to a formal report. -->
 - **Applies to:** blog posts, internal memos, LinkedIn.
 - **Re-calibrate for:** formal external reports, customer-facing comms.
+
+## Verbatim Anchors
+
+- "The reranker helped NDCG by 2 points." — early metric anchor
+- "It worked." — short claim opener
+- "So the real question is whether the tail ever gets clean." — open-question close
 
 ## Measured Fingerprint
 

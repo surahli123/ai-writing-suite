@@ -7,9 +7,9 @@
   ------------
   The reusable blank form that `voice-onboard` fills in, one field at a time,
   from your interview answers + writing samples. When complete, its contents
-  are written out to `_shared/voice-profiles/<genre-slug>.md` (one file per genre;
-  the legacy `voice-profile.md` is the shipped sample + fallback, no longer the
-  write target).
+  are written to `<state>/voice-profiles/<genre-slug>.md` (one file per genre),
+  with `<state>` resolved through `_shared/state-location.md`. The legacy
+  `voice-profile.md` is the shipped sample + fallback, never the write target.
 
   HOW TO USE
   ----------
@@ -109,6 +109,15 @@
 
 - **Applies to:** [genres these samples cover]
 - **Re-calibrate for:** [genres not covered — flag so the reader doesn't misapply]
+
+## Verbatim Anchors
+
+<!-- Exactly 3 anchors, separate from the 10 style dimensions. Each quoted line
+     must be copied verbatim from a declared sample (a whitespace-normalized
+     substring), and each tag names exactly one habit that line proves. -->
+- "<verbatim line from a sample>" — <the single habit it proves>
+- "<verbatim line from a sample>" — <the single habit it proves>
+- "<verbatim line from a sample>" — <the single habit it proves>
 
 ## Measured Fingerprint
 
