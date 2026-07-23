@@ -51,6 +51,44 @@ class RetrievalProtocol(unittest.TestCase):
         self.assertEqual(retrieve("alpha beta", entries),
                          (["first.md", "second.md"], (2, 1)))
 
+    def test_zero_overlap_returns_empty(self):
+        entries = [
+            {
+                "file": "first.md",
+                "summary": "alpha",
+                "keywords": {"alpha"},
+                "summary_kw": {"alpha"},
+            },
+            {
+                "file": "second.md",
+                "summary": "beta",
+                "keywords": {"beta"},
+                "summary_kw": {"beta"},
+            },
+        ]
+
+        self.assertEqual(retrieve("gamma delta", entries),
+                         (None, (0, 0)))
+
+    def test_no_match_after_stopword_normalization_returns_none(self):
+        entries = [
+            {
+                "file": "first.md",
+                "summary": "alpha",
+                "keywords": {"alpha"},
+                "summary_kw": {"alpha"},
+            },
+            {
+                "file": "second.md",
+                "summary": "beta",
+                "keywords": {"beta"},
+                "summary_kw": {"beta"},
+            },
+        ]
+
+        self.assertEqual(retrieve("the and of", entries),
+                         (None, (0, 0)))
+
 
 if __name__ == "__main__":
     unittest.main()
