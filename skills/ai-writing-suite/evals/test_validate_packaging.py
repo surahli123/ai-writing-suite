@@ -85,6 +85,21 @@ class ValidatePackagingExitCodes(unittest.TestCase):
         self.assertIn("manifest name mismatch", output)
         self.assertIn("agents-marketplace.name", output)
 
+    def test_mismatched_agents_marketplace_plugin_name_exits_nonzero(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            scratch_root = Path(tmp)
+            self._copy_packaging_tree(scratch_root)
+            manifest = scratch_root / ".agents" / "plugins" / "marketplace.json"
+            data = json.loads(manifest.read_text(encoding="utf-8"))
+            data["plugins"][0]["name"] = "not-ai-writing-suite"
+            manifest.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+            rc, output = self._run_from(scratch_root)
+
+        self.assertEqual(rc, 1)
+        self.assertIn("manifest name mismatch", output)
+        self.assertIn("agents-marketplace.plugins[0].name", output)
+
 
 if __name__ == "__main__":
     unittest.main()
