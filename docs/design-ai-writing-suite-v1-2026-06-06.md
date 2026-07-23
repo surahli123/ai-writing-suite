@@ -2,8 +2,10 @@
 > This document is kept for its decision log (D1–D12) and rationale only. Its packaging
 > prescriptions — the `packaging/`/`sync.sh` generate-and-sync machinery and the
 > `cursor-rules/`/`rovodev/` manifest directories — were **removed**; all hosts now read the
-> single source tree directly. For the current, authoritative packaging and install model, read
-> `docs/packaging.md`. Do not follow the packaging/sync steps below.
+> single source tree directly. The v1/v2 scope split is also historical: QA and drafting
+> (`comms-qa`, `comms-draft`) shipped in v1.1, so this document's "Deferred to v2" list is
+> stale; see the CHANGELOG for shipped scope. For the current, authoritative packaging and
+> install model, read `docs/packaging.md`. Do not follow the packaging/sync steps below.
 
 # Design Plan — AI Writing Suite (OSS) v1
 
