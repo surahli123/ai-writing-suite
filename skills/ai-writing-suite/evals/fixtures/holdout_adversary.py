@@ -101,6 +101,10 @@ def build_draft_holdout(case):
             ("fresh/invented-year",
              _add_to_draft_body(good, "The pilot began back in 2019."),
              "no_fabrication", True),
+            # HARDER: an invented multiword name without an entity designator.
+            ("harder/bare-multiword-name",
+             _add_to_draft_body(good, "The rollout moved forward under Quiet Harbor."),
+             "no_fabrication", True),
             # CONTROL: SKILL.md never mandates sentence-case headings.
             ("control/title-case-heading",
              "## Acceptance Criteria\n## Draft\nWe shipped on 3 March.\n",
