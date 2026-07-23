@@ -176,7 +176,7 @@ Rules the skill must honor — in what it computes AND what it is allowed to cla
   genre, the sample count, and a confidence note. A number with no provenance is
   worse than no number.
 
-### Step 3 — Fill the template, then show a draft
+### Step 3 — Fill the template, then show a blind-first draft
 
 Fill a **copy** of `host-profile-template.md` (one copy per genre — never edit the
 template itself) field by field with evidence — both the 10
@@ -192,10 +192,24 @@ numbers so "distinctive" is checkable, not vibes, e.g.:
 > from your samples. Does this sound like you? Anything off?"
 
 Keep the flow human-gated: show the numbers, let the user confirm or correct;
-never write the profile before they approve (Step 4). If a genre came back
+never write the profile before they approve (Step 5). If a genre came back
 UNSUPPORTED (CJK), say so plainly rather than inventing numbers.
 
-### Step 4 — Confirm, then write the contract file
+### Step 4 — Elicit stated voice, then compare
+
+Only after the measurement pass and draft fingerprint are complete, ask the author
+how they would describe their own voice across the same 10 dimensions. Keep their
+answers separate from the blind-first draft so the self-report cannot anchor the
+extraction.
+
+Treat "authors misjudge their own idiolect" as a hypothesis this comparison tests,
+not a fact about the author. For every mismatch, show the stated claim beside the
+specific measured corpus evidence and ask the author to review it. Resolve any
+extraction-time conflict under the stage-scoped contract in
+[`_shared/precedence-policy.md`](../../_shared/precedence-policy.md); reference that
+contract rather than duplicating it in the profile.
+
+### Step 5 — Confirm, then write the contract file
 
 Only after the user confirms, write each genre's profile to its own file at
 resolved `<state>/voice-profiles/<genre-slug>.md`, preserving every `## H2` header. Set the
@@ -216,7 +230,7 @@ it alone — it is the shipped sample and single-file fallback, not where you wr
 Tell the user which files landed (one per genre) and that `comms-polish` and
 `comms-draft` will now read the matching one automatically (before any rewrite).
 
-### Step 5 — Leave a calibration loop open
+### Step 6 — Leave a calibration loop open
 
 A profile is a living file, not a one-shot. Tell the user:
 
