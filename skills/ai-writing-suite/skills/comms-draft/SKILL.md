@@ -115,9 +115,7 @@ proceed — do not stall on a fourth question.
 
 Run the suite's self-improvement ON START read (see below). Then: pull the
 matching genre preset; read the relevant KB entries via `INDEX.md`; select and
-load the voice profile via the resolved `<state>/voice-profiles/` lookup (see Inputs — list,
-pick one file by precedence, read that one body; legacy file on an empty directory,
-banner = no profile), otherwise infer the lightest voice that fits the reader; open
+load the voice profile via the canonical protocol in `_shared/voice-lookup.md`; otherwise infer the lightest voice that fits the reader; open
 the catalog categories the genre weights hardest. Note any absent input out loud —
 never block on a missing one.
 
