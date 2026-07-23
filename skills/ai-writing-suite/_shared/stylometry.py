@@ -135,6 +135,8 @@ AI_REGISTER_PHRASES = (
     "it's worth noting", "it is worth noting", "a testament to",
 )
 
+# Intentionally mirrored from aiws.text.SENT_SPLIT so this script stays
+# standalone; evals/test_text_seam.py::StylometrySyncPin guards against drift.
 # Sentence splitter for whitespace-delimited scripts. Splits on . ! ? runs.
 _SENT_SPLIT = re.compile(r"[.!?]+(?:\s+|$)")
 # A "word" for counting: run of word-ish chars incl. internal ' and -.
@@ -171,6 +173,8 @@ _VERSION_RE = re.compile(
     """,
     re.IGNORECASE | re.VERBOSE,
 )
+# Intentionally mirrored from aiws.text._CJK_RE so this script stays standalone;
+# B6 extends evals/test_text_seam.py::StylometrySyncPin to guard against drift.
 # CJK / Hangul / Hiragana / Katakana codepoint ranges (predominance -> CJK path).
 _CJK_RE = re.compile(
     "[぀-ヿ㐀-䶿一-鿿가-힯ｦ-ﾟ]"
