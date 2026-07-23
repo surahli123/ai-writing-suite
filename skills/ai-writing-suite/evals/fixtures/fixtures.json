@@ -9,6 +9,10 @@
       "difficulty": "obvious",
       "before": "In today's ever-evolving landscape, we're thrilled to delve into a game-changing paradigm. This seamless, robust solution will revolutionize how you work. The future looks bright! 🚀 #innovation #growth #tech #startup #ai #future #buildinpublic",
       "after": "Shipped the new import flow today. Cut setup from 11 steps to 3. Early users went from 40% drop-off to 12%.",
+      "must_preserve": [
+        "11 steps to 3",
+        "40% drop-off to 12%"
+      ],
       "before_band_min": 45,
       "after_band_max": 20,
       "rubric_focus": [
@@ -43,6 +47,10 @@
       "difficulty": "obvious",
       "before": "I recently had the pleasure of attending a pivotal conference. It was truly a transformative experience that underscored the importance of fostering meaningful connections. Moreover, the keynote was a testament to the power of innovation. As we navigate this dynamic ecosystem, let's embrace the journey. What's next? Only time will tell.",
       "after": "Went to the data conf last week. One talk stuck with me: a team at Stripe cut their feature pipeline from 6 hours to 40 minutes by dropping a caching layer nobody had questioned in two years. Sometimes the win is deleting code.",
+      "must_preserve": [
+        "Stripe",
+        "6 hours to 40 minutes"
+      ],
       "before_band_min": 28,
       "after_band_max": 20,
       "rubric_focus": [
@@ -78,6 +86,11 @@
       "difficulty": "obvious",
       "before": "## Overview\n\nThis comprehensive, cutting-edge library leverages a robust architecture to seamlessly streamline your workflow. It empowers developers to harness the full potential of modern tooling. Whether you're a beginner or an expert, this powerful solution has you covered.",
       "after": "## What this does\n\nParses CSV files up to 2GB without loading them into memory. Streams rows, so it works on machines with 512MB of RAM. No dependencies outside the standard library.",
+      "must_preserve": [
+        "CSV",
+        "2GB",
+        "512MB"
+      ],
       "before_band_min": 20,
       "after_band_max": 20,
       "rubric_focus": [
@@ -111,6 +124,11 @@
       "difficulty": "obvious",
       "before": "It is important to note that, as we move forward, we must delve into the intricacies of our strategy. Experts believe that fostering a culture of innovation is paramount. Furthermore, this pivotal initiative will undoubtedly elevate our position. Let's break this down step by step to ensure a holistic approach.",
       "after": "We're behind on Q3 targets by 14%. Two causes: the API migration slipped three weeks, and we lost two engineers. Proposed fix: pause the redesign, put everyone on migration, revisit the redesign in October.",
+      "must_preserve": [
+        "Q3 targets by 14%",
+        "API migration",
+        "October"
+      ],
       "before_band_min": 36,
       "after_band_max": 20,
       "rubric_focus": [

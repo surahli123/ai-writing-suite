@@ -17,6 +17,7 @@ model the surface provides.
 import argparse
 import json
 import os
+import re
 import sys
 
 # Allow running both as a module (-m fixtures.run_fixtures) and as a script.
@@ -27,6 +28,36 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_PATH = os.path.join(HERE, "fixtures.json")
 FIXTURES_FAIL_PATH = os.path.join(HERE, "fixtures_fail.json")
 RUBRIC_PATH = os.path.join(HERE, "rubric.md")
+
+# Candidate fact surfaces for must_preserve declarations. The numeric pattern
+# mirrors run_draft_cases.py's _NUMERIC: digit-bearing tokens, including
+# percentages and date-shaped punctuation. Dates add named calendar forms; URLs
+# cover explicit links; labels cover short ALLCAPS identifiers and TitleCase
+# names such as API, Q3, CSV, and Stripe.
+_NUMERIC = re.compile(r"\d[\d,\.:/]*%?")
+_DATE = re.compile(
+    r"\b(?:"
+    r"\d{4}-\d{1,2}-\d{1,2}|"
+    r"\d{1,2}[/-]\d{1,2}(?:[/-]\d{2,4})?|"
+    r"(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|"
+    r"Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|"
+    r"Dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?(?:,\s*\d{4})?|"
+    r"\d{1,2}(?:st|nd|rd|th)?\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|"
+    r"Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|"
+    r"Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)(?:\s+\d{4})?|"
+    r"Q[1-4]|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|"
+    r"January|February|March|April|May|June|July|August|September|October|"
+    r"November|December)\b",
+    re.IGNORECASE,
+)
+_URL = re.compile(r"\b(?:https?://|www\.)[^\s<>()]+", re.IGNORECASE)
+_LABEL = re.compile(r"\b(?:[A-Z][A-Z0-9_-]{1,15}|[A-Z][a-z][A-Za-z0-9_-]{0,14})\b")
+_PRESERVABLE_EXTRACTORS = (
+    ("number", _NUMERIC),
+    ("date", _DATE),
+    ("url", _URL),
+    ("label", _LABEL),
+)
 
 # Required fields for a gold-FAIL fixture (see fixtures_fail.json::_doc). Distinct
 # from the PASS-suite shape: no expect_baseline (these are NOT calibration items),
@@ -51,6 +82,19 @@ def _in_band(score, lo=None, hi=None):
     if hi is not None and score > hi:
         return False
     return True
+
+
+def _normalize_whitespace(text):
+    return " ".join(text.split())
+
+
+def _extract_preservable_literals(text):
+    """Return typed number/date/URL/label atoms found in text."""
+    return {
+        (kind, _normalize_whitespace(match.group(0)).rstrip(".,;:!?"))
+        for kind, pattern in _PRESERVABLE_EXTRACTORS
+        for match in pattern.finditer(text)
+    }
 
 
 def _refusal_reasons(result, side):
@@ -97,9 +141,12 @@ def run_deterministic(data):
 
         before = before_result["score"]
         after = after_result["score"]
+        normalized_after = _normalize_whitespace(f["after"])
+        after_literals = _extract_preservable_literals(f["after"])
 
         ok = True
         reasons = []
+        dropped = []
         if before is None:
             ok = False
             reasons.append(
@@ -119,6 +166,13 @@ def run_deterministic(data):
         elif not _in_band(after, hi=f.get("after_band_max")):
             ok = False
             reasons.append(f"after={after} > {f.get('after_band_max')}")
+        for literal in f.get("must_preserve", []):
+            normalized_literal = _normalize_whitespace(literal)
+            literal_atoms = _extract_preservable_literals(literal)
+            if (normalized_literal not in normalized_after
+                    or not literal_atoms.issubset(after_literals)):
+                ok = False
+                dropped.append(literal)
 
         if ok:
             passes += 1
@@ -146,6 +200,8 @@ def run_deterministic(data):
               + ("  (judge-only)" if f.get("detector_blind") else ""))
         for r in reasons:
             print(f"        {r}")
+        for literal in dropped:
+            print(f"[FAIL] {f['id']} dropped '{literal}'")
 
     miss_pct = 100 * miss / total if total else 0
     print(f"\nNaive-baseline miss rate: {miss}/{total} = {miss_pct:.0f}% "
