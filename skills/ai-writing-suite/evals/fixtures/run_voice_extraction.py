@@ -71,6 +71,7 @@ REQUIRED_HEADERS = [
 # INVERSE of the corpus ("ledger — she never writes this word") scores as having
 # learned the habit.
 ABSENCE_SECTIONS = {"Vocabulary Don't", "Things To Avoid"}
+EVIDENCE_SECTIONS = {"Verbatim Anchors"}
 
 HONEST_GAP = "Unknown — not enough signal"
 
@@ -160,7 +161,7 @@ def strip_comments(md):
 
 
 def normalize(s):
-    return s.replace("’", "'").strip()
+    return re.sub(r"\s+", " ", s.replace("’", "'")).strip()
 
 
 def parse_sections(md):
@@ -180,9 +181,9 @@ def parse_sections(md):
 
 def claim_sections(md):
     """The POSITIVE sections — where the profile asserts what the author DOES."""
-    absent = {normalize(h) for h in ABSENCE_SECTIONS}
+    non_claim = {normalize(h) for h in ABSENCE_SECTIONS | EVIDENCE_SECTIONS}
     return {h: b for h, b in parse_sections(md).items()
-            if normalize(h) not in absent}
+            if normalize(h) not in non_claim}
 
 
 def claim_text(md):
@@ -564,6 +565,34 @@ def check_honest_gap(md, corpus, genre):
                  f"there, and the profile filled it confidently anyway")
 
 
+def check_anchor_provenance(md, corpus, genre):
+    """Every verbatim anchor must be copied from a declared sample for this genre."""
+    body = parse_sections(md).get("Verbatim Anchors", "")
+    bullets = [line.strip() for line in body.splitlines() if line.strip().startswith("-")]
+    parsed = []
+    malformed = []
+    for line in bullets:
+        match = re.fullmatch(r'-\s+"(.+)"\s+—\s+([^—]+)', line)
+        if match:
+            parsed.append((match.group(1), match.group(2).strip()))
+        else:
+            malformed.append(line)
+
+    if len(parsed) != 3 or malformed:
+        return False, ("Verbatim Anchors must contain exactly 3 bullets shaped as "
+                       "'- \"<verbatim line>\" — <one habit>'"
+                       + (f"; malformed: {malformed}" if malformed else ""))
+
+    declared = [normalize(sample["text"]) for sample in corpus["samples"]
+                if sample["genre"] == genre]
+    fabricated = [anchor for anchor, _habit in parsed
+                  if not any(normalize(anchor) in sample for sample in declared)]
+    if fabricated:
+        return False, (f"anchors not found verbatim in any declared {genre} sample "
+                       f"after whitespace normalization: {fabricated}")
+    return True, f"all 3 anchors have verbatim provenance in the {genre} corpus"
+
+
 CHECKS = {
     "headers_present": check_headers_present,
     "scope_declared": check_scope_declared,
@@ -574,6 +603,7 @@ CHECKS = {
     "lists_absence": check_lists_absence,
     "genre_scoped_rhythm": check_genre_scoped_rhythm,
     "honest_gap": check_honest_gap,
+    "anchor_provenance": check_anchor_provenance,
 }
 
 # The bad profiles' declared failure modes. Every one MUST trip; a bad profile that
@@ -582,7 +612,7 @@ CHECKS = {
 BAD_MUST_FAIL = [
     "scope_declared", "learns_habit_word", "omits_noise_word",
     "no_subthreshold_claims", "no_invented_traits", "lists_absence",
-    "genre_scoped_rhythm", "honest_gap",
+    "genre_scoped_rhythm", "honest_gap", "anchor_provenance",
 ]
 
 

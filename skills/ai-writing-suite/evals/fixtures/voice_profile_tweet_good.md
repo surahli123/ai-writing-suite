@@ -106,6 +106,12 @@ both would describe neither genre.
 - **Re-calibrate for:** memos and any long-form register — see the memo profile; do
   not carry these figures across.
 
+## Verbatim Anchors
+
+- "Shipped the pricing ledger today." — direct factual opening
+- "Two weeks late." — unsoftened cost beat
+- "It works." — flat verdict closing
+
 ## Changelog
 
 - [2026-07-13] First created from 5 synthetic tweet samples.

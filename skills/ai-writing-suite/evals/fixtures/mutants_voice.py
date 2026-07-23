@@ -232,6 +232,25 @@ def family_honest_gap(good, spec, corpus, genre):
     return out
 
 
+def family_anchor_provenance(good, spec, corpus, genre):
+    body = rve.parse_sections(good).get("Verbatim Anchors", "")
+    samples = [rve.normalize(sample["text"]) for sample in corpus["samples"]
+               if sample["genre"] == genre]
+    cross_sample = " ".join(samples[0].split()[-2:] + samples[1].split()[:2])
+
+    def fabricate(text):
+        mutated = re.sub(r'(?m)^-\s+"[^"]+"', f'- "{text}"', body, count=1)
+        return set_section(good, "Verbatim Anchors", mutated)
+
+    return [
+        ("fabricated-declarative",
+         fabricate("This sentence does not appear in any declared sample."), "must"),
+        ("fabricated-two-clause",
+         fabricate("The invented premise arrived, and everyone applauded."), "must"),
+        ("cross-sample-splice", fabricate(cross_sample), "must"),
+    ]
+
+
 FAMILIES = {
     "scope_declared": family_scope_declared,
     "learns_habit_word": family_learns_habit_word,
@@ -240,6 +259,7 @@ FAMILIES = {
     "no_invented_traits": family_no_invented_traits,
     "genre_scoped_rhythm": family_genre_scoped_rhythm,
     "honest_gap": family_honest_gap,
+    "anchor_provenance": family_anchor_provenance,
 }
 
 
