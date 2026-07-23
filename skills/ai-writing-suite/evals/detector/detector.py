@@ -5,21 +5,19 @@ model: collect raw issues -> dedup by (type, text) -> sum category weights ->
 normalize by log2(words/50) so longer texts don't accumulate unboundedly.
 
 Return shape (dict):
-  score        : int 0-100
+  score        : int 0-100, or None for unsupported scripts
   label        : human-readable band ("Clean" .. "Heavy AI patterns")
   issues       : list of {type, text, severity, suggestion}
   stats        : {wordCount, contextMode, tier counts, ...}
-  classification: HUMAN_ONLY | MIXED | AI_ONLY  (GPTZero-shaped, FN-biased)
+  classification: HUMAN_ONLY | MIXED | AI_ONLY | UNSUPPORTED
   confidence   : low | medium | high
 
 WHY FN-biased: a false "this is AI" on real human writing destroys trust worse
 than a missed AI passage. Ambiguity routes to MIXED, never AI_ONLY.
 
-LIMITATION (review m4): word counting assumes whitespace-delimited scripts
-(`\\S+`). CJK / non-space-delimited text (Chinese, Japanese) collapses to a tiny
-word count and returns UNSCORED ("Too short") rather than a real score. That is
-NOT a clean-text signal — it means "unsupported script." Bilingual/CJK scoring
-is v2 (see voice-onboard + scenario-presets, which scope bilingual to v2).
+LIMITATION (review m4): CJK-dominant input is explicitly unsupported rather than
+scored. Bilingual/CJK scoring is v2 (see voice-onboard + scenario-presets, which
+scope bilingual to v2).
 """
 
 import math
@@ -37,6 +35,7 @@ if SUITE_ROOT not in sys.path:
 from aiws.text import (  # noqa: E402  (path set above)
     WORD_RE as _WORD_RE,
     TOKEN_RE as _TOKEN_RE,
+    segment,
     tokenize,
     count_words,
     split_paragraphs,
@@ -106,6 +105,10 @@ def _dedup(issues):
 def analyze(text, context_mode="general"):
     if not text or not text.strip():
         return _unscored("Empty", 0)
+
+    doc = segment(text)
+    if doc.support_status == "unsupported script":
+        return _unsupported_script(text)
 
     word_count = _count_words(text)
     if word_count < 10:
@@ -377,4 +380,12 @@ def _unscored(label, word_count):
         "confidence": "low",
         "tooShort": label in ("Empty", "Too short"),
         "tooLong": label == "Text too long",
+    }
+
+
+def _unsupported_script(text):
+    return {
+        "score": None, "label": "Unsupported script", "issues": [],
+        "stats": {"wordCount": _count_words(text), "scriptClass": "CJK"},
+        "classification": "UNSUPPORTED", "confidence": "low",
     }

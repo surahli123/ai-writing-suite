@@ -81,29 +81,28 @@ def load_index(index_path=None):
 
 
 def retrieve(query, entries):
-    """Replicate the INDEX retrieval protocol (two steps, in order):
-      1. Scan the Keywords/aliases column for term overlap.
-      2. Use Summary-column (intent) overlap to break keyword ties.
-    Pick the single best entry; remaining ties -> first (stable table order).
+    """Replicate the frozen KB retrieval semantics:
+      1. Rank by overlap across Keywords/aliases and Summary terms.
+      2. Use Summary-column overlap to break total-overlap ties.
+    Return every best entry on a full tie, in stable table order.
 
-    WHY two-tier: the protocol text in INDEX.md says "scan Keywords, THEN the
-    Summary for intent overlap." A flat union of both lets a near-neighbor win
-    on shared keywords; tiering on intent is what makes the disambiguation case
-    (audience vs tone) resolve correctly without editing the KB."""
+    See RETRIEVAL-SEMANTICS.md for the canonical algorithm and rationale."""
     q = set(tokens(query))
-    # Sort key: (total term overlap, summary-intent overlap). Higher = better.
-    #   - primary: overlap across BOTH columns (the protocol's "term overlap")
+    # Sort key: (total overlap, summary-intent overlap). Higher = better.
+    #   - primary: overlap across BOTH columns
     #   - secondary: summary-only overlap, used to break ties on intent
-    # First entry wins a full tie (> not >=, table order preserved).
-    best, best_score = None, (-1, -1)
+    # Full ties are all retained in stable table order.
+    best_files, best_score = [], (-1, -1)
     for e in entries:
         all_terms = e["keywords"] | e["summary_kw"]
         score = (len(q & all_terms), len(q & e["summary_kw"]))
         if score > best_score:
-            best, best_score = e, score
+            best_files, best_score = [e["file"]], score
+        elif score == best_score:
+            best_files.append(e["file"])
     # Overlap guard (review m2): a query with ZERO term overlap must NOT resolve
     # to the first table row by stable-order fallback — that would let an empty
     # or garbage query vacuously satisfy a case. Zero overlap = no match.
-    if best_score[0] == 0:
+    if best_score[0] <= 0:
         return None, best_score
-    return (best["file"] if best else None), best_score
+    return best_files, best_score

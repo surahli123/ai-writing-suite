@@ -57,8 +57,9 @@ Two kinds of match can fire, and the protocol uses both: an **exact alias match*
 (a query term appears verbatim in an entry's Keywords/aliases column) and a
 **semantic Summary match** (the query's intent lines up with an entry's Summary
 even when no keyword token overlaps). They are different retrieval signals — the
-protocol scans keywords first, then Summary intent to break ties. Case 1 below is
-carried by the semantic Summary match, not by an exact alias.
+deterministic replica scores overlap across their union, then uses Summary overlap
+to break total-overlap ties. Case 1 below is carried by Summary terms, not by an
+exact alias.
 
 ---
 
@@ -67,17 +68,17 @@ carried by the semantic Summary match, not by an exact alias.
 **Query (natural language):**
 > "My sentences are too long and try to say too much at once — how do I fix that?"
 
-**Expected entry retrieved:** `clarity.md`
+**Expected entry retrieved:** `clarity.md` (must be among the results)
 
-- *Why:* `clarity.md` wins on **Summary/intent match**, not literal keyword
-  overlap. The query's content terms ("too long," "say too much at once," "fix")
-  line up with the *intent* of clarity's Summary ("Say one idea per sentence...
-  cut filler") and with its keywords `wordy` / `verbose` / `cut words`. Note that
-  `one idea` — the phrase that most precisely names this problem — lives only in
-  the Summary, NOT in the Keywords/aliases column, so it is reached by semantic
-  Summary matching, not by an exact alias hit. No other entry carries
-  within-sentence-overload signal: `structure.md` is about document/paragraph
-  order, not one sentence trying to say too much.
+- *Why:* canonical token scoring produces a genuine two-way tie. The query token
+  `say` overlaps `clarity.md`'s Summary, giving it `(total, summary) = (1, 1)`.
+  The query token `fix` overlaps `revision.md`'s Summary ("fix it in editing
+  passes"), also giving it `(1, 1)`. The INDEX protocol's tie clause therefore
+  opens both `clarity.md` and `revision.md`; `clarity.md` remains required because
+  it contains the within-sentence guidance and expected passage. The earlier
+  narrative claim that "No other entry carries within-sentence-overload signal"
+  was an overlooked token collision in the original hand computation —
+  `revision.md` and this smoke case entered the KB in the same commit.
 
 **Expected passage quoted:**
 > **One idea per sentence.** If you find an "and" joining two full claims, make
@@ -86,9 +87,10 @@ carried by the semantic Summary match, not by an exact alias.
 (plus, acceptable to also surface the Before/After in `clarity.md`:
 "It is worth noting that... → The team cut three slow queries.")
 
-**Pass condition:** the agent returns `clarity.md` as the entry AND quotes the
-"One idea per sentence" Move (or the clarity Before/After). Returning a different
-entry, or inventing advice not in the file, is a FAIL.
+**Pass condition:** the agent returns exactly the two-entry tie
+`clarity.md` + `revision.md`, opens both, AND quotes the "One idea per sentence"
+Move (or the clarity Before/After). A missing or additional entry is a retrieval
+failure even if the prose answer sounds reasonable.
 
 ---
 
@@ -173,8 +175,9 @@ resolves cleanly on the question path.
 ## How Layer 3 will automate this
 
 The eval harness reads each TEST CASE block, sends the **Query** to the agent
-under the retrieval protocol, and asserts: (a) the returned entry filename equals
-**Expected entry**, and (b) the quoted text contains the **Expected passage**.
+under the retrieval protocol, and asserts: (a) Case 1 returns its exact documented
+tie set while Cases 2–5 return only **Expected entry**, and (b) the quoted text
+contains the **Expected passage**.
 Calibrate by adding harder near-neighbor queries until the baseline misses
 ~30-40% (per the project eval-calibration rule), then tighten the index keywords
 to recover recall. Until Layer 3, run all five cases by hand after any KB edit.

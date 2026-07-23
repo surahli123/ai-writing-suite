@@ -232,6 +232,7 @@
       ],
       "expect_baseline": "miss",
       "detector_blind": true,
+      "expect_refusal": true,
       "subtle_tell": "Over-stepping (反代入式越位感): 自问自答式裁判（要不要…？要，…）+「比你想象的简单」预设读者的疑虑。前后两句在 before/after 中逐字相同，只有越位句不同。检测器 0 分；纯站位 tell，须判官识别。"
     },
     {

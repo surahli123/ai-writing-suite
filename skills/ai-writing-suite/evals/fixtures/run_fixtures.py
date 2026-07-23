@@ -97,28 +97,73 @@ def _extract_preservable_literals(text):
     }
 
 
+def _refusal_reasons(result, side):
+    reasons = []
+    if result.get("score") is not None:
+        reasons.append(f"{side} refusal returned numeric score={result.get('score')}")
+    if result.get("label") != "Unsupported script":
+        reasons.append(f"{side} label={result.get('label')!r} (expected unsupported script)")
+    if result.get("classification") != "UNSUPPORTED":
+        reasons.append(
+            f"{side} classification={result.get('classification')!r} "
+            "(expected UNSUPPORTED)")
+    script_class = result.get("stats", {}).get("scriptClass")
+    if script_class != "CJK":
+        reasons.append(f"{side} scriptClass={script_class!r} (expected CJK)")
+    return reasons
+
+
 def run_deterministic(data):
-    """Assert detector scores land in the declared bands. Returns (passes, fails)."""
+    """Assert declared refusals or detector score bands. Returns (passes, fails)."""
     threshold = data["baseline_threshold"]
     passes = fails = 0
     miss = total = 0
 
     print("=== Deterministic check (detector score bands) ===\n")
     for f in data["fixtures"]:
-        before = analyze(f["before"])["score"]
-        after = analyze(f["after"])["score"]
+        before_result = analyze(f["before"])
+        after_result = analyze(f["after"])
+
+        if f.get("expect_refusal"):
+            reasons = (_refusal_reasons(before_result, "before")
+                       + _refusal_reasons(after_result, "after"))
+            ok = not reasons
+            if ok:
+                passes += 1
+            else:
+                fails += 1
+            mark = "PASS" if ok else "FAIL"
+            outcome = "as declared" if ok else "mismatch"
+            print(f"[{mark}] {f['id']} refusal: {outcome}")
+            for reason in reasons:
+                print(f"        {reason}")
+            continue
+
+        before = before_result["score"]
+        after = after_result["score"]
         normalized_after = _normalize_whitespace(f["after"])
         after_literals = _extract_preservable_literals(f["after"])
 
         ok = True
         reasons = []
         dropped = []
-        if not _in_band(before, f.get("before_band_min"), f.get("before_band_max")):
+        if before is None:
+            ok = False
+            reasons.append(
+                "before score is None for non-refusal fixture; declare "
+                "expect_refusal only for intended script refusals")
+        elif not _in_band(
+                before, f.get("before_band_min"), f.get("before_band_max")):
             ok = False
             reasons.append(
                 f"before={before} outside "
                 f"[{f.get('before_band_min', '-')}, {f.get('before_band_max', '-')}]")
-        if not _in_band(after, hi=f.get("after_band_max")):
+        if after is None:
+            ok = False
+            reasons.append(
+                "after score is None for non-refusal fixture; declare "
+                "expect_refusal only for intended script refusals")
+        elif not _in_band(after, hi=f.get("after_band_max")):
             ok = False
             reasons.append(f"after={after} > {f.get('after_band_max')}")
         for literal in f.get("must_preserve", []):
@@ -138,17 +183,20 @@ def run_deterministic(data):
         # score >= threshold. A "miss" is an AI draft that scores below it.
         # `detector_blind` fixtures (judge-only over-stepping cases) are MISSES
         # by construction — the tell is in stance, not vocabulary — so they are
-        # excluded from the calibration denominator. Their score bands above are
-        # still checked; only the 30-40% rate measures the detector-targeted set.
-        caught = before >= threshold
+        # excluded from the calibration denominator. Non-refusal score bands above
+        # are still checked; only the 30-40% rate measures the detector-targeted set.
+        caught = before is not None and before >= threshold
         if not f.get("detector_blind"):
             total += 1
-            if not caught:
+            if before is not None and not caught:
                 miss += 1
 
         mark = "PASS" if ok else "FAIL"
-        print(f"[{mark}] {f['id']:22} before={before:3} after={after:3} "
-              f"baseline={'CATCH' if caught else 'MISS '}"
+        before_display = f"{before:3}" if before is not None else "None"
+        after_display = f"{after:3}" if after is not None else "None"
+        baseline = "CATCH" if caught else ("MISS " if before is not None else "ERROR")
+        print(f"[{mark}] {f['id']:22} before={before_display} after={after_display} "
+              f"baseline={baseline}"
               + ("  (judge-only)" if f.get("detector_blind") else ""))
         for r in reasons:
             print(f"        {r}")
