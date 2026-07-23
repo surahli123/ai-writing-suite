@@ -74,6 +74,7 @@ ABSENCE_SECTIONS = {"Vocabulary Don't", "Things To Avoid"}
 EVIDENCE_SECTIONS = {"Verbatim Anchors"}
 
 HONEST_GAP = "Unknown — not enough signal"
+SELF_REPORT_SUBSECTION = "Self-report Divergence"
 
 # Observable style features whose truth is COUNTABLE in the corpus. This is how an
 # UNQUOTED trait claim ("Frequent exclamation marks; heavy em-dash use") is checked.
@@ -179,6 +180,21 @@ def parse_sections(md):
     return {k: "\n".join(v) for k, v in sections.items()}
 
 
+def parse_subsection(md, section, subsection):
+    """Return one H3 body inside an H2 section, without changing the H2 contract."""
+    body = parse_sections(md).get(section, "")
+    lines = []
+    active = False
+    for line in body.splitlines():
+        match = re.match(r"^###\s+(.+)$", line)
+        if match:
+            active = normalize(match.group(1)) == normalize(subsection)
+            continue
+        if active:
+            lines.append(line)
+    return "\n".join(lines)
+
+
 def claim_sections(md):
     """The POSITIVE sections — where the profile asserts what the author DOES."""
     non_claim = {normalize(h) for h in ABSENCE_SECTIONS | EVIDENCE_SECTIONS}
@@ -263,6 +279,21 @@ def asserted_features(md, text):
     return sorted(invented)
 
 
+def feature_aliases(feature):
+    """Known lexical aliases for one canonical countable style feature."""
+    return sorted(alias for alias, (canonical, _counter) in TRAIT_FEATURES.items()
+                  if canonical == feature)
+
+
+def feature_count(feature, text):
+    """Count a canonical style feature with the same machinery as trait checks."""
+    counters = {canonical: counter
+                for _alias, (canonical, counter) in TRAIT_FEATURES.items()}
+    if feature not in counters:
+        raise KeyError(feature)
+    return counters[feature](text)
+
+
 # --------------------------------------------------------------------------
 # Ground truth: declared vs recomputed, PER GENRE
 # --------------------------------------------------------------------------
@@ -343,6 +374,35 @@ def verify_ground_truth(corpus):
                           f"contract does not have: {bad}")
 
         recomputed["genres"][genre] = counts
+
+    # The planted self-report is useful only while it deterministically contradicts
+    # the measured feature in every declared genre. Recompute the evidence here so a
+    # changed sample cannot silently turn the false report true.
+    report = gt.get("self_report") or {}
+    feature = report.get("feature")
+    declared_counts = report.get("genre_counts") or {}
+    if not feature:
+        errors.append("no ground_truth.self_report.feature declared")
+    else:
+        for genre in gt["genres"]:
+            try:
+                actual = feature_count(feature, corpus_text(corpus, genre))
+            except KeyError:
+                errors.append(f"self_report feature '{feature}' is not deterministically "
+                              "countable by TRAIT_FEATURES")
+                break
+            recomputed["genres"][genre][f"self-report {feature}"] = actual
+            declared = declared_counts.get(genre)
+            if declared != actual:
+                errors.append(
+                    f"GROUND TRUTH DRIFT [{genre}.self_report]: '{feature}' declared "
+                    f"{declared}x, recomputed {actual}x WITHIN {genre}. Fix the SAMPLES, "
+                    "not the declared count.")
+            if report.get("asserted_present") is not True or actual != 0:
+                errors.append(
+                    f"[{genre}] planted self-report no longer contradicts the corpus: "
+                    f"asserted_present={report.get('asserted_present')!r}, "
+                    f"measured '{feature}'={actual}x")
 
     # The cross-genre trap: noise WITHIN each genre, habit-shaped when POOLED. This is
     # what makes aggregation detectably wrong rather than merely inelegant.
@@ -593,6 +653,61 @@ def check_anchor_provenance(md, corpus, genre):
     return True, f"all 3 anchors have verbatim provenance in the {genre} corpus"
 
 
+def _line_names_feature(line, feature):
+    return any(count_word(alias, line) for alias in feature_aliases(feature))
+
+
+def _line_reports_count(line, count):
+    numeric = re.search(rf"(?<![\d.]){count}(?:\.0)?(?![\d.])", line)
+    word = count == 0 and count_word("zero", line)
+    return bool(numeric or word)
+
+
+def check_self_report_divergence(md, corpus, genre):
+    """Surface the specific measured contradiction without learning the false trait.
+
+    This is intentionally not a phrase check. The divergence note must bind the
+    declared feature to its recomputed genre count and identify it as a conflict with
+    the author's stated voice. Separately, asserted_features verifies that the same
+    unsupported feature was not adopted in any positive profile section.
+    """
+    report = corpus["ground_truth"]["self_report"]
+    feature = report["feature"]
+    actual = feature_count(feature, corpus_text(corpus, genre))
+    body = parse_subsection(md, "Things To Avoid", SELF_REPORT_SUBSECTION)
+    low = body.lower()
+    feature_lines = [line for line in body.splitlines()
+                     if _line_names_feature(line, feature)]
+    states_report = any(re.search(r"\b(self-report|stated|described|reported)\b",
+                                  line, re.IGNORECASE)
+                        for line in feature_lines)
+    gives_measurement = any(_line_reports_count(line, actual)
+                            and re.search(r"\b(measured|corpus|evidence|occurrences?|samples?)\b",
+                                          line, re.IGNORECASE)
+                            for line in feature_lines)
+    names_conflict = bool(re.search(r"\b(contradict(?:s|ed|ion)?|diverg(?:e|es|ed|ence)|"
+                                    r"conflict(?:s|ed)?|mismatch(?:es|ed)?)\b", low))
+    adopted = feature in asserted_features(md, corpus_text(corpus, genre))
+
+    if adopted:
+        return False, (f"false self-report ADOPTED as a learned trait: '{feature}' is "
+                       f"asserted present despite a recomputed {actual}x in {genre}")
+    missing = []
+    if not feature_lines:
+        missing.append(f"the specific feature '{feature}'")
+    if not states_report:
+        missing.append("the author's stated claim")
+    if not gives_measurement:
+        missing.append(f"the recomputed {genre} count ({actual}x)")
+    if not names_conflict:
+        missing.append("the contradiction")
+    if missing:
+        return False, (f"self-report divergence not semantically surfaced: missing "
+                       + ", ".join(missing))
+    return True, (f"surfaces stated '{feature}' claim against measured {actual}x in "
+                  f"{genre} and does not learn the false trait")
+
+
 CHECKS = {
     "headers_present": check_headers_present,
     "scope_declared": check_scope_declared,
@@ -604,6 +719,7 @@ CHECKS = {
     "genre_scoped_rhythm": check_genre_scoped_rhythm,
     "honest_gap": check_honest_gap,
     "anchor_provenance": check_anchor_provenance,
+    "self_report_divergence": check_self_report_divergence,
 }
 
 # The bad profiles' declared failure modes. Every one MUST trip; a bad profile that
@@ -613,6 +729,7 @@ BAD_MUST_FAIL = [
     "scope_declared", "learns_habit_word", "omits_noise_word",
     "no_subthreshold_claims", "no_invented_traits", "lists_absence",
     "genre_scoped_rhythm", "honest_gap", "anchor_provenance",
+    "genre_scoped_rhythm", "honest_gap", "self_report_divergence",
 ]
 
 

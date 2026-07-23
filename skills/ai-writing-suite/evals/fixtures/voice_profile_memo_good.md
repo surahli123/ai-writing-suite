@@ -95,6 +95,12 @@ both genres would describe neither.
 
 ## Things To Avoid
 
+### Self-report Divergence
+
+- **Stated:** the author reported using exclamation marks frequently.
+- **Measured contradiction:** 0 exclamation marks across the 3 memo samples; this
+  contradicts the self-report, so the feature is not learned as a memo trait.
+
 - Marketing register and hype adjectives — absent from every memo.
 - kaleidoscope — 2 occurrences in this genre, under the 3+ bar. A vivid word used
   twice is an accident, not a signature; do not write it back into her voice.

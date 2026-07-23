@@ -91,6 +91,16 @@ _DESIGNATOR_RUN = re.compile(
     r"\b[A-Z][\w'’\-]+[ \t]+(?:program|project|initiative|campaign|platform|product"
     r"|release|migration|rollout|programme)\b")
 
+# Candidate specific #3: a deliberately small set of claim verbs in a simple
+# subject-verb-object shape. The base/imperative forms are excluded: "confirm by end
+# of week" is an ask, not a claimed fact. Subject and object grounding is compared by
+# normalized phrase SET MEMBERSHIP against claims extracted from the sources with the
+# same grammar; it is never a bare substring lookup.
+_CLAIM_VERB = re.compile(
+    r"\b(?P<subject>[A-Za-z][\w'’\-]*(?:[ \t]+[A-Za-z][\w'’\-]*)*)[ \t]+"
+    r"(?P<verb>approves|approved|completes|completed|causes|caused|confirms|confirmed)"
+    r"[ \t]+(?P<object>[^.!?\n]+)", re.IGNORECASE)
+
 # Markdown heading lines are stripped before the proper-noun scan: "## Acceptance
 # Criteria" is a heading, not an invented entity. Sentence-case headings in the
 # fixtures used to hide this — the eval passed by the fixtures' convenience, which
@@ -268,27 +278,46 @@ def _name_candidates(body):
     return out
 
 
+def _verb_claims(text):
+    """Simple (subject, verb, object) claims using the closed claim-verb set."""
+    claims = []
+    for match in _CLAIM_VERB.finditer(_HEADING_LINE.sub(" ", text or "")):
+        subject = match.group("subject").strip()
+        verb = match.group("verb").strip()
+        obj = match.group("object").strip(" \t,;:–—-")
+        if subject and obj:
+            claims.append((subject, verb, obj))
+    return claims
+
+
 def find_fabrications(draft, sources):
     """Return the specifics in `draft` that trace back to NEITHER the brief nor the KB.
 
     Pure fn (no I/O, no env) so tests can call it on hand-built inputs. `sources` is
     the raw brief+KB text; it is tokenized here with the SAME rules as the draft.
 
-    Two candidate classes, chosen because they are the two shapes an invented fact
-    takes in practice: a NUMBER presented as measurement ("churn fell 23%") and a
-    CAPITALIZED NAME presented as a real entity ("Northwind Retention", "Acme, Inc.",
-    "the Falcon program"). A number is a violation iff its TYPED claim (value + kind:
-    date / magnitude / percent / plain) is absent from the sources; a name is a
-    violation iff its phrase appears nowhere in the source text.
+    Three deliberately bounded candidate classes: a NUMBER presented as measurement
+    ("churn fell 23%"), a CAPITALIZED NAME presented as a real entity ("Northwind
+    Retention", "Acme, Inc.", "the Falcon program"), and a simple SUBJECT-VERB-OBJECT
+    claim using the closed approves/approved, completes/completed, causes/caused, or
+    confirms/confirmed verb set. Numeric grounding uses typed value equality; the
+    verb class uses normalized subject/object phrase equality against source claims.
 
     Known limits, stated rather than hidden: a lone capitalized word bound to no
     designator is not a candidate (sentence starts and ordinary names would drown
     the signal — draft-03's good_draft legitimately writes "Wednesday", absent from
-    its brief), and a spelled-out numeral ("fifty percent") is not tokenized. This is
-    a checker for the fabrication SHAPE, not a semantic fact-checker.
+    its brief), and a spelled-out numeral ("fifty percent") is not tokenized. Claims
+    with no number, no candidate name, and no verb in the closed set ("The team was
+    thrilled with the outcome.") still escape. This is a checker for those three
+    fabrication SHAPES, not a semantic fact-checker.
     """
     src_text = _norm(sources)
     src_claims = typed_numeric_claims(src_text)
+    src_claim_phrases = {
+        _norm(phrase)
+        for subject, _verb, obj in _verb_claims(sources)
+        for phrase in (subject, obj)
+    }
     body = _NEEDS_SPAN.sub(" ", draft or "")  # a declared gap is not a claimed fact
     found = []
 
@@ -304,6 +333,11 @@ def find_fabrications(draft, sources):
         if _norm(phrase) in src_text:
             continue
         found.append(phrase)
+
+    for subject, verb, obj in _verb_claims(body):
+        if _norm(subject) in src_claim_phrases or _norm(obj) in src_claim_phrases:
+            continue
+        found.append(f"{subject} {verb} {obj}")
 
     # De-dupe, preserve order of first appearance.
     seen, out = set(), []

@@ -10,6 +10,7 @@ current n=8 that band admits EXACTLY ONE miss count — 3 (37.5%); 2 (25%) and
 red. This module turns "is my set still calibrated?" from a knife-edge into a
 lookup: given a target set size n, it returns the miss count(s) that satisfy the
 band — and flags the sizes that CANNOT satisfy it at all.
+Measurement-policy decisions are recorded in `calibration-policy.md`.
 
 Pure arithmetic, stdlib only — no fixtures or model needed to compute the table.
 A separate cross-check (`test_calibration.py`) ties this table to the live

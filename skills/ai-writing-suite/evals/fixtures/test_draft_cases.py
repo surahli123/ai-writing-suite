@@ -62,11 +62,25 @@ class Wellformed(unittest.TestCase):
 
 
 class Fabrication(unittest.TestCase):
-    """The highest-stakes check in the suite, tested on hand-built inputs so it is
-    exercised independently of the shipped artifacts."""
+    """A bounded regression signal for numeric, capitalized-name, and closed
+    claim-verb shapes, tested independently of the shipped artifacts. Claims outside
+    those shapes remain declared misses, not evidence that the draft is factual."""
 
     SOURCES = ("We shipped the win-back campaign on 3 March; Priya owns the "
                "follow-up. Q3 churn was 4.1%.")
+
+    EXPECTED_FABRICATION_ESCAPES = (
+        {
+            "id": "emotion-claim-outside-closed-verbs",
+            "klass": "expected_escape",
+            "draft": "The team was thrilled with the outcome.",
+        },
+        {
+            "id": "reaction-claim-outside-closed-verbs",
+            "klass": "expected_escape",
+            "draft": "The launch delighted everyone involved.",
+        },
+    )
 
     def test_clean_draft_flags_nothing(self):
         draft = ("We shipped on 3 March. Priya owns the follow-up, and Q3 churn "
@@ -85,6 +99,30 @@ class Fabrication(unittest.TestCase):
     def test_invented_proper_noun_is_flagged(self):
         draft = "The campaign runs on Northwind Retention."
         self.assertIn("Northwind Retention", find_fabrications(draft, self.SOURCES))
+
+    def test_completed_claim_is_flagged(self):
+        claim = "The migration completed yesterday and customers were unaffected"
+        self.assertIn(claim, find_fabrications(claim + ".", self.SOURCES))
+
+    def test_caused_claim_is_flagged(self):
+        claim = "The rollout caused an outage and support handled every complaint"
+        self.assertIn(claim, find_fabrications(claim + ".", self.SOURCES))
+
+    def test_approved_claim_is_flagged(self):
+        claim = "Legal approved the policy"
+        self.assertIn(claim, find_fabrications(claim + ".", self.SOURCES))
+
+    def test_claim_phrase_present_in_sources_is_not_flagged(self):
+        claim = "Legal approves the policy."
+        self.assertEqual(find_fabrications(claim, claim), [])
+
+    def test_residual_claim_escapes_are_declared_and_still_escape(self):
+        # Honesty guard: these fabricated claims lack every candidate shape. If the
+        # detector grows to catch one, promote it instead of leaving stale ledger data.
+        for entry in self.EXPECTED_FABRICATION_ESCAPES:
+            with self.subTest(entry=entry["id"]):
+                self.assertEqual(entry["klass"], "expected_escape")
+                self.assertEqual(find_fabrications(entry["draft"], self.SOURCES), [])
 
     def test_needs_marker_content_is_not_treated_as_a_claim(self):
         # A declared gap DESCRIBES a missing fact; it must not be read as asserting

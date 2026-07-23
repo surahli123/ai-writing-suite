@@ -7,12 +7,16 @@ These tests assert the fixture SUITE is well-formed and stays calibrated:
   - the LLM-judge prompt builds for every fixture (the SKIP path is sound)
 """
 
+import contextlib
+import copy
+import io
 import unittest
 
 from detector.detector import analyze
 from fixtures import judge
 from fixtures.run_fixtures import (
-    load_fixtures, load_fail_fixtures, build_judge_prompt, _extract_judge_template)
+    load_fixtures, load_fail_fixtures, build_judge_prompt, run_deterministic,
+    _extract_judge_template)
 
 REQUIRED = {"id", "genre", "difficulty", "before", "after",
             "rubric_focus", "expect_baseline"}
@@ -30,10 +34,31 @@ class FixtureShape(unittest.TestCase):
 
 
 class ScoreBands(unittest.TestCase):
+    def assertUnsupportedRefusal(self, result, fixture_id, side):
+        self.assertIsNone(result["score"],
+                          f"{fixture_id} {side} refusal returned a numeric score")
+        self.assertEqual(result["label"], "Unsupported script",
+                         f"{fixture_id} {side} did not report unsupported script")
+        self.assertEqual(result["classification"], "UNSUPPORTED",
+                         f"{fixture_id} {side} did not refuse")
+        self.assertEqual(result["stats"]["scriptClass"], "CJK",
+                         f"{fixture_id} {side} did not identify CJK")
+
     def test_before_after_scores_in_band(self):
         for f in load_fixtures()["fixtures"]:
-            before = analyze(f["before"])["score"]
-            after = analyze(f["after"])["score"]
+            before_result = analyze(f["before"])
+            after_result = analyze(f["after"])
+            if f.get("expect_refusal"):
+                self.assertUnsupportedRefusal(before_result, f["id"], "before")
+                self.assertUnsupportedRefusal(after_result, f["id"], "after")
+                continue
+
+            before = before_result["score"]
+            after = after_result["score"]
+            self.assertIsNotNone(
+                before, f"{f['id']} before score is None without expect_refusal")
+            self.assertIsNotNone(
+                after, f"{f['id']} after score is None without expect_refusal")
             if "before_band_min" in f:
                 self.assertGreaterEqual(before, f["before_band_min"],
                                         f"{f['id']} before={before}")
@@ -42,6 +67,74 @@ class ScoreBands(unittest.TestCase):
                                      f"{f['id']} before={before}")
             self.assertLessEqual(after, f["after_band_max"],
                                  f"{f['id']} after={after}")
+
+    def test_refusal_fixture_reports_own_pass_line(self):
+        import contextlib
+        import io
+
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            passes, fails = run_deterministic(load_fixtures())
+
+        self.assertEqual((passes, fails), (18, 0))
+        self.assertIn(
+            "[PASS] overstep-04-selfqa-zh refusal: as declared",
+            output.getvalue(),
+        )
+
+    def test_non_refusal_none_score_fails_with_clear_message(self):
+        import contextlib
+        import copy
+        import io
+        from unittest import mock
+
+        data = copy.deepcopy(load_fixtures())
+        marker = "non-refusal-none-score"
+        data["fixtures"][0]["after"] = marker
+
+        def analyze_with_none(text):
+            if text == marker:
+                return {"score": None}
+            return analyze(text)
+
+        output = io.StringIO()
+        with mock.patch("fixtures.run_fixtures.analyze",
+                        side_effect=analyze_with_none), \
+                contextlib.redirect_stdout(output):
+            _passes, fails = run_deterministic(data)
+
+        self.assertEqual(fails, 1)
+        self.assertIn(
+            "after score is None for non-refusal fixture",
+            output.getvalue(),
+        )
+
+
+class MustPreserve(unittest.TestCase):
+    @staticmethod
+    def _data_with_protected_literal():
+        data = copy.deepcopy(load_fixtures())
+        fixture = next(f for f in data["fixtures"]
+                       if f["id"] == "tweet-01-obvious")
+        fixture["must_preserve"] = ["11 steps to 3"]
+        return data, fixture
+
+    def test_present_literal_passes(self):
+        data, _ = self._data_with_protected_literal()
+        with contextlib.redirect_stdout(io.StringIO()):
+            _, fails = run_deterministic(data)
+        self.assertEqual(fails, 0)
+
+    def test_dropped_literal_fails(self):
+        data, fixture = self._data_with_protected_literal()
+        fixture["after"] = fixture["after"].replace(
+            "11 steps to 3", "eleven steps to three")
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            _, fails = run_deterministic(data)
+        self.assertEqual(fails, 1)
+        self.assertIn("[FAIL] tweet-01-obvious dropped '11 steps to 3'",
+                      output.getvalue())
 
 
 class Calibration(unittest.TestCase):
@@ -52,8 +145,13 @@ class Calibration(unittest.TestCase):
         data = load_fixtures()
         thr = data["baseline_threshold"]
         targeted = [f for f in data["fixtures"] if not f.get("detector_blind")]
-        miss = sum(1 for f in targeted
-                   if analyze(f["before"])["score"] < thr)
+        miss = 0
+        for f in targeted:
+            score = analyze(f["before"])["score"]
+            self.assertIsNotNone(
+                score, f"{f['id']} before score is None without expect_refusal")
+            if score < thr:
+                miss += 1
         total = len(targeted)
         pct = 100 * miss / total
         self.assertTrue(30 <= pct <= 40,
@@ -96,7 +194,12 @@ class Calibration(unittest.TestCase):
         data = load_fixtures()
         thr = data["baseline_threshold"]
         for f in data["fixtures"]:
-            caught = analyze(f["before"])["score"] >= thr
+            if f.get("expect_refusal"):
+                continue
+            score = analyze(f["before"])["score"]
+            self.assertIsNotNone(
+                score, f"{f['id']} before score is None without expect_refusal")
+            caught = score >= thr
             expected = "catch" if caught else "miss"
             self.assertEqual(f["expect_baseline"], expected,
                              f"{f['id']}: declared {f['expect_baseline']} "
