@@ -4,5 +4,8 @@ __pycache__/
 # OMC runtime state
 .omc/
 
+# OMX runtime state
+.omx/
+
 # Nested Claude Code worktrees (accidental `git add .` trap)
 .claude/worktrees/
