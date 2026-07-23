@@ -8,7 +8,11 @@ import sys
 import tempfile
 import unittest
 
-from known_human.run_known_human import load_threshold, wilson_interval
+from known_human.run_known_human import (
+    REQUIRED_SAMPLE_FIELDS,
+    load_threshold,
+    wilson_interval,
+)
 
 
 EVALS_DIR = Path(__file__).resolve().parent
@@ -167,14 +171,29 @@ class KnownHumanMachinery(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("false-positive ceiling exceeded", result.stdout)
 
-    def test_committed_manifest_is_empty_and_declares_public_strata(self):
+    def test_committed_manifest_declares_public_strata_and_valid_seed_corpus(self):
         manifest = json.loads(PUBLIC_MANIFEST.read_text(encoding="utf-8"))
         self.assertEqual(manifest["evidence_role"], "supplemental_public")
         self.assertEqual(
             manifest["genre_proxies"],
             ["letter", "essay", "technical", "report"],
         )
-        self.assertEqual(manifest["samples"], [])
+        samples = manifest["samples"]
+        self.assertEqual(len(samples), 8)
+        per_genre = {}
+        for record in samples:
+            for field in REQUIRED_SAMPLE_FIELDS:
+                self.assertTrue(
+                    str(record.get(field, "") or "").strip(),
+                    f"{record.get('path')}: empty required field {field}",
+                )
+            self.assertIn(record["genre_proxy"], manifest["genre_proxies"])
+            per_genre[record["genre_proxy"]] = per_genre.get(record["genre_proxy"], 0) + 1
+            sample_path = PUBLIC_MANIFEST.parent / record["path"]
+            self.assertTrue(sample_path.is_file(), f"missing sample file: {record['path']}")
+            digest = hashlib.sha256(sample_path.read_bytes()).hexdigest()
+            self.assertEqual(digest, record["sha256"], f"checksum drift: {record['path']}")
+        self.assertEqual(per_genre, {g: 2 for g in manifest["genre_proxies"]})
 
 
 if __name__ == "__main__":
