@@ -221,7 +221,9 @@ When neither exists, use the lightest voice that fits the context:
    actor, action, example, number, or consequence that is not in the source
    (Safety Rules).
 7. Vary rhythm without adding fake personality. Bias word choice and cadence
-   toward the voice profile when one was loaded.
+   toward the voice profile when one was loaded. Treat its `Verbatim Anchors` as
+   fidelity anchors: bias the rewrite toward reproducing each tagged habit under
+   `_shared/precedence-policy.md`, without copying unrelated sample content.
 8. **Re-scan your rewrite against the pattern catalog** (repeat step 5 on the *output*).
    Rewriting reintroduces tells — fixing one often plants another. Treat the rewrite as a
    fresh draft, scan it, and remove any tell you find before the final pass.

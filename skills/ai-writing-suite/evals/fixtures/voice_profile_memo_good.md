@@ -112,6 +112,12 @@ both genres would describe neither.
 - **Re-calibrate for:** tweets and any short public register — see the tweet profile;
   do not carry these figures across.
 
+## Verbatim Anchors
+
+- "The fix is boring: retry with backoff, alert on queue depth, and reconcile the numbers every morning before anyone looks at a chart." — colon-led inline action list
+- "Our onboarding funnel lost eleven percent of new accounts last month" — number-led finding
+- "The pattern does not change: a retry storm at midnight, an alert nobody owns, and a morning spent reconstructing what the system was doing while the rest of us slept." — consequence-led close
+
 ## Changelog
 
 - [2026-07-13] First created from 3 synthetic memo samples.

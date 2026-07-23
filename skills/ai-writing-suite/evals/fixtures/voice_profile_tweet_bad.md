@@ -19,6 +19,7 @@
                               figure — the averaging failure the SKILL forbids
     - honest_gap            : fills Uncertainty Style confidently on zero evidence
     - scope_declared        : claims to generalize to all of her writing
+    - anchor_provenance     : includes an anchor absent from every tweet sample
     - self_report_divergence: adopts the false stated exclamation-mark habit and
                               never surfaces its contradiction with the corpus
 -->
@@ -97,6 +98,12 @@
 
 - **Applies to:** all of her writing, tweets and memos alike.
 - **Re-calibrate for:** nothing — the profile generalizes.
+
+## Verbatim Anchors
+
+- "Shipped the pricing ledger today." — direct factual opening
+- "Two weeks late." — unsoftened cost beat
+- "The moonlit ledger sings in perfect harmony." — lyrical closing
 
 ## Changelog
 

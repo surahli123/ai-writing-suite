@@ -18,6 +18,7 @@
                               memo figure (~32) — the averaging failure the SKILL forbids
     - honest_gap            : fills Uncertainty Style confidently on zero evidence
     - scope_declared        : claims to generalize to all of her writing
+    - anchor_provenance     : includes an anchor absent from every memo sample
     - self_report_divergence: adopts the false stated exclamation-mark habit and
                               never surfaces its contradiction with the corpus
 -->
@@ -96,6 +97,12 @@
 
 - **Applies to:** all of her writing, memos and tweets alike.
 - **Re-calibrate for:** nothing — the profile generalizes.
+
+## Verbatim Anchors
+
+- "The fix is boring: retry with backoff, alert on queue depth, and reconcile the numbers every morning before anyone looks at a chart." — colon-led inline action list
+- "Our onboarding funnel lost eleven percent of new accounts last month" — number-led finding
+- "The moonlit queue sings in perfect harmony." — lyrical closing
 
 ## Changelog
 
