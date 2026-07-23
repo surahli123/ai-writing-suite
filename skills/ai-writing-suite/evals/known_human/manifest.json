@@ -1,0 +1,10 @@
+{
+  "evidence_role": "supplemental_public",
+  "genre_proxies": [
+    "letter",
+    "essay",
+    "technical",
+    "report"
+  ],
+  "samples": []
+}
