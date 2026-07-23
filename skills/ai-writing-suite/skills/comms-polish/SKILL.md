@@ -88,28 +88,9 @@ Pick the mode from the user's request. If unclear, use `rewrite`.
 Voice has three sources, in priority order:
 
 1. **A learned per-genre voice profile** under resolved `<state>/voice-profiles/`, produced
-   by `voice-onboard` — one file per genre, the filename is the genre key. Look it
-   up cheaply, before any rewrite:
-   - **List** `<state>/voice-profiles/*.md` — one directory read, filenames only,
-     no body parsing.
-   - **Select one file** by this precedence, first match wins: (1) **explicit user
-     request** — user named a genre ("use my LinkedIn voice") → that file; if it is
-     absent, say so and drop to rule 4; (2) **normalized-exact preset/genre match**
-     — normalize the run's genre preset and each filename slug the same way
-     (lowercase, spaces→hyphens) and match by string equality, no fuzzy/prefix/alias
-     (`formal-report` ≠ `report`); (3) **single-profile fallback** — exactly one
-     file exists → use it; (4) **no match** → degrade (below). IF the user explicitly
-     asked for their own voice, make the Q8 offer once (offer to create the
-     named/needed genre; shares the one offer budget) then degrade; OTHERWISE
-     degrade silently — inferred voice with no question asked. Either way, if
-     profiles exist but none match, the degraded note lists which genres DO exist
-     so the user can redirect.
-   - **Read** the full body of the one selected file only.
-   - **Directory absent or empty** → fall back to the legacy single file
-     `_shared/voice-profile.md`, still gated by the `> SAMPLE PROFILE.` banner: a
-     file carrying that banner counts as **no profile** (the shipped sample) →
-     degrade per rule 4 (Q8 offer only on an explicit my-voice request). A profile
-     is valid only with the banner absent.
+   by `voice-onboard` — one file per genre, the filename is the genre key. Before
+   any rewrite, follow the canonical lookup, fallback, banner-rejection,
+   graceful-degradation, and Q8 offer rules in `_shared/voice-lookup.md`.
    It is loose coupling: comms-polish does not create or own these files — it reads
    whatever fields are present in the selected profile and biases edits toward them.
    The profile's header set is the **canonical ordered list at the top of
@@ -193,10 +174,8 @@ When neither exists, use the lightest voice that fits the context:
    harder and what to leave alone in this genre. If no preset fits, scan the
    catalog evenly.
 3. **Select and load the voice profile.** Run the source #1 lookup (list
-   `<state>/voice-profiles/*.md`, pick one file by the precedence, read that one
-   body; legacy `_shared/voice-profile.md` on an empty directory, banner = no
-   profile — see Voice Matching). No match → pasted sample or inferred voice, and
-   degrade gracefully.
+   and select through `_shared/voice-lookup.md`, then read only the selected
+   body). No match → pasted sample or inferred voice, and degrade gracefully.
 4. Mark the factual anchors that must survive unchanged — **and the modality
    anchors too**: each claim's observed-vs-inferred, possible-vs-certain, and
    step-toward-vs-achieved status is an anchor, not free to strengthen.
@@ -250,69 +229,8 @@ When neither exists, use the lightest voice that fits the context:
 - Do not polish away legal, medical, financial, or safety warnings.
 - Do not rewrite quoted text unless the user asks.
 
-## Before And After Examples
-
-### Technical docs
-
-Before:
-
-```text
-This robust workflow enables teams to seamlessly leverage contextual insights, ensuring a more effective and streamlined development experience.
-```
-
-After:
-
-```text
-This workflow gives teams contextual insights for a more effective, streamlined development experience.
-```
-
-(Every term in the *after* — workflow, teams, contextual insights, more effective,
-streamlined development experience — is present in the *before*. Polish drops the
-empty intensifiers ("robust", "seamlessly leverage", "enables ... ensuring"); it
-adds nothing the source did not say — note it does **not** invent "editing" or any
-timing the source never mentioned.)
-
-### Status update
-
-Before:
-
-```text
-It is important to note that the migration represents a pivotal step toward improving reliability, scalability, and operational efficiency.
-```
-
-After:
-
-```text
-The migration is a step toward more reliable, scalable, efficient operation.
-```
-
-(Every term in the *after* traces to the *before*: "step toward" **keeps the
-original modality** — the migration is *aiming at* these gains, not proven to
-deliver them — and the reliability/scalability/efficiency triple is inherited from
-the source, not composed here (polish preserves meaning, it does not restructure
-the facts). Polish strips the throat-clearing ("It is important to note that") and
-the inflation ("pivotal"); it does **not** strengthen "step toward improving" into
-"improves", add a fact, or restructure the claim.)
-
-### Personal note
-
-Before:
-
-```text
-I wanted to take a moment to express my sincere appreciation for your invaluable support throughout this journey.
-```
-
-After:
-
-```text
-Thank you for sticking with me through this.
-```
-
-(The *after* keeps only what the *before* carried — thanks for support through the
-whole thing. The dropped draft closer "It helped more than you probably know"
-would have invented a magnitude *and* presumed the reader's mind (an
-overstepping-presumption tell in our own catalog) — polish removes slop, it does
-not add either.)
+For worked before/after examples, read
+`references/before-after-examples.md`.
 
 ## Scoring
 
@@ -377,61 +295,11 @@ it. In short:
 
 ### Audit Report Contract (detect / review only)
 
-`detect` and `review` output is a fixed report so two audits of the same draft —
-even by different models — can be diffed and skimmed. Produce these sections **in
-this order**. Inside each section the wording is yours (genre-appropriate); the
-structure below is the contract, not a straitjacket.
+This contract governs `detect` and `review` output only.
+`rewrite` and `edit` are unchanged by it.
 
-**Conformance is byte-literal for structure, normalized for punctuation style.**
-Section headings, the four field markers (`**Quote:**` / `**Tell:**` / `**Why:**`
-/ `**Fix:**`), their order, and the tier names must appear exactly as written
-here — that's what makes two reports diffable. Straight `"..."`, typographic
-`"..."`, and guillemet `«...»` quotes are treated as equivalent wherever a quoted
-snippet is required (paste-from-Word and model output both carry typographic
-quotes routinely); a leading byte-order-mark is stripped before checking. Genre
-flexibility applies to the *prose inside* each field, never to the markers,
-order, or tier names themselves.
-
-**This contract governs `detect` and `review` output only. `rewrite` and `edit`
-are unchanged by it** — a rewrite still returns polished text, an edit still
-returns its file summary.
-
-1. **Lead line — the one biggest problem, in plain words.** First line, format
-   `**Biggest problem:** <one sentence>`. Name the single worst thing a reader
-   would react to (Ogilvy: lead with the one thing). Plain language, **never a
-   number** — the 0-100 score is not the lead, and severity never collapses into a
-   single headline figure.
-
-2. **Findings, grouped under three named severity tiers, each tier defined.**
-   Use `## Critical`, `## Moderate`, `## Minor` headings in that order. The line
-   immediately under each heading is a one-clause *italic* definition of the tier,
-   so two audits sort the same finding the same way:
-   - **Critical** — *tells that make the whole piece read as machine-written at a
-     glance, or that distort meaning or trust.*
-   - **Moderate** — *clear tells a careful reader notices, but that don't dominate
-     the piece.*
-   - **Minor** — *cosmetic or low-frequency tells only a scan catches.*
-   A tier with no findings still keeps its heading and definition, with a single
-   `- None.` bullet and **no other bullets in that tier** — `- None.` never sits
-   alongside real findings in the same tier.
-   Every finding uses this four-part shape, **in exactly this order, once each**:
-   - `**Quote:**` the exact snippet from the draft, quoted (not paraphrased).
-   - `**Tell:**` the catalog id + name it matches — e.g. `S1 — Significance
-     inflation` — and the id **must** be a real entry from `_shared/patterns/`.
-   - `**Why:**` one line on why it reads as AI.
-   - `**Fix:**` the corrected snippet, **shown** — quoted or in a code span —
-     never just described in prose.
-
-3. **`## What already reads well`.** One or two genuinely strong things, tied to a
-   specific passage, so the report is calibrated instead of a pile-on. Per the
-   repo's review standard, **no fake praise**: if nothing reads well yet, say so
-   plainly (e.g. `- Nothing here reads well yet — the draft is AI throughout.`).
-
-4. **Score — only when asked, always last.** When the user requested a score,
-   place the 0-100 AI-tell score as the **final non-blank line of the entire
-   report** — nothing follows it, no trailing commentary or sign-off —
-   `**AI-tell score:** NN/100`, scored per the Scoring table. Never as the lead;
-   omit it entirely when no score was requested.
+Full field-by-field contract in `references/audit-report-contract.md` — read it
+when producing `detect`/`review` output.
 
 A complete worked example built from real catalog tells is in
 `references/audit-report-format.md`.

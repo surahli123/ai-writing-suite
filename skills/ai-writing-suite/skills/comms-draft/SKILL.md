@@ -54,26 +54,12 @@ never block on a missing optional input.
   audience, tone, revision) and — in a company fork — the playbook's structure,
   terminology, and house facts. Quote/apply the relevant passage; cite the entry
   filename when a draft choice came from it.
-- **The voice profile** (optional) under resolved `<state>/voice-profiles/`, produced by
-  `voice-onboard` — one file per genre, filename is the genre key. Look it up
-  cheaply: **list** `<state>/voice-profiles/*.md` (one directory read, filenames
-  only); **select one file** by precedence, first match wins — (1) explicit user
-  request (named genre → that file; absent → drop to rule 4), (2) normalized-exact
-  preset/genre match (lowercase, spaces→hyphens, string equality; no fuzzy/prefix/
-  alias — `formal-report` ≠ `report`), (3) single-profile fallback (exactly one
-  file → use it), (4) no match → infer (below), and IF the user explicitly asked
-  for their own voice make the Q8 offer once, OTHERWISE degrade silently with no
-  question asked; **read** the full body of that one file only. If the directory is
-  absent/empty, fall back to the legacy `_shared/voice-profile.md`. **Any profile
-  file carrying the `> SAMPLE PROFILE.` banner — in `voice-profiles/` or the legacy
-  path — counts as NO profile** (infer; make the Q8 offer only on an explicit
-  my-voice request). For a valid profile, bias the
-  draft toward its fields. The profile's header set is the **canonical ordered list
-  at the top of `_shared/voice-profile.md`** (the single source of truth — do not
-  restate a divergent subset here); use every header present that carries voice
-  guidance — Tone, Sentence Length, Vocabulary Don't, and every other header on
-  that list, **including Measured Fingerprint** (quantitative targets). Read what
-  is there; ignore what is not.
+- **The voice profile** (optional) under resolved `<state>/voice-profiles/`,
+  produced by `voice-onboard` — one file per genre. Follow the canonical source
+  order, directory-list and normalized-exact selection, legacy fallback,
+  banner-rejection, graceful-degradation, and Q8 offer rules in
+  `_shared/voice-lookup.md`. For a valid profile, bias the draft toward every
+  present field that carries voice guidance.
 - **Genre presets** via `skills/comms-polish/references/scenario-presets.md`
   (suite-root-relative). Reuse comms-polish's presets — do not duplicate them.
   A preset tells you the genre's hard form constraints (a tweet's 280-char limit,
