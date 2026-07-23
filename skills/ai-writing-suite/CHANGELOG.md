@@ -10,6 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Known-human false-positive eval (E1, PR #63)** — `evals/known_human/`: stdlib runner with
+  item-level provenance and sha256 validation, threshold read from the existing
+  `flag_threshold` contract (never retuned), per-stratum FP rates with 95% Wilson
+  intervals, and a discovered capability fully separated from the calibration
+  denominator. Seeded with an 8-sample public-domain corpus (2 per genre proxy);
+  first supplemental datum: 0/8 false positives at threshold 14. Output always
+  carries "SUPPLEMENTAL PUBLIC SET — NOT A REAL-WRITER BENCHMARK".
+- **Empty-entries sentinel-path negative (PR #64)** — `retrieve([], …)` now pinned to
+  return `(None, (-1, -1))`, covering the loop-never-ran branch the zero-overlap
+  guard tests missed; plus a return-shape pin for the zero-overlap tuple contract.
+- **no-ai-slop delta research (PR #64)** — `notes/research-no-ai-slop-2026-07-22.md`:
+  petergyang/no-ai-slop (MIT) vs the 72-entry catalog; ~16 of 20 patterns already
+  covered, 3 absorption candidates recorded for an owner-gated future lane.
+
 - **Multi-genre voice profiles (Q10)** — per-genre files at `_shared/voice-profiles/<genre-slug>.md`
   (filename is the contract); deterministic consumer lookup (explicit request > normalized-exact
   preset match > single-profile fallback > offer-then-degrade); legacy `voice-profile.md` kept as
@@ -87,6 +101,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (must-catch floors) and a black-box holdout adversary corpus.
 
 ### Changed
+- **comms-draft Load-the-inputs step (PR #64)** — condensed banner paraphrase replaced
+  by a pointer to the canonical `_shared/voice-lookup.md` protocol.
+- **Density-budget ruling wording (PR #64)** — now quotes `references/final-pass-checklist.md`'s
+  "never a hard length target" verbatim with attribution.
+- **FP-eval design status (PR #63)** — `docs/design-detector-false-positive-eval.md`
+  marked BUILT; the 100-sample license-audited run remains the open next step.
 - **Q7 full-document mixed mode** — mixed polish-plus-add requests route to comms-draft, which
   treats existing text as immutable source, returns the whole revised document, and runs the
   polish final-pass itself; the suite router now executes classify-and-load when invoked.
