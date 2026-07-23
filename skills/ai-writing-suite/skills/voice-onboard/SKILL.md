@@ -99,6 +99,8 @@ posts and 2 memos — different voices. I'll profile them as two files,
 
 ### Step 2 — Extract the style fingerprint
 
+Use the stage-scoped contract in `_shared/precedence-policy.md` during extraction; reference it rather than copying its rules.
+
 Profile each of the 10 dimensions below. **Every claim needs evidence from the
 samples.** No evidence → write "Unknown — not enough signal", never invent.
 
