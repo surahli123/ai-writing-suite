@@ -1,7 +1,7 @@
 # Design — Known-Human-Negative False-Positive Eval (E1)
 
 Date: 2026-07-22
-Status: DESIGN ONLY — no eval or corpus is built in this lane
+Status: BUILT (feat/w3-e1-known-human-eval, 2026-07-22) — machinery + an 8-sample seed public corpus ship per this design; the 100-sample falsifiable next step remains open
 
 ## Problem and boundary
 

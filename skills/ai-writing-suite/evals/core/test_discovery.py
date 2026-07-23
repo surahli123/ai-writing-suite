@@ -18,6 +18,7 @@ EXPECTED_IDS = {
     "kb_smoke",
     "fixtures",
     "false_positives",
+    "known_human_negatives",
     "comms_draft",
     "voice_extraction",
     "audit_report",
@@ -25,7 +26,7 @@ EXPECTED_IDS = {
 
 
 class DiscoveryFindsExactlyKnownCapabilities(unittest.TestCase):
-    def test_discovers_exactly_the_seven_known_ids(self):
+    def test_discovers_exactly_the_eight_known_ids(self):
         caps = discover_capabilities()
         found = {c.id for c in caps}
         self.assertEqual(
@@ -34,8 +35,8 @@ class DiscoveryFindsExactlyKnownCapabilities(unittest.TestCase):
             f"discovery drift: missing={EXPECTED_IDS - found} unexpected={found - EXPECTED_IDS}",
         )
 
-    def test_exactly_seven_capabilities(self):
-        self.assertEqual(len(discover_capabilities()), 7)
+    def test_exactly_eight_capabilities(self):
+        self.assertEqual(len(discover_capabilities()), 8)
 
     def test_ordering_is_deterministic_and_total(self):
         caps = discover_capabilities()
