@@ -53,7 +53,7 @@ class KnownHumanMachinery(unittest.TestCase):
             "genre_proxy": genre_proxies[0],
             "language": "en",
             "sha256": sha256 or hashlib.sha256(sample_bytes).hexdigest(),
-            "path": "samples/sample.txt",
+            "path": "sample.txt",
         }
         if omit:
             record.pop(omit)

@@ -131,7 +131,10 @@ def _sample_path(manifest_path, relative_path):
         raise ValueError("path must be relative under the manifest's samples/")
 
     samples_root = (manifest_path.parent / "samples").resolve()
-    resolved = (manifest_path.parent / path).resolve()
+    if path.parts and path.parts[0] == "samples":
+        resolved = (manifest_path.parent / path).resolve()
+    else:
+        resolved = (samples_root / path).resolve()
     if resolved == samples_root or samples_root not in resolved.parents:
         raise ValueError("path must be relative under the manifest's samples/")
     return resolved
