@@ -206,7 +206,7 @@ Treat "authors misjudge their own idiolect" as a hypothesis this comparison test
 not a fact about the author. For every mismatch, show the stated claim beside the
 specific measured corpus evidence and ask the author to review it. Resolve any
 extraction-time conflict under the stage-scoped contract in
-[`_shared/precedence-policy.md`](../../_shared/precedence-policy.md); reference that
+[`_shared/precedence-policy.md`](_shared/precedence-policy.md); reference that
 contract rather than duplicating it in the profile.
 
 ### Step 5 — Confirm, then write the contract file
