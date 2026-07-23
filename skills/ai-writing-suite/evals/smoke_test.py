@@ -102,7 +102,12 @@ def run():
     print(f"KB smoke test — {len(cases)} case(s), {len(entries)} index entries\n")
     for i, c in enumerate(cases, 1):
         files, overlap = retrieve(c["query"], entries)
-        entry_ok = files is not None and c["entry"] in files
+        expected_files = (["clarity.md", "revision.md"]
+                          if i == 1 else [c["entry"]])
+        if i == 1:
+            entry_ok = sorted(files or []) == sorted(expected_files)
+        else:
+            entry_ok = files == expected_files
 
         # A full tie means every returned entry is opened. The expected passage
         # must appear in the expected entry among those retrieved files.
@@ -123,9 +128,9 @@ def run():
             failures += 1
         mark = "PASS" if ok else "FAIL"
         print(f"[{mark}] Case {i}: query -> {files} "
-              f"(expected {c['entry']}, overlap={overlap})")
+              f"(expected {expected_files}, overlap={overlap})")
         if not entry_ok:
-            print(f"       entry mismatch: got {files}, expected {c['entry']}")
+            print(f"       entry mismatch: got {files}, expected {expected_files}")
         if entry_ok and not passage_ok:
             print(f"       passage not found in {c['entry']}: "
                   f"\"{c['passage'][:60]}...\"")
