@@ -233,16 +233,17 @@ def warn_generic_shadowing(kb):
         q = set(tokens(title))
         if not q:
             continue
-        got, overlap = retrieve(", ".join(sorted(q)), entries)
-        if not got or got == name:
-            continue
-        if read_entry_meta(os.path.join(kb, got)) is not None:
-            continue  # shadowed by another fork entry - not the failure mode
-        warnings.append(
-            path + ":0 WARN own title words ('" + title + "') retrieve '" +
-            got + "' instead — a generic/hand-authored entry may be "
-            "shadowing this fork entry on its own topic (overlap=" +
-            str(overlap) + ")")
+        files, overlap = retrieve(", ".join(sorted(q)), entries)
+        for got in files or []:
+            if got == name:
+                continue
+            if read_entry_meta(os.path.join(kb, got)) is not None:
+                continue  # shadowed by another fork entry - not this mode
+            warnings.append(
+                path + ":0 WARN own title words ('" + title + "') retrieve '" +
+                got + "' instead — a generic/hand-authored entry may be "
+                "shadowing this fork entry on its own topic (overlap=" +
+                str(overlap) + ")")
     return warnings
 
 
@@ -254,14 +255,9 @@ def check_retrieval_smoke(kb):
 
     (a) an entry's keyword string resolves to a DIFFERENT entry (or nothing) —
         retrieval for that topic is broken.
-    (b) an entry's keyword string TIES another entry's score and only "wins"
-        because of INDEX table order (Finding 2 — retrieval-smoke false-pass on
-        shared keywords). A tie means the entry is not uniquely identified by
-        its own keywords; retrieve()'s strict `>` comparison would silently
-        pick whichever entry comes first in the table, which can mask the fact
-        that a query for THIS entry would just as validly resolve to the other
-        one. Both members of a tie are flagged, not just whichever one loses
-        the position-dependent tie-break.
+    (b) an entry's keyword string TIES another entry's score. A tie means the
+        entry is not uniquely identified by its own keywords. Both members of
+        a tie are flagged, not just whichever one appears later in the table.
 
     This is the ingestion-time analogue of the shipped-KB smoke test, run over
     the fork KB."""
@@ -273,27 +269,12 @@ def check_retrieval_smoke(kb):
     for e in entries:
         q = set(e["keywords"])
         path = os.path.join(kb, e["file"])
-        got, overlap = retrieve(", ".join(sorted(q)), entries)
-        if got != e["file"]:
+        files, overlap = retrieve(", ".join(sorted(q)), entries)
+        if files != [e["file"]]:
             problems.append(
-                path + ":0 own keywords retrieve '" + str(got) +
-                "' not '" + e["file"] + "' (overlap=" + str(overlap) + ")")
-            continue
-        # e "won" the retrieval — now check whether it won UNIQUELY, or
-        # only by table-order privilege over a genuine tie.
-        e_terms = e["keywords"] | e["summary_kw"]
-        e_score = (len(q & e_terms), len(q & e["summary_kw"]))
-        for g in entries:
-            if g is e:
-                continue
-            g_terms = g["keywords"] | g["summary_kw"]
-            g_score = (len(q & g_terms), len(q & g["summary_kw"]))
-            if g_score >= e_score:
-                problems.append(
-                    path + ":0 own keywords are shadowed by '" +
-                    g["file"] + "' (self=" + str(e_score) + ", shadow=" +
-                    str(g_score) + ") — not uniquely retrievable")
-                break
+                path + ":0 own keywords are shadowed; retrieve " +
+                str(files) + ", not uniquely '" + e["file"] +
+                "' (overlap=" + str(overlap) + ")")
     return (not problems), problems
 
 
