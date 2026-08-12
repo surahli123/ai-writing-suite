@@ -76,7 +76,7 @@ class ScoreBands(unittest.TestCase):
         with contextlib.redirect_stdout(output):
             passes, fails = run_deterministic(load_fixtures())
 
-        self.assertEqual((passes, fails), (19, 0))
+        self.assertEqual((passes, fails), (23, 0))
         self.assertIn(
             "[PASS] overstep-04-selfqa-zh refusal: as declared",
             output.getvalue(),
@@ -210,6 +210,8 @@ class Calibration(unittest.TestCase):
         data = load_fixtures()
         expected_total = sum(1 for f in data["fixtures"]
                              if not f.get("detector_blind"))
+        self.assertEqual(expected_total, 8,
+                         "the detector-targeted calibration cohort must stay at 8")
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
             run_deterministic(data)
@@ -218,6 +220,7 @@ class Calibration(unittest.TestCase):
         self.assertEqual(int(m.group(1)), expected_total,
                          f"calibration denominator {m.group(1)} != "
                          f"{expected_total} non-detector_blind fixtures")
+        self.assertIn("miss rate: 3/8 = 38%", buf.getvalue())
 
     def test_expect_baseline_matches_actual(self):
         # The declared expect_baseline must match what the detector actually does.
@@ -245,11 +248,112 @@ class JudgePrompt(unittest.TestCase):
             # No template placeholder may leak — including subtle_tell, whose
             # template token was `{subtle_tell or "..."}` and silently leaked.
             for token in ("{before", "{after", "{genre", "{rubric_focus",
-                          "{subtle_tell"):
+                          "{subtle_tell", "{source_context"):
                 self.assertNotIn(token, prompt,
                                  f"{f['id']} leaked placeholder {token}")
             self.assertIn(f["before"], prompt)
             self.assertIn(f["after"], prompt)
+
+
+class FactInterpretationBoundaryGuards(unittest.TestCase):
+    """Relation-level fixtures must stay source-aware and detector-blind."""
+
+    PASS_IDS = {
+        "factbridge-01-unsupported-cause-en",
+        "factbridge-02-cooccurrence-en",
+        "factbridge-03-unsupported-meaning-zh",
+        "factbridge-04-supported-possibility-en",
+    }
+    FAIL_IDS = {
+        "factbridge-fail-01-supported-cause-deleted-en",
+        "factbridge-fail-02-cooccurrence-hardened-en",
+        "factbridge-fail-03-possibility-hardened-en",
+        "factbridge-fail-04-supported-meaning-zh",
+    }
+
+    def test_required_source_support_minimal_pairs_exist(self):
+        pass_by_id = {f["id"]: f for f in load_fixtures()["fixtures"]}
+        fail_by_id = {f["id"]: f for f in load_fail_fixtures()["fixtures"]}
+        self.assertLessEqual(self.PASS_IDS, set(pass_by_id))
+        self.assertLessEqual(self.FAIL_IDS, set(fail_by_id))
+
+        unsupported = pass_by_id["factbridge-01-unsupported-cause-en"]
+        supported = fail_by_id["factbridge-fail-01-supported-cause-deleted-en"]
+        self.assertEqual(unsupported["before"], supported["before"])
+        self.assertEqual(unsupported["after"], supported["after"])
+        self.assertNotEqual(unsupported["source_context"],
+                            supported["source_context"])
+
+    def test_pass_fixtures_are_declared_detector_blind(self):
+        by_id = {f["id"]: f for f in load_fixtures()["fixtures"]}
+        for fixture_id in self.PASS_IDS:
+            fixture = by_id[fixture_id]
+            self.assertTrue(fixture.get("detector_blind"), fixture_id)
+            self.assertEqual(fixture.get("expect_baseline"), "miss", fixture_id)
+            self.assertIn("source_context", fixture)
+
+    def test_source_aware_and_legacy_prompts_use_separate_semantics(self):
+        template = _extract_judge_template()
+        with_source = {
+            "genre": "memo",
+            "rubric_focus": ["meaning_preserved"],
+            "before": "The teams expanded, reflecting integration failures.",
+            "after": "The teams expanded.",
+            "source_context": "The source reports only that the teams expanded.",
+        }
+        source_aware_prompt = build_judge_prompt(with_source, template)
+        self.assertIn(with_source["source_context"], source_aware_prompt)
+        self.assertIn("SOURCE CONTEXT (authority for what the evidence establishes):",
+                      source_aware_prompt)
+        self.assertIn("FACT-INTERPRETATION CHECK", source_aware_prompt)
+        self.assertIn("source expressly gives no support", source_aware_prompt)
+
+        # These legacy gold-PASS fixtures deliberately remove an over-explained
+        # interpretation or add concrete detail absent from before. They must keep
+        # the pre-source-aware prompt semantics unless explicitly opted in.
+        fixtures = {f["id"]: f for f in load_fixtures()["fixtures"]}
+        for fixture_id in ("narrshape-01-overexplained-theme-en", "tweet-01-obvious"):
+            legacy_prompt = build_judge_prompt(fixtures[fixture_id], template)
+            self.assertNotIn("SOURCE CONTEXT (authority for what the evidence establishes):",
+                             legacy_prompt, fixture_id)
+            self.assertNotIn("FACT-INTERPRETATION CHECK", legacy_prompt,
+                             fixture_id)
+            self.assertNotIn("source expressly gives no support", legacy_prompt,
+                             fixture_id)
+            self.assertNotIn("No separate source context was supplied", legacy_prompt,
+                             fixture_id)
+
+    def test_cooccurrence_pair_changes_only_the_repair_quality(self):
+        pass_by_id = {f["id"]: f for f in load_fixtures()["fixtures"]}
+        fail_by_id = {f["id"]: f for f in load_fail_fixtures()["fixtures"]}
+        good = pass_by_id["factbridge-02-cooccurrence-en"]
+        bad = fail_by_id["factbridge-fail-02-cooccurrence-hardened-en"]
+        self.assertEqual(good["source_context"], bad["source_context"])
+        self.assertIn("coincided", good["after"])
+        self.assertIn("because", bad["after"])
+
+    def test_source_supported_possibility_stays_calibrated(self):
+        pass_by_id = {f["id"]: f for f in load_fixtures()["fixtures"]}
+        fail_by_id = {f["id"]: f for f in load_fail_fixtures()["fixtures"]}
+        good = pass_by_id["factbridge-04-supported-possibility-en"]
+        bad = fail_by_id["factbridge-fail-03-possibility-hardened-en"]
+        self.assertEqual(good["source_context"], bad["source_context"])
+        self.assertEqual(good["before"], bad["before"])
+        self.assertIn("may be related to", good["source_context"])
+        self.assertIn("may be related to", good["after"])
+        self.assertIn("caused", bad["after"])
+        self.assertEqual(bad["fail_dimension"], "no_fabrication")
+
+    def test_chinese_supported_context_flips_the_same_surface_pair(self):
+        pass_by_id = {f["id"]: f for f in load_fixtures()["fixtures"]}
+        fail_by_id = {f["id"]: f for f in load_fail_fixtures()["fixtures"]}
+        unsupported = pass_by_id["factbridge-03-unsupported-meaning-zh"]
+        supported = fail_by_id["factbridge-fail-04-supported-meaning-zh"]
+        self.assertEqual(unsupported["before"], supported["before"])
+        self.assertEqual(unsupported["after"], supported["after"])
+        self.assertNotEqual(unsupported["source_context"], supported["source_context"])
+        self.assertTrue(unsupported.get("expect_refusal"))
+        self.assertEqual(supported["fail_dimension"], "meaning_preserved")
 
 
 class JudgePromptAlwaysScoresNoFabrication(unittest.TestCase):
@@ -953,7 +1057,7 @@ class CombinedConfusionMatrix(unittest.TestCase):
         self.n_pass = len(self.pass_fixtures)
         self.n_fail = len(self.fail_fixtures)
         # Premise guard: the cohort sizes the hand-computed numbers below assume.
-        self.assertEqual((self.n_pass, self.n_fail), (19, 5))
+        self.assertEqual((self.n_pass, self.n_fail), (23, 9))
 
     def _reply(self, verdicts):
         """verdicts: {dim: 'PASS'|'FAIL'} defaults PASS for every other dim."""
@@ -1031,11 +1135,11 @@ class CombinedConfusionMatrix(unittest.TestCase):
     def test_mixed_realistic_judge_matches_hand_computed_numbers(self):
         # FAILs the first 3 gold-PASS fixtures (3 false positives) and the first 2
         # gold-FAIL fixtures (2 true positives); PASSes everything else.
-        # Hand-computed for the artifact-lane cohorts (19 PASS / 5 FAIL):
-        # TP=2 FN=3 TN=16 FP=3
-        #   sensitivity = 2/5   = 0.40
-        #   specificity = 16/19 = 0.8421...
-        #   balanced    = (0.4 + 16/19) / 2 = 0.62105...
+        # Hand-computed for the artifact-lane cohorts (23 PASS / 9 FAIL):
+        # TP=2 FN=7 TN=20 FP=3
+        #   sensitivity = 2/9   = 0.2222...
+        #   specificity = 20/23 = 0.8696...
+        #   balanced    = (2/9 + 20/23) / 2 = 0.5459...
         all_fail = {d: "FAIL" for d in self.ALL_DIMS}
 
         def reply(i):
@@ -1045,15 +1149,15 @@ class CombinedConfusionMatrix(unittest.TestCase):
                 return self._reply({})
             if i < self.n_pass + 2:                     # first 2 gold-FAIL -> TP
                 return self._reply(all_fail)
-            return self._reply({})                      # last 3 gold-FAIL -> FN
+            return self._reply({})                      # remaining gold-FAIL -> FN
         matrix, out = self._run_both(self._ordered_stub(reply))
         self.assertEqual((matrix["tp"], matrix["fn"], matrix["tn"], matrix["fp"]),
-                         (2, 3, 16, 3))
+                         (2, 7, 20, 3))
         sens, spec, bal = self._metrics(matrix)
-        self.assertAlmostEqual(sens, 2 / 5)
-        self.assertAlmostEqual(spec, 16 / 19)
-        self.assertAlmostEqual(bal, (2 / 5 + 16 / 19) / 2)
-        self.assertIn("balanced accuracy = 0.62", out)
+        self.assertAlmostEqual(sens, 2 / 9)
+        self.assertAlmostEqual(spec, 20 / 23)
+        self.assertAlmostEqual(bal, (2 / 9 + 20 / 23) / 2)
+        self.assertIn("balanced accuracy = 0.55", out)
 
     def test_unparseable_rep_is_skipped_not_folded_into_a_cell(self):
         # One gold-FAIL fixture returns garbage -> counted as skipped, absent from
