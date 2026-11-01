@@ -79,11 +79,19 @@ writing a polished conclusion around it.
 - Preserve supported interpretations and their certainty.
 - A purely redundant gloss may be deleted when it adds no author position or
   information.
-- When an independent source packet shows that a **substantive author
-  interpretation** exceeds the evidence, do not silently erase the author's
-  position unless factual revision was authorized. Preserve it and flag the gap
-  through `Notes:` in rewrite mode; in review mode quote it and offer a fact-only
-  repair through `Quote / Tell / Why / Fix`.
+- **A source the user supplies with the request authorizes factual
+  alignment.** When the author hands you their own notes, results, or source
+  alongside the draft, they are asking for a draft that matches it. If that
+  packet shows that a **substantive author interpretation** exceeds the evidence,
+  repair the relation in rewrite mode. Either remove the unsupported bridge, or
+  restate it at the strength the source allows (co-occurrence, possibility). Then
+  say in `Notes:` what you changed and why, so the author can restore it with
+  other evidence. Never make the change silently. In review mode, quote the
+  bridge and offer the fact-only repair through `Quote / Tell / Why / Fix`.
+- Preserve the position and flag the gap through `Notes:` instead only when the
+  user withheld that authority: they asked you not to change the substance, or
+  the packet is someone else's material they asked you to compare against rather
+  than their own reference.
 - With a standalone draft, preserve the position and report that support was not
   assessed.
 

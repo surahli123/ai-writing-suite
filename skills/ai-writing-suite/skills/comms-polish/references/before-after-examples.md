@@ -118,6 +118,8 @@ Multiple companies expanded their deployment teams because persistent data-integ
 For `comms-polish`, a standalone draft does not supply the independent source
 comparison needed to call the author's analysis unsupported. Preserve the claim
 and, if relevant, note that support was not assessed. With an independent source
-packet, review mode can quote the bridge and offer the fact-only repair; rewrite
-mode preserves a substantive author position and appends an evidence note unless
-the user authorized factual revision. A redundant gloss may still be cut.
+packet that the user supplied with the request, rewrite mode applies the
+fact-only repair above and says in `Notes:` what it cut and why. Supplying the
+source is the authorization. Review mode quotes the bridge and offers the same
+repair. Preserve-and-flag applies only when the user asked you not to change
+the substance. A redundant gloss may still be cut.

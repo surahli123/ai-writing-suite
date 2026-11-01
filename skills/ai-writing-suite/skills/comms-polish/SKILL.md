@@ -208,12 +208,14 @@ When neither exists, use the lightest voice that fits the context:
 6. Apply the shared fact-to-interpretation protocol to each bridge that adds a
    cause, motive, significance, trend, or conclusion. Preserve a supported
    relation and its certainty; use co-occurrence wording for timing alone; retain
-   calibrated possibility. If an independent source packet shows a substantive
-   author interpretation exceeds the evidence, preserve the position and flag
-   it through the existing output surface unless the user authorized factual
-   revision. Delete only a **redundant gloss** that carries no position or useful
-   information. In review mode, keep the exact quote and offer a fact-only repair
-   through `Quote / Tell / Why / Fix`.
+   calibrated possibility. A source packet the user supplies with the request
+   authorizes factual alignment. If it shows a substantive author interpretation
+   exceeds the evidence, cut the unsupported bridge or restate it at the strength
+   the source allows, and say what changed in `Notes:`. Never change it silently.
+   Preserve the position and flag it instead only when the user asked you not to
+   change the substance. Without a packet, delete only a **redundant gloss** that
+   carries no position or useful information. In review mode, keep the exact
+   quote and offer a fact-only repair through `Quote / Tell / Why / Fix`.
 7. Make concrete details **already in the source** more prominent — surface the
    specific actor, action, example, or consequence the text already names, instead
    of leaving it buried under an abstraction. If the source has no such detail,

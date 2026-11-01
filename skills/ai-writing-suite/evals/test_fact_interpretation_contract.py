@@ -72,6 +72,21 @@ class SharedFactInterpretationContract(unittest.TestCase):
         self.assertIn("substantive author interpretation", read(POLISH))
         self.assertIn("redundant gloss", read(POLISH))
 
+    def test_user_supplied_source_authorizes_alignment(self):
+        # Skill-lift v0 (notes/eval-lift-2026-11-01): preserve-and-flag with a
+        # user-supplied source lost 2/6 vs 6/6 would-send, and contradicted the
+        # factbridge gold answers. A supplied source authorizes the repair.
+        for surface in (CONTRACT, POLISH):
+            with self.subTest(surface=surface.name):
+                body = read(surface)
+                self.assertIn("authorizes factual", body)
+                self.assertIn("Never", body)
+        self.assertIn("never make the change silently", read(CONTRACT).lower())
+        self.assertIn("never change it silently", read(POLISH).lower())
+        self.assertNotIn("preserve the position and flag\n   it through the existing output surface unless the user authorized",
+                         read(POLISH))
+        self.assertIn("Supplying the\nsource is the authorization", read(EXAMPLES))
+
     def test_final_pass_rechecks_relation_without_a_cue_word_ban(self):
         self.assertIn("fact-to-interpretation", read(FINAL_PASS))
         self.assertIn("source support", read(FINAL_PASS))
