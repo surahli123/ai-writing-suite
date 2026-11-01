@@ -186,6 +186,91 @@
       ],
       "fail_dimension": "meaning_preserved",
       "why": "FIX THE WORDING, KEEP THE CLAIM (edit restraint). 'game-changing experience' and 'masterclass' are slop wording, but they carry the author's stance: they rated the conference and that session highly. The after removes the tells by deleting the stance, so the post no longer says the author valued it. meaning_preserved: FAIL. A passing rewrite keeps the evaluation in plain words, e.g. 'The causal-inference session was the best talk I saw.'"
+    },
+    {
+      "id": "fail-fidelity-units-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "It's important to note that the new onboarding flow drove a meaningful uplift: 7-day retention rose 1.2 percentage points (95% CI 0.3 to 2.1), roughly 3% in relative terms. Revenue per user also moved, but the difference was not statistically significant (p=0.21). These results suggest the flow is worth ramping to 50%.",
+      "after": "7-day retention rose 1.2% with the new onboarding flow (95% CI 0.3 to 2.1), roughly 3% in relative terms. Revenue per user moved too, but the difference was not statistically significant (p=0.21). The results suggest the flow is worth ramping to 50%.",
+      "before_band_max": 30,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "meaning_preserved",
+      "fidelity_class": "units",
+      "why": "1.2 percentage points became '1.2%', which a reader takes as a relative change. meaning_preserved: FAIL (units of change)."
+    },
+    {
+      "id": "fail-fidelity-significance-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "It's important to note that the new onboarding flow drove a meaningful uplift: 7-day retention rose 1.2 percentage points (95% CI 0.3 to 2.1), roughly 3% in relative terms. Revenue per user also moved, but the difference was not statistically significant (p=0.21). These results suggest the flow is worth ramping to 50%.",
+      "after": "7-day retention rose 1.2 percentage points with the new onboarding flow (95% CI 0.3 to 2.1), roughly 3% in relative terms. The flow had no effect on revenue per user. The results suggest the flow is worth ramping to 50%.",
+      "before_band_max": 30,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "meaning_preserved",
+      "fidelity_class": "significance",
+      "why": "'not statistically significant (p=0.21)' became 'had no effect'. Absence of evidence was restated as evidence of absence. meaning_preserved: FAIL."
+    },
+    {
+      "id": "fail-fidelity-interval-strength-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "It's important to note that the new onboarding flow drove a meaningful uplift: 7-day retention rose 1.2 percentage points (95% CI 0.3 to 2.1), roughly 3% in relative terms. Revenue per user also moved, but the difference was not statistically significant (p=0.21). These results suggest the flow is worth ramping to 50%.",
+      "after": "7-day retention rose 1.2 percentage points with the new onboarding flow, roughly 3% in relative terms. Revenue per user moved too, but the difference was not statistically significant (p=0.21). The results show the flow is worth ramping to 50%.",
+      "before_band_max": 30,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "meaning_preserved",
+      "fidelity_class": "interval",
+      "why": "The confidence interval was dropped from the headline effect, and 'suggest' hardened to 'show'. meaning_preserved: FAIL."
+    },
+    {
+      "id": "fail-fidelity-scope-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "Moreover, it is worth highlighting that only 3 of the 12 regions saw roughly a 5% lift, and the incident review suggests the routing change may have contributed. We hope to ship the regional fix by mid-November.",
+      "after": "3 of the 12 regions saw a 5% lift, and the incident review suggests the routing change may have contributed. We hope to ship the regional fix by mid-November.",
+      "before_band_max": 30,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "meaning_preserved",
+      "fidelity_class": "scope",
+      "why": "'only' and 'roughly' were dropped. The sentence now reads as a neutral count of exact lifts rather than a limited, approximate result. meaning_preserved: FAIL."
+    },
+    {
+      "id": "fail-fidelity-hope-to-fact-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "Moreover, it is worth highlighting that only 3 of the 12 regions saw roughly a 5% lift, and the incident review suggests the routing change may have contributed. We hope to ship the regional fix by mid-November.",
+      "after": "Only 3 of the 12 regions saw roughly a 5% lift, and the incident review shows the routing change contributed. We'll ship the regional fix by mid-November.",
+      "before_band_max": 30,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "meaning_preserved",
+      "fidelity_class": "strength",
+      "why": "'suggests ... may have contributed' hardened to 'shows ... contributed', and 'We hope to ship' became the commitment 'We'll ship'. meaning_preserved: FAIL (attribution and intent strengthened)."
     }
   ]
 }

@@ -461,6 +461,44 @@
       "expect_baseline": "miss",
       "detector_blind": true,
       "subtle_tell": "No AI tell. Edit-restraint control (comms-polish 'Edit restraint'): every sentence is clear, specific and correct, so the correct polish returns the text unchanged. Any 'improvement' is an over-edit; see its gold-FAIL partner fail-restraint-overedit-en."
+    },
+    {
+      "id": "fidelity-01-ds-readout-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "It's important to note that the new onboarding flow drove a meaningful uplift: 7-day retention rose 1.2 percentage points (95% CI 0.3 to 2.1), roughly 3% in relative terms. Revenue per user also moved, but the difference was not statistically significant (p=0.21). These results suggest the flow is worth ramping to 50%.",
+      "after": "7-day retention rose 1.2 percentage points with the new onboarding flow (95% CI 0.3 to 2.1), roughly 3% in relative terms. Revenue per user moved too, but the difference was not statistically significant (p=0.21). The results suggest the flow is worth ramping to 50%.",
+      "before_band_max": 20,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "tells_removed",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "fidelity_check": true,
+      "subtle_tell": "Filler opener ('It's important to note') and an inflated causal frame ('drove a meaningful uplift'). The repair removes both and keeps every fidelity class intact: percentage points (not %), the interval, 'roughly', 'not statistically significant', and 'suggest'. Gold-FAIL partners in fixtures_fail.json (fail-fidelity-*) each break one class."
+    },
+    {
+      "id": "fidelity-02-scope-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "Moreover, it is worth highlighting that only 3 of the 12 regions saw roughly a 5% lift, and the incident review suggests the routing change may have contributed. We hope to ship the regional fix by mid-November.",
+      "after": "Only 3 of the 12 regions saw roughly a 5% lift, and the incident review suggests the routing change may have contributed. We hope to ship the regional fix by mid-November.",
+      "before_band_max": 30,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "tells_removed",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "fidelity_check": true,
+      "subtle_tell": "Connector filler ('Moreover, it is worth highlighting that'). The repair cuts the filler and keeps the scope word 'only', the approximator 'roughly', the attribution verb 'suggests', the modal 'may', and the intent 'hope to'."
     }
   ]
 }

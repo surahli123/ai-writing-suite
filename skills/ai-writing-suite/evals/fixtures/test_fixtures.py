@@ -76,7 +76,7 @@ class ScoreBands(unittest.TestCase):
         with contextlib.redirect_stdout(output):
             passes, fails = run_deterministic(load_fixtures())
 
-        self.assertEqual((passes, fails), (24, 0))
+        self.assertEqual((passes, fails), (26, 0))
         self.assertIn(
             "[PASS] overstep-04-selfqa-zh refusal: as declared",
             output.getvalue(),
@@ -1057,7 +1057,7 @@ class CombinedConfusionMatrix(unittest.TestCase):
         self.n_pass = len(self.pass_fixtures)
         self.n_fail = len(self.fail_fixtures)
         # Premise guard: the cohort sizes the hand-computed numbers below assume.
-        self.assertEqual((self.n_pass, self.n_fail), (24, 11))
+        self.assertEqual((self.n_pass, self.n_fail), (26, 16))
 
     def _reply(self, verdicts):
         """verdicts: {dim: 'PASS'|'FAIL'} defaults PASS for every other dim."""
@@ -1135,11 +1135,11 @@ class CombinedConfusionMatrix(unittest.TestCase):
     def test_mixed_realistic_judge_matches_hand_computed_numbers(self):
         # FAILs the first 3 gold-PASS fixtures (3 false positives) and the first 2
         # gold-FAIL fixtures (2 true positives); PASSes everything else.
-        # Hand-computed for the edit-restraint cohorts (24 PASS / 11 FAIL):
-        # TP=2 FN=9 TN=21 FP=3
-        #   sensitivity = 2/11  = 0.1818...
-        #   specificity = 21/24 = 0.875
-        #   balanced    = (2/11 + 21/24) / 2 = 0.5284...
+        # Hand-computed for the fidelity-class cohorts (26 PASS / 16 FAIL):
+        # TP=2 FN=14 TN=23 FP=3
+        #   sensitivity = 2/16  = 0.125
+        #   specificity = 23/26 = 0.8846...
+        #   balanced    = (2/16 + 23/26) / 2 = 0.5048...
         all_fail = {d: "FAIL" for d in self.ALL_DIMS}
 
         def reply(i):
@@ -1152,12 +1152,12 @@ class CombinedConfusionMatrix(unittest.TestCase):
             return self._reply({})                      # remaining gold-FAIL -> FN
         matrix, out = self._run_both(self._ordered_stub(reply))
         self.assertEqual((matrix["tp"], matrix["fn"], matrix["tn"], matrix["fp"]),
-                         (2, 9, 21, 3))
+                         (2, 14, 23, 3))
         sens, spec, bal = self._metrics(matrix)
-        self.assertAlmostEqual(sens, 2 / 11)
-        self.assertAlmostEqual(spec, 21 / 24)
-        self.assertAlmostEqual(bal, (2 / 11 + 21 / 24) / 2)
-        self.assertIn("balanced accuracy = 0.53", out)
+        self.assertAlmostEqual(sens, 2 / 16)
+        self.assertAlmostEqual(spec, 23 / 26)
+        self.assertAlmostEqual(bal, (2 / 16 + 23 / 26) / 2)
+        self.assertIn("balanced accuracy = 0.50", out)
 
     def test_unparseable_rep_is_skipped_not_folded_into_a_cell(self):
         # One gold-FAIL fixture returns garbage -> counted as skipped, absent from
