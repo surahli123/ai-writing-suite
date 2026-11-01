@@ -98,3 +98,19 @@ Paired item-level sign tests, counting how many items each arm did better or wor
    - Haiku as the arm model, since outside reports say rule lift is larger at lower tiers;
    - K≥3 fresh contexts per arm;
    - real de-identified DS drafts as items, which unblocks P3.
+
+## Step gate (pre-registered 2026-11-01, before any step was built)
+
+Every improvement step from `../research-best-practices-round2-2026-11-01.md` ships as its own PR. Each PR must pass this gate. The owner's rule: a step may not score worse than the existing skill (`main`), and may not score worse than no skill (`bare`).
+
+- **Arms.** `bare` and `main` reuse the v0 outputs in `result.json` for the 24 frozen items, so the baselines are fixed. `new` is the step's skill. It is generated fresh with `gen_arms.js` (Sonnet, `suite` kind, rooted at a clean checkout of the step's commit). Step-specific extra items, when a step adds any, get fresh `bare_extra` and `main_extra` outputs too. They are reported, but they are not part of the gate.
+- **Judging.** `step.py packets` writes two blind packets, each in a different label order. `judge.js` runs one judge per packet on the session model, with the same instructions as v0.
+- **Gate** (`step.py score`). Against *both* `main` and `bare`, the step must have:
+  - total would-send on the frozen set ≥ the baseline's;
+  - total meaning changes on the frozen set ≤ the baseline's;
+  - human-control would-send ≥ the baseline's;
+  - deterministic numbers lost, numbers added and hedges lost each ≤ the baseline's.
+- **Noise rule.** If any check fails, generate `new` once more from a fresh agent and judge both runs together. The gate then uses the mean of the two runs. If it still fails, the step does not ship as is. It is fixed or dropped, and that outcome is reported.
+- **Caveat.** These 24 items have now been seen while designing the fixes, so they work as a regression fence, not a held-out benchmark. Step-specific extra items are the evidence that a step helps.
+
+Each step's run is committed under `runs/<step>/`: arms, packets, perms, judges, `report.md`, `gate.json`.
