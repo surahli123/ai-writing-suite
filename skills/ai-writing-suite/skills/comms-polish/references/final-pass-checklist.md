@@ -21,6 +21,17 @@ matter how good the prose reads. This layer is never traded off against style.
   and any note says support was not assessed.
 - **The author's stance, attributions, and commitments survive.** Wording may
   change; who claims what, and how the author evaluates it, may not.
+- **The document agrees with itself.** Applies to multi-paragraph documents with
+  numbers, such as readouts, memos, and incident notes. Check four things:
+  - every number repeated across the lead, body, and tables matches;
+  - shares of a whole add to about 100%;
+  - a defined metric keeps one name throughout;
+  - whatever the title or lead promises, the body delivers.
+
+  **Report** each conflict with its locations, in notes or as a review finding.
+  Never pick a winner yourself; which number is right is the author's call. If
+  you can run Python, `python3 tools/consistency_check.py <file>` lists the
+  numeric conflicts. Run it from the suite root; it is stdlib only.
 
 **L1b — Restraint (run before style).**
 
