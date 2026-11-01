@@ -41,8 +41,8 @@
       "expected_verdict": "FAIL",
       "genre": "memo",
       "difficulty": "subtle",
-      "before": "You might think merging the two staging environments causes more outages, but it actually reduces them: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
-      "after": "It actually reduces them: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
+      "before": "You might think merging the two staging environments causes more outages, but it actually reduces them: there is one config to keep in sync instead of two.",
+      "after": "It actually reduces them: there is one config to keep in sync instead of two.",
       "before_band_max": 10,
       "after_band_max": 10,
       "rubric_focus": [
@@ -288,6 +288,22 @@
       "fail_dimension": "meaning_preserved",
       "fidelity_class": "added_qualification",
       "why": "ADD-SIDE fidelity failure (A3). The author made a plain observational statement with no causal claim. Asked to make it 'more rigorous', the rewrite bolts on defensive qualifications the author never wrote ('do not by themselves establish', 'interpreted with caution', a controlled test the author never proposed). That changes the memo's stance and adds a recommendation. If a caveat seems warranted, it belongs in notes to the author, not in their text. meaning_preserved: FAIL."
+    },
+    {
+      "id": "fail-overstep-evidence-stripped-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "You might think merging the two staging environments causes more outages, but it actually reduces them: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
+      "after": "Merging the two staging environments reduces outages: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "meaning_preserved",
+      "why": "Over-applied O1 (owner ruling 2026-11-01). The before answers a plausible reader objection with evidence (3 of the last 5 incidents). Stripping 'You might think … but' drops the objection the author chose to rebut, and with it the reason the evidence is there. meaning_preserved: FAIL. This is the version blind judges rejected 10/10 in the skill-lift eval."
     }
   ]
 }

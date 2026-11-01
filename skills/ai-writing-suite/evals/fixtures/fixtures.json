@@ -240,8 +240,8 @@
       "expected_verdict": "PASS",
       "genre": "memo",
       "difficulty": "subtle",
-      "before": "You might think merging the two staging environments causes more outages, but it actually reduces them: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
-      "after": "Merging the two staging environments reduces outages: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
+      "before": "You might think merging the two staging environments causes more outages, but it actually reduces them: there is one config to keep in sync instead of two.",
+      "after": "Merging the two staging environments reduces outages: there is one config to keep in sync instead of two.",
       "before_band_max": 10,
       "after_band_max": 10,
       "rubric_focus": [
@@ -252,7 +252,7 @@
       ],
       "expect_baseline": "miss",
       "detector_blind": true,
-      "subtle_tell": "Over-stepping: presumed-cognition with a manufactured prior ('You might think X, but'). This is the payoff_clear ANCHOR: the PASS rewrite deletes the presumption AND leaves the surviving claim complete on its own ('Merging ... reduces outages: ...'). Its minimal-pair FAIL partner over-strips to 'It actually reduces them: ...', where 'it/them' lost the antecedent the deleted presumption supplied — that stub lives in test_fixtures.py::PayoffClearHardNegative. Detector scores 0 -> judge-only."
+      "subtle_tell": "Over-stepping: presumed-cognition with a manufactured prior ('You might think X, but'). This is the payoff_clear ANCHOR: the PASS rewrite deletes the presumption AND leaves the surviving claim complete on its own ('Merging ... reduces outages: ...'). Its minimal-pair FAIL partner over-strips to 'It actually reduces them: ...', where 'it/them' lost the antecedent the deleted presumption supplied — that stub lives in test_fixtures.py::PayoffClearHardNegative. Detector scores 0 -> judge-only. [2026-11-01: the before no longer carries data answering the presumed objection. Under the owner's ruling, an objection answered with concrete evidence is kept; that case is now overstep-07-evidence-answered-en. Without evidence, deleting the presumption stays correct.]"
     },
     {
       "id": "overstep-06-strawman-en",
@@ -499,6 +499,24 @@
       "detector_blind": true,
       "fidelity_check": true,
       "subtle_tell": "Connector filler ('Moreover, it is worth highlighting that'). The repair cuts the filler and keeps the scope word 'only', the approximator 'roughly', the attribution verb 'suggests', the modal 'may', and the intent 'hope to'."
+    },
+    {
+      "id": "overstep-07-evidence-answered-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "You might think merging the two staging environments causes more outages, but it actually reduces them: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
+      "after": "You might think merging the two staging environments causes more outages, but it actually reduces them: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "voice_kept",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Owner ruling 2026-11-01 (docs/decisions-2026-11-01.md): a presumed objection ('You might think X, but') is NOT the O1 tell when X is a plausible objection a real reader could hold AND the sentence answers it with concrete evidence (here: 3 of the last 5 incidents traced to drift). The correct polish keeps it. Blind judges in the skill-lift eval rejected the stripped version 10/10. Gold-FAIL partner: fail-overstep-evidence-stripped-en."
     }
   ]
 }
