@@ -86,7 +86,30 @@ Pick the mode from the user's request. If unclear, use `rewrite`.
 | `detect` | The user wants to know what sounds AI-written. | Findings and examples, no rewrite. |
 | `review` | The user wants prioritized writing feedback. | Findings first, with examples. |
 | `rewrite` | The user pasted text and wants a polished version. | Polished text only unless notes are requested. |
+| `light-edit` | The user asks for a light edit, a proofread, minimal changes, or to keep their voice. | Only sentences with a named failure change; clean text comes back unchanged. |
 | `edit` | The user asks to modify a file. | Targeted file edits plus verification. |
+
+## Edit restraint (all modes that change text)
+
+Unchanged is a valid result. Every sentence starts as kept.
+
+- **Change a sentence only for a failure you can name.** Valid failures: a grammar
+  or spelling error; an ambiguity; a factual mismatch with a source the user
+  supplied; a house-style or preset rule; filler that carries nothing; or a
+  *cluster* of AI tells. A single catalog match is not a failure on its own; apply
+  the cluster guardrail and the false-positive gate. In `light-edit`, filler and
+  tell clusters count only when they hurt clarity.
+- **Fix the wording, keep the claim.** When slop wording carries the author's
+  stance (an evaluation like "it was valuable"), an attribution ("analysts
+  expect"), a commitment, or a conclusion, rewrite the words and keep that
+  content. Never move an attributed claim onto the author.
+- **Restructure only when it helps a judgment document.** Answer-first or pyramid
+  reordering is for documents that ask the reader to accept a conclusion or
+  decision. Leave timelines, runbooks, logs, tutorials, thank-you notes and
+  exploratory notes in their own order. Keep terse genres (Slack, status,
+  incident updates) terse; do not expand bullets into prose.
+- **If nothing has a named failure, return the text unchanged** and say so in one
+  line of notes.
 
 ## Voice Matching
 

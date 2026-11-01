@@ -443,6 +443,24 @@
         "/healthz"
       ],
       "subtle_tell": "Artifact-editing slice: compact a rendered status-card hotspot without dropping its release, date, or endpoint. Every must_preserve literal appears verbatim in both before and after, so the edit removes only redundant framing and invents no text. The fixture is detector_blind because it gates fact preservation rather than detector calibration; it must stay outside the 3/8 denominator."
+    },
+    {
+      "id": "restraint-01-clean-human-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "Quick update on the Q3 dashboard migration. We moved 41 of the 52 reports; the last 11 depend on the finance tables, which won't be ready until Oct 20. Until then, keep using the old dashboard for anything revenue-related. Ping me if a report you need is missing from the new one.",
+      "after": "Quick update on the Q3 dashboard migration. We moved 41 of the 52 reports; the last 11 depend on the finance tables, which won't be ready until Oct 20. Until then, keep using the old dashboard for anything revenue-related. Ping me if a report you need is missing from the new one.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "voice_kept",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "No AI tell. Edit-restraint control (comms-polish 'Edit restraint'): every sentence is clear, specific and correct, so the correct polish returns the text unchanged. Any 'improvement' is an over-edit; see its gold-FAIL partner fail-restraint-overedit-en."
     }
   ]
 }

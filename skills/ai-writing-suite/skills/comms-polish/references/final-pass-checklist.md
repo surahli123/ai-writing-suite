@@ -19,6 +19,17 @@ matter how good the prose reads. This layer is never traded off against style.
   `reflecting`, `meaning`, or `表明`: this is a relation check, not a word blacklist.
   When the draft was the only source, substantive author analysis was preserved
   and any note says support was not assessed.
+- **The author's stance, attributions, and commitments survive.** Wording may
+  change; who claims what, and how the author evaluates it, may not.
+
+**L1b — Restraint (run before style).**
+
+- **Reversion test:** compare each changed sentence with the original. If the
+  original was correct, clear, and not padded, restore it.
+- **Cut check:** after any deletion, re-read the neighbors for dangling
+  references ("this", "them", "these results") and broken transitions.
+- **Unchanged is allowed:** if no sentence had a named failure (see SKILL.md,
+  Edit restraint), the right output is the input.
 
 **L2 — Slop removal (style).**
 
