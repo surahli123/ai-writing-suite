@@ -49,5 +49,14 @@ order, or tier names themselves.
 4. **Score — only when asked, always last.** When the user requested a score,
    place the 0-100 AI-tell score as the **final non-blank line of the entire
    report** — nothing follows it, no trailing commentary or sign-off —
-   `**AI-tell score:** NN/100`, scored per the Scoring table. Never as the lead;
-   omit it entirely when no score was requested.
+   `**AI-tell score:** NN/100 (surface patterns only, not authorship)`, scored
+   per the Scoring table. Never as the lead; omit it entirely when no score was
+   requested. The line **directly before** the score (ignoring blank lines) is
+   the coverage statement, `**Coverage:** <what was checked by rule, what by
+   judgment, what was not checked>`, so the reader knows what the number does
+   and does not cover.
+
+5. **No authorship verdicts, anywhere.** The report describes the text, never its
+   origin. Never write that the draft "was written by AI", "is AI-generated", or
+   that "detectors will catch it". Findings say *reads as* or *pattern*, not
+   *was produced by*.

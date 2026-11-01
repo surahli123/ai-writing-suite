@@ -282,6 +282,12 @@ When neither exists, use the lightest voice that fits the context:
     "expects" never becomes "will", and "we hope to" or "we plan to" never
     becomes "we will".
 - Do not remove caveats that carry real uncertainty.
+- **Do not add caveats the source lacks either.** No new qualifications,
+  limits, or negative scoping ("this does not by itself establish…", "results
+  should be interpreted with caution"), even when the user asks for something
+  "more rigorous" or "review-proof". A rewrite that hedges a claim the author
+  stated plainly changes its meaning as surely as one that hardens a hedge. If a
+  claim looks under-supported, say so in notes and let the author decide.
 - Do not polish away legal, medical, financial, or safety warnings.
 - Do not rewrite quoted text unless the user asks.
 
@@ -290,16 +296,27 @@ For worked before/after examples, read
 
 ## Scoring
 
-When the user asks for a score, estimate AI-writing density on a 0-100 scale
-(lower is more human). Do not claim detector certainty.
+When the user asks for a score, estimate **AI-pattern density** on a 0-100 scale
+(lower = fewer catalogued patterns). The score describes surface patterns in this
+text. It is **not** evidence of who or what wrote it: human writers trip these
+patterns, AI-edited human text scores differently from AI-drafted text, and no
+detector can tell editing from drafting. Never state or imply authorship ("this
+was written by AI"), and never present the number as a detector prediction.
+Named, quoted findings are the evidence; the number only summarizes their density.
 
-| Score | Verdict | Meaning |
+| Score | Band | Meaning |
 | --- | --- | --- |
-| 0-20 | Pristine | Reads like a specific human wrote it. |
-| 21-40 | Mostly human | One or two minor tells, easy to clean. |
-| 41-60 | Mixed | Half-AI half-human; partial editing likely. |
-| 61-80 | AI-leaning | Multiple structural tells; detectors will probably catch it. |
-| 81-100 | Pure AI smell | Wholesale chatbot output with no editing. |
+| 0-20 | Clean | Few or no catalogued patterns. |
+| 21-40 | Light | One or two minor patterns, easy to clean. |
+| 41-60 | Mixed | Patterns in several places; partial cleanup needed. |
+| 61-80 | Heavy | Multiple structural patterns throughout. |
+| 81-100 | Saturated | Patterns in nearly every sentence. |
+
+When you give a score in a report, put a `**Coverage:**` line directly before
+it. The Coverage line says which categories you checked by rule, which by
+judgment, and what you did not check. End the score line with "(surface
+patterns only, not authorship)". The exact format is in
+`references/audit-report-contract.md`.
 
 Weight structural tells (rhythm uniformity, reshuffle immunity, treadmill effect)
 above vocabulary hits — structure is the harder signal to mask.

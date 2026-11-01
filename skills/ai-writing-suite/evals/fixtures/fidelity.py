@@ -22,6 +22,12 @@ Classes:
   interval      `before` carries a confidence interval; `after` drops it
   strength      a hedged or intent verb in `before` hardens in `after`
                 (suggests->shows, may->will, hope/plan to->will, expect->will)
+  added_qualification
+                `after` adds a defensive qualification `before` never had
+                ("does not by itself establish", "interpreted with caution",
+                "further research is needed", "not necessarily"); the add-side
+                twin of `strength` (Liao et al. 2026: review-flavored prompts
+                make models add these, and AI judges reward them)
 """
 import re
 
@@ -39,6 +45,14 @@ _STRENGTH = (
     (re.compile(r"\b(?:hope|plan|aim|intend)s? to\b", re.I), re.compile(r"\bwill\b|\b\w+'ll\b", re.I), "hope/plan to->will"),
     (re.compile(r"\bexpects?\b|\bexpected to\b", re.I), re.compile(r"\bwill\b|\b\w+'ll\b", re.I), "expect->will"),
 )
+
+
+_ADDED_QUAL = re.compile(
+    r"\b(?:do(?:es)? not (?:by (?:itself|themselves) |on (?:its|their) own )?(?:establish|prove|imply|guarantee)"
+    r"|(?:should|must) be interpreted with caution|interpret(?:ed)? with caution"
+    r"|further (?:research|work|analysis|study) (?:is|would be) (?:needed|required|warranted)"
+    r"|not necessarily|correlation (?:is not|does not imply) causation"
+    r"|(?:by|on) (?:itself|themselves|its own|their own),? (?:this|these|it|they) (?:do|does) not)\b", re.I)
 
 
 def _has_word(text, w):
@@ -66,4 +80,7 @@ def fidelity_violations(before, after):
     for weak, strong, label in _STRENGTH:
         if weak.search(before) and not weak.search(after) and strong.search(after) and not strong.search(before):
             out.append(("strength", label))
+    added = {m.group(0).lower() for m in _ADDED_QUAL.finditer(after)} - {m.group(0).lower() for m in _ADDED_QUAL.finditer(before)}
+    for q in sorted(added):
+        out.append(("added_qualification", f"added '{q}'"))
     return out

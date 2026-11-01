@@ -51,6 +51,12 @@ _FIELD_LINE = re.compile(r"^\*\*(Quote|Tell|Why|Fix):\*\*\s*(.*)$")
 _TELL_ID = re.compile(r"^([A-Za-z]+\d+)\s+[—-]\s+")
 _LEAD = re.compile(r"^\*\*Biggest problem:\*\*\s*(.+)$")
 _SCORE = re.compile(r"^\*\*AI-tell score:\*\*\s*(\d{1,3})\s*/\s*100\b")
+# Authorship verdicts the report must never make (A4, notes/research-landscape-2026-11-01.md).
+_AUTHORSHIP = re.compile(
+    r"\b(?:was|were|is|are)\s+(?:likely\s+|probably\s+|clearly\s+|definitely\s+)?"
+    r"(?:written|generated|produced)\s+by\s+(?:an?\s+)?(?:AI|LLM|ChatGPT|chatbot|language model|model)\b"
+    r"|\bdetectors?\s+will\s+(?:probably\s+|likely\s+)?(?:catch|flag)",
+    re.I)
 _H2 = re.compile(r"^##\s+(.+?)\s*$")
 _BULLET = re.compile(r"^-\s+", re.MULTILINE)
 _FENCE = re.compile(r"`[^`]+`")
@@ -277,5 +283,21 @@ def check_report(text, catalog_ids):
             violations.append(
                 "score: must be the final non-blank line of the report "
                 "(trailing content found after it)")
+        if "not authorship" not in lines[score_idx].lower():
+            violations.append(
+                "score: line must say it measures surface patterns, "
+                "'not authorship'")
+        prev = next((i for i in range(score_idx - 1, -1, -1) if lines[i].strip()), None)
+        if prev is None or not lines[prev].strip().startswith("**Coverage:**"):
+            violations.append(
+                "score: the line directly before it must be a **Coverage:** line")
+
+    # 5. No authorship verdicts anywhere in the report (score epistemics, A4).
+    for i, ln in enumerate(lines):
+        if _AUTHORSHIP.search(ln):
+            violations.append(
+                f"authorship verdict on line {i + 1}: describe patterns, "
+                "never who or what wrote the text")
+            break
 
     return (not violations), violations

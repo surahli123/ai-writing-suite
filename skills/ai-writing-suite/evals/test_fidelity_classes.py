@@ -28,13 +28,20 @@ MUTANTS = [
     ("strength", "The rollback may fix latency.", "The rollback will fix latency.", "Rolling back may fix latency."),
     ("strength", "We hope to ship by Friday.", "We'll ship by Friday.", "We hope to ship it by Friday."),
     ("strength", "Analysts expect demand to soften.", "Demand will soften.", "Analysts expect demand to soften next year."),
+    ("added_qualification", "Retention rose 1.2 pp after the redesign.",
+     "Retention rose 1.2 pp after the redesign, though this does not by itself establish that the redesign caused it.",
+     "After the redesign, retention rose 1.2 pp."),
+    ("added_qualification", "The new model cut false positives by 30%.",
+     "The new model cut false positives by 30%, but these results should be interpreted with caution.",
+     "False positives fell 30% with the new model."),
 ]
 
 
 class FidelityMutants(unittest.TestCase):
     def test_every_class_has_a_mutant(self):
         self.assertEqual({c for c, *_ in MUTANTS},
-                         {"scope", "approximator", "units", "significance", "interval", "strength"})
+                         {"scope", "approximator", "units", "significance", "interval", "strength",
+                          "added_qualification"})
 
     def test_bad_rewrites_are_caught_for_their_class(self):
         for cls, before, bad, _ in MUTANTS:
