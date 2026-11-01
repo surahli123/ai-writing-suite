@@ -30,6 +30,18 @@ flagging anything here.
 - **Before:** You probably assume more data always means a better model, but data
   quality matters more than quantity.
 - **After:** Data quality matters more than quantity for model performance.
+- **Validity condition (owner ruling 2026-11-01):** a presumed objection is *not*
+  this tell, so keep it, when both of these hold:
+  - (a) the belief is a plausible objection a real reader in this audience could
+    hold;
+  - (b) the same or the next sentence answers it with concrete evidence: a
+    number, an observed incident, or a source.
+
+  Example to keep: "You might think merging the two staging environments causes
+  more outages, but it reduces them: one config instead of two, and we traced 3
+  of the last 5 incidents to drift." Without (b), the setup is the tell. When in
+  doubt, flag it as advisory; do not strip it. Fixture pair:
+  `overstep-07-evidence-answered-en` / `fail-overstep-evidence-stripped-en`.
 - **Sources:** anti-vibe (反代入式越位感, bilingual).
 
 ---
