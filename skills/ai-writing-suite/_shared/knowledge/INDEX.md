@@ -29,12 +29,16 @@
 | `audience.md` | Write for one specific reader and their job, not "everyone." | audience, reader, who is this for, target reader, stakeholder, exec vs engineer, jargon level, too technical, condescending, tailor |
 | `tone.md` | Sound like a competent colleague: direct, no sycophancy, no hype, varied rhythm. | tone, voice, formal, casual, sounds robotic, sounds like AI, stiff, corporate, hype, salesy, sycophantic, cheesy, register, how it sounds |
 | `revision.md` | Treat the first draft as raw; fix it in editing passes; final tell-sweep. | revision, editing, revise, edit, second draft, polish, proofread, rewrite, read aloud, cut length, final pass, self-edit, improve a draft |
+| `experiment-readout.md` | Readouts open with the verdict and validity; every effect carries baseline, unit, interval, n, window; three distinct nulls. | experiment readout, A/B test, ab test, readout, results write-up, effect size, confidence interval, statistical significance, not significant, null result, underpowered, lift, holdout analysis, launch review |
+| `decision-memo.md` | Decision memos owe the call, rejected options, trade-off and change trigger; status updates owe the call, the ask, owned and dated items. | decision memo, recommendation, proposal, go/no-go, options, trade-off, reversible, ADR, status update, weekly update, 3P, progress report, blocked, ask |
+| `incident-note.md` | Incident notes separate facts, hypotheses and unknowns; postmortems need a single-timezone timeline, cause vs symptom, owned actions. | incident, incident update, postmortem, post-mortem, outage, root cause, hypothesis, timeline, on-call, data quality incident, blameless, action items |
 
 ## Categories (for browsing, not required for retrieval)
 
 - **Sentence-level:** `clarity.md`, `tone.md`
 - **Document-level:** `structure.md`, `audience.md`
 - **Process:** `revision.md`
+- **Data-science genres:** `experiment-readout.md`, `decision-memo.md`, `incident-note.md`
 
 ## Provenance
 

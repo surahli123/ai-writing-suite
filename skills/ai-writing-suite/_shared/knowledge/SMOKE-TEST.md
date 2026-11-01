@@ -144,7 +144,7 @@ open X?"). This case represents that path: a real question a user would ask the 
 > "How should I open a status update for an exec — where do I put the main point?"
 
 **Expected entry:** `structure.md`
-**Expected files:** `structure.md`
+**Expected files:** `structure.md`, `decision-memo.md`
 **Expected passage:**
 > BLUF — bottom line up front. Open with the decision, result, or ask.
 
@@ -153,6 +153,11 @@ goes — which is exactly `structure.md`'s domain. Its Keywords match "where" (f
 "where to start") and its Summary matches "point" (from "Lead with the point").
 `audience.md` scores only on "exec" (one keyword, "exec vs engineer") and loses on
 total overlap, so the question-path query still resolves to the ordering entry.
+*Updated 2026-11-01 (step 6, DS genre entries):* `decision-memo.md` now ties
+`structure.md` on the same overlap ("status update" plus "the call" / "point"). Its
+status-update slots ("the call first, then the ask") answer this question too, so
+the frozen protocol's genuine-tie rule applies: open both and synthesize. The
+tie is the intended behavior, not a regression.
 
 ---
 
