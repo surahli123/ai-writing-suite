@@ -107,3 +107,25 @@ have W ≥ 0.85 and S ≤ 0.10, absolute.
 - **Power is limited.** With 24 items the design detects only large
   differences (roughly 0.15 or more on S or W). Smaller effects come out
   "inconclusive", and the report says so.
+
+## Addendum (2026-11-01, before run 2)
+
+Run 1 triggered BISECT. The pairwise loss was 3 items to 10. The judges' written
+reasons localized it to step 1's restraint: `new` returned "make this read better"
+requests unchanged, where `main` made a light readability polish. The owner ruled
+"allow light polish". Step 1 now calibrates restraint to the request type, and the
+fix is merged forward into steps 2–8 (final tip `7f230eb`).
+
+Run 2 re-tests the final tip with the **same rules**:
+
+- 3 fresh `new` generations on the same 24 held-out items;
+- absolute judging of `new` only, reusing run 1's absolute judgments of
+  `main`/`bare`, which are per-candidate and independent of the other arms;
+- pairwise `new` run k against run 1's `main` run k, k = 1..3, in both
+  orders.
+
+**Disclosed contamination.** The orchestrator read run 1's judge reasons on
+these held-out items while designing the fix. The fix is generic: request-type
+calibration, not item-specific wording. Still, run 2 is no longer a pure
+held-out test; read it as a confirmation of direction. If run 2 shows no WORSE,
+the step PRs open, with this caveat stated in each PR.
