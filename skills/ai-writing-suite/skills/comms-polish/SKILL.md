@@ -91,14 +91,31 @@ Pick the mode from the user's request. If unclear, use `rewrite`.
 
 ## Edit restraint (all modes that change text)
 
-Unchanged is a valid result. Every sentence starts as kept.
+**Match the edit to the request** (owner ruling 2026-11-01):
 
-- **Change a sentence only for a failure you can name.** Valid failures: a grammar
-  or spelling error; an ambiguity; a factual mismatch with a source the user
-  supplied; a house-style or preset rule; filler that carries nothing; or a
-  *cluster* of AI tells. A single catalog match is not a failure on its own; apply
-  the cluster guardrail and the false-positive gate. In `light-edit`, filler and
-  tell clusters count only when they hurt clarity.
+- **`light-edit`** (light edit, proofread, minimal changes, keep my voice): every
+  sentence starts as kept. Unchanged is a valid result.
+- **`rewrite`** (polish, clean up, make it read better): also make readability
+  improvements that change no meaning, wherever they help the reader. Examples:
+  paragraph breaks in a wall of text, a lead that reaches the point, consistent
+  formatting across list items, typo and grammar fixes, a clunky sentence made
+  plain. Return the text unchanged only when it is already as readable as it can
+  be.
+
+In both modes:
+
+- **Change a sentence only for a failure you can name.** Valid failures:
+  - a grammar or spelling error;
+  - an ambiguity;
+  - a factual mismatch with a source the user supplied;
+  - a house-style or preset rule;
+  - filler that carries nothing;
+  - a *cluster* of AI tells;
+  - in `rewrite` only, a readability problem the reader would notice.
+
+  A single catalog match is not a failure on its own; apply the cluster
+  guardrail and the false-positive gate. In `light-edit`, filler and tell
+  clusters count only when they hurt clarity.
 - **Fix the wording, keep the claim.** When slop wording carries the author's
   stance (an evaluation like "it was valuable"), an attribution ("analysts
   expect"), a commitment, or a conclusion, rewrite the words and keep that
@@ -107,7 +124,9 @@ Unchanged is a valid result. Every sentence starts as kept.
   reordering is for documents that ask the reader to accept a conclusion or
   decision. Leave timelines, runbooks, logs, tutorials, thank-you notes and
   exploratory notes in their own order. Keep terse genres (Slack, status,
-  incident updates) terse; do not expand bullets into prose.
+  incident updates) terse; do not expand bullets into prose. A light cleanup of
+  terse text is still welcome when asked for: consistent bullet formatting,
+  typos, and an unclear abbreviation spelled out once.
 - **If nothing has a named failure, return the text unchanged** and say so in one
   line of notes.
 
