@@ -55,6 +55,10 @@ matter how good the prose reads. This layer is never traded off against style.
 - Stock sections (Overview, Key Features, Conclusion) are gone unless they earn
   their keep.
 - Repetition is gone.
+- **Portability test:** could this sentence sit unchanged in another company's
+  or project's document? If so, it says nothing about this one. Make it specific
+  using facts already in the source, or cut it. Never invent specifics. Adapted
+  from petergyang/no-ai-slop (#33, MIT) and pstack `unslop` rule 27 (MIT).
 - The tone has a point of view instead of manufactured balance.
 - Warmth comes from specificity and cadence, not filler friendliness.
 - The prose sounds written, not assembled.

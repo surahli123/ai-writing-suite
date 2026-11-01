@@ -227,3 +227,22 @@ priority to fix in any professional or factual document.
   regex backs this entry; it is a quality-first, judge-only signal.
 - **Sources:** Shreya Shankar thread (@sh_reya), cross-confirmed for English,
   Polish, and Mandarin by three independent repliers (research 2026-07-14).
+
+### S11 — Faux-insight setups
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | judge |
+
+- **Tell:** A lone-expert frame that flatters the reader by promising hidden
+  knowledge before saying something ordinary: "What nobody tells you about…",
+  "The part everyone misses:", "What most people get wrong is…", "Here's what
+  they don't teach you". This differs from O1/O2, which presume what the reader
+  thinks; S11 presumes the writer has a secret.
+- **Fix:** Delete the frame and state the point. If the point really is little
+  known, say who doesn't know it and why ("Most teams skip the holdout check
+  because the dashboard hides it").
+- **Validity condition:** a real, documented gap ("the vendor docs omit the rate
+  limit") is not this tell.
+- **Sources:** petergyang/no-ai-slop (MIT, Peter Yang, 2026); forjd/better-writing
+  (MIT); round-1 research A5(a).

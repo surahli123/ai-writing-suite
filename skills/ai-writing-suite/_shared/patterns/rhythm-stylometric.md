@@ -21,9 +21,16 @@ personality chasing clean prose.
 - **Tell:** Detectors measure "burstiness" — sentence-length variance. Human
   writing has high burstiness; AI has low. If most sentences run 15-25 words with
   no short punches and no long flowing thoughts, it reads robotic.
-- **Fix:** Mix short (3-8 words), medium (12-20), and long (25-40) in every
-  paragraph. Never 3+ consecutive sentences of similar length. Reach for genuine
-  syntactic variation first — fragments, clause inversion, a long thought given
+- **Fix:** Let rhythm follow the content. Do not edit to hit a length band, and
+  do not count words per sentence. A short sentence earns its place by carrying a
+  result or a turn; a long one by carrying a qualified idea that needs room. When
+  a passage is monotone because every sentence makes the same move, vary the
+  *moves* (claim, evidence, consequence), and length follows. 2026 evidence
+  (second-hand) says sentence-length variance is a weak detection signal, and
+  that instructing models to "vary sentence length" raised detector scores. So
+  R1 stays a detection signal, never a rewrite target, and the false-positive
+  gate applies: a human text with uniform sentences is not rewritten for
+  variance. Reach for genuine syntactic variation first — fragments, clause inversion, a long thought given
   room. Use a question only when the question itself carries reader value, never
   as a bare rhythm device: a question dropped in purely to break monotony trips C8
   (rhetorical-question openers) in `communication-artifacts.md`. Let one sentence

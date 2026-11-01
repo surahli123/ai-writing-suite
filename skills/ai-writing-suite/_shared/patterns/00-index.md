@@ -58,16 +58,16 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 <!-- BEGIN GENERATED: inventory (aiws/catalog.py) -->
 | File | Entries |
 | --- | --- |
-| [`lexical-tells.md`](lexical-tells.md) | 6 (L1–L6) |
-| [`significance-attribution.md`](significance-attribution.md) | 10 (S1–S10) |
-| [`structural-tells.md`](structural-tells.md) | 12 (T1–T12) |
+| [`lexical-tells.md`](lexical-tells.md) | 7 (L1–L7) |
+| [`significance-attribution.md`](significance-attribution.md) | 11 (S1–S11) |
+| [`structural-tells.md`](structural-tells.md) | 13 (T1–T13) |
 | [`hedging-filler.md`](hedging-filler.md) | 10 (H1–H10) |
 | [`punctuation-formatting.md`](punctuation-formatting.md) | 10 (F1–F10) |
 | [`communication-artifacts.md`](communication-artifacts.md) | 11 (C1–C11) |
 | [`rhythm-stylometric.md`](rhythm-stylometric.md) | 5 (R1–R5) |
 | [`overstepping-presumption.md`](overstepping-presumption.md) | 4 (O1–O4) |
 | [`narrative-shape.md`](narrative-shape.md) | 4 (N1–N4) |
-| **Total** | **72** |
+| **Total** | **75** |
 <!-- END GENERATED: inventory -->
 
 (Plus L1's three vocabulary tiers in `lexical-tells.md`.)
@@ -89,6 +89,7 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 | L4 | False ranges | medium | judge |
 | L5 | Hyphenated-pair overuse | low | judge |
 | L6 | Hollow / "real-actual" intensifiers | low | regex |
+| L7 | Mannered prose (metaphor where a literal phrase exists) | medium | advisory |
 | S1 | Significance inflation | high | regex |
 | S2 | Symbolic gloss / meaning-telling | medium | judge |
 | S3 | Novelty inflation | high | regex |
@@ -99,6 +100,7 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 | S8 | Speculative gap-filling | high | judge |
 | S9 | Consultant-speak / business jargon | medium | judge |
 | S10 | Invented jargon / coined pseudo-terms | medium | advisory |
+| S11 | Faux-insight setups | medium | judge |
 | T1 | Rule of three | low | judge |
 | T2 | Negative parallelism / tailing negation | low | judge |
 | T3 | Formulaic challenges section | medium | regex |
@@ -111,6 +113,7 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 | T10 | Treadmill effect (low information density) | medium | judge |
 | T11 | Fragmented headers | low | judge |
 | T12 | Diff-anchored writing | low | judge |
+| T13 | Over-compression (telegraphic text a rewrite introduced) | low | advisory |
 | H1 | Filler phrases | medium | regex |
 | H2 | Excessive / stacked hedging | medium | regex |
 | H3 | Generic positive conclusions | medium | regex |

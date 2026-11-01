@@ -1,6 +1,6 @@
 # Attribution & Licenses
 
-AI Writing Suite is a consolidated writing-assistant skill that absorbs and extends patterns, templates, and methodologies from seven open-source projects, all MIT-licensed. This document preserves the copyright and license notice for each source.
+AI Writing Suite is a consolidated writing-assistant skill that absorbs and extends patterns, templates, and methodologies from ten open-source projects, all MIT-licensed. This document preserves the copyright and license notice for each source.
 
 ## Source Projects
 
@@ -105,6 +105,51 @@ revision: upstream `main` HEAD at the absorption timestamp was `5186579d6c0a`
 **Contribution:** 30-pattern catalog derived from Wikipedia's "Signs of AI writing," with structured Tell / Fix / example format.
 
 **Used in:** Consolidated pattern catalog (`_shared/patterns/`), detection baseline, pattern structure conventions.
+
+---
+
+### 8. no-ai-slop
+
+**Author:** Peter Yang  
+**Repository:** [petergyang/no-ai-slop](https://github.com/petergyang/no-ai-slop)  
+**License:** MIT  
+**Copyright:** Copyright (c) 2026 Peter Yang
+
+**Contribution:** Faux-insight setup pattern, statement-form colon reveal, "delete the kicker, don't rewrite it", and the portability test. Ideas re-worded; no text copied.
+
+**Used in:** S11, C7 (statement form), H3 fix prose, final-pass portability test.
+
+---
+
+### 9. pstack (cursor/plugins)
+
+**Author:** Lauren Tan  
+**Repository:** [cursor/plugins `pstack`](https://github.com/cursor/plugins/tree/main/pstack)  
+**License:** MIT  
+**Copyright:** Copyright (c) 2026 Lauren Tan
+
+**Contribution:** `unslop` rules 27 (portability), 32 (mannered prose), 33 (over-compression). Ideas re-worded; no text copied.
+
+**Used in:** L7, T13, final-pass portability test.
+
+---
+
+### 10. better-writing (Forjd)
+
+**Author:** Forjd  
+**Repository:** [forjd/better-writing](https://github.com/forjd/better-writing)  
+**License:** MIT  
+**Copyright:** Copyright (c) 2026 Forjd
+
+**Contribution:** Corroborating source for faux-insight setups and kicker deletion; eval-method ideas (dev/held-out split, progressive-disclosure read tracing) recorded in `notes/`.
+
+**Used in:** S11 (corroboration).
+
+---
+
+### Quoted vendor guidance (not a license grant)
+
+L7 quotes, with attribution, the definition of mannered prose from Anthropic's public documentation *Prompting Claude Fable 5.1* ("Writing density" section, retrieved 2026-11-01). It is quoted for commentary, not relicensed.
 
 ---
 

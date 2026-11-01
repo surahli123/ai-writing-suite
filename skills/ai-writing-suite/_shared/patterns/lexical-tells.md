@@ -182,3 +182,31 @@ what works · `in order to` → to · `due to the fact that` → because · `ser
   it when the sentence names the contrast ("actual revenue from customers, not
   grants") — that is honest contrastive writing, not a tell.
 - **Sources:** avoid-ai (hollow intensifiers + real/actual inflation), stop-slop.
+
+### L7 — Mannered prose (metaphor where a literal phrase exists)
+
+| Severity | Enforcement |
+| --- | --- |
+| medium | advisory |
+
+- **Tell:** A fresh, bespoke metaphor or flourish where a plain literal phrase is
+  available: "a dial worth turning" for "a parameter worth varying", "earns its
+  keep" for "is useful", "load-bearing" for "essential", "the substrate of the
+  argument". Unlike L5-style dead metaphors, these are newly minted and sound
+  clever. Anthropic's Fable 5.1 prompting guide (2026-09-01) names this pattern
+  in its own model and defines it, quoted verbatim: *"Mannered prose substitutes
+  metaphor and flourish for direct statement. Instead of 'a parameter worth
+  varying,' the mannered writer produces 'a dial worth turning.' Instead of 'this
+  point still matters,' they write 'this point earns its keep.' The phrases exist
+  to display the writer, not to convey the idea, and readers can tell."*
+  Model-scoped: most frequent in late-2026 Claude output; treat it as a prior,
+  not proof.
+- **Fix:** Ask "is a literal phrase available?" If yes, use it. If the metaphor
+  carries something the literal phrase loses, keep it.
+- **Validity condition (advisory, judge-only):** a field's established technical
+  metaphor (load-bearing wall in an engineering doc, loss landscape, technical
+  debt) and a metaphor in the author's voice profile are not this tell. Flag a
+  cluster, not one phrase.
+- **Sources:** Anthropic, *Prompting Claude Fable 5.1*, "Writing density"
+  (quoted with attribution); cursor/plugins pstack `unslop` rule 32 (MIT,
+  Lauren Tan); round-1 research `notes/research-landscape-2026-11-01.md` A5(b).

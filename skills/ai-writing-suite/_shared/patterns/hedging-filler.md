@@ -51,6 +51,11 @@ written feel.
   direction," "As we move forward," "Only time will tell."
 - **Fix:** Cut them. If the piece needs a closing thought, make it specific to the
   argument. "The company plans to open two more locations next year."
+- **Delete, don't substitute:** when you cut a kicker or aphorism ending, end on
+  the clearest concrete sentence already in the draft. Do not write a "better"
+  metaphor or aphorism in its place; replacing slop with prettier slop is fix
+  erosion. Keep a closer that carries a fact, a decision, or a next action. At
+  most one punchy paragraph closer per piece.
 - **Sources:** blader (P24), aboudjem (§25), avoid-ai (generic conclusions),
   anti-vibe.
 

@@ -121,6 +121,11 @@ immediately.
 - **Fix:** Delete the hook; state the thing. "The catch? It only works on
   weekends." → "It only works on weekends." If you want a rhythm break, use a
   short declarative fragment, not a question.
+- **Statement form:** the same reveal also comes without a question mark: a noun
+  phrase, a colon, then a dramatic reveal ("The best part: it learns." "The
+  result: chaos."). Fix it the same way: "It learns from your edits." Colons
+  that introduce a list, a label, a definition, a quotation, or a time ("Status:
+  blocked", "Owner: Dana") are not this tell.
 - **Sources:** blader (P41), avoid-ai (infomercial engagement hooks).
 
 ---
