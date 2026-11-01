@@ -1,6 +1,6 @@
 ---
 name: ai-writing-suite
-description: A suite of writing-assistant skills for professional and product communication — polish/de-AI prose, learn an author's voice, answer questions from a knowledge base, and draft from it. Classifies a request and loads the right sub-skill. Use for docs, emails, posts, reports, and user-facing copy; not for source-code cleanup.
+description: "Writing assistant for professional and data-science communication. Polishes drafts so they read like a person wrote them without changing facts, drafts readouts, memos, and updates from notes, learns an author's voice, and answers questions from the writing playbook. Use for any request to write, edit, review, or ask about prose (docs, emails, Slack posts, reports, posts); it routes to the right sub-skill. Not for source-code cleanup."
 ---
 
 # AI Writing Suite (router)

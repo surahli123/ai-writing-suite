@@ -1,6 +1,6 @@
 ---
 name: comms-polish
-description: Polish prose that sounds AI-written while preserving meaning, facts, and author voice. Modes - detect, review, rewrite, edit - plus a 0-100 AI-tell score on demand. Use for docs, emails, posts, reports, and user-facing copy. Not for code cleanup, and not for learning or extracting an author's voice - that is voice-onboard. A mixed request to polish AND add new content routes to comms-draft, which treats the existing text as immutable source, returns the fully revised document, and runs this polish final-pass itself - polishing here never adds substance.
+description: "Edit existing prose so it reads like a person wrote it, without changing facts, numbers, hedges, or the author's voice. Use when the user asks to polish, clean up, de-AI, proofread, lightly edit, or review a draft (Slack update, email, memo, readout, README, post), or asks what in it sounds AI-written. Modes are rewrite, light-edit, review, detect, and file edit, with an optional AI-pattern density score. Not for adding new sections or content (that is comms-draft), learning a voice (voice-onboard), answering playbook questions (comms-qa), or code."
 ---
 
 # comms-polish

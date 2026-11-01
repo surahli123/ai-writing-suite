@@ -1,0 +1,25 @@
+{
+  "_doc": "Labeled trigger set for skill descriptions (round-2 research R2-7; Anthropic/agentskills.io guidance: verify descriptions with should- and should-not-trigger queries including near-misses). The deterministic test only checks shape and coverage. A live run (host-specific, opt-in, never in run_all.sh) would send each query to an agent with the suite installed and compare the skill it loads against `expect`. Queries are synthetic placeholders. Replace them with the DS team's real phrasings when available. `expect` is a sub-skill name or `none` (the suite should not trigger).",
+  "cases": [
+    {"query": "can you polish this slack update before I post it", "expect": "comms-polish"},
+    {"query": "this email sounds like ChatGPT, fix it", "expect": "comms-polish"},
+    {"query": "light edit only, keep my voice: <draft>", "expect": "comms-polish"},
+    {"query": "what in this readout sounds AI-written?", "expect": "comms-polish"},
+    {"query": "proofread my memo, don't change the numbers", "expect": "comms-polish"},
+    {"query": "turn these analysis notes into an experiment readout for leadership", "expect": "comms-draft"},
+    {"query": "write the incident summary from this timeline and my notes", "expect": "comms-draft"},
+    {"query": "polish this and add a risks section", "expect": "comms-draft"},
+    {"query": "draft a decision memo recommending vendor B", "expect": "comms-draft"},
+    {"query": "what does our playbook say about status updates?", "expect": "comms-qa"},
+    {"query": "how should an experiment readout be structured?", "expect": "comms-qa"},
+    {"query": "is it ok to put the recommendation at the end of an exec memo?", "expect": "comms-qa"},
+    {"query": "learn my writing voice from these five posts", "expect": "voice-onboard"},
+    {"query": "make future drafts sound like me", "expect": "voice-onboard"},
+    {"query": "clean up this python function and remove dead code", "expect": "none"},
+    {"query": "write a commit message for this diff", "expect": "none"},
+    {"query": "translate this paragraph into Spanish, no other changes", "expect": "none"},
+    {"query": "fix the typo in this code comment", "expect": "none"},
+    {"query": "summarize this research paper for me", "expect": "none"},
+    {"query": "what's the p-value for this test? here's the data", "expect": "none"}
+  ]
+}

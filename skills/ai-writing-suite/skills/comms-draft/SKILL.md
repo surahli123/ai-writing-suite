@@ -1,6 +1,6 @@
 ---
 name: comms-draft
-description: "Draft a new page from a brief, or revise a document that mixes existing text with a requested addition, guided by the knowledge base / playbook, so the output already reads human instead of AI-generated. In mixed polish-plus-add mode the existing text is immutable source material and comms-draft returns the fully revised whole document, running the polish final-pass itself. Derives per-task acceptance criteria, injects concrete detail and varied rhythm, then self-scans for tells. Use to produce a fresh draft or to handle a mixed polish-plus-add request. Pure rewording with no new content is comms-polish; answering questions from the knowledge base is comms-qa. Never invents facts; marks gaps with [NEEDS: ...]."
+description: "Write a new document from a brief or notes, such as an experiment readout, decision memo, status update, incident note, email, or post, guided by the knowledge base or playbook so it reads human and never invents facts (gaps become [NEEDS: ...] markers). Use when the user asks to draft, write up, or turn notes into something, or to polish a draft AND add to it; the existing text stays immutable and the whole revised document comes back. Not for pure rewording of existing text (comms-polish) or for questions about the playbook (comms-qa)."
 ---
 
 # comms-draft
