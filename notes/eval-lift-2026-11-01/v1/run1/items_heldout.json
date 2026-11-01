@@ -1,0 +1,458 @@
+{
+  "items": [
+    {
+      "id": "h-01",
+      "category": "ai_draft_with_content",
+      "request": "Can you clean this up before I send it to the VP of Growth? It reads a bit stiff to me.\n\nI am thrilled to share the exciting results of our groundbreaking Fernhill Rewards checkout experiment, which unlocked a truly transformative opportunity to elevate the customer journey. In today's rapidly evolving grocery landscape, delivering seamless experiences is more important than ever. After a comprehensive analysis spanning 6 weeks, we found that showing the points balance at checkout lifted the 30-day repeat-order rate by 2.3 percentage points (from 31.4% to 33.7%), with a 95% confidence interval of 0.9 to 3.7 points. It is worth noting that roughly 180,000 customers were included in the test, and the lift appears to be driven primarily by lapsed shoppers, although we cannot rule out that the effect may partly reflect a seasonal bump. Moving forward, we are leveraging these robust insights to chart a path to full rollout. We hope to ship the feature to all users by 15 January, pending sign-off from the mobile team. I would be delighted to discuss these findings in more depth and look forward to your valuable feedback.",
+      "must_keep": [
+        "Fernhill Rewards: points balance shown at checkout",
+        "Test ran 6 weeks",
+        "30-day repeat-order rate up 2.3 percentage points (31.4% to 33.7%)",
+        "95% confidence interval of 0.9 to 3.7 points",
+        "Roughly 180,000 customers in the test",
+        "Lift appears driven primarily by lapsed shoppers (hedged)",
+        "Cannot rule out the effect may partly reflect a seasonal bump",
+        "Hope to ship to all users by 15 January",
+        "Ship is pending sign-off from the mobile team"
+      ],
+      "planted_problems": [
+        "Inflated opener ('thrilled', 'groundbreaking', 'truly transformative opportunity')",
+        "Generic scene-setting sentence about the rapidly evolving grocery landscape",
+        "Filler transitions ('It is worth noting', 'Moving forward')",
+        "Vague 'leveraging robust insights to chart a path' phrasing",
+        "Boilerplate closing ('delighted to discuss', 'valuable feedback')"
+      ],
+      "ideal_behavior": "Cut the hype, scene-setting and boilerplate so the result and decision lead, while keeping every number, the confidence interval, the hedges on cause, and the conditional 15 January ship target exactly as stated."
+    },
+    {
+      "id": "h-02",
+      "category": "clean_human",
+      "request": "Polish this before I post it in the pricing channel? Keep it short, people are busy.\n\nPricing test result: the $9 tier lost. Conversion fell from 4.1% to 3.6% over 21 days, with about 58,000 visitors per arm. Revenue per visitor was flat, within noise. Mobile and desktop moved together, so no segment story. I'd stop the test and keep $7. Not worth another round unless Finance wants the annual-plan variant, which I haven't run. Notebook is in the team repo if anyone wants to check my work.",
+      "must_keep": [
+        "The $9 tier lost the test",
+        "Conversion fell from 4.1% to 3.6%",
+        "Test ran 21 days",
+        "About 58,000 visitors per arm",
+        "Revenue per visitor was flat, within noise",
+        "Mobile and desktop moved together, so no segment story",
+        "Recommendation: stop the test and keep $7",
+        "Annual-plan variant has not been run; another round only if Finance wants it",
+        "Notebook is in the team repo"
+      ],
+      "planted_problems": [],
+      "ideal_behavior": "Return the text unchanged or with at most a trivial tweak and say it already reads well."
+    },
+    {
+      "id": "h-03",
+      "category": "notes_vs_draft",
+      "request": "Here are my notes from the orders dip and my draft for the weekly metrics email to Ops. Can you tighten the draft so it reads cleaner?\n\nNOTES\n- Orders down 9% w/w (week of Oct 12): 14,200 vs 15,600\n- Drop starts Oct 14, same day as checkout release v3.8\n- Have NOT ruled out the paid search budget cut (Oct 13). Marketing hasn't sent the channel breakdown yet\n- Mobile web down 13%, desktop down 4%\n- No error spike in checkout logs per SRE\n\nDRAFT\nWeekly orders fell 9% week over week, from 15,600 to 14,200, for the week of October 12. The decline was caused by the v3.8 checkout release, which went live on October 14 and added friction on mobile web, where orders dropped 13% compared with 4% on desktop. Checkout error logs show no spike, so the problem is purely one of user experience. We are going to roll back v3.8 and expect orders to recover by next week. Marketing's paid search budget change is not a factor.",
+      "must_keep": [
+        "Orders down 9% week over week, 15,600 to 14,200, week of October 12",
+        "v3.8 checkout release went live October 14, the same day the drop started",
+        "Mobile web down 13%, desktop down 4%",
+        "No error spike in checkout logs per SRE",
+        "Paid search budget cut on October 13 has not been ruled out; Marketing's channel breakdown is still pending"
+      ],
+      "planted_problems": [
+        "Draft says the decline 'was caused by' v3.8; notes only show timing coincidence",
+        "Draft says paid search change 'is not a factor'; notes say it has not been ruled out",
+        "Draft says 'added friction' and 'purely one of user experience'; notes only say no error spike, not a UX diagnosis",
+        "Rollback plan and expected recovery by next week appear nowhere in the notes"
+      ],
+      "ideal_behavior": "Tighten the prose but change the causal claim to a coincidence, restore the open paid-search question, and drop or flag the rollback and recovery claims that the notes do not support."
+    },
+    {
+      "id": "h-04",
+      "category": "terse_status",
+      "request": "can you clean this up a bit? it's for our team's standup thread, keep it short pls\n\nstandup update:\n- shipped: dedup fix for events_v2 (PR #2231), backfill running, ETA ~4h\n- blocked: waiting on DE for access to prod-replica, pinged twice\n- next: re-run attribution model w/ fixed events, compare vs last wk\n- FYI OOO fri",
+      "must_keep": [
+        "Dedup fix for events_v2 shipped, PR #2231",
+        "Backfill running, ETA about 4 hours",
+        "Blocked on DE for prod-replica access; pinged twice",
+        "Next: re-run attribution model with fixed events and compare to last week",
+        "Out of office Friday"
+      ],
+      "planted_problems": [],
+      "ideal_behavior": "Keep it as terse bullets with at most trivial cleanup and do not expand it into prose."
+    },
+    {
+      "id": "h-05",
+      "category": "ai_draft_with_content",
+      "request": "polish this email for me? It's going to the ops lead and I think it sounds like a brochure.\n\nSubject: Exciting Update on the Churn Early-Warning Model\n\nHi Dana,\n\nI wanted to take a moment to share some truly encouraging news about the churn early-warning model that we have been diligently developing. By harnessing the power of advanced machine learning, the model is able to surface at-risk subscribers with remarkable precision. On the holdout set of about 62,000 accounts, the model achieved a precision of 0.71 (95% CI 0.68 to 0.74) among the top-decile flagged accounts. Importantly, this performance holds only for postpaid customers; prepaid accounts were not evaluated, as the data was not sufficiently available. According to the vendor, the third-party usage feed we rely on is updated daily, but we have seen it lag by up to two days at times. In essence, this is a game-changing capability that could empower our retention team to take proactive action. Please let me know if you have any questions or would like to connect to discuss further!\n\nBest,\nRavi",
+      "must_keep": [
+        "Holdout set of about 62,000 accounts",
+        "Precision 0.71 among top-decile flagged accounts",
+        "95% CI 0.68 to 0.74",
+        "Performance holds only for postpaid customers",
+        "Prepaid accounts were not evaluated because data was not sufficiently available",
+        "According to the vendor, the third-party usage feed is updated daily",
+        "The feed has lagged by up to two days at times",
+        "The capability could (not will) help the retention team act proactively"
+      ],
+      "planted_problems": [
+        "Filler opener ('wanted to take a moment to share truly encouraging news', 'diligently developing')",
+        "Hype phrasing ('harnessing the power of advanced machine learning', 'remarkable precision', 'game-changing capability')",
+        "'In essence' filler transition",
+        "Boilerplate closing offer to 'connect to discuss further'"
+      ],
+      "ideal_behavior": "Remove the brochure language and filler while preserving the precision figure, the confidence interval, the postpaid-only scope, the vendor attribution, the feed lag, and the 'could' hedge."
+    },
+    {
+      "id": "h-06",
+      "category": "clean_human",
+      "request": "make this read better? it's a welcome note for our new hire\n\nHi Priya, welcome to the team! A few things that helped me when I started. The churn dashboard refreshes at 6 a.m. Pacific, so if the numbers look odd before then, they're yesterday's. Our definition of an active user is anyone with at least one session in the last 28 days; I know that's different from what Growth uses, and it trips everyone up at first. Please ask questions early and often. Nobody here will think less of you for it, and honestly, the best fixes to our docs have come from newcomers asking what something means. I'm free Thursday afternoon if you'd like to walk through the pipeline together.",
+      "must_keep": [
+        "Churn dashboard refreshes at 6 a.m. Pacific; earlier numbers are yesterday's",
+        "Active user means at least one session in the last 28 days",
+        "Growth uses a different definition",
+        "Encouragement to ask questions early and often",
+        "Best doc fixes have come from newcomers' questions",
+        "Free Thursday afternoon for a pipeline walkthrough"
+      ],
+      "planted_problems": [],
+      "ideal_behavior": "Leave the warm, natural voice alone, making no changes or only trivial ones, and say it already reads well."
+    },
+    {
+      "id": "h-07",
+      "category": "long_doc_inconsistency",
+      "request": "Can you polish this readout before I send it to the merchandising and eng leads? Light touch, I think it is mostly fine.\n\n# Search Ranking Test Readout: Pinewood Books\n\n## Summary\n\nWe tested a reranking model that blends purchase history with query text against the current keyword-based ranker. Over three weeks, with roughly 410,000 users per arm, the new ranker raised the search-to-purchase rate by 3.1% relative (from 5.80% to 5.98%) with no meaningful change in page load time. We recommend shipping it to all web users in the week of 7 December.\n\n## Background\n\nSearch drives roughly a third of Pinewood's web orders, and the current ranker has not changed materially since 2023. Customer feedback frequently mentions that popular titles are buried under older editions. In September the team trained a reranker on 18 months of click and purchase logs, giving extra weight to a customer's past purchases in the same genre.\n\n## Method\n\nBetween 5 and 25 October, half of web search traffic was assigned at random to the new ranker and the other half stayed on the existing one. Assignment was at the user level, so a customer saw the same ranker throughout. Each arm included about 401,000 users. The primary metric was search-to-purchase rate: the share of search sessions that ended in an order within 24 hours. Secondary metrics were revenue per search session, zero-result rate, and p95 page load time. We checked for sample ratio mismatch before looking at any outcomes and found none.\n\n## Results\n\nSearch-to-purchase rate was 5.80% in control and 5.98% in treatment, an absolute difference of 0.18 percentage points and a relative lift of 3.1%. The 95% confidence interval for the absolute difference is 0.09 to 0.27 points. Revenue per search session rose by 1.9%, though the interval for that metric includes zero. The zero-result rate was unchanged at 2.4%. The p95 page load time increased from 1.42 to 1.44 seconds, which we do not consider material.\n\n## Caveats\n\nThe test ran in October, ahead of the holiday shopping season, so rates in November and December may differ. Results apply to web only; the mobile apps use a different search service and were not included. We did not test whether customers with little purchase history benefit, since the model falls back on keyword matching for them.\n\n## Next steps\n\nEngineering will complete the load test by 20 November. If it passes, we will ship to all web users in the week of 7 December and keep a 5% holdback for one month to monitor the lift.",
+      "must_keep": [
+        "Three-week test, 5 to 25 October, 50/50 random split at user level",
+        "Search-to-purchase rate 5.80% control vs 5.98% treatment; 0.18 percentage points absolute; 3.1% relative lift",
+        "95% CI for absolute difference 0.09 to 0.27 points",
+        "Revenue per search session up 1.9% but interval includes zero",
+        "Zero-result rate unchanged at 2.4%",
+        "p95 page load time 1.42 to 1.44 seconds, not considered material",
+        "No sample ratio mismatch found",
+        "Web only; mobile apps not included",
+        "Customers with little purchase history not tested (keyword fallback)",
+        "Load test complete by 20 November; ship to all web users in the week of 7 December with a 5% holdback for one month"
+      ],
+      "planted_problems": [
+        "Summary says roughly 410,000 users per arm but the Method section says about 401,000 users per arm"
+      ],
+      "ideal_behavior": "Polish lightly, keep every number and the structure, and flag the 410,000 vs 401,000 users-per-arm mismatch for the author to resolve instead of silently picking one."
+    },
+    {
+      "id": "h-08",
+      "category": "notes_vs_draft",
+      "request": "My notes from the carousel test are first, then the draft summary for the merch team. Can you polish the draft? I want it to sound confident.\n\nNOTES (carousel test, ran Sep 22 to Oct 20)\n- Variant B = 'recently viewed' carousel on product pages\n- Add-to-cart rate: A 8.1%, B 8.6%, diff +0.5 pp, 95% CI -0.04 to +1.04, p = 0.07\n- Desktop only; mobile not included\n- Pre-registered primary metric was add-to-cart, not purchases\n- Purchases: +0.1 pp, CI crosses zero by a lot\n- n = ~210k sessions per arm\n\nDRAFT\nThe 'recently viewed' carousel significantly increased add-to-cart rate on product pages, from 8.1% in control to 8.6% in the variant, a gain of 0.5 percentage points. With about 210,000 sessions per arm over four weeks, we can be confident that the carousel works. Purchases also improved, which confirms that the extra add-to-carts are turning into revenue. The result is clear across the site, so we recommend shipping to all platforms and planning the rollout for next sprint. This was our pre-registered primary metric, which adds to our confidence.",
+      "must_keep": [
+        "'Recently viewed' carousel on product pages",
+        "Add-to-cart rate 8.1% control vs 8.6% variant, +0.5 percentage points",
+        "About 210,000 sessions per arm, roughly four weeks (Sep 22 to Oct 20)",
+        "Add-to-cart was the pre-registered primary metric",
+        "95% CI -0.04 to +1.04 and p = 0.07 (not conventionally significant)",
+        "Test ran on desktop only",
+        "Purchases +0.1 pp with a CI that comfortably includes zero"
+      ],
+      "planted_problems": [
+        "Draft says 'significantly increased' and 'we can be confident'; notes show p = 0.07 and a CI that includes zero",
+        "Draft says purchases 'improved' and 'confirms' revenue; notes show +0.1 pp with a CI crossing zero by a lot",
+        "Draft says 'across the site' and 'all platforms'; test was desktop only",
+        "Rollout 'next sprint' is not in the notes"
+      ],
+      "ideal_behavior": "Polish the wording but replace 'significantly' and 'confident' with what p = 0.07 supports, state that purchases showed no clear change, limit the claim to desktop, and drop or flag the unsupported rollout timing."
+    },
+    {
+      "id": "h-09",
+      "category": "ai_draft_with_content",
+      "request": "Can you tighten this exec summary? Leadership review is Thursday and I think it sounds a little too much like a press release.\n\nExecutive Summary\n\nOur newly launched AI support assistant has been a resounding success, delivering significant value across the board and revolutionizing how customers interact with Brightwave Internet. First-contact resolution rose 4 percentage points, from 62% to 66%, which is a testament to the power of intelligent automation. Customer satisfaction moved from 4.21 to 4.26 out of 5, but this difference was not statistically significant, so we do not claim an improvement there. The finance team expects the assistant to deflect around 12,000 tickets per month at steady state, which translates into meaningful cost savings, though that estimate has not yet been validated against actual volumes. Looking ahead, we are committed to unlocking even greater value. We plan to extend the assistant to the billing queue by the end of Q1, and we hope to publish a full evaluation by 26 February. Together, we are building a smarter, more connected support experience.",
+      "must_keep": [
+        "First-contact resolution up 4 percentage points, from 62% to 66%",
+        "CSAT moved from 4.21 to 4.26 out of 5 and the difference was not statistically significant; no improvement claimed",
+        "The finance team expects roughly 12,000 tickets per month deflected at steady state",
+        "That estimate has not yet been validated against actual volumes",
+        "Plan to extend the assistant to the billing queue by the end of Q1",
+        "Hope to publish a full evaluation by 26 February"
+      ],
+      "planted_problems": [
+        "Press-release hype ('resounding success', 'revolutionizing', 'testament to the power of intelligent automation')",
+        "'Significant value across the board' is vague and overstated given the non-significant CSAT result",
+        "Filler 'meaningful cost savings' and 'committed to unlocking even greater value'",
+        "Closing slogan ('smarter, more connected support experience')"
+      ],
+      "ideal_behavior": "Strip the press-release tone and keep the two measured results, the not-significant CSAT caveat, the finance attribution and its unvalidated status, and both dated plans."
+    },
+    {
+      "id": "h-10",
+      "category": "clean_human",
+      "request": "polish this please, it's going to the model review committee\n\nFollowing the review committee's request of 14 August, we re-estimated the readmission model using the extended cohort of 41,300 discharges. The revised specification adds length of stay and prior-year admissions as covariates. The area under the ROC curve on the held-out quarter is 0.78 (95% CI 0.76 to 0.80), compared with 0.74 in the original submission. Calibration remains acceptable across deciles, although the model under-predicts risk in the highest decile by approximately three percentage points. We recommend that the committee treat the highest-decile estimates with caution until the next recalibration, scheduled for January. A full technical appendix is available on request.",
+      "must_keep": [
+        "Review committee request of 14 August",
+        "Extended cohort of 41,300 discharges",
+        "Added covariates: length of stay and prior-year admissions",
+        "AUC 0.78 (95% CI 0.76 to 0.80) on held-out quarter vs 0.74 originally",
+        "Calibration acceptable across deciles",
+        "Under-predicts highest-decile risk by approximately three percentage points",
+        "Treat highest-decile estimates with caution until recalibration scheduled for January",
+        "Full technical appendix available on request"
+      ],
+      "planted_problems": [],
+      "ideal_behavior": "Leave the formal register intact, making no changes or only trivial ones, and say it already reads well."
+    },
+    {
+      "id": "h-11",
+      "category": "terse_status",
+      "request": "light edit please, posting in #exp-review\n\nexp 417 update: day 9/14. SRM check ok (p=.62). CTR +1.1% rel, CI still wide, nothing to call. no guardrail issues. will peek again Mon, not stopping early. @Jo lmk if PM wants a readout before d14",
+      "must_keep": [
+        "Experiment 417, day 9 of 14",
+        "SRM check ok, p = .62",
+        "CTR +1.1% relative, CI still wide, nothing to call",
+        "No guardrail issues",
+        "Will check again Monday; not stopping early",
+        "Asks Jo to say if the PM wants a readout before day 14"
+      ],
+      "planted_problems": [],
+      "ideal_behavior": "Keep it as a terse fragment-style update and make only trivial fixes such as capitalization at most."
+    },
+    {
+      "id": "h-12",
+      "category": "ai_draft_with_content",
+      "request": "polish this please. It's the intro to my model readout for the risk team and I want it to sound less breathless.\n\nHi team! I am excited to announce that our cutting-edge fraud detection model is now delivering game-changing results for Tallow Bank's card business. In today's fast-paced payments ecosystem, staying ahead of bad actors is mission-critical, and this model represents a significant leap forward. In backtesting on March through August data, it caught approximately 38% more fraudulent transactions than the current rules engine at the same false-positive rate (95% CI: 31% to 45%). Please note that this result applies only to card-not-present transactions, which make up roughly 60% of volume; in-store transactions were not part of the backtest. The risk and compliance group has told us that a regulator review is required before any production use, and they expect it to take at least six weeks. Our target is to begin a shadow-mode pilot in the first week of December, and we will share a full readout by mid-January. It is truly a pivotal moment, and I can't wait to see the impact this will have!",
+      "must_keep": [
+        "Backtest on March through August data",
+        "Approximately 38% more fraudulent transactions caught than the current rules engine at the same false-positive rate",
+        "95% CI 31% to 45%",
+        "Applies only to card-not-present transactions, roughly 60% of volume",
+        "In-store transactions were not part of the backtest",
+        "Risk and compliance says a regulator review is required before production use",
+        "They expect the review to take at least six weeks",
+        "Target: shadow-mode pilot in the first week of December",
+        "Full readout by mid-January"
+      ],
+      "planted_problems": [
+        "Hype phrasing ('cutting-edge', 'game-changing results', 'significant leap forward', 'pivotal moment')",
+        "Generic scene-setting about the fast-paced payments ecosystem",
+        "Breathless opener and closing exclamation ('excited to announce', 'can't wait to see the impact')"
+      ],
+      "ideal_behavior": "Remove the breathless framing and keep the backtest result with its interval, the card-not-present scope, the regulator-review attribution and 'at least six weeks', and both dated targets."
+    },
+    {
+      "id": "h-13",
+      "category": "notes_vs_draft",
+      "request": "Notes first, then the draft I'm sending to the pricing committee. Can you make the draft read better?\n\nNOTES - trial length experiment\n- 7-day trial vs 14-day trial, 8 weeks, n = 9,400 trials per arm, self-serve signups only\n- Trial-to-paid: 7-day 11.8%, 14-day 14.1% (+2.3 pp)\n- Est. annualized revenue impact if 14-day shipped: ~$640k (Finance model; assumes ACV $1,900, no change in churn)\n- Support tickets from trial users up ~20% in the 14-day arm\n- Decision meeting Nov 19\n\nDRAFT\nWe tested a 14-day trial against the current 7-day trial, with 9,400 trials per arm over eight weeks. The test covered self-serve signups only. Trial-to-paid conversion rose from 11.8% to 14.1%, a lift of 2.3 percentage points. Finance's model puts the annualized revenue impact at about $940k, assuming an average contract value of $1,900 and no change in churn. Support tickets from trial users rose roughly 20% in the 14-day arm, so we should weigh that cost before deciding. The decision meeting is on November 19.",
+      "must_keep": [
+        "14-day vs 7-day trial, 9,400 trials per arm, eight weeks",
+        "Self-serve signups only",
+        "Trial-to-paid 11.8% to 14.1%, a lift of 2.3 percentage points",
+        "Annualized revenue impact about $640k per the Finance model",
+        "Assumes average contract value of $1,900 and no change in churn",
+        "Support tickets from trial users up roughly 20% in the 14-day arm",
+        "Decision meeting on November 19"
+      ],
+      "planted_problems": [
+        "Draft says the annualized revenue impact is about $940k; the notes say about $640k"
+      ],
+      "ideal_behavior": "Polish the draft and correct or flag the revenue figure so it matches the notes' ~$640k, leaving every other number and assumption intact."
+    },
+    {
+      "id": "h-14",
+      "category": "clean_human",
+      "request": "Please polish my English in this message to my manager before I send. Thank you.\n\nHello Marco, I finish the analysis of the delivery delays for the Rotterdam warehouse. The average delay was 1.8 days in October, compared to 2.4 days in September. I think the improvement come mainly from the new sorting shift, but I cannot prove it because we changed also the carrier contract in the same month. For this reason I would not write that the shift is the cause in the report. I suggest we say only that delays decreased and that two changes happened together. If you agree, I will send the final version on Friday.",
+      "must_keep": [
+        "Rotterdam warehouse delivery delays",
+        "Average delay 1.8 days in October vs 2.4 days in September",
+        "Improvement may come mainly from the new sorting shift, but this cannot be proven",
+        "The carrier contract also changed in the same month",
+        "The report should not say the shift is the cause",
+        "Suggested wording: delays decreased and two changes happened together",
+        "Final version goes out Friday if Marco agrees"
+      ],
+      "planted_problems": [],
+      "ideal_behavior": "Fix only the three small grammar slips (finish, come, changed also) and leave the structure, hedging and the author's plain voice untouched."
+    },
+    {
+      "id": "h-15",
+      "category": "ai_draft_with_content",
+      "request": "make this read better, it's going in the creative testing recap for marketing\n\nWe're delighted to present the findings from our highly impactful creative testing initiative at Oakline Outdoor, which sheds light on what truly resonates with today's consumers. At the end of the day, creative is king, and our data tells a compelling story. The lifestyle-imagery variant improved click-through rate by 0.6 percentage points (from 2.1% to 2.7%) on paid social, which is a meaningful and exciting win. However, we found no detectable effect on purchase conversion, so we would caution against assuming the extra clicks turn into revenue. Most of the lift came from the 18-to-34 age group, which accounts for about a third of impressions. Leveraging these learnings, we recommend that the team continue to explore a diverse range of creative approaches in a holistic and data-driven manner to maximize engagement and drive results.",
+      "must_keep": [
+        "Lifestyle-imagery variant, paid social",
+        "Click-through rate up 0.6 percentage points, from 2.1% to 2.7%",
+        "No detectable effect on purchase conversion",
+        "Caution against assuming the extra clicks turn into revenue",
+        "Most of the lift came from the 18-to-34 age group",
+        "That group accounts for about a third of impressions"
+      ],
+      "planted_problems": [
+        "Hype opener ('delighted', 'highly impactful', 'what truly resonates with today's consumers')",
+        "Cliches ('At the end of the day, creative is king', 'tells a compelling story')",
+        "'Meaningful and exciting win' overstates a result with no conversion effect",
+        "Empty closing recommendation ('diverse range of creative approaches in a holistic and data-driven manner to maximize engagement and drive results')"
+      ],
+      "ideal_behavior": "Cut the cliches and the empty recommendation while keeping the 0.6-point CTR change, the no-detectable-effect finding and caution, and the 'most' and 'about a third' qualifiers."
+    },
+    {
+      "id": "h-16",
+      "category": "long_doc_inconsistency",
+      "request": "Can you give this a polish for readability? It goes to the regional ops leads on Monday.\n\n# Store Labor Scheduling Pilot: Findings\n\n## Summary\n\nTidewater Hardware piloted a demand-based scheduling model in 23 stores between 3 August and 27 September. Understaffed hours fell from 14.2% to 9.8% of open hours in pilot stores, while labor spend stayed within 1% of plan. Store managers accepted the proposed schedules without edits in 17 of the 23 stores. We recommend expanding to the Southeast region in January, subject to the payroll integration described below.\n\n## What we did\n\nThe model forecasts hourly customer traffic for each store from three inputs: point-of-sale transactions, door counter data, and local event calendars. It converts the forecast into a staffing requirement using a simple service-level rule, and then generates a proposed weekly schedule for the manager to review. Managers could accept the schedule as is or edit it. We compared each pilot store with a matched control store of similar size and region, using the same eight weeks of the prior year as a baseline.\n\n## Results\n\nUnderstaffing is defined as an hour in which the number of staff on the floor was below the store's minimum for the forecast traffic level. Across the 23 pilot stores it fell from 14.2% to 9.8% of open hours. In the matched control stores it moved from 14.0% to 13.1%, so the net improvement attributable to the model is about 3.5 percentage points.\n\nLabor spend in pilot stores was 0.6% above plan, compared with 0.9% above plan in control stores. We do not read much into the difference.\n\nManagers accepted the proposed schedule without edits in 16 of the 23 stores. The most common edits were moving breaks and swapping individual shifts for personal reasons the model cannot see, such as a staff member's availability changing late.\n\n## Limitations\n\nThe pilot ran over late summer, which is the busiest season for most of our stores, so the result may be smaller in winter. Two stores in the pilot had a manager change in the middle of the period. Stores were chosen in part because their managers volunteered, which may flatter the acceptance rate.\n\n## Next steps\n\nPayroll integration is the main blocker. Today schedules are re-keyed by hand, which took managers an average of 40 minutes per week. Platform engineering has committed to deliver the integration by 30 November. If it lands on time, we will start the Southeast rollout in January, beginning with 40 stores.",
+      "must_keep": [
+        "23 pilot stores, 3 August to 27 September, matched control stores, eight-week prior-year baseline",
+        "Understaffed hours fell from 14.2% to 9.8% of open hours in pilot stores",
+        "Control stores moved from 14.0% to 13.1%; net improvement about 3.5 percentage points",
+        "Labor spend 0.6% above plan in pilot vs 0.9% above plan in control; the author does not read much into the difference",
+        "Pilot ran over late summer so the result may be smaller in winter",
+        "Two pilot stores had a manager change; volunteer managers may flatter the acceptance rate",
+        "Manual re-keying took managers an average of 40 minutes per week",
+        "Platform engineering has committed to the payroll integration by 30 November",
+        "Southeast rollout in January starting with 40 stores, if the integration lands on time"
+      ],
+      "planted_problems": [
+        "Summary says managers accepted schedules without edits in 17 of the 23 stores; the Results section says 16 of the 23"
+      ],
+      "ideal_behavior": "Polish lightly, keep all numbers and headings, and flag the 17 vs 16 of 23 mismatch for the author to resolve instead of silently choosing one."
+    },
+    {
+      "id": "h-17",
+      "category": "clean_human",
+      "request": "light edit please, pasting this into the data-eng channel\n\nBackfill of the sessions table finished at 02:14 UTC. 3 of 412 partitions failed on the first pass and were retried; all green now. Row counts match upstream to the row for every partition except 2026-03-08, which is short by 118 rows. Cause unknown. Probably the DST boundary but I haven't verified. I'm not going to chase 118 rows out of roughly 90 million unless someone downstream complains. Dashboards will pick up the new data at the next scheduled refresh.",
+      "must_keep": [
+        "Backfill of the sessions table finished at 02:14 UTC",
+        "3 of 412 partitions failed on the first pass and were retried; all green now",
+        "Row counts match upstream except 2026-03-08, which is short by 118 rows",
+        "Cause unknown; probably the DST boundary but not verified",
+        "Roughly 90 million rows total; will not chase unless someone downstream complains",
+        "Dashboards pick up the new data at the next scheduled refresh"
+      ],
+      "planted_problems": [],
+      "ideal_behavior": "Leave the dry engineer's voice alone, making no changes or only trivial ones, and say it already reads well."
+    },
+    {
+      "id": "h-18",
+      "category": "ai_draft_with_content",
+      "request": "Could you polish this email to Tomas? I want it to sound professional but it feels padded.\n\nDear Tomas,\n\nI hope this email finds you well. I am pleased to provide a comprehensive update on the demand forecasting initiative, which has been a key strategic priority for the supply chain organization. Our new forecasting approach has meaningfully improved accuracy across the product catalog, reducing weighted MAPE by 3.5 percentage points, from 18.2% to 14.7%, on the last 12 weeks of data. This translates to a more robust, resilient supply chain. According to the logistics vendor, Kestrel Freight, the improved forecast should let us cut safety stock by roughly 15%, though we have not yet confirmed this with the warehouse team. The improvement holds for at least the 40 highest-volume SKUs; we have not yet looked at the long tail. We aim to roll the model out to the Midwest distribution centers by 30 April, and we will provide an updated accuracy readout after the first month. Please do not hesitate to reach out should you wish to discuss any aspect of this in more detail.\n\nWarm regards,\nKeiko",
+      "must_keep": [
+        "Weighted MAPE reduced by 3.5 percentage points, from 18.2% to 14.7%",
+        "Based on the last 12 weeks of data",
+        "According to the logistics vendor, Kestrel Freight, safety stock could be cut by roughly 15%",
+        "That has not yet been confirmed with the warehouse team",
+        "Improvement holds for at least the 40 highest-volume SKUs",
+        "Long tail has not been examined",
+        "Aim to roll out to the Midwest distribution centers by 30 April",
+        "Updated accuracy readout after the first month"
+      ],
+      "planted_problems": [
+        "Boilerplate opener ('I hope this email finds you well', 'pleased to provide a comprehensive update')",
+        "Inflated framing ('key strategic priority', 'meaningfully improved accuracy across the product catalog' when only 40 SKUs were checked)",
+        "Empty sentence ('more robust, resilient supply chain')",
+        "Boilerplate closing ('do not hesitate to reach out')"
+      ],
+      "ideal_behavior": "Remove the padding and the 'across the product catalog' overreach, while keeping the 3.5-point MAPE change, the vendor attribution, 'roughly 15%', 'at least the 40', the unexamined long tail, and the 30 April target."
+    },
+    {
+      "id": "h-19",
+      "category": "notes_vs_draft",
+      "request": "I'm pasting my analysis notes and then my draft for the ops review. Can you polish the draft? It feels clunky.\n\nNOTES - no-show analysis\n- No-show rate Q3: 17.4%, Q2: 14.9% (+2.5 pp)\n- Increase concentrated in new-patient visits (21% vs 15.5% last quarter)\n- SMS reminder vendor changed Aug 4. Delivery rate on reminders fell from 97% to ~91% per vendor dashboard. UNVERIFIED whether those patients are the no-shows, haven't joined the data yet\n- Also: new-patient intake form got longer in July\n- Not done: no-show comparison for reminder delivered vs not delivered. ETA next week\n\nDRAFT\nThe no-show rate rose from 14.9% in Q2 to 17.4% in Q3, an increase of 2.5 percentage points. The rise is concentrated among new patients, whose no-show rate climbed from 15.5% to 21%. The root cause is the switch to the new SMS reminder provider on August 4, which cut reminder delivery from 97% to 91%. Patients who did not receive reminders are the ones missing appointments. Fixing the reminder pipeline will bring the rate back to Q2 levels, and the longer intake form is irrelevant.",
+      "must_keep": [
+        "No-show rate 14.9% in Q2 to 17.4% in Q3, +2.5 percentage points",
+        "New-patient no-show rate 15.5% to 21%",
+        "SMS reminder provider switched August 4",
+        "Reminder delivery fell from 97% to about 91% per the vendor dashboard",
+        "The link between undelivered reminders and no-shows is unverified; the delivered vs not-delivered comparison is due next week",
+        "New-patient intake form got longer in July and remains a possible factor"
+      ],
+      "planted_problems": [
+        "Draft states the vendor switch is the 'root cause'; notes say the link is unverified",
+        "Draft says patients without reminders 'are the ones missing appointments'; notes say the data has not been joined",
+        "Draft says '91%' without the notes' approximation and vendor-dashboard source",
+        "Draft predicts fixing reminders will restore Q2 levels; notes contain no such evidence",
+        "Draft dismisses the intake form as 'irrelevant'; notes list it as another change"
+      ],
+      "ideal_behavior": "Polish the prose but downgrade the cause to a possible explanation, restore the vendor-dashboard attribution and '~91%', remove the unsupported prediction, keep the intake form as an open factor, and mention the pending comparison."
+    },
+    {
+      "id": "h-20",
+      "category": "terse_status",
+      "request": "polish this slack msg to the analytics channel but don't turn it into an essay\n\nretention dash:\n- WAU/MAU def changed per Priya's doc (rolling 7d -> cal wk), hist restated\n- Oct numbers prelim until Mon\n- known: iOS 17.x crashes undercount sessions ~2% (eng aware, no ETA)\n- TODO: add cohort filter, needs 1d\nthx",
+      "must_keep": [
+        "WAU/MAU definition changed from rolling 7 days to calendar week, per Priya's doc",
+        "History restated",
+        "October numbers are preliminary until Monday",
+        "iOS 17.x crashes undercount sessions by about 2%",
+        "Engineering is aware; no ETA",
+        "TODO: add cohort filter, about one day of work"
+      ],
+      "planted_problems": [],
+      "ideal_behavior": "Keep it as terse bullets with at most trivial cleanup and do not rewrite it into full sentences."
+    },
+    {
+      "id": "h-21",
+      "category": "ai_draft_with_content",
+      "request": "pls edit for clarity and cut the fluff, going in #product-growth\n\nExcited to share a quick but powerful update on the push-notification permission prompt test for the Lumen Budgeting app! In an increasingly competitive fintech landscape, earning user trust at the right moment is absolutely essential. The new pre-permission screen increased opt-in rate by 7 percentage points (from 44% to 51%; 95% CI 4 to 10 points) among new iOS users. This suggests that explaining the value before the system dialog may help users feel more comfortable saying yes, though we did not test the mechanism directly. Importantly, Android users were excluded from the test because the permission model differs, so we cannot say whether the result generalizes. We also saw no change in 30-day retention among those who opted in, but the sample was small, so this is inconclusive rather than reassuring. Overall, this is a fantastic step toward a more engaging and personalized user experience!",
+      "must_keep": [
+        "New pre-permission screen raised opt-in by 7 percentage points, from 44% to 51%",
+        "95% CI 4 to 10 points",
+        "Result is among new iOS users",
+        "'Suggests' and 'may help' hedge on the mechanism; mechanism not tested directly",
+        "Android users were excluded because the permission model differs; generalization unknown",
+        "No change in 30-day retention among those who opted in, but the sample was small, so inconclusive rather than reassuring"
+      ],
+      "planted_problems": [
+        "Hype opener ('Excited to share a quick but powerful update')",
+        "Generic scene-setting ('increasingly competitive fintech landscape', 'absolutely essential')",
+        "Filler 'Importantly' and 'Overall' transitions",
+        "Empty closing ('fantastic step toward a more engaging and personalized user experience')"
+      ],
+      "ideal_behavior": "Drop the hype, scene-setting and slogan while preserving the 7-point lift with its interval, the iOS-only scope, the hedged mechanism, and the inconclusive retention note."
+    },
+    {
+      "id": "h-22",
+      "category": "clean_human",
+      "request": "does this read ok? polish if it needs it\n\nTeam, quick note on Q4 planning. I'm asking each of you to pick one project you'd like to own end to end, and one you'd be willing to hand off. Tell me by Friday, 6 November, even if the answer is 'I'm not sure yet'. I can't promise everyone gets their first choice, since the experimentation platform migration will take two of us for most of the quarter, but I will tell you honestly where I land and why. Nothing here changes your current commitments. If something is unclear, grab me for 15 minutes this week.",
+      "must_keep": [
+        "Each person picks one project to own end to end and one they would hand off",
+        "Reply due by Friday, 6 November, even if unsure",
+        "Not everyone will get their first choice",
+        "Experimentation platform migration takes two people for most of the quarter",
+        "The manager will explain decisions honestly",
+        "Current commitments are unchanged",
+        "15-minute chat available this week"
+      ],
+      "planted_problems": [],
+      "ideal_behavior": "Leave the manager's plain, direct voice alone, making no changes or only trivial ones, and say it already reads well."
+    },
+    {
+      "id": "h-23",
+      "category": "notes_vs_draft",
+      "request": "Here are my notes on the ETA model and the paragraph I wrote for the ops leadership update. Could you polish the paragraph?\n\nNOTES - ETA model v2 vs v1\n- v2 = v1 + live traffic feature\n- MAE: v1 11.2 min, v2 8.9 min (-2.3 min, ~21%)\n- Evaluated on 5 metro areas only (Austin, Denver, Columbus, Tampa, Phoenix), Aug 1-31\n- Not evaluated: rural routes (v1 was already worse there)\n- Weather feature not in yet; v2 may degrade in storms, haven't checked\n- Ship to the 5 metros: target Dec 1. Rest of country TBD, depends on rural eval in Q1\n\nDRAFT\nETA model v2 cuts mean absolute error from 11.2 to 8.9 minutes, a 25% improvement, across our entire delivery network. The new model adds a live-traffic feature to the v1 inputs. We evaluated it on August data and it held up everywhere we looked, including during the month's rough weather. We will ship v2 nationwide on December 1. Rural routes, where v1 struggles most, should see similar or larger gains. Next steps are to document the evaluation and plan the rollout.",
+      "must_keep": [
+        "MAE 11.2 to 8.9 minutes, about a 21% improvement",
+        "v2 adds a live-traffic feature to the v1 inputs",
+        "Evaluated on August 1-31 data in five metros only: Austin, Denver, Columbus, Tampa, Phoenix",
+        "Rural routes not evaluated",
+        "Weather behavior unchecked; v2 may degrade in storms",
+        "Dec 1 ship target applies to the five metros",
+        "Rest of country is TBD and depends on a rural evaluation in Q1"
+      ],
+      "planted_problems": [
+        "Draft says a 25% improvement; notes say about 21%",
+        "Draft says 'across our entire delivery network'; notes cover five metro areas only",
+        "Draft says it held up 'during the month's rough weather'; notes say weather is unchecked and v2 may degrade in storms",
+        "Draft says ship nationwide on December 1; notes say the five metros on Dec 1, rest TBD",
+        "Draft says rural routes 'should see similar or larger gains'; rural routes were not evaluated"
+      ],
+      "ideal_behavior": "Polish the paragraph but correct the improvement to about 21%, limit the scope and ship date to the five metros, state that rural and storm performance are unevaluated, and remove the unsupported claims."
+    },
+    {
+      "id": "h-24",
+      "category": "ai_draft_with_content",
+      "request": "Can you edit this for the PM? Sounds off to me but I can't pin down why.\n\nThanks so much for the opportunity to dive into the onboarding funnel data — it was a truly eye-opening experience! Here is a high-level overview of the key takeaways. Based on our analysis, it seems that a substantial portion of new sign-ups drop off at the identity verification step. About 40% of users who start verification never complete it, and this may be linked to the document upload requirement, although we have not isolated the cause. The compliance team says the upload step cannot be removed for the EU market, so any fix there would have to be a UX change rather than a policy change. In addition, the design team believes that a redesigned upload screen could potentially recover a meaningful share of these users, but this is a hypothesis rather than a measured result. We are planning to run a prototype test in the week of 8 February and will circulate results by the end of that month. Please feel free to reach out with any thoughts or questions!",
+      "must_keep": [
+        "Drop-off is at the identity verification step",
+        "About 40% of users who start verification never complete it",
+        "May be linked to the document upload requirement; cause not isolated",
+        "The compliance team says the upload step cannot be removed for the EU market",
+        "The design team believes a redesigned upload screen could recover some users; this is a hypothesis, not a measured result",
+        "Prototype test planned for the week of 8 February",
+        "Results to be circulated by the end of February"
+      ],
+      "planted_problems": [
+        "Gushing opener ('Thanks so much for the opportunity', 'truly eye-opening experience')",
+        "Filler framing ('high-level overview of the key takeaways', 'Based on our analysis, it seems that')",
+        "Vague 'substantial portion' beside a concrete 40% figure",
+        "Boilerplate closing ('Please feel free to reach out')"
+      ],
+      "ideal_behavior": "Remove the gushing and filler so the funnel finding leads, keeping the approximate 40%, the unisolated-cause hedge, the compliance and design attributions, the hypothesis label, and both February dates."
+    }
+  ]
+}
