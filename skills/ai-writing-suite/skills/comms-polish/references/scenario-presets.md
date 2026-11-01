@@ -235,6 +235,24 @@ stop after the last user-visible change; do not append a marketing conclusion.
 
 ---
 
+## Data-science documents (KB-backed)
+
+Experiment readouts, decision memos, status updates, and incident notes have
+genre slot lists in the knowledge base. Use the closest numbered preset above
+(usually Memo) for tone, and use the matching entry's slots as a structure check:
+
+- `_shared/knowledge/experiment-readout.md`: verdict and validity first; each
+  effect with baseline, unit, interval, n, and window; three distinct nulls.
+- `_shared/knowledge/decision-memo.md`: the call, rejected options, trade-off,
+  and change trigger. For status updates: the call, the ask, and owned, dated
+  items.
+- `_shared/knowledge/incident-note.md`: facts, hypotheses, and unknowns kept
+  apart; timelines stay chronological.
+
+In polish, a missing slot is reported in notes and never filled. Polish does not
+add content. In `comms-draft`, a missing slot becomes `[NEEDS: …]`. A company
+fork's playbook entries replace these generic ones through the same KB slot.
+
 ## Cross-scenario invariants
 
 No matter the genre, these never change (these are the bottom line, not preset
