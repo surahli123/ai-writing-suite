@@ -87,6 +87,22 @@
       "genre": "memo",
       "note": "PLANTED POSITIVE, different flavor: chatbot artifacts + cutoff disclaimer + reasoning-chain leak. Guards a different detector family than control-01 so a single-category regression can't silently make the whole planted-positive check pass.",
       "text": "Certainly! I'd be happy to help you with that. As an AI language model, I don't have access to real-time data, but let me break this down step by step. First, let's consider the key factors. It's worth noting that this is a comprehensive and multifaceted topic. I hope this helps! Feel free to reach out if you need anything else."
+    },
+    {
+      "id": "fp-ds-methods-10",
+      "role": "clean",
+      "genre": "readme",
+      "flavor": "ds-literal",
+      "note": "Data-science methods prose whose terms of art collide with tier-1 slop words: 'robust' (robust standard errors, robust regression), 'leverage' (high-leverage points), 'landscape' (loss landscape). Literal technical use is not AI vocabulary; the FP gate's term-of-art question, enforced in the detector by patterns.TERMS_OF_ART.",
+      "text": "We fit the model with heteroskedasticity-robust standard errors and re-ran it as a robust regression to check sensitivity. Four observations had high leverage; dropping them moved the coefficient from 0.42 to 0.39, inside the original interval. The loss landscape was flat near the optimum, so we report the estimate from the cross-validated fit rather than the single best run."
+    },
+    {
+      "id": "fp-ds-eval-11",
+      "role": "clean",
+      "genre": "memo",
+      "flavor": "ds-literal",
+      "note": "Model-evaluation prose: 'eval harness', 'leverage scores', 'robust to outliers' are literal. Guards the same term-of-art mechanism in a memo register.",
+      "text": "The eval harness now runs every candidate model on the frozen March holdout. Leverage scores flagged twelve rows from one merchant; after removing them, v3 still beat v2 on precision. The median-based metric is robust to outliers, so we kept it as the headline number. Ping me before changing the holdout."
     }
   ]
 }

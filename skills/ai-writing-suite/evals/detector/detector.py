@@ -122,19 +122,23 @@ def analyze(text, context_mode="general"):
 
     tokens = _tokenize(text)
     paragraphs = _paragraphs(text)
+    # Vocabulary tiers read a copy with technical terms of art masked
+    # (P.TERMS_OF_ART); every other check reads the original text.
+    vocab_text = P.mask_terms_of_art(text)
+    vocab_tokens = _tokenize(vocab_text)
     sentences = _sentences(text)
     issues = []
 
     # 1. Tier 1 single words (one issue per distinct word).
     tier1_found = set()
-    for tok in tokens:
+    for tok in vocab_tokens:
         if tok in P.TIER1 and tok not in tier1_found:
             tier1_found.add(tok)
             issues.append({"type": "tier1", "text": tok, "severity": "high",
                            "suggestion": P.TIER1[tok]})
     # Tier 1 multi-word phrases.
     for rx, sugg in P.TIER1_PHRASES:
-        for m in rx.finditer(text):
+        for m in rx.finditer(vocab_text):
             low = m.group(0).lower()
             if low in tier1_found:
                 continue
@@ -144,7 +148,7 @@ def analyze(text, context_mode="general"):
 
     # 2. Tier 2 clusters — only flag when 2+ distinct hits in one paragraph.
     tier2_clusters = 0
-    for para in paragraphs:
+    for para in _paragraphs(vocab_text):
         found = []
         for tok in _tokenize(para):
             if tok in P.TIER2 and tok not in found:
@@ -157,7 +161,7 @@ def analyze(text, context_mode="general"):
 
     # 3. Tier 3 density — flag at 3% of words, floor of 3 occurrences.
     tier3_counts = {}
-    for tok in tokens:
+    for tok in vocab_tokens:
         canon = P.TIER3_LOOKUP.get(tok)
         if canon:
             tier3_counts[canon] = tier3_counts.get(canon, 0) + 1

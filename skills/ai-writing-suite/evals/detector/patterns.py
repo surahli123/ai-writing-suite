@@ -77,6 +77,37 @@ TIER1_PHRASES = [
     (re.compile(r"\bboasts\b", re.I), "has"),
 ]
 
+# --- Terms of art: literal technical uses that are NOT AI vocabulary ---------
+# WHY: a DS methods sentence ("robust standard errors ... high leverage points
+# ... flat loss landscape") scored 15/100 because those words are tier-1 slop in
+# marketing prose. The false-positive gate already says an official term of art
+# is advisory only. This makes the deterministic detector honor the same rule
+# for the collocations a data-science team uses literally. Each pattern masks
+# only the collocation; the bare word in marketing use ("a robust, seamless
+# solution", "leverage our platform", "the AI landscape") still flags.
+# Paired protect/recall rows live in evals/test_ds_terms_of_art.py.
+TERMS_OF_ART = [
+    re.compile(r"\b(?:heteroskedasticity|heteroscedasticity|outlier|cluster)-robust\b", re.I),
+    re.compile(r"\brobust(?:ness)?\s+(?:standard\s+errors?|SEs?\b|regression|estimators?|statistics|"
+               r"covariance|optimi[sz]ation|scaler|loss|PCA|check|checks|to\s+(?:outliers|noise|misspecification))", re.I),
+    re.compile(r"\b(?:high|low)[- ]leverage\b", re.I),
+    re.compile(r"\bleverage\s+(?:points?|scores?|values?|statistics?|plots?)\b", re.I),
+    re.compile(r"\b(?:loss|fitness|energy|optimi[sz]ation|error)\s+landscapes?\b", re.I),
+    re.compile(r"\b(?:eval(?:uation)?|test|benchmark)\s+harness(?:es)?\b", re.I),
+]
+
+
+def mask_terms_of_art(text):
+    """Replace each word inside a term-of-art collocation with a neutral token.
+
+    Word count is preserved, so length-based scoring is unchanged; only the
+    vocabulary tiers stop seeing the literal technical use.
+    """
+    for rx in TERMS_OF_ART:
+        text = rx.sub(lambda m: re.sub(r"[A-Za-z]+", "termofart", m.group(0)), text)
+    return text
+
+
 # --- Tier 2: flag in clusters of 2+ per paragraph (catalog L1 tier 2) -----
 TIER2 = {
     "harness": "use, take advantage of",
