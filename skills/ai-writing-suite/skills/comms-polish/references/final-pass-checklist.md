@@ -29,7 +29,9 @@ matter how good the prose reads. This layer is never traded off against style.
 - **Cut check:** after any deletion, re-read the neighbors for dangling
   references ("this", "them", "these results") and broken transitions.
 - **Unchanged is allowed:** if no sentence had a named failure (see SKILL.md,
-  Edit restraint), the right output is the input.
+  Edit restraint), the right output is the input. For a `rewrite` request, a
+  readability problem the reader would notice counts as a failure. Fix it
+  without changing meaning.
 
 **L2 — Slop removal (style).**
 
