@@ -1,0 +1,143 @@
+{
+ "arms": {
+  "new": {
+   "items": [
+    {
+     "id": "ds-01-abtest",
+     "output": "*New ranking model A/B test: recommend ramping to 50%, not 100%*\n\nThe test ran 14 days across 1.2M sessions. The model looks like a real CTR win, but two open questions mean I'd stage the rollout.\n\n*What we saw*\n- CTR: +2.1% (95% CI +0.4% to +3.8%). Positive, though the interval is wide.\n- Revenue per session: +0.6%, not statistically significant (p=0.21). We can't claim a revenue effect yet.\n- By platform: mobile CTR +3.4%; desktop flat (+0.1%, CI includes 0). The gain is concentrated on mobile.\n\n*The caveat*\nThe effect was larger in week 1, so we can't rule out a novelty effect. The headline 2.1% may overstate the steady-state lift.\n\n*Recommendation*\nRamp to 50% now and re-check in 2 weeks. If the lift holds as novelty fades, we'll have the evidence to go to 100%. If it fades, we'll know before committing fully. Happy to walk through the platform and week-over-week cuts if useful.",
+     "notes": "Returned unchanged. I found no AI tells worth editing. The hedges (interval is wide, not significant, can't rule out a novelty effect, may overstate) are your actual findings, so smoothing or sharpening them would change what the data supports. The figures, CI and p-value match your notes."
+    },
+    {
+     "id": "ds-02-churn",
+     "output": "Subject: Q3 churn: up 1.2 points, cause not yet separable\n\nHi all,\n\nMonthly churn rose from 4.1% in Q2 to 5.3% in Q3, an increase of 1.2 points (about 29% in relative terms).\n\nWe don't yet know why. Two events landed early in the quarter: the July 1 price change and the July 9 competitor launch. They are only eight days apart, and our analysis cannot separate their effects. I'd treat any claim that one of them explains the increase as premature.\n\nOne useful data point: churn among annual-plan customers was unchanged at 1.2%, so the increase is coming from customers outside annual plans.\n\nNext step: we are surveying about 200 churned users to hear directly why they left. Results are expected in mid-November, and I'll follow up then with what they tell us about price versus the competitor.\n\nUntil then, I'd suggest holding off on decisions that depend on which of the two is responsible. Happy to walk through the analysis if that would help.\n\nThanks,",
+     "notes": "Returned unchanged. The draft is specific, states its uncertainty once and plainly, and matches your notes (1.2 points is about 29% relative; Jul 1 to Jul 9 is eight days). Your sign-off is just 'Thanks,' so add your name before sending."
+    },
+    {
+     "id": "ds-03-dataincident",
+     "output": "*Incident summary: DAU dashboards overstated, Aug 4 to Aug 11*\n\n*What happened*\nA pipeline bug double-counted about 3.2% of events between Aug 4 and Aug 11.\n\n*Impact*\n- DAU dashboards were overstated by roughly 3% for that week. If you pulled numbers for Aug 4-11 before Aug 14 (reports, exports, slides), please refresh them.\n- The forecast model was retrained on Aug 10 using the affected data. Its impact on the forecast is still being assessed, so please treat recent forecast outputs with caution until we report back.\n- As far as we know, no other models were affected.\n\n*Timeline and status*\n- Aug 4 to Aug 11: double-counting in the pipeline\n- Aug 10: forecast model retrained on the affected data\n- Aug 12: bug fixed\n- Aug 14: backfill completed, correcting the affected week\n- Open: forecast impact assessment (in progress)\n\n*Next*\nWe'll share the forecast assessment as soon as it's done. If you see numbers for that week that don't look right, send them our way.",
+     "notes": "Returned unchanged. The dates, the 3.2% and roughly 3% figures, and the 'still being assessed' caveat on the forecast model all match your notes. The timeline bullets earn their place in an incident summary. Nothing here reads as AI-generated."
+    },
+    {
+     "id": "ds-04-forecast",
+     "output": "*Q4 demand forecast and recommended planning number*\n\n*Summary*\nThe Q4 demand forecast is 118k units, with an 80% interval of 104k to 131k. You asked for a single number to plan against. I recommend 125k.\n\n*Why not 118k*\n118k is the most likely outcome, but it is not a safe planning number. Last year's Q4 forecast was off by 9%, which at this volume is roughly 10k units. The largest source of uncertainty this year is holiday timing: Thanksgiving falls late, and that makes it harder to predict how holiday demand will land.\n\n*Why 125k*\n125k sits in the upper part of the interval. It covers most plausible demand outcomes without planning to the 131k extreme.\n\nThe trade-off: if demand comes in at the point forecast, we would hold about 7k more units than needed. How much that costs versus the risk of a shortfall is a judgment call, and Supply is better placed to weigh it than I am.\n\n*Next*\nI will refresh the forecast on Nov 15 and flag right away if the range or the recommended number changes.",
+     "notes": "Returned unchanged. The numbers hang together (125k minus 118k is the 7k overage), the trade-off is stated plainly, and handing the cost-versus-shortfall call to Supply is a real hand-off rather than a hedge. I only had the memo, so I did not check the forecast figures against a source."
+    },
+    {
+     "id": "ds-05-fraudmodel",
+     "output": "*Fraud model v3: September holdout results and rollout plan*\n\nv3 beats v2 on both precision and recall:\n- Precision 0.91 at recall 0.62 (v2: 0.88 at 0.55)\n\nOne regression to flag: false positive rate on new merchants is higher than v2 (2.1% vs 1.4%, about 50% higher). We don't know why yet and are investigating.\n\n*Plan*\n- Ship v3 to 10% of traffic on Monday\n- Guardrail on new-merchant FPR, so we catch this in live traffic early\n- We'll post what we find on the root cause\n\nIf you know of anything that changed for new merchants (onboarding flow, merchant mix, data availability), please tell us. It could save us some digging.\n\nThanks to Priya for the feature work on v3.",
+     "notes": "Returned unchanged. The figures match your notes (2.1% vs 1.4% is about 50% higher), the regression is stated up front with the 'we don't know why yet' kept, and the credit to Priya is intact."
+    },
+    {
+     "id": "ds-06-survey",
+     "output": "*Onboarding survey: summary*\n\n*Headline*\n61% of respondents said onboarding was confusing (412 responses, 18% response rate). The top themes in open-text answers were permissions setup and data import.\n\n*How far to trust it*\nRespondents skew toward power users: 70% are weekly active, versus roughly 35% of users overall. Combined with an 18% response rate, this means the sample is not representative, so the 61% may not generalize. From this data alone we can't say whether the true figure for all users is higher or lower. Less active users are underrepresented.\n\nWhat the survey does tell us: even in a sample weighted toward engaged users, a majority found onboarding confusing, and the two themes point to specific places to look.\n\n*Recommendation*\nBefore redesigning, run about 5 follow-up interviews with new users. Focus on permissions setup and data import, and use them to check whether the survey's themes hold for people who are onboarding now.",
+     "notes": "Returned unchanged. The sample-skew caveats are the substance of this summary, so I left them exactly as written. I only had the memo, so I did not check the survey figures against a source."
+    },
+    {
+     "id": "ds-07-nullresult",
+     "output": "*Email reminder experiment: no detectable effect on 7-day retention; recommend stopping*\n\nThe test found no detectable effect of the email reminder on 7-day retention: +0.2pp (95% CI -0.5pp to +0.9pp).\n\nHow to read it: the test was powered to detect a 1pp change, and the top of the interval (+0.9pp) falls below that, so we can rule out a lift of 1pp or more. We cannot rule out a smaller effect, in either direction, within the interval. This is a result of no detectable effect, not proof of no effect.\n\n*Recommendation*\nStop the test and don't ship the reminder. Any benefit is likely under 1pp, and we have no evidence that it is positive. Pinning down a smaller effect would take a much larger sample for a payoff that is modest at best.",
+     "notes": "Returned unchanged. The 'no detectable effect, not proof of no effect' distinction is the point of this section, and the interval reasoning is correct as written. I did not touch the numbers or the recommendation."
+    },
+    {
+     "id": "ds-08-latency",
+     "output": "*Incident update: p95 latency spike, Oct 3*\n\n*Status*\np95 latency rose from 340ms to 910ms (about 2.7x) starting at 14:12 UTC.\n\n*What we know*\n- Onset was 14 minutes after the 13:58 UTC config deploy.\n- Traffic was also up 22% during that hour, so load is a possible contributor.\n\n*What we don't know*\n- Root cause is not confirmed. Leading hypothesis: the cache eviction policy change in the deploy. We have not ruled out the traffic increase or other contributors.\n\n*Next steps*\n- Rollback of the deploy is scheduled for 16:00 UTC.\n- I'll post here after the rollback with whether latency recovers. If it does, that supports the deploy as the cause (we'll check against traffic at that time). If it doesn't, we'll widen the investigation.",
+     "notes": "Returned unchanged. The timing (14 minutes after the 13:58 deploy), the 2.7x figure and the hypothesis-not-confirmed framing all match your notes, and the draft keeps traffic open as a possible contributor rather than ruling it out."
+    },
+    {
+     "id": "factbridge-01-unsupported-cause-en",
+     "output": "Multiple companies expanded their deployment teams.",
+     "notes": "Notes: I cut 'reflecting persistent data-integration failures'. Your source note says the source gives no reason for the expansion and does not mention data-integration failures, so the clause adds a cause the source doesn't support. Softening it to 'may reflect' wouldn't fix that. If you have another source for the cause, add the clause back with the citation."
+    },
+    {
+     "id": "factbridge-02-cooccurrence-en",
+     "output": "The support backlog grew during the same quarter that three teams expanded.",
+     "notes": "Notes: I cut 'indicating the backlog caused the hiring'. Your source note establishes only that the backlog grew and three teams expanded in the same quarter, and says it does not claim either event caused the other. The sentence now states the supported timing relation. If you have evidence for a causal direction, restore it with the source."
+    },
+    {
+     "id": "factbridge-04-supported-possibility-en",
+     "output": "Response times declined after the new routing policy; the incident review says the decline may be related to the policy.",
+     "notes": "Unchanged. It already reports the decline and the incident review's 'may be related' at the strength your source supports. Tightening it further risks hardening the hedge into a cause."
+    },
+    {
+     "id": "tweet-01-obvious",
+     "output": "We're working on a solution that will change how you work. #buildinpublic",
+     "notes": "Your draft never says what the product is or what changes, so there is nothing concrete to keep beyond 'it will change how you work'. I cut the filler opener, the hype adjectives, the 'future looks bright' closer, the rocket emoji and six of the seven hashtags, and I did not invent a feature or benefit. 'Will change how you work' is still an unsupported claim. If you add one concrete detail (what it does, who it's for, a number), the tweet will read as human."
+    },
+    {
+     "id": "linkedin-01-obvious",
+     "output": "I recently attended a conference, and it reinforced for me how much building connections matters. The keynote showed the power of innovation.",
+     "notes": "Nothing in the post says which conference it was, what the keynote argued, or who you met, so the rewrite is short. I cut the pivotal/transformative/testament inflation and the closing lines ('let's embrace the journey', 'What's next? Only time will tell') because they carried no content, and I did not invent specifics. One concrete detail (a talk, a person, something you'll do differently) would make this read as yours."
+    },
+    {
+     "id": "memo-01-obvious",
+     "output": "We must examine our strategy in detail. Experts believe a culture of innovation is essential, and this initiative will improve our position.",
+     "notes": "Notes: 'Experts believe' still has no named source. I kept it because deleting it would turn a reported view into your own assertion; name the source or cut the claim. 'This initiative will improve our position' is unsupported as written (no initiative named, no mechanism), so add those or soften it. I cut the throat-clearing, 'undoubtedly', 'pivotal', and the 'step by step ... holistic approach' sentence, which announced work instead of doing it."
+    },
+    {
+     "id": "memo-02-subtle",
+     "output": "Our current approach has served us well, but there is room to improve. Research suggests engagement is trending in a positive direction. We should watch for potential headwinds, and a measured strategy could position us well. That strategy will help us capture emerging opportunities.",
+     "notes": "Notes: 'Research suggests' names no research; add the source. 'Room to improve', 'headwinds' and 'emerging opportunities' have nothing specific behind them in the draft, so I left them rather than invent specifics. One sentence says a measured strategy 'could' position us well and the next says it 'will' help capture opportunities. I kept each as written, but you probably want one level of certainty."
+    },
+    {
+     "id": "overstep-05-payoff-en",
+     "output": "Merging the two staging environments reduces outages: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
+     "notes": "I removed the 'You might think ... but it actually' setup and led with the claim. If someone on the team actually raised the worry that merging adds outages, say so and the contrast is worth keeping. The claim and the 3-of-5 figure are unchanged."
+    },
+    {
+     "id": "overstep-06-strawman-en",
+     "output": "Longer prompts often bury the key instruction, and accuracy drops. We cap retrieved context at 8 chunks and rerank before sending.",
+     "notes": "I removed the 'You might think ... can never hurt and is always the optimal move' setup, since it attributes an extreme view to the reader and the point stands without it. The claim and the details (8 chunks, rerank) are unchanged."
+    },
+    {
+     "id": "narrshape-04-absent-ambiguity-en",
+     "output": "The A/B test is clear: variant B lifted conversion 6%. We should roll it out to everyone next week.",
+     "notes": "Unchanged. It is already short and direct, and nothing you gave me points to a competing reading, so I didn't add a hedge or a doubt you don't hold. One thing to check before sending: the 6% has no sample size, interval or run length attached. If there is a real caveat you're weighing, say it; otherwise leave it as is."
+    },
+    {
+     "id": "artifact-01-status-card-en",
+     "output": "## Status card\n\nRelease v2.4.1 deploys July 31. Health checks run at `/healthz`.",
+     "notes": "Cut the last sentence: it describes the card instead of telling the reader anything the first two sentences don't. The version, date and `/healthz` path are unchanged."
+    },
+    {
+     "id": "fp-terse-04",
+     "output": "Deploy failed. Rolled back. Logs were empty. Tried again at midnight. Same error. Found it at 2am: a stale env var in the staging box. Fixed the config and it went green. Slept.",
+     "notes": "Unchanged. Fragments are native to a tweet, and the specifics (midnight retry, 2am, stale env var in staging) are what make it read human. It is well under 280 characters."
+    },
+    {
+     "id": "fp-pro-linkedin-07",
+     "output": "Six months ago our on-call rotation was a mess. People dreaded their week, pages fired at 3am for things that could wait until morning, and nobody trusted the dashboards. We spent a quarter cleaning it up: deleted 40% of the alerts, rewrote the runbooks, and added a severity tier that actually maps to whether you should wake up. Last month we had two pages the entire rotation. The lesson for me was simple. Most alert fatigue is a design problem, not a discipline problem.",
+     "notes": "Unchanged. It is specific (40% of alerts, two pages, 3am) and in a clear first-person voice. 'The lesson for me was simple' is a mild signpost, but it sets up the closing contrast and is normal for LinkedIn, so I left it. Cut it if you want the last line to land on its own."
+    },
+    {
+     "id": "fp-pro-memo-09",
+     "output": "Heads up on the Q3 planning timeline. Draft proposals are due to your leads by the 18th. Leads consolidate and send me the top three asks per team by the 25th. We will not be able to fund everything, so rank ruthlessly and say what breaks if a line item is cut. Final decisions go out the first week of the quarter. Questions to me directly, not the group thread.",
+     "notes": "Unchanged. It is direct, nearly every sentence carries a date or an instruction, and 'rank ruthlessly' and 'not the group thread' read as your voice."
+    },
+    {
+     "id": "fp-academic-05",
+     "output": "This document specifies the retrieval component's ranking contract. The scorer accepts a query and a candidate set, and returns an ordering. Callers must not assume stability across versions; the ordering is defined only up to the documented tie-break rule. Two properties hold. First, monotonicity: if a candidate's relevance features strictly dominate another's, its rank is at least as high. Second, determinism: given identical inputs and a fixed model hash, the output ordering is byte-identical. Violations of either property are defects, not tuning opportunities. The contract deliberately says nothing about latency, which is governed by a separate service-level objective. Downstream consumers that require a probability rather than an ordinal should call the calibration endpoint; the raw scores are not calibrated and their absolute magnitudes carry no meaning. We state these constraints because past incidents traced to consumers reading structure into the scores that the contract never promised.",
+     "notes": "Unchanged. This is a specification: monotonicity, determinism, fixed model hash and calibration endpoint are precise terms, and 'defects, not tuning opportunities' states a real constraint. Nothing here can be cut or reworded without changing the contract."
+    },
+    {
+     "id": "fp-esl-03-memo",
+     "output": "To the whole team,\n\nWe decided to move the weekly sync from Monday to Wednesday, because many people have conflicts on Monday morning. Please update your calendar before this week. If you cannot join at the new time, tell me and we will find another slot. Thank you for understanding.",
+     "notes": "I fixed grammar only (tense, plural, 'at the new time', 'we will find', 'thank you for understanding') and kept your plain, direct voice. 'Before this week' is unclear about the deadline, so I left your wording; consider giving a specific day."
+    },
+    {
+     "id": "s0-churn-cause",
+     "output": "Churn rose from 4.1% to 5.3% in Q3. The July 1 price change and the July 9 competitor launch both landed early in the quarter, and this analysis cannot separate the two. Annual-plan churn was unchanged at 1.2%.",
+     "notes": "Notes: I removed 'driven by the July 1 price change' and 'confirms that price sensitivity among monthly customers is the root cause'. Your own notes say the analysis cannot separate the price change from the July 9 competitor launch, and unchanged annual-plan churn does not settle which one (or either) drives the rise. The rewrite states both events as happening early in Q3. If you have evidence that separates them, restore the claim and cite it."
+    },
+    {
+     "id": "s0-latency-cause",
+     "output": "p95 latency rose from 340ms to 910ms starting at 14:12 UTC, 14 minutes after the 13:58 UTC config deploy. Our leading hypothesis is the cache eviction policy change in that deploy, but this is not confirmed, and traffic was also up 22% that hour. We're rolling back at 16:00 UTC to try to bring latency back down.",
+     "notes": "Notes: your draft said the cache eviction change 'was caused by' the deploy and that rolling back would 'fix it'. Your notes call it the leading hypothesis, not confirmed, with traffic also up 22% that hour. I restated the cause as a hypothesis, kept the timing, and changed 'to fix it' to an attempt. If the cause is now confirmed, restore the stronger wording."
+    },
+    {
+     "id": "s0-keep-conclusion",
+     "output": "Churn rose from 4.1% to 5.3% in Q3, and in my view the July 1 price change is the main driver.",
+     "notes": "Notes: your conclusion is unchanged, as you asked, and 'in my view' keeps it framed as your judgment. Your notes say the analysis cannot separate the July 1 price change from the July 9 competitor launch, so 'main driver' is a judgment the analysis doesn't show. If the execs ask, be ready to defend it as judgment, or add a clause saying the analysis can't separate the two. That is your call."
+    }
+   ]
+  }
+ }
+}
