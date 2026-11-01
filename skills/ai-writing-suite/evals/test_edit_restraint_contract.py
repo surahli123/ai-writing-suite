@@ -31,6 +31,8 @@ class EditRestraintContract(unittest.TestCase):
     def test_restraint_rules_present(self):
         body = text(POLISH)
         for phrase in ("Unchanged is a valid result.",
+                       "Match the edit to the request",
+                       "improvements that change no meaning",
                        "Change a sentence only for a failure you can name.",
                        "A single catalog match is not a failure on its own",
                        "Fix the wording, keep the claim.",
