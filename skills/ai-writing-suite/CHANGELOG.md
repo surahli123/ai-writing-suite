@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Empty-entries sentinel-path negative (PR #64)** — `retrieve([], …)` now pinned to
   return `(None, (-1, -1))`, covering the loop-never-ran branch the zero-overlap
   guard tests missed; plus a return-shape pin for the zero-overlap tuple contract.
+- **Aug–Nov 2026 landscape research** — `notes/research-landscape-2026-11-01.md`: the owner's
+  recent GitHub stars, new writing skills found by GitHub search, and X/web discourse (X seen as
+  snippets only), compared against the suite file by file. Result: 27 practice clusters, 15
+  prioritized proposals (fidelity classes, edit restraint, add-side hedge guard, score epistemics,
+  mannered prose, R1 softening, E2 additions, a skill-lift ablation arm), and a list of
+  re-proposed owner-rejected items. Proposal only; nothing implemented.
 - **no-ai-slop delta research (PR #64)** — `notes/research-no-ai-slop-2026-07-22.md`:
   petergyang/no-ai-slop (MIT) vs the 72-entry catalog; ~16 of 20 patterns already
   covered, 3 absorption candidates recorded for an owner-gated future lane.
