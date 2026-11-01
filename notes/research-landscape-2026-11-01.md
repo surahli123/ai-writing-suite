@@ -70,7 +70,7 @@ Evidence limits. Read this before trusting any number below.
 - human-gated learned rules;
 - the untrusted-content contract.
 
-No external writing skill ships a quantitative voice fingerprint or a holdout adversary.
+No external writing skill we saw ships a holdout adversary. *Correction (round 2):* theclaymethod/unslop v2.3.0 does ship a quantitative voice score with impostor calibration (`scripts/voice_score.py`). Our per-genre profiles, verbatim anchors and divergence loop remain distinctive.
 
 **At par:** the false-positive gate, the narrative/structure-first tells (N1–N4, which match SlopShape and StoryScope), deletion-first density, and BLUF.
 
@@ -273,7 +273,7 @@ Found by search, not starred: [edonadei/caliper](https://github.com/edonadei/cal
 | [bnivanov/omp-writing-skills](https://github.com/bnivanov/omp-writing-skills) | MIT | 7 | A separate drafter and editor subagent above about 300 words; a deterministic lint with exit codes 0/1/2. |
 | [larashero3-dotcom/lieflat-less-ai-tone](https://github.com/larashero3-dotcom/lieflat-less-ai-tone) | **CC BY-NC** (ideas only) | 4.7k | A matched-pair study of 5.2M characters showing em-dash direction *flips* between GPT-5.6 and Opus 4.6. |
 
-stop-slop has no commits since 2026-03-18. anthropics/skills shipped no writing skill. Its relevant changes were the eval-hillclimb and eval-audit guides and a frontend-design update with a dated list of default tells.
+stop-slop has no commits since 2026-03-18. anthropics/skills shipped no *new* AI-tell editing skill since July. *Correction (round 2):* its existing doc-coauthoring and internal-comms skills are among the most-installed writing skills; see `research-best-practices-round2-2026-11-01.md`. Its relevant recent changes were the eval-hillclimb and eval-audit guides and a frontend-design update with a dated list of default tells.
 
 ### X and web discourse (all X items are snippet-only)
 
