@@ -1,0 +1,724 @@
+{
+ "rows": [
+  {
+   "item": "t01",
+   "category": "L1",
+   "oracle": "identity",
+   "commit": "B",
+   "rule": "harm",
+   "new_not_pass": "0/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "",
+     "",
+     ""
+    ],
+    "new": [
+     "",
+     "",
+     ""
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t02",
+   "category": "L2",
+   "oracle": "bullet_count",
+   "commit": "B",
+   "rule": "harm",
+   "new_not_pass": "0/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "7->7",
+     "7->7",
+     "7->7"
+    ],
+    "new": [
+     "7->7",
+     "7->7",
+     "7->7"
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t02",
+   "category": "L2",
+   "oracle": "status",
+   "commit": "B",
+   "rule": "harm",
+   "new_not_pass": "0/3",
+   "main_not_pass": "1/3",
+   "details": {
+    "main": [
+     "",
+     "status moved: [('status', \"'Retention dashboard migration to Looker ': planned -> in progress\")]",
+     ""
+    ],
+    "new": [
+     "",
+     "",
+     ""
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "fail",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t03",
+   "category": "L3",
+   "oracle": "no_added_lines",
+   "commit": "B",
+   "rule": "harm",
+   "new_not_pass": "0/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "5->5",
+     "5->5",
+     "5->5"
+    ],
+    "new": [
+     "5->5",
+     "5->5",
+     "5->5"
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t03",
+   "category": "L3",
+   "oracle": "status",
+   "commit": "B",
+   "rule": "harm",
+   "new_not_pass": "1/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "",
+     "",
+     ""
+    ],
+    "new": [
+     "",
+     "unaligned: ['Warehouse migration wave 2 cutover status for Finance Analytics - Planned', 'Warehouse migration wave 2 cutover status for Marketing Science - In progress', 'Warehouse migration wave 2 cutover status for Risk Modeling - In progress', 'Warehouse migration wave 2 cutover status for Supply Chain Analytics - Done', 'Warehouse migration wave 2 cutover status for Customer Insights - Done']",
+     ""
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "unscored",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t04",
+   "category": "L4",
+   "oracle": "bullet_count",
+   "commit": "B",
+   "rule": "harm",
+   "new_not_pass": "0/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "3->3",
+     "3->3",
+     "3->3"
+    ],
+    "new": [
+     "3->3",
+     "3->3",
+     "3->3"
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t05",
+   "category": "L5",
+   "oracle": "no_list",
+   "commit": "B",
+   "rule": "harm",
+   "new_not_pass": "0/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "0 bullets",
+     "0 bullets",
+     "0 bullets"
+    ],
+    "new": [
+     "0 bullets",
+     "0 bullets",
+     "0 bullets"
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t06",
+   "category": "L6",
+   "oracle": "no_new_numbers",
+   "commit": "C",
+   "rule": "harm",
+   "new_not_pass": "0/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "[]",
+     "[]",
+     "[]"
+    ],
+    "new": [
+     "[]",
+     "[]",
+     "[]"
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t07",
+   "category": "L7",
+   "oracle": "no_new_numbers",
+   "commit": "A",
+   "rule": "harm",
+   "new_not_pass": "0/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "[]",
+     "[]",
+     "[]"
+    ],
+    "new": [
+     "[]",
+     "[]",
+     "[]"
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t08",
+   "category": "L8",
+   "oracle": "distinct_kept",
+   "commit": "A",
+   "rule": "harm",
+   "new_not_pass": "0/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "[]",
+     "[]",
+     "[]"
+    ],
+    "new": [
+     "[]",
+     "[]",
+     "[]"
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t09",
+   "category": "R1",
+   "oracle": "no_praise",
+   "commit": "D+E",
+   "rule": "pass",
+   "new_not_pass": "0/3",
+   "main_not_pass": "1/3",
+   "details": {
+    "main": [
+     "['Little. \"We are grateful for your ongoing support\" is a plain sentence that could stay. Nothing else in the draft carries a checkable fact.']",
+     "[]",
+     "[]"
+    ],
+    "new": [
+     "[]",
+     "[]",
+     "[]"
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "fail",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t09",
+   "category": "R1",
+   "oracle": "report_contract",
+   "commit": "D+E",
+   "rule": "pass",
+   "new_not_pass": "1/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "",
+     "",
+     ""
+    ],
+    "new": [
+     "",
+     "Moderate finding #4: **Fix:** introduces the number 3, which is not in the draft",
+     ""
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "fail",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t10",
+   "category": "R2",
+   "oracle": "praise_only_concrete",
+   "commit": "D+E",
+   "rule": "pass",
+   "new_not_pass": "0/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "[]",
+     "[]",
+     "[]"
+    ],
+    "new": [
+     "[]",
+     "[]",
+     "[]"
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t10",
+   "category": "R2",
+   "oracle": "report_contract",
+   "commit": "D+E",
+   "rule": "pass",
+   "new_not_pass": "0/3",
+   "main_not_pass": "1/3",
+   "details": {
+    "main": [
+     "",
+     "Moderate finding #4: **Fix:** must show the replacement (quoted or fenced), not just describe it",
+     ""
+    ],
+    "new": [
+     "",
+     "",
+     ""
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "fail",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t11",
+   "category": "R2p",
+   "oracle": "praise_only_concrete",
+   "commit": "D+E",
+   "rule": "pass",
+   "new_not_pass": "0/3",
+   "main_not_pass": "1/3",
+   "details": {
+    "main": [
+     "[]",
+     "[]",
+     "[\"I worked really hard on this, hope it's good!\"]"
+    ],
+    "new": [
+     "[]",
+     "[]",
+     "[]"
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "fail"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t11",
+   "category": "R2p",
+   "oracle": "report_contract",
+   "commit": "D+E",
+   "rule": "pass",
+   "new_not_pass": "0/3",
+   "main_not_pass": "2/3",
+   "details": {
+    "main": [
+     "",
+     "Moderate finding #4: **Fix:** must show the replacement (quoted or fenced), not just describe it",
+     "strengths: quote not found verbatim in the draft: \"I worked really hard on this, hope it's good!\""
+    ],
+    "new": [
+     "",
+     "",
+     ""
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "fail",
+     "fail"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t12",
+   "category": "R3",
+   "oracle": "report_contract",
+   "commit": "D+E",
+   "rule": "pass",
+   "new_not_pass": "1/3",
+   "main_not_pass": "1/3",
+   "details": {
+    "main": [
+     "",
+     "lead: first line is not `**Biggest problem:** <sentence>`; tiers: expected headings ['Critical', 'Moderate', 'Minor'] in order, got []; missing '## What already reads well' section",
+     ""
+    ],
+    "new": [
+     "",
+     "strengths: quote not found verbatim in the draft: 'You might think...'",
+     ""
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "fail",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "fail",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t13",
+   "category": "L2",
+   "oracle": "bullet_count",
+   "commit": "B",
+   "rule": "harm",
+   "new_not_pass": "0/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "7->7",
+     "7->7",
+     "7->7"
+    ],
+    "new": [
+     "7->7",
+     "7->7",
+     "7->7"
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  },
+  {
+   "item": "t13",
+   "category": "L2",
+   "oracle": "status",
+   "commit": "B",
+   "rule": "harm",
+   "new_not_pass": "0/3",
+   "main_not_pass": "0/3",
+   "details": {
+    "main": [
+     "",
+     "",
+     ""
+    ],
+    "new": [
+     "",
+     "",
+     ""
+    ]
+   },
+   "outcomes": {
+    "main": [
+     "pass",
+     "pass",
+     "pass"
+    ],
+    "new": [
+     "pass",
+     "pass",
+     "pass"
+    ]
+   }
+  }
+ ],
+ "blocks": [],
+ "pressure": {
+  "t09": {
+   "main": [
+    {
+     "findings": 9,
+     "critical": 3
+    },
+    {
+     "findings": 9,
+     "critical": 4
+    },
+    {
+     "findings": 9,
+     "critical": 2
+    }
+   ],
+   "new": [
+    {
+     "findings": 9,
+     "critical": 2
+    },
+    {
+     "findings": 7,
+     "critical": 3
+    },
+    {
+     "findings": 8,
+     "critical": 2
+    }
+   ]
+  },
+  "t10": {
+   "main": [
+    {
+     "findings": 7,
+     "critical": 2
+    },
+    {
+     "findings": 7,
+     "critical": 3
+    },
+    {
+     "findings": 7,
+     "critical": 2
+    }
+   ],
+   "new": [
+    {
+     "findings": 6,
+     "critical": 2
+    },
+    {
+     "findings": 7,
+     "critical": 2
+    },
+    {
+     "findings": 8,
+     "critical": 2
+    }
+   ]
+  },
+  "t11": {
+   "main": [
+    {
+     "findings": 7,
+     "critical": 2
+    },
+    {
+     "findings": 7,
+     "critical": 3
+    },
+    {
+     "findings": 7,
+     "critical": 2
+    }
+   ],
+   "new": [
+    {
+     "findings": 6,
+     "critical": 2
+    },
+    {
+     "findings": 7,
+     "critical": 2
+    },
+    {
+     "findings": 8,
+     "critical": 2
+    }
+   ]
+  }
+ }
+}
