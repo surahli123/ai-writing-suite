@@ -1,0 +1,44 @@
+{
+ "items": [
+  {
+   "id": "s1-light-edit",
+   "subset": "s1-restraint",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "Hey all, the churn model retrain finished last night. AUC went from 0.81 to 0.83 on the holdout, mostly from the new tenure features. I havent checked calibration yet, so please dont use the new scores for the retention campaign until I post the calibration plot tomorrow.",
+   "request": "Light edit only, keep my voice. This goes in our team Slack channel:\n\nHey all, the churn model retrain finished last night. AUC went from 0.81 to 0.83 on the holdout, mostly from the new tenure features. I havent checked calibration yet, so please dont use the new scores for the retention campaign until I post the calibration plot tomorrow."
+  },
+  {
+   "id": "s1-timeline",
+   "subset": "s1-restraint",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "Timeline (all times UTC, Oct 3)\n- 13:58 config deploy (cache eviction policy change) goes out\n- 14:12 p95 latency alert fires (340ms -> 910ms)\n- 14:20 on-call acks, starts checking traffic and recent deploys\n- 14:45 traffic confirmed up 22% vs same hour last week\n- 15:30 decision to roll back the 13:58 deploy\n- 16:00 rollback complete; p95 back to 360ms by 16:10",
+   "request": "Polish this incident timeline before I paste it into the postmortem doc:\n\nTimeline (all times UTC, Oct 3)\n- 13:58 config deploy (cache eviction policy change) goes out\n- 14:12 p95 latency alert fires (340ms -> 910ms)\n- 14:20 on-call acks, starts checking traffic and recent deploys\n- 14:45 traffic confirmed up 22% vs same hour last week\n- 15:30 decision to roll back the 13:58 deploy\n- 16:00 rollback complete; p95 back to 360ms by 16:10"
+  },
+  {
+   "id": "s1-stance",
+   "subset": "s1-restraint",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "I recently had the privilege of attending the Experimentation Summit, and it was truly an eye-opening experience. The talk on CUPED variance reduction was hands down the most valuable hour of my year, and I came away with a renewed passion for rigorous testing. Excited to bring these learnings back to the team!",
+   "request": "Polish this LinkedIn post so it doesn't sound AI-written:\n\nI recently had the privilege of attending the Experimentation Summit, and it was truly an eye-opening experience. The talk on CUPED variance reduction was hands down the most valuable hour of my year, and I came away with a renewed passion for rigorous testing. Excited to bring these learnings back to the team!"
+  },
+  {
+   "id": "s1-attribution",
+   "subset": "s1-restraint",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "In today's rapidly evolving market landscape, industry analysts expect demand for our category to soften in the first half of next year. It is therefore crucial that we leverage this window to proactively optimize our inventory strategy and ensure we remain well-positioned for the road ahead.",
+   "request": "Polish this paragraph from my planning memo so it doesn't read AI-generated:\n\nIn today's rapidly evolving market landscape, industry analysts expect demand for our category to soften in the first half of next year. It is therefore crucial that we leverage this window to proactively optimize our inventory strategy and ensure we remain well-positioned for the road ahead."
+  },
+  {
+   "id": "s1-terse-status",
+   "subset": "s1-restraint",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "Status, wk of Oct 27\n- Forecast v4: done, shipped to supply Tue\n- Churn retrain: done, calibration check pending (Thu)\n- Survey analysis: blocked on legal review of open-text, ETA unknown\n- Ask: need a reviewer for the forecast backtest PR by Fri",
+   "request": "Polish my weekly status update before I post it in the team channel:\n\nStatus, wk of Oct 27\n- Forecast v4: done, shipped to supply Tue\n- Churn retrain: done, calibration check pending (Thu)\n- Survey analysis: blocked on legal review of open-text, ETA unknown\n- Ask: need a reviewer for the forecast backtest PR by Fri"
+  }
+ ]
+}
