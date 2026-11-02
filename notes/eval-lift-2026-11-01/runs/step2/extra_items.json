@@ -1,0 +1,36 @@
+{
+ "items": [
+  {
+   "id": "s2-readout",
+   "subset": "s2-fidelity",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "In a significant development for our growth strategy, the new onboarding flow delivered a meaningful uplift: 7-day retention rose 1.2 percentage points (95% CI 0.3 to 2.1), roughly 3% in relative terms. Revenue per user also moved, but the difference was not statistically significant (p=0.21). These results suggest the flow is worth ramping to 50%.",
+   "request": "Polish this experiment readout paragraph so it doesn't read AI-generated before I share it with leadership:\n\nIn a significant development for our growth strategy, the new onboarding flow delivered a meaningful uplift: 7-day retention rose 1.2 percentage points (95% CI 0.3 to 2.1), roughly 3% in relative terms. Revenue per user also moved, but the difference was not statistically significant (p=0.21). These results suggest the flow is worth ramping to 50%."
+  },
+  {
+   "id": "s2-scope",
+   "subset": "s2-fidelity",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "It is worth highlighting that only 3 of the 12 regions saw roughly a 5% lift in conversion, and at least two of those had the holiday promo running at the same time. The incident review suggests the routing change may have contributed to the dip elsewhere. We hope to ship the regional fix by mid-November.",
+   "request": "Clean this up for the weekly business review, it sounds too much like ChatGPT:\n\nIt is worth highlighting that only 3 of the 12 regions saw roughly a 5% lift in conversion, and at least two of those had the holiday promo running at the same time. The incident review suggests the routing change may have contributed to the dip elsewhere. We hope to ship the regional fix by mid-November."
+  },
+  {
+   "id": "s2-null",
+   "subset": "s2-fidelity",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "Delving into the results, the email reminder showed no detectable effect on 7-day retention (+0.2pp, 95% CI -0.5pp to +0.9pp). Notably, the test was powered to detect a 1pp change, so a smaller effect is not ruled out. Analysts expect the reminder to matter more for new users, which we plan to test in Q1.",
+   "request": "Polish this for the analytics weekly so it reads like a person wrote it:\n\nDelving into the results, the email reminder showed no detectable effect on 7-day retention (+0.2pp, 95% CI -0.5pp to +0.9pp). Notably, the test was powered to detect a 1pp change, so a smaller effect is not ruled out. Analysts expect the reminder to matter more for new users, which we plan to test in Q1."
+  },
+  {
+   "id": "s2-forecast",
+   "subset": "s2-fidelity",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "Our robust forecasting framework projects Q4 demand at approximately 118k units (80% interval 104k-131k). Historically, our Q4 error has been about 9%. We may need to revisit the number after the Nov 15 refresh, but for now we recommend planning at 125k.",
+   "request": "Make this forecast memo paragraph sound less AI-written:\n\nOur robust forecasting framework projects Q4 demand at approximately 118k units (80% interval 104k-131k). Historically, our Q4 error has been about 9%. We may need to revisit the number after the Nov 15 refresh, but for now we recommend planning at 125k."
+  }
+ ]
+}
