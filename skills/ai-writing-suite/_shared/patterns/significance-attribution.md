@@ -89,8 +89,13 @@ priority to fix in any professional or factual document.
 - **Tell:** Phantom authorities give opinions weight: "Experts believe,"
   "Studies show," "Research suggests," "Industry leaders agree," "several
   sources" — with no named source.
-- **Fix:** Name the specific expert, paper, or report, or drop the claim. One
-  sourced reference beats four vague ones.
+- **Fix:** Name the specific expert, paper, or report when the text or the user
+  supplies it. One sourced reference beats four vague ones. When polishing
+  someone else's draft, never invent the source. Never silently turn an
+  attributed claim into the author's own claim either: keep the attribution in
+  plain words ("some analysts expect") and flag the missing source in notes. Drop
+  the claim only if it carries nothing the author needs. The After below assumes
+  the survey was supplied.
 - **Before:** Experts believe it plays a crucial role in the regional ecosystem.
 - **After:** A 2019 Chinese Academy of Sciences survey found 12 endemic fish
   species.
