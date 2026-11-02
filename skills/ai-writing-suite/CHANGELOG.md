@@ -20,6 +20,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Empty-entries sentinel-path negative (PR #64)** — `retrieve([], …)` now pinned to
   return `(None, (-1, -1))`, covering the loop-never-ran branch the zero-overlap
   guard tests missed; plus a return-shape pin for the zero-overlap tuple contract.
+- **Aug–Nov 2026 landscape research** — `notes/research-landscape-2026-11-01.md`: the owner's
+  recent GitHub stars, new writing skills found by GitHub search, and X/web discourse (X seen as
+  snippets only), compared against the suite file by file. Result: 27 practice clusters, 15
+  prioritized proposals (fidelity classes, edit restraint, add-side hedge guard, score epistemics,
+  mannered prose, R1 softening, E2 additions, a skill-lift ablation arm), and a list of
+  re-proposed owner-rejected items. Proposal only; nothing implemented.
+- **Skill-lift eval v0** — `notes/eval-lift-2026-11-01/`: six Sonnet arms on 24 requests,
+  four blind Opus judges. Arms: bare, one-liner, suite@main, suite+PR #67, cursor pstack unslop,
+  theclaymethod/unslop. Results: the suite ties a one-line instruction and clearly beats pstack
+  unslop. A later adversarial review (`notes/eval-lift-2026-11-01/review/`) found that the
+  meaning-drift edge over bare (p=0.04) did not replicate across re-judgings, that the
+  pre-registered step gate is dominated by judge noise, and that the PR #67 finding came from
+  the rubric. PR #67's
+  preserve-and-flag rule kept unsupported claims that every other arm cut. The regex detector
+  scores modern Sonnet drafts 0. Advisory and outside `run_all.sh`.
+- **Round-2 best-practice research** — `notes/research-best-practices-round2-2026-11-01.md`:
+  official skill-authoring guidance, the most-installed writing skills, DS-comms frameworks, and
+  AI-writing product UX and HCI research. Adds 16 clusters and a merged priority list driven by
+  the eval. It also corrects two round-1 claims. Proposal only.
 - **no-ai-slop delta research (PR #64)** — `notes/research-no-ai-slop-2026-07-22.md`:
   petergyang/no-ai-slop (MIT) vs the 72-entry catalog; ~16 of 20 patterns already
   covered, 3 absorption candidates recorded for an owner-gated future lane.

@@ -1,0 +1,18 @@
+[
+  {"id": "ds-01-abtest", "format": "Slack update", "audience": "product leadership", "with_notes": true,
+   "notes": "New ranking model A/B test, 14 days, 1.2M sessions.\n- CTR +2.1% (95% CI +0.4% to +3.8%).\n- Revenue per session +0.6%, not significant (p=0.21).\n- Mobile +3.4% CTR; desktop flat (+0.1%, CI includes 0).\n- Novelty effect not ruled out (effect was larger in week 1).\n- Recommendation: ramp to 50%, not 100%, and re-check in 2 weeks."},
+  {"id": "ds-02-churn", "format": "email", "audience": "the exec team", "with_notes": true,
+   "notes": "Q3 churn analysis.\n- Monthly churn rose from 4.1% (Q2) to 5.3% (Q3).\n- The price change on Jul 1 and the competitor launch on Jul 9 both happened early in Q3; this analysis cannot separate the two.\n- Annual-plan customers: churn unchanged (1.2%).\n- Next step: survey ~200 churned users; results expected mid-November."},
+  {"id": "ds-03-dataincident", "format": "incident summary", "audience": "dashboard stakeholders", "with_notes": true,
+   "notes": "Pipeline bug double-counted ~3.2% of events from Aug 4 to Aug 11.\n- DAU dashboards overstated by about 3% for that week.\n- Fixed Aug 12; backfill completed Aug 14.\n- Forecast model was retrained on Aug 10 with the bad data; impact on the forecast is still being assessed.\n- No other models affected as far as we know."},
+  {"id": "ds-04-forecast", "format": "memo", "audience": "the supply planning team", "with_notes": false,
+   "notes": "Q4 demand forecast: 118k units, 80% interval 104k-131k.\n- Last year's Q4 forecast error was 9%.\n- Biggest uncertainty: holiday timing (Thanksgiving falls late this year).\n- Supply asked for a single number; I recommend planning at 125k to cover the upper part of the interval.\n- Will refresh the forecast Nov 15."},
+  {"id": "ds-05-fraudmodel", "format": "Slack post", "audience": "engineering and product", "with_notes": true,
+   "notes": "Fraud model v3 on September holdout.\n- Precision 0.91 at recall 0.62 (v2: 0.88 at 0.55).\n- False positive rate on new merchants is higher than v2 (2.1% vs 1.4%); we don't know why yet, investigating.\n- Plan: ship to 10% of traffic Monday, guardrail on new-merchant FPR.\n- Thanks to Priya for the feature work."},
+  {"id": "ds-06-survey", "format": "summary for the product doc", "audience": "the product team", "with_notes": false,
+   "notes": "Onboarding survey.\n- 412 responses, 18% response rate.\n- 61% said onboarding was confusing.\n- Respondents skew toward power users (70% weekly active vs ~35% overall), so this may not generalize.\n- Top open-text themes: permissions setup, data import.\n- Suggest 5 follow-up interviews with new users before redesigning."},
+  {"id": "ds-07-nullresult", "format": "section of the weekly DS update", "audience": "the analytics org", "with_notes": false,
+   "notes": "Email reminder experiment.\n- No detectable effect on 7-day retention: +0.2pp (95% CI -0.5pp to +0.9pp).\n- Test was powered to detect a 1pp change.\n- A small effect under 1pp is not ruled out.\n- Recommend stopping the test and not shipping the reminder."},
+  {"id": "ds-08-latency", "format": "incident channel update", "audience": "on-call engineers and their managers", "with_notes": true,
+   "notes": "p95 latency spiked from 340ms to 910ms on Oct 3 starting 14:12 UTC.\n- Spike began 14 minutes after the 13:58 config deploy.\n- Traffic was also up 22% that hour.\n- Leading hypothesis: the cache eviction policy change in the deploy. Not confirmed.\n- Rollback scheduled for 16:00 UTC; will report whether latency recovers."}
+]
