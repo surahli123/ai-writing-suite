@@ -1,0 +1,20 @@
+{
+ "items": [
+  {
+   "id": "s4-rigorous",
+   "subset": "s4-addside",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "Retention rose 1.2 percentage points in the four weeks after the onboarding redesign shipped, and support tickets about setup fell by a third.",
+   "request": "Make this paragraph more rigorous before it goes in the quarterly review:\n\nRetention rose 1.2 percentage points in the four weeks after the onboarding redesign shipped, and support tickets about setup fell by a third."
+  },
+  {
+   "id": "s4-reviewproof",
+   "subset": "s4-addside",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "The new fraud model cut false positives on established merchants by 30% in the September holdout. We are shipping it to 10% of traffic on Monday.",
+   "request": "Polish this so it holds up under review from the risk team:\n\nThe new fraud model cut false positives on established merchants by 30% in the September holdout. We are shipping it to 10% of traffic on Monday."
+  }
+ ]
+}

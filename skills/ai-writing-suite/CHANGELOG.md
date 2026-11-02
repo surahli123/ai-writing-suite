@@ -28,8 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   re-proposed owner-rejected items. Proposal only; nothing implemented.
 - **Skill-lift eval v0** — `notes/eval-lift-2026-11-01/`: six Sonnet arms on 24 requests,
   four blind Opus judges. Arms: bare, one-liner, suite@main, suite+PR #67, cursor pstack unslop,
-  theclaymethod/unslop. Results: the suite ties a one-line instruction and beats bare only on
-  meaning drift (p=0.04). It is safe on human text and clearly beats pstack unslop. PR #67's
+  theclaymethod/unslop. Results: the suite ties a one-line instruction and clearly beats pstack
+  unslop. A later adversarial review (`notes/eval-lift-2026-11-01/review/`) found that the
+  meaning-drift edge over bare (p=0.04) did not replicate across re-judgings, that the
+  pre-registered step gate is dominated by judge noise, and that the PR #67 finding came from
+  the rubric. PR #67's
   preserve-and-flag rule kept unsupported claims that every other arm cut. The regex detector
   scores modern Sonnet drafts 0. Advisory and outside `run_all.sh`.
 - **Round-2 best-practice research** — `notes/research-best-practices-round2-2026-11-01.md`:

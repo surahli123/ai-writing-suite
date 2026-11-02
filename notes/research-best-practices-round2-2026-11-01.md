@@ -107,7 +107,7 @@ Low value, recorded only:
 
 ## Merged priority list (round 1 + v0 eval + round 2)
 
-The v0 eval changes the ranking. On Sonnet, the suite's only measured lift over no skill is **fidelity and restraint**. A one-liner ties it. The external evidence (unslop's NO-SHIP, millwright, quiron) says shipping should be decided by **damage on clean or literal text**. So the build order puts the measured value first, then the things a one-liner *cannot* do (DS genre knowledge, document-level checks).
+The v0 eval changes the ranking. On Sonnet, the suite's only measured difference from no skill is **restraint**: it edits less. A one-liner ties it. *(Correction after adversarial review: the "fidelity lift, p=0.04" did not replicate, and the PR #67 result was set by the judge rubric. See `eval-lift-2026-11-01/review/`.)* The external evidence (unslop's NO-SHIP, millwright, quiron) says shipping should be decided by **damage on clean or literal text**. So the build order puts the measured value first, then the things a one-liner *cannot* do (DS genre knowledge, document-level checks).
 
 | Order | Item | Why now |
 |---|---|---|
