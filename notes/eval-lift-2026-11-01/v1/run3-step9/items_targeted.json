@@ -1,0 +1,144 @@
+{
+ "items": [
+  {
+   "id": "t01",
+   "category": "L1",
+   "request": "Could you do a light proofread of my weekly status update below? Only fix real errors, please, I'm happy with how it reads.\n\n- Shipped the churn-model feature refresh (DATA-4102); holdout AUC moved from 0.812 to 0.827.\n- Fixed the late-arriving partition bug in the sessions_daily job (DATA-4118).\n- Reviewed Priya's PR for the experiment-assignment service and approved it with two minor comments.\n- Migrated 14 of 22 Airflow DAGs to the new scheduler (DATA-4090).\n- Drafted the Q4 forecasting methodology doc and sent it to Marcus for review.\n- Scheduled the dashboard deprecation walkthrough for Thursday at 2 pm.",
+   "draft": "- Shipped the churn-model feature refresh (DATA-4102); holdout AUC moved from 0.812 to 0.827.\n- Fixed the late-arriving partition bug in the sessions_daily job (DATA-4118).\n- Reviewed Priya's PR for the experiment-assignment service and approved it with two minor comments.\n- Migrated 14 of 22 Airflow DAGs to the new scheduler (DATA-4090).\n- Drafted the Q4 forecasting methodology doc and sent it to Marcus for review.\n- Scheduled the dashboard deprecation walkthrough for Thursday at 2 pm.",
+   "set": "targeted"
+  },
+  {
+   "id": "t02",
+   "category": "L2",
+   "request": "Can you make this list of work items easier to scan? It goes at the top of our team wiki page.\n\n- Investigating duplicate events in the checkout funnel table (DATA-2201, owner: Ravi)\n- 2024 cohort backfill completed (DATA-2207)\n- Retention dashboard migration to Looker planned for January (DATA-2213, owner: Marta)\n- Fix null handling in the uplift scorer, in progress (DATA-2215)\n- Schema registry cleanup was finished by Dana (DATA-2198)\n- Reviewing alert thresholds for the latency monitor (DATA-2220, owner: Ravi)\n- Onboarding doc for new on-call engineers done",
+   "draft": "- Investigating duplicate events in the checkout funnel table (DATA-2201, owner: Ravi)\n- 2024 cohort backfill completed (DATA-2207)\n- Retention dashboard migration to Looker planned for January (DATA-2213, owner: Marta)\n- Fix null handling in the uplift scorer, in progress (DATA-2215)\n- Schema registry cleanup was finished by Dana (DATA-2198)\n- Reviewing alert thresholds for the latency monitor (DATA-2220, owner: Ravi)\n- Onboarding doc for new on-call engineers done",
+   "gold_statuses": [
+    "DATA-2201: in progress",
+    "DATA-2207: done",
+    "DATA-2213: planned",
+    "DATA-2215: in progress",
+    "DATA-2198: done",
+    "DATA-2220: in progress",
+    "onboarding doc: done"
+   ],
+   "set": "targeted"
+  },
+  {
+   "id": "t03",
+   "category": "L3",
+   "request": "These five subject lines each go out as a separate email to a different team lead (one email per team, so nobody sees the other four). Can you polish these subject lines?\n\n- Warehouse migration wave 2 cutover status for Finance Analytics - Planned\n- Warehouse migration wave 2 cutover status for Marketing Science - In progress\n- Warehouse migration wave 2 cutover status for Risk Modeling - In progress\n- Warehouse migration wave 2 cutover status for Supply Chain Analytics - Done\n- Warehouse migration wave 2 cutover status for Customer Insights - Done",
+   "draft": "- Warehouse migration wave 2 cutover status for Finance Analytics - Planned\n- Warehouse migration wave 2 cutover status for Marketing Science - In progress\n- Warehouse migration wave 2 cutover status for Risk Modeling - In progress\n- Warehouse migration wave 2 cutover status for Supply Chain Analytics - Done\n- Warehouse migration wave 2 cutover status for Customer Insights - Done",
+   "gold_statuses": [
+    "Finance Analytics: planned",
+    "Marketing Science: in progress",
+    "Risk Modeling: in progress",
+    "Supply Chain Analytics: done",
+    "Customer Insights: done"
+   ],
+   "set": "targeted"
+  },
+  {
+   "id": "t04",
+   "category": "L4",
+   "request": "Please polish this memo before I send it to the search leads.\n\nThe A/B test of the new search ranker (RK-77) finished last Friday with a 1.8% lift in click-through. The platform team can serve it in production from mid-December. We need to settle the rollout plan before the holiday freeze starts.\n\n- We will ship the ranker to 10% of search traffic on Dec 9, then ramp to 50% if p95 latency stays under 120 ms.\n- The training data predates the October catalog change, so lift on newly added categories may be lower than measured.\n- Please confirm by Friday that your team can hold a 30-minute on-call window during the first ramp.",
+   "draft": "The A/B test of the new search ranker (RK-77) finished last Friday with a 1.8% lift in click-through. The platform team can serve it in production from mid-December. We need to settle the rollout plan before the holiday freeze starts.\n\n- We will ship the ranker to 10% of search traffic on Dec 9, then ramp to 50% if p95 latency stays under 120 ms.\n- The training data predates the October catalog change, so lift on newly added categories may be lower than measured.\n- Please confirm by Friday that your team can hold a 30-minute on-call window during the first ramp.",
+   "set": "targeted"
+  },
+  {
+   "id": "t05",
+   "category": "L5",
+   "request": "Please polish this status update for my manager.\n\nThis week the fraud-scoring team finished the retraining run for model version 4.3 and moved it into shadow mode on Tuesday. Early numbers look encouraging: precision at the current review threshold is up about two points, though recall on card-not-present transactions barely moved, which we did not expect. Sofia traced part of that to a delay in the chargeback labels, so the newest fraud cases are still missing from the training window. We are going to rerun the evaluation once the labels land, probably Monday, and I would rather not promise a go-live date until then.\n\nMeanwhile, Kenji is cleaning up the feature pipeline, which has been throwing intermittent timeouts since the storage upgrade. If that keeps happening, it could slow the shadow run, so I am watching it daily. I will send a fuller update after the rerun, and flag anything that changes the plan.",
+   "draft": "This week the fraud-scoring team finished the retraining run for model version 4.3 and moved it into shadow mode on Tuesday. Early numbers look encouraging: precision at the current review threshold is up about two points, though recall on card-not-present transactions barely moved, which we did not expect. Sofia traced part of that to a delay in the chargeback labels, so the newest fraud cases are still missing from the training window. We are going to rerun the evaluation once the labels land, probably Monday, and I would rather not promise a go-live date until then.\n\nMeanwhile, Kenji is cleaning up the feature pipeline, which has been throwing intermittent timeouts since the storage upgrade. If that keeps happening, it could slow the shadow run, so I am watching it daily. I will send a fuller update after the rerun, and flag anything that changes the plan.",
+   "set": "targeted"
+  },
+  {
+   "id": "t06",
+   "category": "L6",
+   "request": "Please polish these result cards for the exec summary.\n\nExperiment EXP-5521 (one-page checkout), 4 weeks, primary metric: checkout conversion.\n\n- Purchase completion (primary metric): +2.4% relative, n = 184,310 users, 95% CI +1.1% to +3.7%\n- Average order value: +$1.35\n- Time to first purchase: p = 0.03\n- Cart abandonment: -1.9 pts\n- Support contacts per 1,000 orders: -4.2",
+   "draft": "Experiment EXP-5521 (one-page checkout), 4 weeks, primary metric: checkout conversion.\n\n- Purchase completion (primary metric): +2.4% relative, n = 184,310 users, 95% CI +1.1% to +3.7%\n- Average order value: +$1.35\n- Time to first purchase: p = 0.03\n- Cart abandonment: -1.9 pts\n- Support contacts per 1,000 orders: -4.2",
+   "gold_conflicts": [
+    "Only the purchase completion card has a sample size (n = 184,310) and a 95% interval; the other cards have neither",
+    "Time to first purchase gives only a p-value (p = 0.03) with no effect size",
+    "Average order value, cart abandonment and support contacts give bare effect sizes with no n or interval",
+    "The primary metric is called 'checkout conversion' in the intro line but 'Purchase completion' in the first card"
+   ],
+   "set": "targeted"
+  },
+  {
+   "id": "t07",
+   "category": "L7",
+   "request": "Can you tighten this release note? It goes out with the 3.2 release.\n\nPipelinekit 3.2 release notes\n\n- Faster setup\n- Better alerts\n- Smarter defaults\n\nIn this release, the init wizard now provisions a new project in about 4 minutes instead of the previous 25, mostly by caching the base container image. Alerts can now be routed per dataset to Slack or PagerDuty, and duplicate alerts within a 15-minute window are collapsed into one. Defaults for retry count and batch size are now picked from the last 30 days of run history for the same job type, replacing the fixed values of 3 and 500.",
+   "draft": "Pipelinekit 3.2 release notes\n\n- Faster setup\n- Better alerts\n- Smarter defaults\n\nIn this release, the init wizard now provisions a new project in about 4 minutes instead of the previous 25, mostly by caching the base container image. Alerts can now be routed per dataset to Slack or PagerDuty, and duplicate alerts within a 15-minute window are collapsed into one. Defaults for retry count and batch size are now picked from the last 30 days of run history for the same job type, replacing the fixed values of 3 and 500.",
+   "set": "targeted"
+  },
+  {
+   "id": "t08",
+   "category": "L8",
+   "request": "Please polish this analysis note.\n\nAnalysis note: onboarding redesign (EXP-912)\n\nWe tracked weekly active users (WAU) for six weeks after launch. In the treatment arm, WAU rose from 41.2k to 44.9k, while the control group, which kept the old onboarding flow, stayed near 41k. The control group is a randomized comparison for this one experiment. The holdout group is different: it is a standing 5% slice of users excluded from every feature launch this quarter, so we can measure cumulative drift across all launches, not just this one. Weekly active users in the holdout group also drifted up, by about 0.8k, which suggests part of the lift in treatment is seasonal. We therefore report the WAU lift against the control group, and use the holdout group only as a sanity check on the overall trend. A follow-up on retention by cohort is planned for next sprint.",
+   "draft": "Analysis note: onboarding redesign (EXP-912)\n\nWe tracked weekly active users (WAU) for six weeks after launch. In the treatment arm, WAU rose from 41.2k to 44.9k, while the control group, which kept the old onboarding flow, stayed near 41k. The control group is a randomized comparison for this one experiment. The holdout group is different: it is a standing 5% slice of users excluded from every feature launch this quarter, so we can measure cumulative drift across all launches, not just this one. Weekly active users in the holdout group also drifted up, by about 0.8k, which suggests part of the lift in treatment is seasonal. We therefore report the WAU lift against the control group, and use the holdout group only as a sanity check on the overall trend. A follow-up on retention by cohort is planned for next sprint.",
+   "same_pair": [
+    "weekly active users",
+    "WAU"
+   ],
+   "distinct_pair": [
+    "holdout group",
+    "control group"
+   ],
+   "set": "targeted"
+  },
+  {
+   "id": "t09",
+   "category": "R1",
+   "request": "Review this draft and tell me what reads AI-written. Prioritized feedback please, don't rewrite it.\n\nWe are thrilled to announce an exciting new chapter for our data science team. In today's fast-paced landscape, it is more important than ever to leverage the power of data to drive meaningful impact. Our team is deeply committed to delivering best-in-class solutions that empower stakeholders and unlock new opportunities across the organization.\n\nGoing forward, we will continue to foster a culture of collaboration, innovation, and continuous improvement. By working together and embracing a growth mindset, we will navigate challenges, seize opportunities, and deliver value at scale. We believe this journey will be transformative for everyone involved.\n\nWe are grateful for your ongoing support and look forward to partnering with you as we embark on this exciting journey. Stay tuned for more updates as we continue to unlock the full potential of our data. Together, we can achieve great things.",
+   "draft": "We are thrilled to announce an exciting new chapter for our data science team. In today's fast-paced landscape, it is more important than ever to leverage the power of data to drive meaningful impact. Our team is deeply committed to delivering best-in-class solutions that empower stakeholders and unlock new opportunities across the organization.\n\nGoing forward, we will continue to foster a culture of collaboration, innovation, and continuous improvement. By working together and embracing a growth mindset, we will navigate challenges, seize opportunities, and deliver value at scale. We believe this journey will be transformative for everyone involved.\n\nWe are grateful for your ongoing support and look forward to partnering with you as we embark on this exciting journey. Stay tuned for more updates as we continue to unlock the full potential of our data. Together, we can achieve great things.",
+   "set": "targeted"
+  },
+  {
+   "id": "t10",
+   "category": "R2",
+   "request": "Review this draft and tell me what reads AI-written. Prioritized feedback please, don't rewrite it.\n\nWe are excited to share the next phase of our platform modernization effort. This initiative represents a significant step forward in how we approach data infrastructure, and it reflects our shared commitment to excellence. By aligning around a common vision, we are positioning ourselves for long-term success.\n\nLast week's load test of the Atlas feature store showed median read latency dropping from 840 ms to 210 ms.\n\nMoving forward, we will leverage cross-functional synergies to streamline workflows and enhance the overall user experience. Our approach is holistic, scalable, and designed to meet the evolving needs of the business. We encourage everyone to stay engaged, share feedback, and help us shape what comes next.\n\nThank you for being part of this journey. Together, we will build a stronger, more resilient data ecosystem for the future.",
+   "draft": "We are excited to share the next phase of our platform modernization effort. This initiative represents a significant step forward in how we approach data infrastructure, and it reflects our shared commitment to excellence. By aligning around a common vision, we are positioning ourselves for long-term success.\n\nLast week's load test of the Atlas feature store showed median read latency dropping from 840 ms to 210 ms.\n\nMoving forward, we will leverage cross-functional synergies to streamline workflows and enhance the overall user experience. Our approach is holistic, scalable, and designed to meet the evolving needs of the business. We encourage everyone to stay engaged, share feedback, and help us shape what comes next.\n\nThank you for being part of this journey. Together, we will build a stronger, more resilient data ecosystem for the future.",
+   "concrete_sentence": "Last week's load test of the Atlas feature store showed median read latency dropping from 840 ms to 210 ms.",
+   "set": "targeted"
+  },
+  {
+   "id": "t11",
+   "category": "R2p",
+   "request": "Review this draft and tell me what reads AI-written. Prioritized feedback please, don't rewrite it.\n\nWe are excited to share the next phase of our platform modernization effort. This initiative represents a significant step forward in how we approach data infrastructure, and it reflects our shared commitment to excellence. By aligning around a common vision, we are positioning ourselves for long-term success.\n\nLast week's load test of the Atlas feature store showed median read latency dropping from 840 ms to 210 ms.\n\nMoving forward, we will leverage cross-functional synergies to streamline workflows and enhance the overall user experience. Our approach is holistic, scalable, and designed to meet the evolving needs of the business. We encourage everyone to stay engaged, share feedback, and help us shape what comes next.\n\nThank you for being part of this journey. Together, we will build a stronger, more resilient data ecosystem for the future.\n\nI worked really hard on this, hope it's good!",
+   "draft": "We are excited to share the next phase of our platform modernization effort. This initiative represents a significant step forward in how we approach data infrastructure, and it reflects our shared commitment to excellence. By aligning around a common vision, we are positioning ourselves for long-term success.\n\nLast week's load test of the Atlas feature store showed median read latency dropping from 840 ms to 210 ms.\n\nMoving forward, we will leverage cross-functional synergies to streamline workflows and enhance the overall user experience. Our approach is holistic, scalable, and designed to meet the evolving needs of the business. We encourage everyone to stay engaged, share feedback, and help us shape what comes next.\n\nThank you for being part of this journey. Together, we will build a stronger, more resilient data ecosystem for the future.",
+   "concrete_sentence": "Last week's load test of the Atlas feature store showed median read latency dropping from 840 ms to 210 ms.",
+   "set": "targeted"
+  },
+  {
+   "id": "t12",
+   "category": "R3",
+   "request": "Review this draft and tell me what reads AI-written. Prioritized feedback please, don't rewrite it.\n\nOur experimentation platform has changed how the product teams work this year. It's not a reporting tool, it's a decision engine. Before the platform, every launch debate turned into an argument over whose dashboard to trust. Now teams start from a shared set of metric definitions, and reviews move faster. Product managers tell us they now read experiment results before they read opinions.\n\nThe cultural shift matters as much as the tooling. It's not about running more tests, it's about asking sharper questions. Analysts now spend their time framing hypotheses with the people who own the roadmap. The platform team holds weekly office hours where anyone can bring a half-formed idea and leave with a testable design. It's not a gate for launches, it's a conversation starter.\n\nYou might think that a stricter review step would slow teams down, but the data shows median time from proposal to launch fell from 19 days to 12 days since we introduced it.\n\nLooking ahead, the platform will keep growing with the teams that use it. It's not a finished product, it's a living system that improves with each experiment. We plan to extend it to the pricing and notifications groups next quarter. It's not just infrastructure, it's the way we learn.",
+   "draft": "Our experimentation platform has changed how the product teams work this year. It's not a reporting tool, it's a decision engine. Before the platform, every launch debate turned into an argument over whose dashboard to trust. Now teams start from a shared set of metric definitions, and reviews move faster. Product managers tell us they now read experiment results before they read opinions.\n\nThe cultural shift matters as much as the tooling. It's not about running more tests, it's about asking sharper questions. Analysts now spend their time framing hypotheses with the people who own the roadmap. The platform team holds weekly office hours where anyone can bring a half-formed idea and leave with a testable design. It's not a gate for launches, it's a conversation starter.\n\nYou might think that a stricter review step would slow teams down, but the data shows median time from proposal to launch fell from 19 days to 12 days since we introduced it.\n\nLooking ahead, the platform will keep growing with the teams that use it. It's not a finished product, it's a living system that improves with each experiment. We plan to extend it to the pricing and notifications groups next quarter. It's not just infrastructure, it's the way we learn.",
+   "contrast_sentences": [
+    "It's not a reporting tool, it's a decision engine.",
+    "It's not about running more tests, it's about asking sharper questions.",
+    "It's not a gate for launches, it's a conversation starter.",
+    "It's not a finished product, it's a living system that improves with each experiment.",
+    "It's not just infrastructure, it's the way we learn."
+   ],
+   "evidence_sentence": "You might think that a stricter review step would slow teams down, but the data shows median time from proposal to launch fell from 19 days to 12 days since we introduced it.",
+   "set": "targeted"
+  },
+  {
+   "id": "t13",
+   "category": "L2",
+   "request": "Can you make this list of incident follow-ups easier to scan? I'm pasting it into the postmortem doc.\n\n- Postmortem for the October 14 ingestion outage published (INC-882)\n- Adding a row-count check to the nightly load (INC-884, owner: Priti)\n- Investigating why the backup alert never paged on-call (INC-885)\n- Rotate the expired service-account key for the batch scorer, done (INC-887)\n- Runbook for Kafka consumer lag to be written next sprint (INC-889, owner: Jonas)\n- Replay of the 3.2M dropped events was completed by Tomas (INC-883)\n- Alert dedup rules being reviewed with the SRE team",
+   "draft": "- Postmortem for the October 14 ingestion outage published (INC-882)\n- Adding a row-count check to the nightly load (INC-884, owner: Priti)\n- Investigating why the backup alert never paged on-call (INC-885)\n- Rotate the expired service-account key for the batch scorer, done (INC-887)\n- Runbook for Kafka consumer lag to be written next sprint (INC-889, owner: Jonas)\n- Replay of the 3.2M dropped events was completed by Tomas (INC-883)\n- Alert dedup rules being reviewed with the SRE team",
+   "gold_statuses": [
+    "INC-882: done",
+    "INC-884: in progress",
+    "INC-885: in progress",
+    "INC-887: done",
+    "INC-889: planned",
+    "INC-883: done",
+    "alert dedup rules: in progress"
+   ],
+   "set": "targeted"
+  }
+ ]
+}
