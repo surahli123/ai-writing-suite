@@ -127,3 +127,5 @@ Every improvement step from `../research-best-practices-round2-2026-11-01.md` sh
 - **Caveat.** These 24 items have now been seen while designing the fixes, so they work as a regression fence, not a held-out benchmark. Step-specific extra items are the evidence that a step helps.
 
 Each step's run is committed under `runs/<step>/`: arms, packets, perms, judges, `report.md`, `gate.json`.
+
+> **Raw artifacts removed (owner decision, 2026-11-02).** Model outputs, judge packets, judge JSON and packet keys are no longer kept in the repository. This folder keeps the reports, verdicts, pre-registrations, item inputs and scripts. Paths in the reports that point to raw files refer to that removed data.
