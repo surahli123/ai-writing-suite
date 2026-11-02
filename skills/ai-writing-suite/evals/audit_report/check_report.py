@@ -149,16 +149,169 @@ def _split_tier_bullets(body_lines):
     return blocks
 
 
-def _check_one_finding(tag, block, catalog_ids, violations):
+# --- Step 9 D+E: quote grammar, counts, verbatim and Fix fidelity ---------
+# Contract §2 "Instances and counts" and §3 (strengths). The draft-aware checks
+# run only when the caller passes the audited draft; without it the checker
+# behaves as before for everything except grammar and counts.
+
+_OPEN_CLOSE = {'"': '"', "“": "”", "«": "»"}
+_COUNT = re.compile(r"^\s*[×x](\d+)\b")
+_NEEDS = re.compile(r"\[NEEDS:[^\]]*\]", re.I)
+_SNIPPETS = re.compile(r'"([^"]*)"|“([^”]*)”|«([^»]*)»')
+_FIX_SHOWN = re.compile(r'"([^"]*)"|“([^”]*)”|«([^»]*)»|`([^`]*)`')
+
+
+def _parse_snippet(value):
+    """Inner text of one quoted instance, or None.
+
+    The snippet opens with a quote mark and closes at the LAST matching mark,
+    so quotation marks inside the draft stay intact. After the closing mark
+    only an optional parenthetical location without quote marks may follow."""
+    v = value.strip()
+    if not v or v[0] not in _OPEN_CLOSE:
+        return None
+    close = _OPEN_CLOSE[v[0]]
+    end = v.rfind(close)
+    if end <= 0:
+        return None
+    tail = v[end + 1:].strip()
+    if tail and not re.fullmatch(r"\([^\"“”«»]*\)", tail):
+        return None
+    inner = v[1:end]
+    return inner if inner.strip() else None
+
+
+def _norm(s):
+    """Normalization for the verbatim check: quote and dash style, markdown
+    emphasis, whitespace, case. Content is never normalized away."""
+    for a in "’‘‛′":
+        s = s.replace(a, "'")
+    for a in "“”„″«»":
+        s = s.replace(a, '"')
+    s = s.replace("---", "—").replace("--", "—").replace("–", "—").replace("—", "-")
+    s = re.sub(r"[*_`]", "", s)
+    return re.sub(r"\s+", " ", s).strip().casefold()
+
+
+def _assign_spans(snippets, draft_norm):
+    """Map each snippet to its own non-overlapping occurrence in the draft.
+
+    Returns (missing, overlapping) lists of snippets. Snippets with the fewest
+    occurrences are placed first so a legitimately repeated phrase can take a
+    later occurrence."""
+    occ = {}
+    for s in snippets:
+        n = _norm(s)
+        occ[s] = [m.start() for m in re.finditer(re.escape(n), draft_norm)] if n else []
+    taken, missing, overlapping = [], [], []
+    for s in sorted(snippets, key=lambda x: len(occ[x])):
+        if not occ[s]:
+            missing.append(s)
+            continue
+        size = len(_norm(s))
+        spot = next((p for p in occ[s]
+                     if all(p + size <= a or b <= p for a, b in taken)), None)
+        if spot is None:
+            overlapping.append(s)
+        else:
+            taken.append((spot, spot + size))
+    return missing, overlapping
+
+
+_WORDNUM = {w: i for i, w in enumerate(
+    "zero one two three four five six seven eight nine ten eleven twelve "
+    "thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty".split())}
+_WORDNUM.update({"thirty": 30, "forty": 40, "fifty": 50, "sixty": 60,
+                 "seventy": 70, "eighty": 80, "ninety": 90, "dozen": 12})
+_MULT = {"hundred": 100, "thousand": 1000, "million": 1_000_000, "k": 1000}
+
+
+def _numbers(text, fix_side=False):
+    """Set of (value, unit) asserted in `text`. unit is '%' or ''.
+
+    Parses digits, number words up to ninety (hyphenated tens), dozen, half,
+    and compositions with hundred / thousand / million ("three thousand" =
+    3000 = "3,000"). On the Fix side, 'one' and 'half' are not treated as
+    asserted numbers, because plain fixes use them ("Pick one."). Forms outside
+    this list are not checked (a stated coverage limit)."""
+    toks = re.findall(r"\d+(?:\.\d+)?|%|[a-z]+(?:-[a-z]+)?",
+                      text.lower().replace(",", ""))
+    out, i = set(), 0
+    while i < len(toks):
+        t, val = toks[i], None
+        if re.fullmatch(r"\d+(?:\.\d+)?", t):
+            val = float(t)
+        elif t == "half":
+            if not fix_side:
+                out.update({(0.5, ""), (50.0, "%")})
+        elif all(p in _WORDNUM for p in t.split("-")) and not (fix_side and t == "one"):
+            val = float(sum(_WORDNUM[p] for p in t.split("-")))
+        if val is not None:
+            while i + 1 < len(toks) and toks[i + 1] in _MULT:
+                val *= _MULT[toks[i + 1]]
+                i += 1
+            unit = "%" if i + 1 < len(toks) and toks[i + 1] in ("%", "percent") else ""
+            out.add((val, unit))
+        i += 1
+    return out
+
+
+def _fix_numbers_not_in_draft(fix_value, draft_nums):
+    shown = " ".join(next(g for g in m.groups() if g is not None)
+                     for m in _FIX_SHOWN.finditer(fix_value))
+    shown = _NEEDS.sub(" ", shown)
+    return sorted(n for n in _numbers(shown, fix_side=True) if n not in draft_nums)
+
+
+def _fmt_num(n):
+    v, unit = n
+    return (str(int(v)) if v == int(v) else str(v)) + unit
+
+
+def _check_strengths(body, draft_norm, violations):
+    """Contract §3: each strength quotes the draft or says 'Nothing …'."""
+    bullets = []
+    for ln in body:
+        s = ln.strip()
+        if s.startswith(("**Coverage:**", "**AI-tell score:**")):
+            break
+        if s.startswith("- "):
+            bullets.append(s[2:].strip())
+    nothing = [b for b in bullets if b.startswith("Nothing")]
+    quoted = [b for b in bullets if not b.startswith("Nothing")]
+    if nothing and quoted:
+        violations.append(
+            "strengths: a 'Nothing …' bullet is mixed with quoted strengths")
+    for b in quoted:
+        snippets = [next(g for g in m.groups() if g is not None)
+                    for m in _SNIPPETS.finditer(b)]
+        if not snippets:
+            violations.append(
+                "strengths: each strength must quote the draft (or say 'Nothing …')")
+            continue
+        if draft_norm is not None:
+            for s in snippets:
+                if _norm(s) not in draft_norm:
+                    violations.append(
+                        f"strengths: quote not found verbatim in the draft: {s!r}")
+
+
+def _check_one_finding(tag, block, catalog_ids, violations,
+                       draft_norm=None, draft_nums=None):
     """Ordered state-machine check: Quote -> Tell -> Why -> Fix, exactly once
     each, in that order. Any reordering, duplication, or omission is a single
     'fields must appear in order' violation — the shape itself is wrong, so
     per-field content isn't evaluated in that case."""
     field_lines = []
+    quote_items = []          # sub-bullets under a bare **Quote:** line
+    in_quote = False
     for raw in block.splitlines():
         m = _FIELD_LINE.match(raw.strip())
         if m:
             field_lines.append((m.group(1), m.group(2)))
+            in_quote = m.group(1) == "Quote" and not m.group(2).strip()
+        elif in_quote and raw.strip().startswith("- "):
+            quote_items.append(raw.strip()[2:])
 
     names = [n for n, _ in field_lines]
     if names != list(FIELD_ORDER):
@@ -169,8 +322,33 @@ def _check_one_finding(tag, block, catalog_ids, violations):
 
     values = dict(field_lines)
 
-    if not _is_quoted(values["Quote"]):
+    instances = [values["Quote"]] if values["Quote"].strip() else quote_items
+    inners = [_parse_snippet(v) for v in instances]
+    if not instances or any(i is None for i in inners):
         violations.append(f"{tag}: **Quote:** is not a quoted snippet")
+        inners = [i for i in inners if i is not None]
+
+    count = _COUNT.match(values["Why"])
+    if len(instances) > 1 and (not count or int(count.group(1)) < 2):
+        violations.append(
+            f"{tag}: multi-instance **Quote:** needs ×N (N ≥ 2) at the start of **Why:**")
+    elif count:
+        n = int(count.group(1))
+        if n <= 5 and len(instances) != n:
+            violations.append(
+                f"{tag}: ×{n} claimed but {len(instances)} instance(s) quoted")
+        elif n > 5 and not 3 <= len(instances) <= 5:
+            violations.append(
+                f"{tag}: ×{n} (> 5) needs the clearest 3-5 instances quoted, "
+                f"got {len(instances)}")
+
+    if draft_norm is not None and inners:
+        missing, overlapping = _assign_spans(inners, draft_norm)
+        for s in missing:
+            violations.append(f"{tag}: quote not found verbatim in the draft: {s!r}")
+        for s in overlapping:
+            violations.append(
+                f"{tag}: instance overlaps another instance's span in the draft: {s!r}")
 
     tm = _TELL_ID.match(values["Tell"])
     if not tm:
@@ -187,8 +365,15 @@ def _check_one_finding(tag, block, catalog_ids, violations):
             f"{tag}: **Fix:** must show the replacement (quoted or fenced), "
             f"not just describe it")
 
+    if draft_nums is not None:
+        for n in _fix_numbers_not_in_draft(values["Fix"], draft_nums):
+            violations.append(
+                f"{tag}: **Fix:** introduces the number {_fmt_num(n)}, "
+                f"which is not in the draft")
 
-def _check_findings(tier, body, catalog_ids, violations):
+
+def _check_findings(tier, body, catalog_ids, violations,
+                    draft_norm=None, draft_nums=None):
     """Validate every finding in one tier's body lines.
 
     `- None.` is the sanctioned empty-tier marker, but ONLY when it is the
@@ -214,21 +399,32 @@ def _check_findings(tier, body, catalog_ids, violations):
         return
 
     for n, block in enumerate(real_blocks, 1):
-        _check_one_finding(f"{tier} finding #{n}", block, catalog_ids, violations)
+        _check_one_finding(f"{tier} finding #{n}", block, catalog_ids, violations,
+                           draft_norm, draft_nums)
 
 
-def check_report(text, catalog_ids):
+def check_report(text, catalog_ids, draft=None):
     """Return (ok, violations). ok == (violations == []).
 
     Enforces, in order: a plain-language (non-numeric) lead line; the three
     tiers Critical/Moderate/Minor present in order, each with an italic
     one-clause definition and well-formed findings (ordered Quote->Tell->Why->
     Fix, `- None.` never mixed with real findings); a non-empty 'What already
-    reads well' section; and — only if a score line is present — that it is
-    the single, final non-blank line of the whole report and 0-100.
+    reads well' section whose bullets quote the draft or say 'Nothing …'; the
+    optional consistency section in its place; and — only if a score line is
+    present — that it is the single, final non-blank line of the whole report
+    and 0-100.
+
+    Quote grammar and ×N counts (contract §2) are always checked. When `draft`
+    (the audited text) is given, every Quote instance and strength quote must
+    also appear verbatim in it (after quote/dash/markdown/whitespace/case
+    normalization), instances of one finding must sit on non-overlapping spans,
+    and numbers a Fix asserts must be numbers the draft states.
     """
     text = _normalize(text)
     violations = []
+    draft_norm = _norm(_normalize(draft)) if draft is not None else None
+    draft_nums = _numbers(_normalize(draft)) if draft is not None else None
     lines = text.splitlines()
 
     # 1. Lead line: first non-blank line, plain words (not purely a number).
@@ -256,7 +452,8 @@ def check_report(text, catalog_ids):
             if not _is_italic_clause(defn):
                 violations.append(
                     f"{tier}: missing italic one-clause tier definition under heading")
-            _check_findings(tier, body, catalog_ids, violations)
+            _check_findings(tier, body, catalog_ids, violations,
+                            draft_norm, draft_nums)
 
     # 3. 'What already reads well' present and non-empty.
     well = next((h for h in sections if h.lower().startswith("what already reads well")), None)
@@ -264,6 +461,8 @@ def check_report(text, catalog_ids):
         violations.append("missing '## What already reads well' section")
     elif not any(b.strip() for b in sections[well][1]):
         violations.append("'What already reads well' section is empty")
+    else:
+        _check_strengths(sections[well][1], draft_norm, violations)
 
     # 3b. Optional consistency section: after 'reads well', before the
     #     Coverage/score lines, at least one bullet, never empty.
