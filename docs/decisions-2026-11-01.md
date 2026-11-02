@@ -14,6 +14,14 @@ applies only to standalone drafts (no source supplied) or when the user says
 (`claude/laughing-rubin-mkkadx-s0-pr67-fix`): `_shared/fact-interpretation-boundary.md`,
 comms-polish step 6, before-after examples, contract tests.
 
+**Amendment (2026-11-02): claims, not decisions.** Alignment covers claims of
+fact and interpretation. It does not cover the author's own recommendation,
+decision, or plan. When the notes show a recommendation rests on narrower
+evidence, for example "ship to all platforms" when only desktop was tested,
+keep it as written and flag the gap in `Notes:`. This came from an edge case in
+eval v1 run 2. Merging #67 first was also an owner decision; #69's diff is now
+only the fix.
+
 ## R2. A presumed objection answered with evidence is kept (overstepping O1)
 
 "You might think X, but Y" is **not** the O1 tell when X is a plausible reader
