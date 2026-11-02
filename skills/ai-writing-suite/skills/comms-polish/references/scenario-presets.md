@@ -151,7 +151,7 @@ what was chosen, what was dropped, and why.
 
 **Leave alone:**
 - A real caveat that carries genuine uncertainty — keep it, just make it specific.
-- Long precise sentences — length isn't a tell when every word is load-bearing.
+- Long precise sentences — length isn't a tell when every word carries meaning.
 - Legal, security, financial, or safety warnings — never polished away.
 
 **Endings that work:** a clear recommendation or decision, not a balanced summary

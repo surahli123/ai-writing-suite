@@ -204,3 +204,24 @@ every flagged word while leaving the shape untouched still reads as AI.
 - **Fix:** Describe the current state. "The API supports streaming." Unless the
   change itself is the point.
 - **Sources:** aboudjem (§30), anti-vibe (diff-anchored writing).
+
+### T13 — Over-compression (telegraphic text a rewrite introduced)
+
+| Severity | Enforcement |
+| --- | --- |
+| low | advisory |
+
+- **Tell:** The opposite failure from padding. Dropped articles, verbless
+  fragments, and arrows or symbols as connectives ("Parser rejects bad date ->
+  exit 2, no write"), plus undefined abbreviations. Readers then have to
+  reconstruct the sentence. It often appears when an editor over-applies "be
+  concise".
+- **Fix:** Restore the articles and verbs the meaning needs. Keep the sentence
+  short, but make it a sentence.
+- **Validity condition (advisory):** flag only what a rewrite *introduced* in a
+  genre that isn't terse by convention. Status updates, Slack, incident
+  timelines, and commit messages written tersely by their author are genre-normal
+  (false-positive gate question 4). Never expand an author's terse bullets into
+  prose.
+- **Sources:** cursor/plugins pstack `unslop` rule 33 (MIT, Lauren Tan); round-2
+  research R2-11.

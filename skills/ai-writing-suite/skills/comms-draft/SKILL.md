@@ -180,8 +180,10 @@ in the words as they go down.
   co-occurrence without converting it to cause. If the requested claim depends
   on a missing link, write `[NEEDS: causal evidence]` (or an equally specific
   relation gap) instead of adding a plausible explanation.
-- **Varied sentence length and structure (burstiness).** Mix short and long
-  sentences; vary how clauses open. Uniform sentence length is itself a tell.
+- **Let rhythm follow the content.** Vary the *moves* (claim, evidence,
+  consequence, decision), and sentence length follows. Do not edit to hit a
+  length band. Per catalog R1, length variance is a weak signal and never a
+  target.
 - **The catalog as a negative checklist.** As you write, avoid the tells the
   genre preset weights — filler openers, inflated significance, forced
   rule-of-three, "not X but Y" theatrics, vague attribution, promotional
@@ -196,9 +198,10 @@ in the words as they go down.
 After the first pass, break the uniformity. Why: over-polished, evenly-shaped
 output is itself an AI tell — a little natural unevenness reads as authentic.
 
-- Vary paragraph shapes — not every paragraph the same length and rhythm.
-- Allow one natural aside or a short, plain sentence where the draft wants to
-  breathe.
+- Vary paragraph shapes where the content differs, not as decoration.
+- Allow a short, plain sentence where the draft wants to breathe. Never add an
+  aside or "texture" that carries no information; that is manufactured
+  personality.
 - Do not sand every edge into sameness. Keep the genre's hard constraints intact
   (this is roughening rhythm, never breaking a format rule or a fact).
 
