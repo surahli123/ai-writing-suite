@@ -26,7 +26,7 @@ REQUIRED_PHRASES = [
 SKILL_FILES = [
     SUITE_ROOT / "SKILL.md",
     SUITE_ROOT / "skills" / "comms-polish" / "SKILL.md",
-    SUITE_ROOT / "skills" / "comms-draft" / "SKILL.md",
+    SUITE_ROOT / "skills" / "comms-shape" / "SKILL.md",
     SUITE_ROOT / "skills" / "comms-qa" / "SKILL.md",
     SUITE_ROOT / "skills" / "voice-onboard" / "SKILL.md",
 ]

@@ -23,7 +23,7 @@ theme or ties every thread in a bow. The mechanical detector (`evals/detector/`)
 scores these `before` texts near **zero** — it reads words and density, and there
 is no word to flag. **This category is judge-only and advisory. It never gates
 CI.** It is applied by the LLM judge (`narrative_shape_ok` in
-`evals/fixtures/rubric.md`) and, at draft time, by `comms-draft`'s structural
+`evals/fixtures/rubric.md`) and, at draft time, by `comms-shape`'s structural
 planning step.
 
 The load-bearing rule is the **validity condition** (below): a structural property
@@ -203,7 +203,7 @@ Invented → the flat shape was honest; leave it.
   sentence. All eight other catalog categories work below this level; this is the
   only one that reads the shape.
 - **Detector-blind by design:** no vocabulary or density signal. Applied by the LLM
-  judge (`narrative_shape_ok` in `evals/fixtures/rubric.md`) and by `comms-draft`'s
+  judge (`narrative_shape_ok` in `evals/fixtures/rubric.md`) and by `comms-shape`'s
   **structural planning** step (draft-shaping time), never by the mechanical
   detector, and it **never gates CI**.
 - **Excludes motivated shapes.** Whether a tidy resolution or a single reading is a

@@ -28,7 +28,7 @@
     - id        : LR-001, LR-002, ... (zero-padded, never reused)
     - rule      : the imperative the skill should follow (one or two sentences)
     - rationale : why — grounded in a real session correction, not theory
-    - scope     : comms-polish | comms-draft | comms-qa | voice-onboard | all
+    - scope     : comms-polish | comms-shape | comms-qa | voice-onboard | all  (legacy `comms-draft` entries are read by comms-shape)
     - date      : YYYY-MM-DD it was approved
     - status    : proposed | active | retired | graduated
                   (proposed  = approved by user, not yet eval-measured in Layer 3;

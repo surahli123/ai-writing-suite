@@ -1,7 +1,7 @@
 # Voice Lookup Protocol
 
 This is the single lookup protocol for consumer skills that match a user's
-learned voice. `comms-polish` and `comms-draft` reference this file; they do not
+learned voice. `comms-polish` and `comms-shape` reference this file; they do not
 copy its selection, fallback, banner, or offer rules.
 
 Resolve mutable profile paths through `_shared/state-location.md`.
@@ -61,7 +61,7 @@ Otherwise, degrade silently: do not ask a question or mention the missing
 profile.
 
 The `voice-onboard` offer budget is **at most one offer per session,
-suite-wide**. An offer already made by `comms-polish`, `comms-draft`, or the
+suite-wide**. An offer already made by `comms-polish`, `comms-shape`, or the
 router spends it. Check the conversation before offering. An offer is
 offer-only: never auto-run `voice-onboard` and never hold the deliverable for
 it.

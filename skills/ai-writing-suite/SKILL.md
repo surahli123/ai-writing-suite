@@ -14,9 +14,9 @@ itself. Think of it as the dispatch layer in front of four specialized writers.
 | Sub-skill | What it does | Status |
 | --- | --- | --- |
 | `comms-polish` | Polish, review, detect, or edit existing prose to remove AI tells while preserving meaning and voice. 0-100 AI-tell score on demand. | **available** |
-| `voice-onboard` | Interview the author and distill their historical writing into a reusable voice profile that `comms-polish` and `comms-draft` read. | **available** |
+| `voice-onboard` | Interview the author and distill their historical writing into a reusable voice profile that `comms-polish` and `comms-shape` read. | **available** |
 | `comms-qa` | Answer a question from the pluggable KB/playbook, citing the entry the answer came from; says so when the KB does not cover it. Never invents playbook guidance. | **available** |
-| `comms-draft` | Draft a new page from a brief — or revise a document that mixes existing text with a requested addition — guided by the KB/playbook; bakes anti-AI discipline (concreteness, varied rhythm, self-scan) into the draft and never fabricates, marking gaps with `[NEEDS: …]`. | **available** |
+| `comms-shape` | Shape a document with its author before writing it: reader and decision, a chosen thesis, an outline sharpened against objections and sourced to the author's notes, then the fill. Also pressure-tests a draft's argument and handles polish-plus-add. Never fabricates; gaps become `[NEEDS: …]`. Replaces `comms-draft` (archived). | **available** |
 
 The sub-skills live under `skills/<name>/SKILL.md`. Shared assets (the AI-tell
 pattern catalog, the voice profile, and the learned-rules log) live under
@@ -33,18 +33,26 @@ Classify by what the request asks you to **do**:
 
 | If the user wants to… | Route to |
 | --- | --- |
-| clean up / de-AI / polish / review / score / edit existing text, with no new content added | `comms-polish` |
-| add new content — a new page from a brief, a new section, or a mix of polishing existing text **and** adding to it | `comms-draft` |
+| clean up / de-AI / polish / review how it reads / score / edit existing text, with no new content added | `comms-polish` |
+| add new content — a new page from a brief, a new section, or a mix of polishing existing text **and** adding to it | `comms-shape` |
+| pressure-test whether a draft's argument holds (thesis, evidence, objections) before sending | `comms-shape` |
+| ask for `comms-draft` by name (archived; its job moved) | `comms-shape` |
 | ask a question the knowledge base answers | `comms-qa` |
 | teach the tool their writing style / build a voice profile | `voice-onboard` |
 
 **Precedence rule for mixed requests.** Any request that asks for a substantive
 **addition** — even when it also asks to polish existing text ("polish this and
-add a risks section") — routes to `comms-draft`. Drafting owns everything that
+add a risks section") — routes to `comms-shape`. Drafting owns everything that
 adds substance; `comms-polish` never adds content. Route to `comms-polish` only
 when the request is pure rewording with no new material. This one rule breaks
 every polish-vs-draft tie — there is no "ambiguous defaults to polish" fallback
 for mixed cases.
+
+**Review vs pressure-test.** `comms-polish` review is about how the text reads
+(tells, wording, fidelity); `comms-shape` pressure-testing is about whether the
+argument holds (thesis, evidence, objections). A request that names neither
+("look at this before I send it") goes to `comms-shape`, which asks once which
+the author wants.
 
 If a request genuinely matches none of the four (e.g. "translate this, no other
 change"), say so plainly and pick the closest fit rather than stalling.

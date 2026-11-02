@@ -127,7 +127,7 @@ it invented to pass a shape check?** Real and shown → PASS. Real but flattened
 → FAIL (under). Invented → FAIL (over). This dimension is **judge-only and
 advisory** — the mechanical detector is blind to structure (it scores these `before`
 texts near 0) and whether a shape is motivated is partly a task question, so it
-**never gates CI**. It is applied at draft-*shaping* time by `comms-draft`, not as a
+**never gates CI**. It is applied at draft-*shaping* time by `comms-shape`, not as a
 line-edit self-scan.
 
 ## Verdict aggregation

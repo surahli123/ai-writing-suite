@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-"""Run the comms-draft behavioral cases (artifact discrimination).
+"""Run the comms-shape behavioral cases (artifact discrimination).
+
+(These cases began as the comms-draft suite; comms-draft was archived on
+2026-11-02 and the artifacts now follow comms-shape's three segments:
+`## Intake`, `## Outline`, `## Draft`.)
 
 Run from `evals/`:
     python3 -m fixtures.run_draft_cases            # deterministic (gates CI)
     python3 -m fixtures.run_draft_cases --judge    # + advisory LLM judge
 
-WHY this suite exists and why it is shaped like this. comms-draft is SKILL PROSE:
+WHY this suite exists and why it is shaped like this. comms-shape is SKILL PROSE:
 its "code" is an agent's behavior, so nothing here can invoke it without a model.
 The lazy eval — assert the fixture file parses — can never go red and is worse
 than nothing. So each case ships a brief plus TWO PRE-AUTHORED artifacts, a
-`good_draft` (what comms-draft/SKILL.md mandates) and a `bad_draft` (the named
+`good_draft` (what comms-shape/SKILL.md mandates) and a `bad_draft` (the named
 failure mode), and this runner's job is to TELL THEM APART deterministically.
 
 The gate is a per-case planted positive, in both directions:
@@ -42,16 +46,23 @@ from fixtures.run_fixtures import (  # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 DRAFT_CASES_PATH = os.path.join(HERE, "draft_cases.json")
 
-# Everything before this line is the PRE-DRAFT section (step-1 questions +
-# acceptance criteria); everything after is the draft body. See draft_cases.json::_doc.
+# Everything before this line is the PRE-DRAFT section; everything after is the
+# draft body. See draft_cases.json::_doc.
 DRAFT_HEADING = "## draft"
 
-# The five acceptance-criteria dimensions comms-draft/SKILL.md step 1 requires,
+# comms-shape's segments. Intake holds the at-most-three questions; Outline holds
+# the acceptance criteria and, by design, the sharpen questions (so questions are
+# counted in Intake only). An artifact without these headings falls back to the
+# whole pre-draft section.
+INTAKE_HEADING = "## intake"
+OUTLINE_HEADING = "## outline"
+
+# The five acceptance-criteria dimensions comms-shape/SKILL.md stage 3 requires,
 # named BEFORE a word is written. Naming two of them, or falling back to a fixed
 # generic rubric, is the failure this checks.
 CRITERIA_DIMENSIONS = ("style", "format", "length", "content integration", "depth")
 
-MAX_QUESTIONS = 3  # SKILL.md step 1: "at most 2-3" — a 4th is a stall.
+MAX_QUESTIONS = 3  # comms-shape intake: "at most three questions" — a 4th is a stall.
 
 # A [NEEDS: ...] marker DESCRIBES a missing fact; it does not assert one. So the
 # marker spans are stripped before fabrication extraction — "[NEEDS: Q3 churn
@@ -158,6 +169,33 @@ def pre_draft_section(draft):
         if line.strip().lower().startswith(DRAFT_HEADING):
             return "\n".join(lines[:i])
     return draft  # no draft body at all (a stall) — the whole artifact is pre-draft
+
+
+def _segment(draft, start, stops):
+    """Lines after a `start` heading up to the first `stops` heading, or None."""
+    out = None
+    for line in draft.splitlines():
+        s = line.strip().lower()
+        if out is None:
+            if s.startswith(start):
+                out = []
+            continue
+        if any(s.startswith(x) for x in stops):
+            break
+        out.append(line)
+    return None if out is None else "\n".join(out)
+
+
+def intake_section(draft):
+    """comms-shape's intake segment (falls back to the whole pre-draft)."""
+    seg = _segment(draft, INTAKE_HEADING, (OUTLINE_HEADING, DRAFT_HEADING))
+    return pre_draft_section(draft) if seg is None else seg
+
+
+def outline_section(draft):
+    """comms-shape's outline segment (falls back to the whole pre-draft)."""
+    seg = _segment(draft, OUTLINE_HEADING, (DRAFT_HEADING,))
+    return pre_draft_section(draft) if seg is None else seg
 
 
 def _num_key(tok):
@@ -356,7 +394,7 @@ def count_questions(draft):
     marker are draft body (a rhetorical question in the prose), not step-1
     clarifying questions, so pre_draft_section() bounds the count.
     """
-    return pre_draft_section(draft).count("?")
+    return intake_section(draft).count("?")
 
 
 def criteria_labels(draft):
@@ -366,7 +404,7 @@ def criteria_labels(draft):
     over the whole pre-draft, so prose that merely used the word "depth" satisfied
     the "depth" dimension. A criterion is something you NAME as a criterion.
     """
-    pre = pre_draft_section(draft)
+    pre = outline_section(draft)
     labels, in_criteria = [], False
     for line in pre.splitlines():
         if re.match(r"^[ \t]*#{1,6}[ \t]+", line):
@@ -410,8 +448,8 @@ def _check_question_count(case, draft):
     n = count_questions(draft)
     if n <= MAX_QUESTIONS:
         return []
-    return [f"asked {n} clarifying questions before drafting (max {MAX_QUESTIONS}) "
-            f"— SKILL step 1 says propose inferred criteria and proceed instead"]
+    return [f"asked {n} intake questions (max {MAX_QUESTIONS}) — comms-shape intake "
+            f"asks at most three, in one message, then stops for the answers"]
 
 
 def _check_criteria_dimensions(case, draft):
@@ -445,7 +483,7 @@ def run_deterministic(data):
     cases = data.get("cases", [])
     passes = fails = 0
 
-    print("=== comms-draft behavioral cases (artifact discrimination) ===\n")
+    print("=== comms-shape behavioral cases (artifact discrimination) ===\n")
 
     # Self-guard against a gutted dataset, same stance as the false-positive suite:
     # zero cases, or a case with only one side of the pair, means the discrimination
@@ -513,7 +551,7 @@ def run_deterministic(data):
 
 # --- advisory judge lane ------------------------------------------------------
 
-JUDGE_TEMPLATE = """You are grading a draft produced by the `comms-draft` skill against that
+JUDGE_TEMPLATE = """You are grading an artifact produced by the `comms-shape` skill against that
 skill's own contract. Score each dimension PASS or FAIL.
 
 THE ONLY LEGITIMATE SOURCES OF FACT (nothing else is a source):
@@ -535,11 +573,12 @@ Dimensions:
 - needs_marked: PASS iff every fact the draft needs but does not have is marked in
   line with `[NEEDS: ...]` and collected in a list. N/A if the brief and KB supply
   everything.
-- criteria_named: PASS iff the artifact names the five acceptance-criteria
+- criteria_named: PASS iff the outline names the five acceptance-criteria
   dimensions (style, format, length, content integration, depth) BEFORE the draft.
-  A generic fixed rubric is a FAIL.
-- question_discipline: PASS iff the artifact asks at most 3 clarifying questions and
-  then proposes inferred criteria and proceeds. Stalling on a 4th question is a FAIL.
+  A generic fixed rubric is a FAIL. N/A for an intake-only artifact.
+- question_discipline: PASS iff the intake asks at most 3 questions, in one
+  message, and then stops for the author's answers (an explicit "just draft it"
+  request may proceed). A 4th question is a FAIL.
 
 Output ONE line per dimension, exactly:
 <dimension>: PASS|FAIL|N/A — <one-line reason> | EVIDENCE: "<verbatim quote from the brief or the draft>"
@@ -576,7 +615,7 @@ def run_judge(data, matrix=None):
     from fixtures import judge  # lazy: the deterministic path stays network-free
 
     configured = judge.is_configured()
-    print("\n=== comms-draft judge lane (advisory) ===")
+    print("\n=== comms-shape judge lane (advisory) ===")
     if not configured:
         print("No judge configured (set AIWS_JUDGE_URL/MODEL/KEY + AIWS_JUDGE_RUN=1) "
               "— every artifact SKIPPED, no network call.\n")
@@ -631,7 +670,7 @@ def run_judge(data, matrix=None):
 def main(argv=None):
     argv = argv if argv is not None else sys.argv[1:]
     ap = argparse.ArgumentParser(
-        description="Run the comms-draft behavioral (artifact-discrimination) cases.")
+        description="Run the comms-shape behavioral (artifact-discrimination) cases.")
     ap.add_argument("--judge", action="store_true",
                     help="also run the advisory LLM-judge lane (SKIPPED unless "
                          "AIWS_JUDGE_* is configured and AIWS_JUDGE_RUN=1)")

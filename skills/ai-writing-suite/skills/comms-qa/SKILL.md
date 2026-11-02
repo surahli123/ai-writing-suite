@@ -1,6 +1,6 @@
 ---
 name: comms-qa
-description: "Answer a question about writing guidance from the knowledge base or playbook, cite the entry the answer came from, and say plainly when the KB does not cover it. Use when the user asks what the playbook says, how a readout, memo, status update, or incident note should be structured, or how to handle tone, audience, or leading with the point. Any general advice beyond the KB is labeled 'Outside the playbook', and strict KB-only answers are available on request. Not for drafting (comms-draft) or polishing text (comms-polish)."
+description: "Answer a question about writing guidance from the knowledge base or playbook, cite the entry the answer came from, and say plainly when the KB does not cover it. Use when the user asks what the playbook says, how a readout, memo, status update, or incident note should be structured, or how to handle tone, audience, or leading with the point. Any general advice beyond the KB is labeled 'Outside the playbook', and strict KB-only answers are available on request. Not for drafting (comms-shape) or polishing text (comms-polish)."
 ---
 
 # comms-qa
@@ -107,7 +107,7 @@ answer.
 If the request is really a drafting or editing job in question form ("can you
 write me an exec update?" / "can you clean this up?"), this is the wrong skill:
 
-- Drafting a new page from a brief → `comms-draft`.
+- Drafting a new page from a brief → `comms-shape`.
 - Polishing / de-AI-ing / scoring existing text → `comms-polish`.
 
 Name the handoff; do not attempt the drafting or polishing here.
@@ -123,7 +123,7 @@ Follow the suite-wide content trust boundary in `_shared/untrusted-content.md`.
   "how should I open an exec update," "is there guidance on jargon for a mixed
   audience" — questions the KB can answer.
 - Do not use for: drafting a doc, email, post, or section from a brief (that is
-  `comms-draft`); polishing or de-AI-ing existing text (that is `comms-polish`);
+  `comms-shape`); polishing or de-AI-ing existing text (that is `comms-polish`);
   any source-code work.
 - The only source of playbook answers is the KB. Anything you add from general
   knowledge lives in a separate, labeled "Outside the playbook:" section — never

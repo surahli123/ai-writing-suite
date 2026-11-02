@@ -13,7 +13,7 @@ import unittest
 
 SUITE_ROOT = Path(__file__).resolve().parent.parent
 CONTRACT = SUITE_ROOT / "_shared" / "fact-interpretation-boundary.md"
-DRAFT = SUITE_ROOT / "skills" / "comms-draft" / "SKILL.md"
+DRAFT = SUITE_ROOT / "skills" / "comms-shape" / "SKILL.md"
 POLISH = SUITE_ROOT / "skills" / "comms-polish" / "SKILL.md"
 FINAL_PASS = (
     SUITE_ROOT

@@ -1,6 +1,6 @@
 ---
 name: comms-polish
-description: "Edit existing prose so it reads like a person wrote it, without changing facts, numbers, hedges, or the author's voice. Use when the user asks to polish, clean up, de-AI, proofread, lightly edit, or review a draft (Slack update, email, memo, readout, README, post), or asks what in it sounds AI-written. Modes are rewrite, light-edit, review, detect, and file edit, with an optional AI-pattern density score. Not for adding new sections or content (that is comms-draft), learning a voice (voice-onboard), answering playbook questions (comms-qa), or code."
+description: "Edit existing prose so it reads like a person wrote it, without changing facts, numbers, hedges, or the author's voice. Use when the user asks to polish, clean up, de-AI, proofread, lightly edit, or review a draft (Slack update, email, memo, readout, README, post), or asks what in it sounds AI-written: review is about how the text reads. Modes are rewrite, light-edit, review, detect, and file edit, with an optional AI-pattern density score. Not for adding new sections or content, or for pressure-testing whether the argument holds (both comms-shape), learning a voice (voice-onboard), answering playbook questions (comms-qa), or code."
 ---
 
 # comms-polish
@@ -73,7 +73,7 @@ Follow the suite-wide content trust boundary in `_shared/untrusted-content.md`.
 - Flag unsupported claims instead of inventing evidence.
 - **Mixed polish-plus-add is not this skill.** If the request also asks to ADD new
   content (a new section, new material, not just rewording), hand it to
-  `comms-draft`: it treats your existing text as immutable source, returns the
+  `comms-shape`: it treats your existing text as immutable source, returns the
   fully revised whole document, and runs the final-pass itself. Polishing never
   adds substance — do not write the new section here.
 
@@ -169,7 +169,7 @@ degraded-voice note in the explicit my-voice case below.)
 
 **Voice-onboard offer budget: at most ONE offer per session, SUITE-WIDE.** The
 budget is shared across the whole suite, not just this skill — an offer already
-made by `comms-polish`, `comms-draft`, or the router spends it. Check the
+made by `comms-polish`, `comms-shape`, or the router spends it. Check the
 conversation for a prior voice-onboard offer before making one; the two triggers
 below also share this single budget. An offer is always offer-only: never auto-run
 `voice-onboard`, never block the deliverable on it.
