@@ -2,7 +2,7 @@
 
 Date: 2026-11-02.
 
-**Status:** v2.1. It has been revised after two round-1 adversarial reviews and Fable's round-2 review; Codex's round-2 review is pending. It is waiting for the owner's go-ahead, and no skill file has been changed.
+**Status:** v2.2, revised after two review rounds by Codex and Fable. It is waiting for the owner's go-ahead, and no skill file has been changed.
 
 **Reviews:**
 - Codex 6.1 Astra (medium): `reviews/2026-11-02-codex-plan-step9-comms-shape.md`. Verdicts: not stated per step. It reported 1 blocker and 13 major findings.
@@ -122,7 +122,7 @@ A noun is not information, so "Optimize customer outcomes" and "Unlock enterpris
 - Item order is preserved.
 
 **Mode gating:**
-- `light-edit` makes **no list-structure transformations**: no frame unification, no word reordering inside items, no prefix moves. Every existing light-edit permission stays:
+- `light-edit` makes **no list-structure transformations**: no frame unification, no prefix moves, and no reordering of words inside an item to unify the frame or bring the distinguishing word forward. A local word-order change that a grammar or ambiguity fix needs is still allowed ("We the login bug fixed" → "We fixed the login bug"). Every existing light-edit permission stays:
   - grammar, spelling, ambiguity, and mismatch with a user-supplied source (SKILL.md 107-118);
   - consistent punctuation, capitalization and bullet markers (SKILL.md 127-129).
 - `rewrite` and `edit` use the permissions above.
@@ -134,10 +134,17 @@ A noun is not information, so "Optimize customer outcomes" and "Unlock enterpris
 
 **Fidelity check:** a deterministic `status` class in `evals/fixtures/fidelity.py`.
 - It uses a closed vocabulary with tiers: planned < in progress < done.
-- It is item-aligned. Items are matched by shared ticket IDs and content words first, with position as the fallback, so swapping Investigating and Fixed between two items is caught and a reorder is not mistaken for a status change.
-- Any upward move in an item fires.
+- It is entity-aligned. Items are matched by a unique ticket ID or an unambiguous entity, whether or not the item counts match. Position is used only after the entity is confirmed to be the same.
+  - Swapping Investigating and Fixed between LOGIN-1 and CHECKOUT-2 is caught, even though the statuses by position stay the same.
+  - A faithful reorder is not mistaken for a status change.
+- Any upward move in an aligned item fires.
+- An item that can't be aligned is **unscored** and reported as a coverage gap. It never counts as a pass.
 - When either side has fewer than two list items, it returns no finding and leaves running prose to the existing classes.
-- Add it to the pinned class set in `evals/test_fidelity_classes.py:41-44` and to the docstring. It gets one mutant, one faithful control and the swapped-entity case.
+- Add it to the pinned class set in `evals/test_fidelity_classes.py:41-44` and to the docstring. It gets:
+  - a mutant with statuses swapped between entities;
+  - a faithful control;
+  - a faithful-reorder control;
+  - an unalignable case that must come back unscored.
 
 ### C. Consistency across a parallel set (report only)
 
@@ -209,9 +216,15 @@ The number of quoted instances must be N if N ≤ 5, or 3–5 if N > 5, with Why
   - strip `*`, `_` and backticks;
   - collapse whitespace;
   - casefold.
-- Instances must be distinct: each snippet must occur in the draft at least as many times as it is quoted.
+- Instances must be distinct source occurrences. Within one finding, each quoted instance is assigned to its own span of the draft, and the spans may not overlap. "Moreover" and "Moreover," quoted from the same spot count once and are rejected. Different findings may quote the same sentence. Controls: the same text legitimately repeated in two places, quoted twice, passes; two snippets of different length taken from one spot are rejected. This checks location only; whether the span really shows the tell is judged.
 
-**Fix fidelity (draft given).** Digits and number words in a Fix (two…twenty, hundred, thousand, million, percent, dozen) must appear in the draft. `one` and `half` are excluded, because plain fixes use them ("Pick one.", which is H2's own catalog fix). This is a cheap guard; semantic invention is judged in the eval. The contract text says a Fix uses only material in the draft, and shows a cut or `[NEEDS: …]` when a better sentence would need facts the draft lacks.
+**Fix fidelity (draft given).** The check covers only the replacement text the Fix asserts. `[NEEDS: …]` spans are removed first, because a number inside a placeholder is not a claim (`run_draft_cases.py` already strips them).
+- Each number in what remains must match a number in the draft by normalized value and unit. So "3 views" → "three views" passes, and 40% equals 40 percent.
+- Parsed forms: digits, and the number words two…twenty, hundred, thousand, million and dozen. `one` and `half` are not checked, because plain fixes use them ("Pick one." is H2's own catalog fix).
+- A form that can't be parsed is reported as a coverage limit, not a pass or a failure.
+- Controls: numeral ↔ number-word equivalence; a number inside `[NEEDS]`.
+
+Semantic invention stays with the judge. This is a cheap guard; semantic invention is judged in the eval. The contract text says a Fix uses only material in the draft, and shows a cut or `[NEEDS: …]` when a better sentence would need facts the draft lacks.
 
 **Test artifacts.** The worked example's draft is saved as `evals/audit_report/draft.md`, so the verbatim and Fix-fidelity mutants have a draft to check against. `conforming.md` gains the consistency section in its accepted position, so the acceptance path is tested and not only the "misplaced" mutant.
 
@@ -313,7 +326,8 @@ Fixing it requires recalibrating the 3/8 band, so it gets its own follow-up PR. 
      - Notes and consistency-section findings → C;
      - strengths, counts, verbatim and Fix fidelity → D+E;
      - term pair → A.
-   - **Harm rule:** an arm fails an oracle on an item when it fails in at least 2 of its 3 runs. If s9 fails where s8 does not, the mapped commit is blocked.
+   - **Harm rule (shared rewrite oracles):** an arm fails an oracle on an item when it fails in at least 2 of its 3 runs. If s9 fails where s8 does not, the mapped commit is blocked.
+   - **Pass rule (review-only oracles):** strengths, counts, verbatim and Fix fidelity are absolute checks on s9. A majority-of-3 failure blocks D+E. s8 is not asked to produce a format it never promised. Scoring for the semantic review items is fixed before the run.
    - **Pressure-invariance pair:** sampling noise changes finding sets from run to run, so this is not an oracle. Finding count and highest severity are compared across the 3 runs with and without the pressure line, and the result is reported.
    - **×5 item:** the checker verifies only that the number quoted equals the number claimed. Whether 5 is the right count is the judge's call.
    - **Notes gold:** each C item's spec carries a gold list of conflicts written by the item author. Precision and recall are scored against it.
@@ -480,8 +494,13 @@ For class (d), "Draft a decision memo recommending vendor B" with no notes is **
 
 K=2 runs per arm.
 
+**Claim → source list (drives traceability and unsupported claims).** A judge that sees the packet and the answers actually revealed in that session, but not the arm, lists every claim in the final document and marks it *supported*, *unsupported* or *declared gap* (`[NEEDS]`).
+- Traceability and the unsupported-claim count come from this list.
+- An author approving a model suggestion is not evidence; see "When the author insists".
+- Positive control: a planted plain unsourced assertion ("The product is secure and reliable") must be marked unsupported.
+
 **Deterministic measures:**
-- traceability (`find_fabrications` against the packet plus the answers);
+- a **bounded fabrication screen**: `find_fabrications` against the packet plus the answers. It sees only numbers, some proper names and a closed verb set (`run_draft_cases.py:293-315`), so it is an auxiliary signal and never stands in for traceability;
 - `[NEEDS]` at the planted gap;
 - author turns;
 - total characters in and out (tokens where available);
@@ -515,7 +534,7 @@ K=2 runs per arm.
 **Ruled:** the owner is blind-labeling the existing page (10 items × 3 candidates). The v1 judge re-judges those outputs, and judge–owner agreement is reported before step 9's eval verdict.
 
 **Open:**
-1. Approve v2.1 so step 9 can start, after Codex's round-2 review is folded in.
+1. Approve v2.2 so step 9 can start.
 2. **Stops vs the collapsed paths.** The ruling is "required stops after the thesis and after the outline". v2.1 collapses them in three places:
    - the short path has one combined stop (thesis and bullets);
    - mixed mode has one stop, on the addition's outline;
@@ -556,7 +575,9 @@ C = Codex finding number, F = Fable finding number. "Accepted" means v2 adopts t
 
 ## Review log (round 2)
 
-Fable round 2: `reviews/2026-11-02-fable-round2-plan-v2.md`. Verdicts: step 9 GO WITH CHANGES; step 10 GO WITH CHANGES, with three changes needed before any code. It rated 33 of the round-1 findings RESOLVED, 3 PARTIAL and 2 REJECTED-OK. Codex round 2 is pending. F2-n = Fable round-2 finding n.
+Two reviews:
+- **Fable round 2** (`reviews/2026-11-02-fable-round2-plan-v2.md`): step 9 GO WITH CHANGES; step 10 GO WITH CHANGES, with three changes needed before any code. It rated 33 of the round-1 findings RESOLVED, 3 PARTIAL and 2 REJECTED-OK. F2-n = its finding n.
+- **Codex round 2** (`reviews/2026-11-02-codex-round2-plan-v2.md`): "Conditional No", with 2 P1 and 5 P2 findings and no P0. Every other round-1 item is marked "resolved, not reopened". Its stated completion condition is: apply the 7 items, then do a targeted re-check of the changed points. C2-Rn = its finding Rn.
 
 | Finding | Disposition in v2.1 |
 |---|---|
@@ -578,3 +599,10 @@ Fable round 2: `reviews/2026-11-02-fable-round2-plan-v2.md`. Verdicts: step 9 GO
 | F2-16 archive discovered by plugin validate | Accepted: `SKILL.archived.md`, plus the validate check. |
 | F2-17 Q4 is preset-based | Accepted: the H7 entry carries its own register carve-out. |
 | Owner decision: stops vs collapsed paths | Open (decision 2). |
+| C2-R1 (P1) status oracle by position misses entity swaps | Accepted: entity alignment first; position only after the entity is confirmed; unalignable items unscored and reported; swap mutant, faithful-reorder control and unalignable case. This supersedes F2-5's content-then-position wording. |
+| C2-R2 (P1) `find_fabrications` used as traceability | Accepted: a judge-built claim → source list drives traceability and unsupported claims; `find_fabrications` is demoted to a bounded screen; positive control for plain unsourced assertions. |
+| C2-R3 (P2) review-only oracles had no failure rule | Accepted: absolute majority-of-3 pass rule on s9 blocks D+E; the relative harm rule stays for shared rewrite oracles. |
+| C2-R4 (P2) per-string counts are not distinct occurrences | Accepted: non-overlapping span assignment within a finding; overlapping-snippet mutant; repeated-text control. |
+| C2-R5 (P2) literal number-word membership | Accepted: normalized value and unit comparison on asserted text only, `[NEEDS]` spans removed, unparseable forms reported as coverage limits. |
+| C2-R6 (P2) direction of the cost bar | Resolved in v2.1 by F2-3: cost is no longer in the bar and is reported only, so there is no direction to guess. |
+| C2-R7 (P2) light-edit word-order ban vs grammar fixes | Accepted: only reordering done to unify the frame or front the distinguishing word is barred; local reordering a grammar or ambiguity fix needs is allowed. |
