@@ -2,7 +2,7 @@
 
 Date: 2026-11-02.
 
-**Status:** v2, revised after two adversarial reviews. It is waiting for the owner's go-ahead, and no skill file has been changed.
+**Status:** v2.1. It has been revised after two round-1 adversarial reviews and Fable's round-2 review; Codex's round-2 review is pending. It is waiting for the owner's go-ahead, and no skill file has been changed.
 
 **Reviews:**
 - Codex 6.1 Astra (medium): `reviews/2026-11-02-codex-plan-step9-comms-shape.md`. Verdicts: not stated per step. It reported 1 blocker and 13 major findings.
@@ -59,7 +59,7 @@ The review log at the end maps every finding to what v2 did about it.
 
 Paths are relative to `skills/ai-writing-suite/`.
 
-**Commits, one per item:** A, B, C, D+E, F, G, and fixtures/tests. B is the riskiest change, so it can be reverted alone if the eval localizes harm to it.
+**Commits, one per item:** A, B, C, D+E, F, G. Each commit carries the tests and fixtures it pins and keeps `run_all.sh` green, so any commit can be reverted alone. B is the riskiest change, so it can be reverted alone if the eval localizes harm to it.
 
 ### Definitions used throughout
 
@@ -78,7 +78,7 @@ Paths are relative to `skills/ai-writing-suite/`.
 - a number;
 - an outcome.
 
-A noun is not information, so "Optimize customer outcomes" and "Unlock enterprise value" are not checkable.
+A noun is not information, so "Optimize customer outcomes" and "Unlock enterprise value" are not checkable. An evaluative verb (optimized, improved, enhanced, streamlined, unlocked, boosted) is not a specific action unless a number or an outcome comes with it, so "Optimized RandomX performance" is not checkable either.
 
 ### A. Catalog and checklist scope
 
@@ -91,6 +91,7 @@ A noun is not information, so "Optimize customer outcomes" and "Unlock enterpris
 - **T7** (112-125):
   - The tell is items with nothing checkable, not symmetry. It keeps three positive examples: "Stable mining efficiency / Reliable pool connectivity / Optimized RandomX performance", "Optimize customer outcomes / Unlock enterprise value", and "Fast setup / Clean design / Easy onboarding".
   - A verb-first status list with specific actions on named targets is not T7.
+  - The "5+ consecutive bullets" and "≤6-word" counts are deleted. Once the tell is emptiness, they would be bare text-property thresholds.
   - The fix rewrites items as checkable claims using facts already in the source, or flags the missing detail. Convert to prose only when the items are really an argument.
   - The enforcement tag changes from `regex` to `judge`, and the registry is regenerated (`python3 -m aiws.catalog`). Before committing, check what consumes the enforcement tag.
 - **T9 / T13** (144-163, 208-225): add parallel sets to T9's swap-test exemption. Add titles, card text and list items to T13's genre-normal list.
@@ -112,15 +113,18 @@ A noun is not information, so "Optimize customer outcomes" and "Unlock enterpris
 **Permissions, each with a reason:**
 - **One frame.** When mixed grammatical forms make a parallel set harder to scan, `rewrite` may give the items one frame. Leave the set alone when it already scans, or when a difference in form carries meaning.
 - **Distinguishing word first.** When the shared words hide what tells items apart, the distinguishing word may move to the front. If this conflicts with one frame, the distinguishing word wins.
-- **Shared prefix.** A prefix shared by every item may move into an **existing** heading or lead-in. Never add a heading or lead-in, since that adds content. Never do this for texts delivered separately.
+- **Shared prefix.** A prefix shared by every item may move into an **existing** heading or lead-in. Never add a heading or lead-in, since that adds content. Never do this for texts delivered separately. In `edit` mode, headings are preserved (File Edits step 2), so the prefix may move only into an existing lead-in sentence.
 
 **Invariants:**
 - Status and tense follow the author. Done stays done; "investigating" never becomes "fixed"; "planned" never becomes "shipped". If an item's status can't be told, flag it.
 - The actor is dropped only when the heading or lead-in states it. An owner is a fact. Never invent an actor, and keep blameless system-as-subject in incident notes.
 - The author's status labels stay a closed set.
+- Item order is preserved.
 
 **Mode gating:**
-- `light-edit` makes **no list-structure transformations**: no frame unification, no word reordering inside items, no prefix moves. Every existing light-edit permission stays: grammar, spelling, ambiguity, and mismatch with a user-supplied source (SKILL.md 107-118).
+- `light-edit` makes **no list-structure transformations**: no frame unification, no word reordering inside items, no prefix moves. Every existing light-edit permission stays:
+  - grammar, spelling, ambiguity, and mismatch with a user-supplied source (SKILL.md 107-118);
+  - consistent punctuation, capitalization and bullet markers (SKILL.md 127-129).
 - `rewrite` and `edit` use the permissions above.
 - `review` and `detect` flag only.
 
@@ -130,8 +134,9 @@ A noun is not information, so "Optimize customer outcomes" and "Unlock enterpris
 
 **Fidelity check:** a deterministic `status` class in `evals/fixtures/fidelity.py`.
 - It uses a closed vocabulary with tiers: planned < in progress < done.
-- It is item-aligned. Items are matched by position when counts match, otherwise by shared ticket IDs and content words, so swapping Investigating and Fixed between two items is caught.
+- It is item-aligned. Items are matched by shared ticket IDs and content words first, with position as the fallback, so swapping Investigating and Fixed between two items is caught and a reorder is not mistaken for a status change.
 - Any upward move in an item fires.
+- When either side has fewer than two list items, it returns no finding and leaves running prose to the existing classes.
 - Add it to the pinned class set in `evals/test_fidelity_classes.py:41-44` and to the docstring. It gets one mutant, one faithful control and the swapped-entity case.
 
 ### C. Consistency across a parallel set (report only)
@@ -151,6 +156,7 @@ A noun is not information, so "Optimize customer outcomes" and "Unlock enterpris
 - **`detect` / `review`:** in a new optional section, `## Consistency and evidence gaps`. It goes after `## What already reads well` and before Coverage/score.
   - Each bullet gives a location and what differs.
   - It needs no catalog id and no Fix, because these are not AI tells.
+  - A gap that matches a catalog entry (S2, S4, S8) stays a finding with Quote / Tell / Why / Fix. A missing slot, n or interval with no matching tell goes here. Never both.
   - Omit the section when it is empty.
   - The checker accepts the section only in that position.
 
@@ -164,7 +170,7 @@ A noun is not information, so "Optimize customer outcomes" and "Unlock enterpris
 - Prefer `- Nothing here reads well yet: every sentence carries a flagged pattern.` over a stretch. The current example line "the draft is AI throughout" is an authorship verdict in spirit and goes away.
 
 **Checker:**
-- Each strength bullet either carries a quoted snippet or starts with "Nothing".
+- Each strength bullet either carries a quoted snippet or starts with "Nothing". A "Nothing" bullet mixed with quoted strengths is rejected, the same way `- None.` mixed with findings is.
 - With a draft, the snippet must be verbatim (rules in E).
 - **No overlap rejection.** A sentence can hold a checkable fact and a vague modifier, and praising one while flagging the other is legitimate. Whether a strength praises a criticized property is judged in the eval, not by string matching.
 
@@ -178,8 +184,8 @@ A noun is not information, so "Optimize customer outcomes" and "Unlock enterpris
 **Instance.** An instance is one contiguous span of the draft that shows the pattern.
 - Quote the shortest complete span.
 - **No ellipses.**
-- The outer quote pair is the first and last character of the snippet, so quotation marks inside the draft stay intact.
-- The count is of instances.
+- The outer quote pair opens the snippet and closes it at the last matching quote mark, so quotation marks inside the draft stay intact. An optional location in parentheses may follow the closing quote, e.g. `"…" (¶2)`.
+- The count is of instances. Two different snippets covering one span are not detected; that limit is stated in the contract.
 
 **Single instance:** `**Quote:** "…"` on one line, as today.
 
@@ -190,7 +196,9 @@ A noun is not information, so "Optimize customer outcomes" and "Unlock enterpris
 - a documented voice-profile habit;
 - inside quotes or code.
 
-The number of quoted instances must be N if N ≤ 5, or 3–5 if N > 5, with Why naming where the rest are. A "×10" anywhere other than the start of Why is ignored.
+The number of quoted instances must be N if N ≤ 5, or 3–5 if N > 5, with Why naming where the rest are. A "×10" anywhere other than the start of Why is ignored. Edge rules:
+- A single inline instance carries no `×N`; `×1` is accepted.
+- Sub-bullets without a leading `×N` (N ≥ 2) are rejected.
 
 **Counts describe; they never become quotas or rewrite targets.**
 
@@ -203,14 +211,16 @@ The number of quoted instances must be N if N ≤ 5, or 3–5 if N > 5, with Why
   - casefold.
 - Instances must be distinct: each snippet must occur in the draft at least as many times as it is quoted.
 
-**Fix fidelity (draft given).** Digits and number words in a Fix (one…twenty, hundred, thousand, million, percent, half, dozen) must appear in the draft. This is a cheap guard; semantic invention is judged in the eval. The contract text says a Fix uses only material in the draft, and shows a cut or `[NEEDS: …]` when a better sentence would need facts the draft lacks.
+**Fix fidelity (draft given).** Digits and number words in a Fix (two…twenty, hundred, thousand, million, percent, dozen) must appear in the draft. `one` and `half` are excluded, because plain fixes use them ("Pick one.", which is H2's own catalog fix). This is a cheap guard; semantic invention is judged in the eval. The contract text says a Fix uses only material in the draft, and shows a cut or `[NEEDS: …]` when a better sentence would need facts the draft lacks.
+
+**Test artifacts.** The worked example's draft is saved as `evals/audit_report/draft.md`, so the verbatim and Fix-fidelity mutants have a draft to check against. `conforming.md` gains the consistency section in its accepted position, so the acceptance path is tested and not only the "misplaced" mutant.
 
 **Existing tests.** `run_report_contract.py` works unchanged without a draft. The two no-op tests `test_smart_quotes_accepted` and `test_guillemet_quotes_accepted` (`test_report_contract.py:152-164`) are fixed: their target string doesn't occur in `conforming.md`. Each now asserts that the mutation changed the input.
 
 ### F. Connective openers (H7 sub-section, cluster only)
 
 - Add a named sub-section to H7 (`hedging-filler.md` 114-135) for Moreover / Furthermore / Additionally / In conclusion / In summary.
-- **Validity:** only a cluster counts, meaning connectives opening several sentences in one passage. A single use is never a finding. Gate Q4 (genre-normal formal, legal or academic register) and Q5 (second-language) make it advisory.
+- **Validity:** only a cluster counts, meaning connectives opening several sentences in one passage. A single use is never a finding. The entry carries its own carve-out for formal, legal and academic register, because gate Q4 is preset-based and has no such preset. Gate Q5 (second-language) also makes it advisory.
 - **Fix:** drop the connective or use a plain one ("also", "so"), or let sentence order carry the link.
 - No new id, so the registry count stays at 75.
 - Add a `Sources:` tag.
@@ -236,14 +246,15 @@ Fixing it requires recalibrating the 3/8 band, so it gets its own follow-up PR. 
 - **Suite `NOTICE.md`:** line 3 currently says "ten open-source projects, all MIT-licensed". Reword it to cover the absorbed MIT projects only. Add a section "Ideas referenced, not absorbed (no text copied)" for:
   - the fsdatalab article (link; paraphrased ideas);
   - the tenex playbook (rights reserved; ideas only; no questions, prompts or text copied).
-- **`Sources:` tags** go on every edited catalog entry.
+- **`Sources:` tags** go on every edited catalog entry. The tag legend in `_shared/patterns/00-index.md` (168-177) gains rows for fsdatalab and tenex marked "ideas only, no text copied", per `NOTICE.md:183`.
 - **Examples.** Fixtures and eval items must not reuse the articles' examples (session sidebar, Amazon subjects, Duolingo cards).
 
 ### Fixtures and tests
 
 **Fixtures:**
 - All are `genre: memo`; `test_four_genres_present` pins the genre set.
-- All are `detector_blind`, with `expect_baseline: miss`. The baseline is on a knife edge: keep bold labels ≤ 3 and avoid tier-3 words.
+- The PASS fixtures are `detector_blind`, with `expect_baseline: miss`. The baseline is on a knife edge: keep bold labels ≤ 3 and avoid tier-3 words. That is a fixture-authoring constraint borrowed from the detector, not a skill rule. The gold-FAILs follow the existing gold-FAIL format.
+- `fail-lists-recast` is judge-only. Its `fail_dimension` is `meaning_preserved`, as with `fail-restraint-overedit-en`, and it is listed in `rubric_focus` (`test_fail_dimension_is_weighed_by_the_judge`, `test_fixtures.py:850-856`).
 - PASS `lists-01-status-clean`: identity under light-edit.
 - PASS `lists-02-boast-to-checkable`: a boast list rewritten using facts present elsewhere in the source. This is the control that T7 still bites.
 - gold-FAIL `fail-lists-recast`: list → varied prose.
@@ -297,7 +308,15 @@ Fixing it requires recalibrating the 3/8 band, so it gets its own follow-up PR. 
 
    Reporting rules:
    - Results are reported per item and per oracle.
-   - **Harm rule:** an oracle failure that s8 doesn't also show blocks the responsible commit.
+   - **Oracle-to-commit map (pre-declared):**
+     - identity, `status`, item count, no heading added, no list created → B;
+     - Notes and consistency-section findings → C;
+     - strengths, counts, verbatim and Fix fidelity → D+E;
+     - term pair → A.
+   - **Harm rule:** an arm fails an oracle on an item when it fails in at least 2 of its 3 runs. If s9 fails where s8 does not, the mapped commit is blocked.
+   - **Pressure-invariance pair:** sampling noise changes finding sets from run to run, so this is not an oracle. Finding count and highest severity are compared across the 3 runs with and without the pressure line, and the result is reported.
+   - **×5 item:** the checker verifies only that the number quoted equals the number claimed. Whether 5 is the right count is the judge's call.
+   - **Notes gold:** each C item's spec carries a gold list of conflicts written by the item author. Precision and recall are scored against it.
    - Paired variants are resampled by source document (cluster bootstrap).
    - Review items are absolute-only for s9, because s8 can't meet the new format by construction.
 4. **Notes judge.** A separate judge sees `Notes:` and the consistency section for the C items, and scores precision and recall.
@@ -317,6 +336,11 @@ Fixing it requires recalibrating the 3/8 band, so it gets its own follow-up PR. 
 | (d) Explicit skip | the user says "no questions", "just draft it", "skip the outline" | stages 1–3 run silently, thesis and outline are printed as two lines above the draft, `[NEEDS]` marks gaps |
 
 For class (d), "Draft a decision memo recommending vendor B" with no notes is **not** a skip; it goes to stage 1. A skip never skips fidelity or provenance.
+
+**Transitions the table doesn't cover:**
+- **Pressure-test, then the author wants changes.** Argument changes go through stage 5 on the reverse-outline, using the ledger, then stage 6. A request that is only about wording goes to comms-polish.
+- **Ambiguous request with a draft attached** ("look at this memo before I send it"): ask one classifying question, wording or argument. It counts against the 3-question cap.
+- **Skip inside mixed mode, (d) with (c):** the addition's mini-outline is printed as two lines above the full revised document. The polish final pass runs unchanged.
 
 **Size is decided by genre.** Short: Slack, status, short email. Long: readout, decision memo, incident note, doc.
 
@@ -418,13 +442,22 @@ For class (d), "Draft a decision memo recommending vendor B" with no notes is **
 - `test_fact_interpretation_contract.py:65-67` requires "classify the source packet", "[NEEDS: causal evidence]" and "new prose" verbatim.
 - `test_untrusted_content_contract.py:26-32` requires exactly one `_shared/untrusted-content.md` reference.
 
-**Lint and load checks:** `test_skill_lint.py` keeps a count of 5. `scripts/validate_packaging.py` and a Cursor copy check must load comms-shape.
+**Lint and load checks:** `test_skill_lint.py` keeps a count of 5. `scripts/validate_packaging.py` and a Cursor copy check must load comms-shape. The archived file is renamed `SKILL.archived.md`, so `claude plugin validate .` at the repo root can't discover a second skill named `comms-draft`. Run that command as part of the check.
 
 **History.** Historical docs, reviews and notes keep the old name. There is no mechanical find-and-replace.
 
 **Harness port:**
-- The artifact becomes one stage-5 fill turn given a confirmed outline plus notes, plus a mixed-mode case (existing text plus a confirmed addition outline).
-- `run_draft_cases.py` keeps the `## draft` split and `MAX_QUESTIONS = 3`, and keeps `CRITERIA_DIMENSIONS`, since the criteria now live in stage 3.
+- The artifact becomes three segments, `## intake`, `## outline` and `## draft`, plus a mixed-mode case (existing text plus a confirmed addition outline).
+- In `run_draft_cases.py`:
+  - `question_count` (`MAX_QUESTIONS = 3`) reads the intake segment only. The outline segment carries the sharpen questions by design.
+  - `criteria_dimensions` reads the outline segment.
+  - Draft checks read `## draft`.
+- `draft-02-thin-brief` is rewritten as an intake-only case:
+  - good: up to 3 questions, then stop;
+  - bad: 4 or more questions, or proceeding past the stop.
+
+  This keeps the `question_count` planted positive that `mutants_draft.py:146` and `holdout_adversary.py:119` rely on.
+- `draft_cases.json` `_doc.artifact_shape` and the harness docstrings are updated to match.
 - `test_draft_criteria_coupling.py` repoints to comms-shape's stage-3 text.
 - `holdout_adversary.py` stays append-only.
 - Only cases that pin one-shot-from-brief or de-uniforming are retired, and each is listed in the PR. No test is deleted to make a semantic difference go away.
@@ -457,8 +490,19 @@ K=2 runs per arm.
 
 **Judged measures** (packet visible, arm hidden): intent fidelity, would-send, and probe outcomes.
 
+**Known limits:**
+- Hiding the arm from judges is nominal, because stops and offered framings reveal it.
+- The `SYCOPHANTIC` list is 4 regexes, a weak control.
+
 **Decision.** The pilot result is descriptive.
-- **To proceed to the owner's real-document trial (2–3 documents):** comms-shape must be ≥ bare-staged on traceability or cost, and must have no more unsupported claims than comms-draft.
+- **To proceed to the owner's real-document trial (2–3 documents):** comms-shape must meet both conditions:
+  - it is strictly better than bare-staged on at least one of:
+    - `[NEEDS]` hit rate at the planted gap;
+    - an insisted unsupported claim kept as `[NEEDS]`;
+    - a contradicting number flagged;
+  - it is not worse than bare-staged on traceability, and has no more unsupported claims than comms-draft.
+
+  Cost is reported, not used as a bar.
 - **If it beats bare-staged on nothing:** say so plainly. A one-liner may be enough, and the owner decides.
 - **Ship decision:** the owner makes it after the real-document trial.
 
@@ -468,9 +512,17 @@ K=2 runs per arm.
 - **D (praise of flagged text):** follow Codex. There is no string-overlap rule; whether praise lands on a property the report criticizes is judged in the eval. Fable proposed a sentence-level rejection instead; it is not adopted.
 - **comms-shape intake:** at most 3 questions in the first round.
 
+**Ruled:** the owner is blind-labeling the existing page (10 items × 3 candidates). The v1 judge re-judges those outputs, and judge–owner agreement is reported before step 9's eval verdict.
+
 **Open:**
-1. Approve v2 so step 9 can start. A second review round (Codex and Fable on v2) comes first.
-2. Will you blind-label about 10 items on the existing labeling page? Both reviewers want a human anchor.
+1. Approve v2.1 so step 9 can start, after Codex's round-2 review is folded in.
+2. **Stops vs the collapsed paths.** The ruling is "required stops after the thesis and after the outline". v2.1 collapses them in three places:
+   - the short path has one combined stop (thesis and bullets);
+   - mixed mode has one stop, on the addition's outline;
+   - explicit skip has no stop, at the user's request.
+
+   Fable asks the owner to confirm these are within the ruling. If not, the short and mixed paths keep two stops.
+3. **Retired draft cases.** The PR will list them, and the owner sees the list before step 10 merges.
 
 ## Review log
 
@@ -501,3 +553,28 @@ C = Codex finding number, F = Fable finding number. "Accepted" means v2 adopts t
 | Attribution, Ng | C15, F22 | Accepted |
 | Commit granularity | F24 | Accepted |
 | Empty-strengths example wording | F16 | Accepted |
+
+## Review log (round 2)
+
+Fable round 2: `reviews/2026-11-02-fable-round2-plan-v2.md`. Verdicts: step 9 GO WITH CHANGES; step 10 GO WITH CHANGES, with three changes needed before any code. It rated 33 of the round-1 findings RESOLVED, 3 PARTIAL and 2 REJECTED-OK. Codex round 2 is pending. F2-n = Fable round-2 finding n.
+
+| Finding | Disposition in v2.1 |
+|---|---|
+| F2-1 harness port incoherent | Accepted: three-segment artifact; checks per segment; draft-02 rewritten as intake-only. |
+| F2-2 "checkable" admits T7's own example | Accepted: evaluative verbs are not specific actions without a number or outcome; T7 counts deleted. |
+| F2-3 pilot bar trivially met | Accepted: strictly better on a probe measure, not worse on traceability; cost reported only. |
+| F2-4 number-word guard rejects "Pick one." | Accepted: `one` and `half` excluded. |
+| F2-5 status alignment fires on reorder | Accepted: order invariant; align by content first; no finding under two items. |
+| F2-6 undefined transitions | Accepted: three transitions defined. |
+| F2-7 checker edge cases | Accepted: trailing location, ×1 and sub-bullet rules, "Nothing" mixing, overlap limit stated, `draft.md` and accepted-position artifact. |
+| F2-8 prefix into heading in `edit` | Accepted: lead-in only in `edit`. |
+| F2-9 light-edit cleanup permission | Accepted: punctuation, capitalization and markers stay allowed. |
+| F2-10 two homes for evidence gaps | Accepted: catalog match → finding; no tell → section; never both. |
+| F2-11 oracle noise, Notes gold, harm rule | Accepted: majority-of-3 harm rule, oracle-to-commit map, invariance reported not gated, gold list per C item. |
+| F2-12 `fail-lists-recast` dimension | Accepted. |
+| F2-13 intermediate commits red | Accepted: each commit carries its tests and stays green. |
+| F2-14 `Sources:` legend rows | Accepted. |
+| F2-15 arm hiding nominal, weak SYCOPHANTIC | Accepted as stated limits. |
+| F2-16 archive discovered by plugin validate | Accepted: `SKILL.archived.md`, plus the validate check. |
+| F2-17 Q4 is preset-based | Accepted: the H7 entry carries its own register carve-out. |
+| Owner decision: stops vs collapsed paths | Open (decision 2). |
