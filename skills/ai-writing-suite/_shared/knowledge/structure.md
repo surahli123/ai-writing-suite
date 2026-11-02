@@ -46,3 +46,6 @@ front-loaded — spend the first sentence on the answer.
 
 - `audience.md` — "match shape to channel" and "write for one reader" are two halves of the same call: the reader's role decides the channel and the order.
 - `revision.md` — the BLUF and one-idea-per-paragraph fixes usually happen on the second pass, once you know what the piece is actually about.
+- `experiment-readout.md` — BLUF applied to a readout: verdict and validity first, then each effect with its uncertainty.
+- `decision-memo.md` — the slots a recommendation-first document owes the reader (options, trade-off, change trigger).
+- `incident-note.md` — the exception: timelines keep chronological order; only the status line goes first.
