@@ -2,7 +2,7 @@
 
 Date: 2026-11-02.
 
-**Status:** v2.3, revised after two review rounds by Codex and Fable plus Fable's targeted round-3 check of the round-2 edits. It is waiting for the owner's go-ahead, and no skill file has been changed.
+**Status:** v2.3, approved by the owner 2026-11-02. Revised after two review rounds by Codex and Fable plus Fable's targeted round-3 check of the round-2 edits. Implementation follows in this branch.
 
 **Reviews:**
 - Codex 6.1 Astra (medium): `reviews/2026-11-02-codex-plan-step9-comms-shape.md`. Verdicts: not stated per step. It reported 1 blocker and 13 major findings.
@@ -538,15 +538,13 @@ K=2 runs per arm.
 
 **Ruled:** the owner is blind-labeling the existing page (10 items × 3 candidates). The v1 judge re-judges those outputs, and judge–owner agreement is reported before step 9's eval verdict.
 
-**Open:**
-1. Approve v2.3 so step 9 can start.
-2. **Stops vs the collapsed paths.** The ruling is "required stops after the thesis and after the outline". v2.1 collapses them in three places:
-   - the short path has one combined stop (thesis and bullets);
-   - mixed mode has one stop, on the addition's outline;
-   - explicit skip has no stop, at the user's request.
+**Ruled (2026-11-02, later):**
+- v2.3 is approved; step 9 starts.
+- The three collapsed paths (short piece: one combined stop; mixed mode: one stop; explicit skip: no stop) are within the stops ruling.
+- No further Codex review.
+- Recorded as R4 in `docs/decisions-2026-11-01.md`.
 
-   Fable asks the owner to confirm these are within the ruling. If not, the short and mixed paths keep two stops.
-3. **Retired draft cases.** The PR will list them, and the owner sees the list before step 10 merges.
+**Open:** the retired draft cases are listed in the step-10 PR for the owner to see before it merges.
 
 ## Review log
 
