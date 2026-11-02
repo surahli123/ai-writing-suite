@@ -198,6 +198,21 @@ class ConsistencyIsReportOnly(unittest.TestCase):
         self.assertIn("never report it in both places", c)
 
 
+class ConnectivesAreClusterOnly(unittest.TestCase):
+    def test_h7_connective_subsection(self):
+        h7 = entry("hedging-filler.md", "H7")
+        self.assertIn("**Connective openers (cluster only).**", h7)
+        self.assertIn("A single use is never a finding.", h7)
+        self.assertIn("formal, legal, and academic register", h7)
+        self.assertIn("gate\n    question 5", h7)
+        self.assertIn("tenex", h7)
+
+    def test_registry_count_unchanged(self):
+        # A sub-section, not a new id: the 75-entry registry stays as it was.
+        idx = text(PATTERNS / "00-index.md")
+        self.assertNotIn("| H7b |", idx)
+
+
 class Attribution(unittest.TestCase):
     def test_ideas_only_sources_are_credited_without_claiming_a_license(self):
         notice = text(NOTICE)
