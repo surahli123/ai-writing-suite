@@ -2,7 +2,7 @@
 
 Date: 2026-11-02.
 
-**Status:** v2.2, revised after two review rounds by Codex and Fable. It is waiting for the owner's go-ahead, and no skill file has been changed.
+**Status:** v2.3, revised after two review rounds by Codex and Fable plus Fable's targeted round-3 check of the round-2 edits. It is waiting for the owner's go-ahead, and no skill file has been changed.
 
 **Reviews:**
 - Codex 6.1 Astra (medium): `reviews/2026-11-02-codex-plan-step9-comms-shape.md`. Verdicts: not stated per step. It reported 1 blocker and 13 major findings.
@@ -74,7 +74,7 @@ Paths are relative to `skills/ai-writing-suite/`.
 
 **Checkable:** a reader could verify the item. It carries at least one of:
 - a specific action on a named target;
-- a named artifact, person or ticket;
+- a named artifact, person or ticket, together with what was done to it or what state it is in (a name alone is a noun);
 - a number;
 - an outcome.
 
@@ -134,12 +134,13 @@ A noun is not information, so "Optimize customer outcomes" and "Unlock enterpris
 
 **Fidelity check:** a deterministic `status` class in `evals/fixtures/fidelity.py`.
 - It uses a closed vocabulary with tiers: planned < in progress < done.
-- It is entity-aligned. Items are matched by a unique ticket ID or an unambiguous entity, whether or not the item counts match. Position is used only after the entity is confirmed to be the same.
+- It is entity-aligned. Items are matched first by a ticket-ID pattern (e.g. `ABC-123`), then by a key of content words that is unique within the list, whether or not the item counts match. Position plays no role in matching. It is used only to report where a matched item moved.
   - Swapping Investigating and Fixed between LOGIN-1 and CHECKOUT-2 is caught, even though the statuses by position stay the same.
   - A faithful reorder is not mistaken for a status change.
 - Any upward move in an aligned item fires.
 - An item that can't be aligned is **unscored** and reported as a coverage gap. It never counts as a pass.
-- When either side has fewer than two list items, it returns no finding and leaves running prose to the existing classes.
+- When `before` has fewer than two list items, it returns no finding and leaves running prose to the existing classes. When `before` has two or more and `after` has fewer, every `before` item is reported as unaligned, so a merge that also inflates a status can't pass silently.
+- Unscored items have their own return channel: `fidelity_violations` stays violations-only, and a companion `status_coverage()` returns the unaligned items. The existing `== []` tests (`test_fidelity_classes.py:54, 67`) are unaffected.
 - Add it to the pinned class set in `evals/test_fidelity_classes.py:41-44` and to the docstring. It gets:
   - a mutant with statuses swapped between entities;
   - a faithful control;
@@ -191,8 +192,8 @@ A noun is not information, so "Optimize customer outcomes" and "Unlock enterpris
 **Instance.** An instance is one contiguous span of the draft that shows the pattern.
 - Quote the shortest complete span.
 - **No ellipses.**
-- The outer quote pair opens the snippet and closes it at the last matching quote mark, so quotation marks inside the draft stay intact. An optional location in parentheses may follow the closing quote, e.g. `"…" (¶2)`.
-- The count is of instances. Two different snippets covering one span are not detected; that limit is stated in the contract.
+- The outer quote pair opens the snippet and closes it at the last matching quote mark, so quotation marks inside the draft stay intact. An optional location in parentheses may follow the closing quote, e.g. `"…" (¶2)`. The location may contain no quote marks.
+- The count is of instances. The same span quoted by two different findings is not detected; that limit is stated in the contract.
 
 **Single instance:** `**Quote:** "…"` on one line, as today.
 
@@ -220,7 +221,8 @@ The number of quoted instances must be N if N ≤ 5, or 3–5 if N > 5, with Why
 
 **Fix fidelity (draft given).** The check covers only the replacement text the Fix asserts. `[NEEDS: …]` spans are removed first, because a number inside a placeholder is not a claim (`run_draft_cases.py` already strips them).
 - Each number in what remains must match a number in the draft by normalized value and unit. So "3 views" → "three views" passes, and 40% equals 40 percent.
-- Parsed forms: digits, and the number words two…twenty, hundred, thousand, million and dozen. `one` and `half` are not checked, because plain fixes use them ("Pick one." is H2's own catalog fix).
+- Parsed forms: digits, the number words one…twenty, hundred, thousand, million and dozen, `half`, and compositions such as "three thousand" (= 3,000).
+- The draft side parses every form, `one` and `half` included, so "one dashboard" → "1 dashboard" and "half the team" → "50% of the team" pass. On the Fix side, `one` and `half` are not treated as asserted numbers, because plain fixes use them ("Pick one." is H2's own catalog fix).
 - A form that can't be parsed is reported as a coverage limit, not a pass or a failure.
 - Controls: numeral ↔ number-word equivalence; a number inside `[NEEDS]`.
 
@@ -299,7 +301,7 @@ Fixing it requires recalibrating the 3/8 band, so it gets its own follow-up PR. 
 - Paired bootstrap 90% CI. Not worse: S upper bound ≤ +0.10 and W lower bound ≥ −0.10. Otherwise Inconclusive. Worse as defined there.
 - Pairwise one-sided sign test; Worse at p < 0.10.
 - Floor on the 9 clean_human + terse_status items: W ≥ 0.85, S ≤ 0.10.
-- **Ship rule:** s9 is not Worse than s8 on S, W or pairwise; not Worse than bare on S or W; and meets the floor. **Inconclusive is reported and does not block.** Any Worse result means bisecting by commit (A, B, C, …).
+- **Ship rule:** s9 is not Worse than s8 on S, W or pairwise; not Worse than bare on S or W; and meets the floor. **Inconclusive is reported and does not block.** In addition, no commit may be blocked under the targeted-set Harm or Pass rules (deviation 3). Any Worse result means bisecting by commit (A, B, C, …).
 
 **Declared deviations from v1:**
 1. **Comparison arm.** The comparison is the s8 tip (`0424a7f`) instead of main, with fresh K=3 for both s9 and s8, because s8 changed after run 2. Bare reuses run 1's per-candidate absolute judgments at K=1.
@@ -326,13 +328,13 @@ Fixing it requires recalibrating the 3/8 band, so it gets its own follow-up PR. 
      - Notes and consistency-section findings → C;
      - strengths, counts, verbatim and Fix fidelity → D+E;
      - term pair → A.
+     - Judge-only items (boast list, "scans better") are reported and never block.
    - **Harm rule (shared rewrite oracles):** an arm fails an oracle on an item when it fails in at least 2 of its 3 runs. If s9 fails where s8 does not, the mapped commit is blocked.
    - **Pass rule (review-only oracles):** strengths, counts, verbatim and Fix fidelity are absolute checks on s9. A majority-of-3 failure blocks D+E. s8 is not asked to produce a format it never promised. Scoring for the semantic review items is fixed before the run.
    - **Pressure-invariance pair:** sampling noise changes finding sets from run to run, so this is not an oracle. Finding count and highest severity are compared across the 3 runs with and without the pressure line, and the result is reported.
    - **×5 item:** the checker verifies only that the number quoted equals the number claimed. Whether 5 is the right count is the judge's call.
    - **Notes gold:** each C item's spec carries a gold list of conflicts written by the item author. Precision and recall are scored against it.
    - Paired variants are resampled by source document (cluster bootstrap).
-   - Review items are absolute-only for s9, because s8 can't meet the new format by construction.
 4. **Notes judge.** A separate judge sees `Notes:` and the consistency section for the C items, and scores precision and recall.
 5. **Human anchor.** The owner blind-labels about 10 items on the existing labeling page, and judge agreement is reported. Without labels, the report says "no human anchor".
 
@@ -386,7 +388,7 @@ For class (d), "Draft a decision memo recommending vendor B" with no notes is **
 
 **Claim-provenance ledger.**
 - **What it records:** each claim or number maps to its source: the original draft, notes, an author answer (by turn), or an approved external source.
-- **How each item is tagged:** author-provided, or model-proposed and author-approved.
+- **How each item is tagged:** author-provided, or model-proposed and author-approved. Approval is a tag, not a source. A model-proposed row's source is evidence the author supplied, or `[NEEDS: evidence]`. Stage 6 fails any row with an empty source.
 - **Where it shows:**
   - in pressure-test output;
   - in the final notes, for model-proposed items only.
@@ -471,6 +473,9 @@ For class (d), "Draft a decision memo recommending vendor B" with no notes is **
   - bad: 4 or more questions, or proceeding past the stop.
 
   This keeps the `question_count` planted positive that `mutants_draft.py:146` and `holdout_adversary.py:119` rely on.
+- `draft-01` and `draft-03` artifacts are rewritten into the three-segment shape, so `criteria_dimensions` finds its criteria in `## outline`.
+- `draft-02` drops `needs_marker` and `requires_needs_marker`, since an intake-only artifact has no draft. `no_fabrication` keeps scanning the whole artifact, so `_body_insert`'s fallback (`mutants_draft.py:55-64`) still lands its must-catch mutant somewhere the check reads.
+- `JUDGE_TEMPLATE`'s `question_discipline` (`run_draft_cases.py:541-543`, "then proposes inferred criteria and proceeds") is updated to the stop semantics.
 - `draft_cases.json` `_doc.artifact_shape` and the harness docstrings are updated to match.
 - `test_draft_criteria_coupling.py` repoints to comms-shape's stage-3 text.
 - `holdout_adversary.py` stays append-only.
@@ -490,7 +495,7 @@ For class (d), "Draft a decision memo recommending vendor B" with no notes is **
 **Arms.** All arms get the same information-revelation rules, the same budget (at most 4 author turns) and the same cutoff.
 - comms-shape.
 - Bare-staged: the one-liner "ask me for the thesis and outline first, then write". This is the comparator that answers "is a skill needed at all?".
-- The archived comms-draft, one-shot with up to 3 questions plus one polish round.
+- The archived comms-draft, one-shot with up to 3 questions plus one polish round. It runs from `archive/comms-draft/SKILL.archived.md`'s content given as the system prompt, since no host loads the renamed file as a skill.
 
 K=2 runs per arm.
 
@@ -534,7 +539,7 @@ K=2 runs per arm.
 **Ruled:** the owner is blind-labeling the existing page (10 items × 3 candidates). The v1 judge re-judges those outputs, and judge–owner agreement is reported before step 9's eval verdict.
 
 **Open:**
-1. Approve v2.2 so step 9 can start.
+1. Approve v2.3 so step 9 can start.
 2. **Stops vs the collapsed paths.** The ruling is "required stops after the thesis and after the outline". v2.1 collapses them in three places:
    - the short path has one combined stop (thesis and bullets);
    - mixed mode has one stop, on the addition's outline;
@@ -606,3 +611,22 @@ Two reviews:
 | C2-R5 (P2) literal number-word membership | Accepted: normalized value and unit comparison on asserted text only, `[NEEDS]` spans removed, unparseable forms reported as coverage limits. |
 | C2-R6 (P2) direction of the cost bar | Resolved in v2.1 by F2-3: cost is no longer in the bar and is reported only, so there is no direction to guess. |
 | C2-R7 (P2) light-edit word-order ban vs grammar fixes | Accepted: only reordering done to unify the frame or front the distinguishing word is barred; local reordering a grammar or ambiguity fix needs is allowed. |
+
+## Review log (round 3, targeted)
+
+Fable round 3 (`reviews/2026-11-02-fable-round3-plan-v2.2.md`) checked only the edits between `621d9e4` and `0db4071`. Verdicts: step 9 READY AFTER MINOR EDITS; step 10 READY AFTER MINOR EDITS. Of 24 round-2 items, 20 were APPLIED and 4 PARTIAL (F2-1, F2-2, F2-7, C2-R5); none were WRONG. F3-n = its new issue n.
+
+| Finding | Disposition in v2.3 |
+|---|---|
+| F3-1 limit sentence contradicts the span rule | Accepted: the remaining limit is "the same span quoted by two different findings". |
+| F3-2 T7 prong 2 (named artifact) | Accepted: a name counts only with what was done to it or its state. |
+| F3-3 `one`/`half` excluded on both sides; number-word composition | Accepted: the draft side parses everything incl. compositions; only the Fix side skips `one`/`half`. |
+| F3-4 under-two rule vs unscored rule | Accepted: the under-two rule applies to `before` only; a collapse to under two reports every item unaligned. |
+| F3-5 ledger has no source for approved proposals | Accepted: approval is a tag; source is author evidence or `[NEEDS: evidence]`; empty source fails stage 6. |
+| F3-6 harness port goes red | Accepted: draft-01/-03 rewritten, draft-02 checks adjusted, judge template updated. |
+| F3-7 unscored return channel | Accepted: `status_coverage()` companion. |
+| F3-8 location with quote marks | Accepted. |
+| F3-9 judge items in the map | Accepted: report-only. |
+| F3-10 ship rule omits oracle blocks; duplicate line | Accepted. |
+| F3-11 archived arm can't load as a skill | Accepted: runs from the file's content as the system prompt. |
+| C2-R1 residual (position's role; "unambiguous entity") | Accepted: ticket-ID pattern, then a unique content-word key; position only reports moves. |
