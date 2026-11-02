@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""BLACK-BOX held-out adversary for the comms-draft and voice-onboard checkers.
+"""BLACK-BOX held-out adversary for the comms-shape (formerly comms-draft) and voice-onboard checkers.
 
 WHY THIS IS SEPARATE FROM THE MUTANT FAMILIES (the 2026-07-13 audit's BLOCKER)
 

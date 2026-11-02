@@ -250,7 +250,7 @@ genre slot lists in the knowledge base. Use the closest numbered preset above
   apart; timelines stay chronological.
 
 In polish, a missing slot is reported in notes and never filled. Polish does not
-add content. In `comms-draft`, a missing slot becomes `[NEEDS: …]`. A company
+add content. In `comms-shape`, a missing slot becomes `[NEEDS: …]`. A company
 fork's playbook entries replace these generic ones through the same KB slot.
 
 ## Parallel items (lists, feeds, cards, titles)

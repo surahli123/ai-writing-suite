@@ -79,7 +79,7 @@ If a candidate exists, **present it to the user** in the proposed-rule shape
 
 - the proposed rule text,
 - a one-line rationale grounded in *this* session (cite what happened),
-- the scope it would apply to (`comms-polish`, `comms-draft`, `comms-qa`,
+- the scope it would apply to (`comms-polish`, `comms-shape`, `comms-qa`,
   `voice-onboard`, or `all`),
 - a note that in Layer 3 this rule will be eval-measured before it counts as
   trusted (do not build or run that eval here — just reference it).

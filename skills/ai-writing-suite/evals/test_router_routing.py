@@ -13,9 +13,11 @@ SKILL = os.path.normpath(os.path.join(
 
 ROUTING_FIXTURES = (
     ("polish this without adding content", "comms-polish"),
-    ("draft a new page from this brief", "comms-draft"),
-    ("add a new section", "comms-draft"),
-    ("polish this and add a risks section", "comms-draft"),
+    ("draft a new page from this brief", "comms-shape"),
+    ("add a new section", "comms-shape"),
+    ("polish this and add a risks section", "comms-shape"),
+    ("pressure-test my memo before I send it", "comms-shape"),
+    ("use comms-draft", "comms-shape"),
     ("answer this question from the knowledge base", "comms-qa"),
     ("learn my voice", "voice-onboard"),
 )
@@ -30,6 +32,8 @@ ROUTER_ANCHORS = {
     "answer this question from the knowledge base":
         "ask a question the knowledge base answers",
     "learn my voice": "teach the tool their writing style",
+    "pressure-test my memo before I send it": "pressure-test whether a draft's argument holds",
+    "use comms-draft": "ask for `comms-draft` by name",
 }
 
 
@@ -83,7 +87,7 @@ class RouterRoutingDecision(unittest.TestCase):
             '"polish this and add a risks section"',
             paragraph,
         )
-        self.assertIn("routes to `comms-draft`", paragraph)
+        self.assertIn("routes to `comms-shape`", paragraph)
         self.assertIn("pure rewording with no new material", paragraph)
         self.assertIn("Route to `comms-polish` only", paragraph)
 

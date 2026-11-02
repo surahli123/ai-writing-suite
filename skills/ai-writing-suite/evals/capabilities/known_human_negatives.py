@@ -9,7 +9,7 @@ SPEC = {
     "needs_model": False,
     "depends_on": [
         "audit_report",
-        "comms_draft",
+        "comms_shape",
         "false_positives",
         "fixtures",
         "kb_smoke",

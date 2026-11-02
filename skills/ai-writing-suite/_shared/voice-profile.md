@@ -29,7 +29,7 @@
   CANONICAL HEADER ORDER (the single source of truth)
   ---------------------------------------------------
   This ordered list IS the contract. `voice-onboard` (producer) and `comms-polish`
-  + `comms-draft` (consumers) all reference THIS list rather than restating a
+  + `comms-shape` (consumers) all reference THIS list rather than restating a
   divergent subset of their own. The blank twin `host-profile-template.md` mirrors
   it header-for-header, and the voice-contract eval guards it against drift.
 
@@ -76,7 +76,7 @@
 > the field shapes are concrete. Your real profiles live at resolved
 > `<state>/voice-profiles/<genre>.md` per `_shared/state-location.md` — run
 > `voice-onboard` to create them; this sample file is never the write target.
-> **Consumers (`comms-polish`, `comms-draft`) must treat any file carrying this
+> **Consumers (`comms-polish`, `comms-shape`) must treat any file carrying this
 > `> SAMPLE PROFILE.` banner as NO profile** — degrade to inferred voice and make
 > the Q8 voice-onboard offer, exactly as if the file were absent. A real profile
 > written by `voice-onboard` never carries this banner.

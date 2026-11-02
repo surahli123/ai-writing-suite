@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""White-box mutant FAMILIES for the comms-draft checkers (cheap smoke).
+"""White-box mutant FAMILIES for the comms-shape checkers (formerly comms-draft) (cheap smoke).
 
 WHY THIS EXISTS (the root cause it removes)
 

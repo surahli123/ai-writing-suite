@@ -23,7 +23,7 @@ approve before anything is written. Core skill logic is never auto-edited.
 
 **Built, verified, and installable on Claude, Codex, and Cursor.** All four sub-skills ship as
 working implementations: polish/de-AI (`comms-polish`), voice learning (`voice-onboard`),
-knowledge QA (`comms-qa`), and guided drafting (`comms-draft`) — plus a generic pluggable KB seed
+knowledge QA (`comms-qa`), and outline-first drafting (`comms-shape`) — plus a generic pluggable KB seed
 with an end-to-end retrieval smoke path, an eval harness (Python AI-tell detector + fixtures), and
 a human-gated self-improvement hook.
 
@@ -94,7 +94,7 @@ The score summarizes how densely the text shows catalogued patterns. It never
 says who or what wrote the text; the quoted findings are the evidence.
 
 Swap `Mode: detect` for `Mode: rewrite` to get the rewrite directly, or ask
-`comms-draft` to draft a fresh page, `comms-qa` to answer from the knowledge base,
+`comms-shape` to shape and draft a page with you, `comms-qa` to answer from the knowledge base,
 or `voice-onboard` to learn your voice first. More examples:
 [`skills/ai-writing-suite/README.md`](skills/ai-writing-suite/README.md#how-to-use).
 
@@ -109,7 +109,7 @@ skills/
     SKILL.md                       # thin router
     .claude-plugin/plugin.json     # Claude plugin manifest
     .codex-plugin/plugin.json      # Codex plugin manifest
-    skills/                        # sub-skills: comms-polish, voice-onboard, comms-qa, comms-draft
+    skills/                        # sub-skills: comms-polish, voice-onboard, comms-qa, comms-shape
     _shared/                       # patterns (engine) + knowledge (swappable KB) + voice profile
     evals/                         # AI-tell detector + fixtures + smoke tests
     NOTICE.md  LICENSE  README.md  CHANGELOG.md

@@ -17,7 +17,7 @@ Use it when a draft has the usual model tells: filler, vague claims, inflated im
 1. **comms-polish** (v1) — identify tells, preserve meaning, remove AI-shaped prose patterns, match author voice or register.
 2. **voice-onboard** (v1) — interview, collect writing samples, distill your voice signature.
 3. **comms-qa** (v1.1) — answer a question from the pluggable playbook, citing the entry the answer came from; never invents playbook guidance.
-4. **comms-draft** (v1.1) — draft a new page from a brief, guided by the playbook; bakes anti-AI discipline into the first draft instead of relying on a later polish.
+4. **comms-shape** (v1.2) — shape a document with its author before writing it: reader and decision, a chosen thesis, a sharpened outline sourced to the author's notes, then the fill. Also pressure-tests a draft's argument. Replaces `comms-draft` (archived).
 
 An agent using the suite can:
 
@@ -106,16 +106,19 @@ Answer a question from the pluggable playbook, citing the KB entry the answer ca
 - Pluggable slot: OSS ships generic KB; company forks and drops a Confluence-sourced playbook.
 - End-to-end smoke test proves the company step is "drop in a page", not "build a RAG engine".
 
-### comms-draft (Ships in v1.1)
+### comms-shape (Ships in v1.2; replaces comms-draft)
 
-Draft a new page from a brief, guided by the playbook — so the first draft already reads human.
+Decide what the document says with its author first, then write it from what was decided. A first draft generated from a brief plus a playbook comes out generic and costs polish loops; changes at the outline stage are cheaper and keep the content the author's.
 
 **Features:**
-- Per-task acceptance criteria (style / format / length / content integration / depth) derived from the brief before drafting.
-- Draft-time anti-AI constraints: concrete actors and examples from the brief/KB, varied sentence rhythm (burstiness), the AI-tell catalog used as a negative checklist while writing.
-- A deliberate vary/roughen pass, then a post-draft self-scan against the pattern catalog (mirrors comms-polish's re-scan step).
-- Never fabricates: facts come only from the brief and KB; gaps are marked with `[NEEDS: …]` and listed for the user.
-- Hands off to comms-polish for the optional final pass.
+- Two required stops: the author picks one of 2-3 genuinely different theses, then confirms an outline whose points are tagged *author*, *proposed*, or `[NEEDS: …]`. Short pieces collapse to one stop; "just draft it" runs the stages silently.
+- Sharpen questions sent with the outline: an objection the author has not raised, where each number came from, and an alternative to any inherited framing. The author answers; the skill does not praise or pick.
+- KB and playbook genre entries are slot checklists for the outline (baseline, interval, n, window for an effect; facts vs hypotheses for an incident), not text generators.
+- Fill from the confirmed outline only, with the catalog as a negative checklist, then the polish final pass and an unsourced-claims check backed by a claim-provenance ledger (approval is a tag, not a source).
+- Pressure-tests an existing draft's argument, and handles "polish this and add a section" by returning the whole revised document.
+- Never fabricates: gaps are `[NEEDS: …]` and listed for the author.
+
+Inspiration (ideas only, nothing copied): the Tenex "Stay Slop-Free" playbook's process questions, and the outline-first, sharpen-then-write approach reported in second-hand summaries of Andrew Ng's *AI Prompting for Everyone* course (not verified first-hand).
 
 ## Self-Improvement (Human-Gated)
 
@@ -172,7 +175,7 @@ cp -R ai-writing-suite/skills/ai-writing-suite ~/.cursor/skills/ai-writing-suite
 Manual install, same primitive as Cursor — copy the folder into RovoDev's skills directory, then
 invoke explicitly (RovoDev does not auto-trigger). Verified scope 2026-06-08: registration
 (`/skills` listed the router and the four sub-skills) plus one `comms-polish` before/after
-rewrite. `comms-qa`, `comms-draft`, and the overstepping / payoff-clear behaviors are untested on
+rewrite. `comms-qa`, `comms-shape`, and the overstepping / payoff-clear behaviors are untested on
 RovoDev pending re-verification.
 
 ```bash

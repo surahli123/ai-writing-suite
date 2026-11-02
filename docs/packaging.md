@@ -59,7 +59,7 @@ RovoDev is not a marketplace target — there is no manifest for it; install is 
 copy, the same primitive as Cursor. **Verified scope on the maintainer's in-house RovoDev
 (2026-06-08):** the suite *registered* (`/skills` listed the router and the four sub-skills) and
 `comms-polish` produced a before/after rewrite. **Not yet verified on RovoDev:** `comms-qa`,
-`comms-draft`, and the overstepping / payoff-clear behaviors — untested pending re-verification
+`comms-shape` (which replaced `comms-draft`), and the overstepping / payoff-clear behaviors — untested pending re-verification
 (#27, owner-scheduled on the company machine). Treat RovoDev support as "registration +
 comms-polish confirmed; other sub-skills unproven," not blanket support. Two RovoDev facts shape
 the workflow:

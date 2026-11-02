@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed — comms-draft replaced by comms-shape (step 10, owner ruling R4)
+- **Upgrade note.** `comms-draft` is archived at the repo root
+  (`archive/comms-draft/SKILL.archived.md`, outside the packaged tree). Its job
+  moved to **`comms-shape`**, which agrees on the reader, a chosen thesis, and a
+  sharpened outline with the author before filling anything in; it also
+  pressure-tests a draft's argument and handles polish-plus-add. Asking for
+  `comms-draft` by name routes to `comms-shape`. Learned rules scoped
+  `comms-draft` keep applying to comms-shape's fill step and mixed mode.
+- The `comms_draft` eval capability is now `comms_shape`; draft cases use the
+  `## Intake` / `## Outline` / `## Draft` artifact shape.
+
 ### Added
 - **Known-human false-positive eval (E1, PR #63)** — `evals/known_human/`: stdlib runner with
   item-level provenance and sha256 validation, threshold read from the existing

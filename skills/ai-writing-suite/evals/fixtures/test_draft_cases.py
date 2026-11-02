@@ -1,4 +1,4 @@
-"""Unit tests for the comms-draft behavioral (artifact-discrimination) suite.
+"""Unit tests for the comms-shape behavioral (artifact-discrimination) suite.
 Run: python3 -m unittest fixtures.test_draft_cases
 
 The load-bearing tests here are NOT "the JSON parses". They are:

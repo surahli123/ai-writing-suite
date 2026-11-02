@@ -1,6 +1,6 @@
 ---
 name: voice-onboard
-description: "Learn how an author writes from their own samples and save per-genre voice profiles that comms-polish and comms-draft use for voice matching. Use when the user says learn my voice, match how I write, make it sound like me, or before a series of posts that must stay on-voice. It interviews the author, measures a style fingerprint with sample evidence, and writes one profile per genre to the user state directory. Not for editing or drafting text (comms-polish, comms-draft)."
+description: "Learn how an author writes from their own samples and save per-genre voice profiles that comms-polish and comms-shape use for voice matching. Use when the user says learn my voice, match how I write, make it sound like me, or before a series of posts that must stay on-voice. It interviews the author, measures a style fingerprint with sample evidence, and writes one profile per genre to the user state directory. Not for editing or drafting text (comms-polish, comms-shape)."
 ---
 
 # voice-onboard
@@ -10,7 +10,7 @@ generic robot and starts sounding like you.
 
 The job is narrow: read your real writing, distill a **voice profile per genre**,
 and write each to its own file `comms-polish` reads before any rewrite (and
-`comms-draft` before drafting). This skill does NOT draft or rewrite anything — it
+`comms-shape` before drafting). This skill does NOT draft or rewrite anything — it
 only listens and profiles.
 
 ## Locating shared assets (suite root)
@@ -228,13 +228,13 @@ other genres' files.
 
 **A real profile must NOT carry the `> SAMPLE PROFILE.` banner** the shipped
 example uses. The files you write under `voice-profiles/` are real profiles, so
-they never carry the banner — consumers (`comms-polish`, `comms-draft`) treat any
+they never carry the banner — consumers (`comms-polish`, `comms-shape`) treat any
 file carrying that banner as *no profile*, so a real profile is defined by the
 banner's absence. (The legacy `_shared/voice-profile.md` keeps its banner; leave
 it alone — it is the shipped sample and single-file fallback, not where you write.)
 
 Tell the user which files landed (one per genre) and that `comms-polish` and
-`comms-draft` will now read the matching one automatically (before any rewrite).
+`comms-shape` will now read the matching one automatically (before any rewrite).
 
 ### Step 6 — Leave a calibration loop open
 

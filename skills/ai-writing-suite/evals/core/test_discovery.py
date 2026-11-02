@@ -19,7 +19,7 @@ EXPECTED_IDS = {
     "fixtures",
     "false_positives",
     "known_human_negatives",
-    "comms_draft",
+    "comms_shape",
     "voice_extraction",
     "audit_report",
 }
