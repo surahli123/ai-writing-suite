@@ -1,0 +1,241 @@
+==============================================================================
+0. SANITY: identical cached text for bare/main across runs?
+  bare  v0 vs step0: 24/24 frozen items byte-identical (output+notes)
+  bare  v0 vs step1: 24/24 frozen items byte-identical (output+notes)
+  bare  v0 vs step2: 24/24 frozen items byte-identical (output+notes)
+  bare  v0 vs step3: 24/24 frozen items byte-identical (output+notes)
+  main  v0 vs step0: 24/24 frozen items byte-identical (output+notes)
+  main  v0 vs step1: 24/24 frozen items byte-identical (output+notes)
+  main  v0 vs step2: 24/24 frozen items byte-identical (output+notes)
+  main  v0 vs step3: 24/24 frozen items byte-identical (output+notes)
+
+==============================================================================
+A. TEST-RETEST ON IDENTICAL TEXT: bare and main totals per run (frozen 24 items, 2 judges each)
+run      | bare ws/48  bare mc bare HC/10 bare over | main ws/48  main mc main HC/10 main over
+v0       |         39       24          8         1 |         42        9         10         2
+step0    |         40       24          8         3 |         45       12         10         1
+step1    |         38       27          8         3 |         44       15         10         1
+step2    |         39       18          9         0 |         43        6         10         2
+step3    |         38       26          8         2 |         44       12         10         2
+  bare_ws : range 38-40  mean 38.8  sd 0.84   (steps only: [40, 38, 39, 38])
+  bare_mc : range 18-27  mean 23.8  sd 3.49   (steps only: [24, 27, 18, 26])
+  bare_hc : range 8-9  mean 8.2  sd 0.45   (steps only: [8, 8, 9, 8])
+  main_ws : range 42-45  mean 43.6  sd 1.14   (steps only: [45, 44, 43, 44])
+  main_mc : range 6-15  mean 10.8  sd 3.42   (steps only: [12, 15, 6, 12])
+  main_hc : range 10-10  mean 10.0  sd 0.00   (steps only: [10, 10, 10, 10])
+  Note: v0 judged these texts among 6 candidates (and read the request from a file); steps judged among 3 with request inline.
+
+A2. Per-item would-send (sum of 2 orderings) for the SAME main/bare text across runs; cells that are not constant:
+  bare: 3/24 items change would-send sum across the 5 runs:
+     linkedin-01-obvious                    v0,s0,s1,s2,s3 = [1, 0, 0, 0, 0]
+     memo-01-obvious                        v0,s0,s1,s2,s3 = [0, 2, 0, 0, 0]
+     fp-esl-03-memo                         v0,s0,s1,s2,s3 = [0, 0, 0, 1, 0]
+  main: 2/24 items change would-send sum across the 5 runs:
+     linkedin-01-obvious                    v0,s0,s1,s2,s3 = [0, 2, 2, 1, 2]
+     memo-01-obvious                        v0,s0,s1,s2,s3 = [0, 1, 0, 0, 0]
+
+A3. Per-judgment stability: for each (item, arm in bare/main) there are 10 verdicts of identical text (5 runs x 2 orderings)
+  bare: unanimous on 21/24 items, split verdicts on 3/24
+  main: unanimous on 22/24 items, split verdicts on 2/24
+  meaning_changes count for identical text, per (item,arm): min..max over 10 verdicts where max>0
+  bare: ds-01:0..1(zeros=2/10); ds-02:0..1(zeros=9/10); ds-05:0..1(zeros=8/10); ds-06:0..2(zeros=2/10); ds-07:1..1(zeros=0/10); factbridge-01:0..1(zeros=9/10); factbridge-02:0..1(zeros=9/10); tweet-01:2..3(zeros=0/10); linkedin-01:2..3(zeros=0/10); memo-01:2..2(zeros=0/10); overstep-06:0..2(zeros=4/10); fp-esl:0..2(zeros=1/10)
+  main: factbridge-01:0..1(zeros=9/10); factbridge-02:0..1(zeros=9/10); tweet-01:0..2(zeros=1/10); linkedin-01:0..1(zeros=2/10); memo-01:1..3(zeros=0/10); memo-02:0..1(zeros=7/10); overstep-05:1..1(zeros=0/10); overstep-06:0..1(zeros=8/10)
+
+==============================================================================
+B. WITHIN-RUN AGREEMENT BETWEEN THE TWO ORDERINGS (p1 vs p2)
+  v0    : would_send agree 134/144 (93%), base rate sent=77%, kappa=0.80 | meaning_changes exact-count agree 90%, kappa(any change)=0.88 | over_edited kappa=0.85 | best agree 11/24
+  step0 : would_send agree 79/81 (98%), base rate sent=88%, kappa=0.89 | meaning_changes exact-count agree 94%, kappa(any change)=0.93 | over_edited kappa=0.31 | best agree 12/27
+  step1 : would_send agree 86/87 (99%), base rate sent=89%, kappa=0.95 | meaning_changes exact-count agree 84%, kappa(any change)=0.71 | over_edited kappa=0.38 | best agree 13/29
+  step2 : would_send agree 81/84 (96%), base rate sent=87%, kappa=0.82 | meaning_changes exact-count agree 92%, kappa(any change)=0.73 | over_edited kappa=1.00 | best agree 16/28
+  step3 : would_send agree 81/81 (100%), base rate sent=90%, kappa=1.00 | meaning_changes exact-count agree 86%, kappa(any change)=0.76 | over_edited kappa=1.00 | best agree 19/27
+
+==============================================================================
+C. HEADLINE REPLICATION: suite-main vs bare, paired item sign tests, recomputed in every run (identical text)
+   (v0 README: would-send 3/2 p=1.0; meaning changes fewer on 8, more on 1, p=0.04)
+  v0     mc: main better on 8, worse on 1, ties 15  -> sign test p=0.039
+  v0     ws: main better on 3, worse on 2, ties 19  -> sign test p=1.000
+  step0  mc: main better on 6, worse on 1, ties 17  -> sign test p=0.125
+  step0  ws: main better on 4, worse on 2, ties 18  -> sign test p=0.688
+  step1  mc: main better on 8, worse on 2, ties 14  -> sign test p=0.109
+  step1  ws: main better on 4, worse on 1, ties 19  -> sign test p=0.375
+  step2  mc: main better on 6, worse on 1, ties 17  -> sign test p=0.125
+  step2  ws: main better on 4, worse on 1, ties 19  -> sign test p=0.375
+  step3  mc: main better on 9, worse on 2, ties 13  -> sign test p=0.065
+  step3  ws: main better on 4, worse on 1, ties 19  -> sign test p=0.375
+  Pooled over all 5 runs (10 verdicts per item):
+    mc: main better 10, worse 2, p=0.039; items: ds-01-abtest(0v8), ds-02-churn(0v1), ds-05-fraudmodel(0v2), ds-06-survey(0v10), ds-07-nullresult(0v10), tweet-01-obvious(14v23), linkedin-01-obvious(8v23), memo-01-obvious(15v20), memo-02-subtle(3v0), overstep-05-payoff-en(10v0), overstep-06-strawman-en(2v7), fp-esl-03-memo(0v13)
+    ws: main better 4, worse 2, p=0.688; items: ds-07-nullresult(10v0), tweet-01-obvious(10v0), linkedin-01-obvious(7v1), memo-01-obvious(1v2), overstep-05-payoff-en(0v10), fp-esl-03-memo(10v1)
+
+==============================================================================
+D. POSITION / LABEL EFFECTS (pooled over runs; p1 and p2 are mirror orders so arms are balanced over positions)
+  v0 (k=6):
+    pos | n | would_send | best picked (expected 1/k) | mean reads-human rank | mean meaning changes
+    A   |  48 | 73%      | 17% (exp 17%)          | 2.69                | 0.38
+    B   |  48 | 83%      | 38% (exp 17%)          | 2.62                | 0.27
+    C   |  48 | 81%      | 19% (exp 17%)          | 3.21                | 0.25
+    D   |  48 | 75%      | 6% (exp 17%)          | 3.88                | 0.27
+    E   |  48 | 81%      | 15% (exp 17%)          | 4.02                | 0.33
+    F   |  48 | 73%      | 6% (exp 17%)          | 4.58                | 0.33
+    best at position A: 8/48 judged items; P(X>=8 | p=1/6) = 0.560
+    best at last position: 3/48; P(X<=3) = 0.031
+  steps (k=3):
+    pos | n | would_send | best picked (expected 1/k) | mean reads-human rank | mean meaning changes
+    A   | 222 | 89%      | 44% (exp 33%)          | 1.64                | 0.34
+    B   | 222 | 87%      | 34% (exp 33%)          | 1.94                | 0.32
+    C   | 222 | 90%      | 22% (exp 33%)          | 2.42                | 0.28
+    best at position A: 98/222 judged items; P(X>=98 | p=1/3) = 0.001
+    best at last position: 48/222; P(X<=48) = 0.000
+
+==============================================================================
+E. IS 'RETURN THE TEXT UNCHANGED' REWARDED? (normalized-whitespace identity; near = edit ratio < 0.03)
+  v0: how many of 24 outputs each arm returned unchanged / near-unchanged:
+    bare           unchanged= 4 near= 3 changed=17
+    oneliner       unchanged=15 near= 0 changed= 9
+    suite-main     unchanged=12 near= 1 changed=11
+    suite-pr67     unchanged=10 near= 3 changed=11
+    cursor-unslop  unchanged= 3 near= 1 changed=20
+    clay-unslop    unchanged=12 near= 2 changed=10
+  Judged outcomes by class (all runs pooled, all arms):
+    subset            class      n   would_send  mean mc  over_edited
+    fresh-ds          unchanged  144   100%        0.00     0%
+    fresh-ds          near        40   100%        0.00     0%
+    fresh-ds          changed    104   80%        0.35     12%
+    human-control     unchanged  132   100%        0.00     0%
+    human-control     near        12   83%        0.08     8%
+    human-control     changed     36   58%        0.58     0%
+    fixtures          unchanged   34   100%        0.00     0%
+    fixtures          near        10   100%        0.00     0%
+    fixtures          changed    244   62%        0.88     11%
+    pr67-factbridge   unchanged   28   86%        0.00     0%
+    pr67-factbridge   changed     80   100%        0.07     0%
+    ALL               unchanged  346   99%        0.00     0%
+    ALL               near        66   97%        0.02     2%
+    ALL               changed    542   75%        0.55     8%
+  Judge comments on unchanged outputs that still said would_send=false:
+    [v0 p1:a] factbridge-01-unsupported-cause-en suite-pr67: Flags the problem well but leaves the unsupported cause in the sentence.
+    [v0 p1:a] factbridge-02-cooccurrence-en suite-pr67: Explains the gap thoroughly but keeps the causal claim the source does not support.
+    [v0 p2:a] factbridge-01-unsupported-cause-en suite-pr67: Flags the problem but leaves the unsupported cause in the sentence.
+    [v0 p2:a] factbridge-02-cooccurrence-en suite-pr67: Flags the problem but keeps the causal claim the source does not support.
+
+==============================================================================
+F. DO THE ASSISTANTS' NOTES LEAK THE ARM? (judges see notes as '[Message to author: ...]')
+  v0 note rate and length by arm:
+    bare           notes on 24/24, mean words 43, max 70
+    oneliner       notes on 24/24, mean words 42, max 83
+    suite-main     notes on 24/24, mean words 56, max 114
+    suite-pr67     notes on 15/24, mean words 50, max 101
+    cursor-unslop  notes on 15/24, mean words 41, max 70
+    clay-unslop    notes on 24/24, mean words 41, max 82
+  Step runs: note rate for bare/main (cached) and new:
+    step0: bare=24/24, main=24/24, new=24/24
+    step1: bare=24/24, main=24/24, new=24/24
+    step2: bare=24/24, main=24/24, new=24/24
+    step3: bare=24/24, main=24/24, new=24/24
+  would_send | notes present vs absent (pooled, by subset):
+    fresh-ds          notes: 17/26 sent without (65%), 250/262 sent with (95%)
+    human-control     notes: 0/0 sent without (0%), 163/180 sent with (91%)
+    fixtures          notes: 6/10 sent without (60%), 189/278 sent with (68%)
+    pr67-factbridge   notes: 0/0 sent without (0%), 104/108 sent with (96%)
+    ALL               notes: 27/40 sent without (68%), 787/914 sent with (86%)
+  Suite-jargon tokens in notes shown to judges (count of candidates whose notes contain the token), per arm (v0 + steps new):
+    bare           tell:1
+    oneliner       unchanged:4, tell:3
+    suite-main     unchanged:11, tell:4, guardrail:1
+    suite-pr67     unchanged:8, notes::8, tell:1, guardrail:1
+    cursor-unslop  tell:2, unchanged:1
+    clay-unslop    tell:2, unchanged:2
+    step0:new      unchanged:8, notes::8, tell:2
+    step1:new      unchanged:17, tell:2, named failure:1, terms of art:1
+    step2:new      unchanged:18, tell:3, named failure:1
+    step3:new      unchanged:15, named failure:10, tell:3, notes::2, guardrail:1
+  Leave-one-out bag-of-words nearest-centroid: predict arm from NOTES text alone (v0, 6 arms, chance=17%):
+    accuracy on candidates with non-empty notes: 17% (n=126)
+    accuracy on all 144 (empty notes -> most-likely-empty arm): 15%
+  Same on OUTPUT text (would the text itself identify the arm?):
+    accuracy: 0% (n=144, chance 17%)  [outputs share the source so this is a hard test]
+
+==============================================================================
+G. HOW MANY ITEMS DISCRIMINATE? (per run, frozen items where arms differ in would-send sum / in mc sum)
+  v0    : ws differs on 17/24 items (among 6 arms); mc differs on 12/24; ws differs among ['bare', 'main'] on 5: ['ds-07-nullresult', 'tweet-01-obvious', 'linkedin-01-obvious', 'overstep-05-payoff-en', 'fp-esl-03-memo']
+          all-core-arms-at-ceiling (2/2 sent) items: 18/24
+  step0 : ws differs on 8/24 items (among 3 arms); mc differs on 9/24; ws differs among ['bare', 'main', 'new'] on 8: ['ds-07-nullresult', 'tweet-01-obvious', 'linkedin-01-obvious', 'memo-01-obvious', 'memo-02-subtle', 'overstep-05-payoff-en', 'narrshape-04-absent-ambiguity-en', 'fp-esl-03-memo']
+          all-core-arms-at-ceiling (2/2 sent) items: 16/24
+  step1 : ws differs on 6/24 items (among 3 arms); mc differs on 10/24; ws differs among ['bare', 'main', 'new'] on 6: ['ds-07-nullresult', 'tweet-01-obvious', 'linkedin-01-obvious', 'memo-01-obvious', 'overstep-05-payoff-en', 'fp-esl-03-memo']
+          all-core-arms-at-ceiling (2/2 sent) items: 18/24
+  step2 : ws differs on 6/24 items (among 3 arms); mc differs on 7/24; ws differs among ['bare', 'main', 'new'] on 6: ['ds-07-nullresult', 'tweet-01-obvious', 'linkedin-01-obvious', 'memo-01-obvious', 'overstep-05-payoff-en', 'fp-esl-03-memo']
+          all-core-arms-at-ceiling (2/2 sent) items: 18/24
+  step3 : ws differs on 6/24 items (among 3 arms); mc differs on 11/24; ws differs among ['bare', 'main', 'new'] on 6: ['ds-07-nullresult', 'tweet-01-obvious', 'linkedin-01-obvious', 'memo-01-obvious', 'overstep-05-payoff-en', 'fp-esl-03-memo']
+          all-core-arms-at-ceiling (2/2 sent) items: 18/24
+  Items whose would-send differs between `main` and `new` in each step (the whole gate signal):
+    step0: ws  memo-02-subtle(2->0), narrshape-04-absent-ambiguity-en(2->0)
+    step0: mc  memo-02-subtle(0->5), narrshape-04-absent-ambiguity-en(0->2)
+    step1: ws  tweet-01-obvious(2->0), memo-01-obvious(0->2)
+    step1: mc  tweet-01-obvious(3->4), overstep-06-strawman-en(1->0), fp-esl-03-memo(0->2)
+    step2: ws  tweet-01-obvious(2->1), linkedin-01-obvious(1->2), memo-01-obvious(0->2), fp-esl-03-memo(2->0)
+    step2: mc  tweet-01-obvious(1->2), linkedin-01-obvious(1->0), memo-01-obvious(2->0), fp-esl-03-memo(0->2)
+    step3: ws  memo-01-obvious(0->2)
+    step3: mc  tweet-01-obvious(3->2), memo-02-subtle(2->0)
+
+==============================================================================
+H. LENGTH / EDIT-SIZE vs VERDICT (within-item: does the judge send the shorter / less-edited candidate?)
+  v0: among (sent, not-sent) pairs within the same judge+item, the SENT one was the less-edited 159/204 (78%) and the shorter 94/172 (55%)
+     fixtures       would_send by edit-ratio bin: [0.00,0.03) n=14 sent=100% | [0.03,0.20) n=2 sent=0% | [0.20,0.40) n=32 sent=66% | [0.40,0.60) n=14 sent=64% | [0.60,1.01) n=34 sent=38%
+     fresh-ds       would_send by edit-ratio bin: [0.00,0.03) n=58 sent=100% | [0.03,0.20) n=32 sent=78% | [0.20,0.40) n=6 sent=0%
+     human-control  would_send by edit-ratio bin: [0.00,0.03) n=48 sent=96% | [0.03,0.20) n=12 sent=50%
+  steps: among (sent, not-sent) pairs within the same judge+item, the SENT one was the less-edited 98/114 (86%) and the shorter 48/87 (55%)
+     fixtures       would_send by edit-ratio bin: [0.00,0.03) n=30 sent=100% | [0.03,0.20) n=6 sent=0% | [0.20,0.40) n=58 sent=79% | [0.40,0.60) n=30 sent=73% | [0.60,1.01) n=68 sent=59%
+     fresh-ds       would_send by edit-ratio bin: [0.00,0.03) n=126 sent=100% | [0.03,0.20) n=66 sent=88%
+     human-control  would_send by edit-ratio bin: [0.00,0.03) n=96 sent=100% | [0.03,0.20) n=24 sent=62%
+
+==============================================================================
+I. GATE UNDER THE NULL: apply the step gate's judged checks to `main` text judged in run i as if it were `new`,
+   against `main` and `bare` judged in run j (identical text both sides). A fair gate passes ~100% here.
+  main-as-new vs main+bare baselines: full gate passes 3/12 run-pairs
+    check vs bare hc: pass 12/12
+    check vs bare mc: pass 12/12
+    check vs bare ws: pass 12/12
+    check vs main hc: pass 12/12
+    check vs main mc: pass 7/12
+    check vs main ws: pass 7/12
+  per pair: step0->step1:PASS, step0->step2:FAIL, step0->step3:PASS, step1->step0:FAIL, step1->step2:FAIL, step1->step3:FAIL, step2->step0:FAIL, step2->step1:FAIL, step2->step3:FAIL, step3->step0:FAIL, step3->step1:PASS, step3->step2:FAIL
+  Within-run proxy (p1 verdicts on main as 'new' vs p2 verdicts on main as baseline, and vice versa):
+    step0 p1 vs p2: ws 22 vs 23, mc 7 vs 5, hc 5 vs 5 -> FAIL
+    step0 p2 vs p1: ws 23 vs 22, mc 5 vs 7, hc 5 vs 5 -> PASS
+    step1 p1 vs p2: ws 22 vs 22, mc 6 vs 9, hc 5 vs 5 -> PASS
+    step1 p2 vs p1: ws 22 vs 22, mc 9 vs 6, hc 5 vs 5 -> FAIL
+    step2 p1 vs p2: ws 21 vs 22, mc 4 vs 2, hc 5 vs 5 -> FAIL
+    step2 p2 vs p1: ws 22 vs 21, mc 2 vs 4, hc 5 vs 5 -> PASS
+    step3 p1 vs p2: ws 22 vs 22, mc 6 vs 6, hc 5 vs 5 -> PASS
+    step3 p2 vs p1: ws 22 vs 22, mc 6 vs 6, hc 5 vs 5 -> PASS
+
+==============================================================================
+J. GENERATION VARIANCE OF `new` (step0/step1 have a second fresh generation arms_k2.json, not yet judged)
+  step0: new vs new2 identical on 16/24 frozen items; mean word-edit distance between the two generations 0.07 (vs mean distance from source 0.20 / 0.17); unchanged-from-source 11 vs 14; notes identical 0/24
+      items where the two generations differ by >0.30: [('tweet-01-obvious', 0.3), ('linkedin-01-obvious', 0.33), ('memo-01-obvious', 0.4)]
+      hedges_lost (frozen): new=2 new2=2
+  step1: new vs new2 identical on 17/24 frozen items; mean word-edit distance between the two generations 0.04 (vs mean distance from source 0.17 / 0.18); unchanged-from-source 13 vs 14; notes identical 0/24
+      items where the two generations differ by >0.30: [('linkedin-01-obvious', 0.3)]
+      hedges_lost (frozen): new=2 new2=2
+
+==============================================================================
+K. META: meaning_changes type mix (how much of the 'fidelity' signal is the catch-all 'other'?)
+  v0    : total  88; other=36(41%), weakened_certainty=27(31%), dropped_fact=13(15%), added_claim=9(10%), strengthened_certainty=3(3%)
+  step0 : total  55; other=20(36%), weakened_certainty=16(29%), dropped_fact=11(20%), added_claim=5(9%), strengthened_certainty=3(5%)
+  step1 : total  59; other=22(37%), weakened_certainty=16(27%), dropped_fact=12(20%), added_claim=6(10%), strengthened_certainty=2(3%), scope_change=1(2%)
+  step2 : total  30; dropped_fact=8(27%), other=7(23%), added_claim=6(20%), weakened_certainty=4(13%), strengthened_certainty=4(13%), scope_change=1(3%)
+  step3 : total  47; other=19(40%), weakened_certainty=13(28%), added_claim=8(17%), dropped_fact=6(13%), scope_change=1(2%)
+
+==============================================================================
+L. EXTRA ITEMS: did they discriminate? (per step, would-send sums and mc for bare_extra/main_extra/new)
+  step0 bare : s0-churn-cause: ws=2 mc=1, s0-latency-cause: ws=2 mc=0, s0-keep-conclusion: ws=2 mc=0
+  step0 main : s0-churn-cause: ws=0 mc=0, s0-latency-cause: ws=2 mc=0, s0-keep-conclusion: ws=2 mc=0
+  step0 new  : s0-churn-cause: ws=2 mc=0, s0-latency-cause: ws=2 mc=0, s0-keep-conclusion: ws=2 mc=0
+  step1 bare : s1-light-edit: ws=2 mc=0, s1-timeline: ws=2 mc=0, s1-stance: ws=0 mc=6, s1-attribution: ws=1 mc=2, s1-terse-status: ws=2 mc=0
+  step1 main : s1-light-edit: ws=2 mc=0, s1-timeline: ws=2 mc=0, s1-stance: ws=2 mc=2, s1-attribution: ws=2 mc=2, s1-terse-status: ws=2 mc=0
+  step1 new  : s1-light-edit: ws=2 mc=0, s1-timeline: ws=2 mc=0, s1-stance: ws=2 mc=2, s1-attribution: ws=2 mc=2, s1-terse-status: ws=2 mc=0
+  step2 bare : s2-readout: ws=2 mc=0, s2-scope: ws=2 mc=0, s2-null: ws=2 mc=0, s2-forecast: ws=2 mc=0
+  step2 main : s2-readout: ws=2 mc=0, s2-scope: ws=2 mc=0, s2-null: ws=2 mc=0, s2-forecast: ws=2 mc=0
+  step2 new  : s2-readout: ws=2 mc=0, s2-scope: ws=2 mc=0, s2-null: ws=2 mc=0, s2-forecast: ws=2 mc=0
+  step3 bare : s3-methods: ws=2 mc=2, s3-eval: ws=2 mc=0, s3-mixed: ws=2 mc=0
+  step3 main : s3-methods: ws=2 mc=0, s3-eval: ws=2 mc=0, s3-mixed: ws=2 mc=0
+  step3 new  : s3-methods: ws=2 mc=0, s3-eval: ws=2 mc=0, s3-mixed: ws=2 mc=0

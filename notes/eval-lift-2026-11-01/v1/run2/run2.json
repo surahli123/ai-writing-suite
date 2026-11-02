@@ -1,0 +1,1634 @@
+{
+ "judges": [
+  {
+   "key": "new_k1",
+   "kind": "abs",
+   "model": "opus",
+   "items": [
+    {
+     "id": "q01",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Strips the hype and keeps every number, the CI, the seasonal-bump caveat and the hedged 15 January ship date."
+    },
+    {
+     "id": "q02",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right for terse, already-clear channel text."
+    },
+    {
+     "id": "q03",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right because the original already reads as natural human writing."
+    },
+    {
+     "id": "q04",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Fixes the draft to match the notes: v3.8 becomes a coincident change rather than the cause, the paid search cut is not ruled out, and the recovery expectation is conditioned on v3.8 being the cause."
+    },
+    {
+     "id": "q05",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Adds only one colon and keeps the terse bullets intact."
+    },
+    {
+     "id": "q06",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the filler opener and keeps the pp figure, the CI, the non-significant revenue result and the hedged recommendation."
+    },
+    {
+     "id": "q07",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Cuts the brochure language and keeps the precision, CI, postpaid-only scope, vendor-feed lag caveat and the hedged 'could'."
+    },
+    {
+     "id": "q08",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Only adds paragraph breaks, and the warm human voice and all facts are intact."
+    },
+    {
+     "id": "q09",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, so meaning is preserved, but it misses that the per-arm sample size is 410,000 in the Summary and 401,000 in the Method."
+    },
+    {
+     "id": "q10",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Drops only the filler opener and keeps 'only', 'roughly', 'suggests', 'may have' and 'hope to'."
+    },
+    {
+     "id": "q11",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "scope_change",
+       "detail": "The author's recommendation to ship 'to all platforms' became 'shipping to desktop'. The notes say only that mobile was not tested; they do not set the ship decision."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Correctly fixes the draft to match the notes (not significant, purchases unproven, desktop only), but it narrows the author's ship recommendation on its own."
+    },
+    {
+     "id": "q12",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the press-release language and keeps the 4pp FCR gain, the non-significant CSAT result, the unvalidated deflection caveat, 'plan to' and 'hope to'."
+    },
+    {
+     "id": "q13",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right for clear, precise committee prose."
+    },
+    {
+     "id": "q14",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, and the meaning and the 3-of-5 figure are intact."
+    },
+    {
+     "id": "q15",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which suits a light edit of terse channel shorthand."
+    },
+    {
+     "id": "q16",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the breathless framing and keeps the 38% (CI 31-45%), the card-not-present-only scope, the regulator review of at least six weeks and the target dates."
+    },
+    {
+     "id": "q17",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects $940k to the $640k in the notes and otherwise leaves the draft alone."
+    },
+    {
+     "id": "q18",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "number_change",
+       "detail": "'rose 1.2 percentage points' became 'rose 1.2%', which turns an absolute pp change into a percent and contradicts the '~3% relative' that follows."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Turns percentage points into percent, which corrupts the main result."
+    },
+    {
+     "id": "q19",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Fixes the grammar and keeps the author's hedged causal reasoning, the numbers and the Friday commitment."
+    },
+    {
+     "id": "q20",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Strips the marketing fluff and keeps the 0.6pp CTR lift, the no-purchase-effect caution and the 18-34 concentration."
+    },
+    {
+     "id": "q21",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, so meaning is preserved, but it misses that the acceptance count is 17 of 23 in the Summary and 16 of 23 in the Results."
+    },
+    {
+     "id": "q22",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "strengthened_certainty",
+       "detail": "A non-significant difference ('moved, but not statistically significant') became a definite 'had no effect on revenue per user'."
+      },
+      {
+       "type": "dropped_fact",
+       "detail": "The p=0.21 value and the fact that revenue per user did move were removed."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Recasts a non-significant result as a proven null effect and drops the p-value."
+    },
+    {
+     "id": "q23",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right for a clear, well-hedged channel update."
+    },
+    {
+     "id": "q24",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the padding and keeps the MAPE numbers, the at-least-40-SKU scope, the unconfirmed vendor safety-stock claim and the 'aim to' date. Dropping 'across the product catalog' removes an overclaim that the author's own long-tail caveat contradicts."
+    },
+    {
+     "id": "q25",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Correctly turns the asserted root cause into unconfirmed candidates, as the notes require, and keeps the 97% to ~91% figure and the next-week ETA."
+    },
+    {
+     "id": "q26",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Only expands a few abbreviations and keeps the Slack bullet format and every fact."
+    },
+    {
+     "id": "q27",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "strengthened_certainty",
+       "detail": "'suggests the routing change may have contributed' became 'shows the routing change contributed'."
+      },
+      {
+       "type": "strengthened_certainty",
+       "detail": "'We hope to ship' became 'We'll ship'."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Removes both hedges, turning a tentative finding and a hope into certainties."
+    },
+    {
+     "id": "q28",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Cuts the fluff and keeps the 7pp lift with its CI, the untested-mechanism hedge, the Android exclusion and the inconclusive retention caveat."
+    },
+    {
+     "id": "q29",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right for natural, clear writing."
+    },
+    {
+     "id": "q30",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Correctly fixes the draft to match the notes: about 21% rather than 25%, five metros only, rural and weather not evaluated, and a Dec 1 target for the metros only."
+    },
+    {
+     "id": "q31",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "weakened_certainty",
+       "detail": "'won't be ready until Oct 20' became 'are expected to be ready by Oct 20', which turns a firm not-before date into a soft target that could arrive earlier."
+      },
+      {
+       "type": "weakened_certainty",
+       "detail": "The directive 'keep using the old dashboard for anything revenue-related' became 'we recommend continuing to use'."
+      }
+     ],
+     "over_edited": true,
+     "comment": "Rewrites already-natural text into stiffer corporate prose and softens both the date and the instruction."
+    },
+    {
+     "id": "q32",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the filler and keeps the 40% figure, the 'may be linked' and 'not isolated' hedges, the EU compliance constraint, the hypothesis caveat and the dates. The dropped 'it seems' carried no information because the stated 40% supports the claim."
+    },
+    {
+     "id": "q33",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "dropped_fact",
+       "detail": "The author's assessment that the session was excellent ('a masterclass') and the 'already testing' timing were removed, leaving no view of the session's value."
+      }
+     ],
+     "over_edited": true,
+     "comment": "Strips the post to a clipped fragment that reads worse and loses the author's judgment of the session."
+    },
+    {
+     "id": "q34",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "added_claim",
+       "detail": "Invented metrics ('cut dashboard load time by 37%, from 2.1s to 1.3s') that are nowhere in the author's text."
+      },
+      {
+       "type": "dropped_fact",
+       "detail": "The claim that the change improves the experience for everyone was removed."
+      }
+     ],
+     "over_edited": true,
+     "comment": "Makes up specific performance numbers the author never gave."
+    }
+   ]
+  },
+  {
+   "key": "new_k2",
+   "kind": "abs",
+   "model": "opus",
+   "items": [
+    {
+     "id": "q01",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Strips the hype and keeps every number, the CI, the lapsed-shopper and seasonal caveats, and the hedged 15 January ship date with its sign-off condition."
+    },
+    {
+     "id": "q02",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Returned unchanged, which is right for terse, clear text that was already ready to post."
+    },
+    {
+     "id": "q03",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Returned unchanged; the original already read as human and needed no edit."
+    },
+    {
+     "id": "q04",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Fixes the draft to match the notes by removing the unsupported causal claim, the 'purely UX' conclusion and the dismissal of the paid-search cut, while keeping the author's rollback plan."
+    },
+    {
+     "id": "q05",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Only a trivial punctuation and capitalization tweak; the bullets are preserved."
+    },
+    {
+     "id": "q06",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Drops the filler opener and keeps the 1.2 pp, CI, relative lift, non-significant revenue result with its p-value, and the hedged recommendation."
+    },
+    {
+     "id": "q07",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the brochure language and keeps the precision, CI, holdout size, postpaid-only scope, vendor attribution and lag caveat."
+    },
+    {
+     "id": "q08",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Only adds paragraph breaks to warm, human writing; the content is untouched."
+    },
+    {
+     "id": "q09",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Returned unchanged, so meaning is preserved, but it missed the internal inconsistency between 410,000 users per arm in the Summary and 401,000 in the Method."
+    },
+    {
+     "id": "q10",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes only the filler opener and keeps 'only', 'roughly', 'suggests... may have contributed' and 'hope to'."
+    },
+    {
+     "id": "q11",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects the draft's overclaims to match the notes (not significant, desktop only, purchases inconclusive) and narrows the ship recommendation to desktop, which the author should confirm because the notes give no recommendation."
+    },
+    {
+     "id": "q12",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Cuts the press-release language and keeps the FCR numbers, the non-significant CSAT caveat, the unvalidated finance estimate, and the plan/hope distinction on dates."
+    },
+    {
+     "id": "q13",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Returned unchanged; the committee text was already precise and well written."
+    },
+    {
+     "id": "q14",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Returned unchanged; the original was already natural."
+    },
+    {
+     "id": "q15",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Returned unchanged, which suits a terse channel post."
+    },
+    {
+     "id": "q16",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the breathless framing and keeps the backtest window, CI, card-not-present scope, regulator-review caveat and target dates."
+    },
+    {
+     "id": "q17",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects the $940k typo to the $640k in the notes; nothing else changed."
+    },
+    {
+     "id": "q18",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "number_change",
+       "detail": "'1.2 percentage points' changed to '1.2%', an absolute lift turned into what reads as a relative one, which also contradicts 'roughly 3% in relative terms'."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Changes percentage points to percent, misstating the headline effect."
+    },
+    {
+     "id": "q19",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Fixes the grammar and keeps the author's hedge ('I think... cannot prove it') and the Friday commitment."
+    },
+    {
+     "id": "q20",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Strips the marketing fluff and keeps the CTR numbers, the no-purchase-effect caution and the age-group concentration."
+    },
+    {
+     "id": "q21",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Returned unchanged, so meaning is preserved, but it missed the inconsistency between 17 of 23 stores in the Summary and 16 of 23 in Results."
+    },
+    {
+     "id": "q22",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "strengthened_certainty",
+       "detail": "'Revenue per user also moved, but the difference was not statistically significant' became 'The flow had no effect on revenue per user', turning a non-significant result into a claim of no effect."
+      },
+      {
+       "type": "dropped_fact",
+       "detail": "The p-value (p=0.21) and the fact that revenue per user did move were dropped."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Misstates a non-significant result as no effect and drops the p-value."
+    },
+    {
+     "id": "q23",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Returned unchanged; the original was already clear for the channel."
+    },
+    {
+     "id": "q24",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the padding and keeps the MAPE numbers, vendor attribution, the unconfirmed safety-stock caveat, the 'at least 40 SKUs' scope and the rollout aim."
+    },
+    {
+     "id": "q25",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects the draft to the notes by framing the SMS change and the intake form as candidate explanations, stating the unjoined data and keeping the next-week ETA."
+    },
+    {
+     "id": "q26",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Lightly expands abbreviations and keeps the bullet format and every fact."
+    },
+    {
+     "id": "q27",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "strengthened_certainty",
+       "detail": "'the incident review suggests the routing change may have contributed' became 'the incident review shows the routing change contributed'."
+      },
+      {
+       "type": "strengthened_certainty",
+       "detail": "'We hope to ship the regional fix by mid-November' became 'We'll ship the regional fix by mid-November'."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Removes two hedges, turning a possible cause into fact and a hope into a commitment."
+    },
+    {
+     "id": "q28",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Cuts the fluff and keeps the CI, iOS-only scope, untested mechanism, Android exclusion and inconclusive retention caveat."
+    },
+    {
+     "id": "q29",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Returned unchanged; the note already read well."
+    },
+    {
+     "id": "q30",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects the draft to the notes (about 21% not 25%, five metros only, weather unchecked, rural not evaluated, national rollout TBD)."
+    },
+    {
+     "id": "q31",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "weakened_certainty",
+       "detail": "'won't be ready until Oct 20' became 'are expected to be ready by Oct 20', which hedges the date and suggests it could come earlier."
+      },
+      {
+       "type": "weakened_certainty",
+       "detail": "The directive 'keep using the old dashboard' was softened to 'we recommend continuing to use the legacy dashboard'."
+      }
+     ],
+     "over_edited": true,
+     "comment": "Rewrote a clean, human update into stiffer corporate prose and softened both the date and the instruction."
+    },
+    {
+     "id": "q32",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the gushing and keeps the 40% figure, the unisolated cause, the EU compliance constraint, the design hypothesis caveat and the dates."
+    },
+    {
+     "id": "q33",
+     "would_send": false,
+     "severe_changes": [],
+     "over_edited": true,
+     "comment": "Over-compressed into clipped fragments that lose the author's voice and their real view that the session was excellent ('masterclass', 'already testing')."
+    },
+    {
+     "id": "q34",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "added_claim",
+       "detail": "Invented specific figures (37% reduction, 2.1s to 1.3s) that are not in the author's text."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Fabricates load-time numbers the author never gave."
+    }
+   ]
+  },
+  {
+   "key": "new_k3",
+   "kind": "abs",
+   "model": "opus",
+   "items": [
+    {
+     "id": "q01",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Cuts the hype and keeps every number, the hedge on the seasonal bump and the 'hope to' ship date."
+    },
+    {
+     "id": "q02",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right because the original is already tight."
+    },
+    {
+     "id": "q03",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right because the original already reads as human."
+    },
+    {
+     "id": "q04",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the causal claims to match the notes and restores the paid-search caveat; the author's own rollback and recovery expectation is kept as written."
+    },
+    {
+     "id": "q05",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Only punctuation changed; the bullets stay terse."
+    },
+    {
+     "id": "q06",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Drops the 'important to note' filler and keeps every number and the non-significance caveat."
+    },
+    {
+     "id": "q07",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the brochure language and keeps the precision, CI, postpaid-only scope and vendor-lag caveat."
+    },
+    {
+     "id": "q08",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Only adds paragraph breaks; the content and voice are intact."
+    },
+    {
+     "id": "q09",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Unchanged, which suits the light-touch request, but it doesn't flag the 410,000 vs 401,000 per-arm mismatch."
+    },
+    {
+     "id": "q10",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Drops only the filler opener; the 'only', 'roughly', 'suggests', 'may have' and 'hope to' qualifiers are all kept."
+    },
+    {
+     "id": "q11",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects the draft to match the notes (not significant, desktop only, purchases unproven); narrowing the ship recommendation to desktop follows from the desktop-only note."
+    },
+    {
+     "id": "q12",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the press-release language and keeps the metrics, the CSAT non-significance, the unvalidated deflection estimate and both commitments."
+    },
+    {
+     "id": "q13",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right because the original is already clean and formal."
+    },
+    {
+     "id": "q14",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right because the original is already human-sounding."
+    },
+    {
+     "id": "q15",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right for a terse channel update."
+    },
+    {
+     "id": "q16",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the breathless framing and keeps the backtest result, CI, card-not-present scope, regulator review and dates."
+    },
+    {
+     "id": "q17",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects the draft's $940k to the $640k in the notes; nothing else changes."
+    },
+    {
+     "id": "q18",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "number_change",
+       "detail": "'rose 1.2 percentage points' became 'rose 1.2%', which changes the unit and contradicts the 'roughly 3% in relative terms' that follows."
+      }
+     ],
+     "over_edited": false,
+     "comment": "The percentage points to percent switch misstates the result."
+    },
+    {
+     "id": "q19",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Fixes the grammar and keeps the hedged causal claim and the Friday commitment."
+    },
+    {
+     "id": "q20",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Cuts the marketing fluff and keeps the CTR figures, the no-conversion-effect caution and the age-group detail."
+    },
+    {
+     "id": "q21",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Unchanged, which is acceptable, but it doesn't flag the 17 vs 16 of 23 stores acceptance mismatch between the Summary and Results."
+    },
+    {
+     "id": "q22",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "strengthened_certainty",
+       "detail": "'Moved, but the difference was not statistically significant' became 'The flow had no effect on revenue per user'."
+      },
+      {
+       "type": "dropped_fact",
+       "detail": "The p=0.21 statistic and the not-significant framing were removed."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Turns a non-significant result into a definite claim of no effect."
+    },
+    {
+     "id": "q23",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right because the original is already clear and appropriately hedged."
+    },
+    {
+     "id": "q24",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the padding and keeps the MAPE figures, the top-40 SKU scope, the vendor attribution, the unconfirmed caveat and the dates."
+    },
+    {
+     "id": "q25",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects the root-cause overclaim to match the notes and keeps the unverified status, next-week ETA and intake-form factor."
+    },
+    {
+     "id": "q26",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Only expands a few abbreviations; it stays a short Slack list."
+    },
+    {
+     "id": "q27",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "strengthened_certainty",
+       "detail": "'The incident review suggests the routing change may have contributed' became 'shows the routing change contributed'."
+      },
+      {
+       "type": "strengthened_certainty",
+       "detail": "'We hope to ship' became 'We'll ship'."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Removes both hedges, so a possible cause becomes fact and a hope becomes a commitment."
+    },
+    {
+     "id": "q28",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Cuts the fluff and keeps the CI, the untested-mechanism caveat, the Android exclusion and the inconclusive retention note."
+    },
+    {
+     "id": "q29",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right because the original already reads well."
+    },
+    {
+     "id": "q30",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects the draft to match the notes: about 21%, five metros, weather not checked, rural not evaluated, five-metro target date."
+    },
+    {
+     "id": "q31",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "weakened_certainty",
+       "detail": "'Won't be ready until Oct 20' became 'expected to be ready by Oct 20', which hedges the date and suggests it could be earlier."
+      },
+      {
+       "type": "weakened_certainty",
+       "detail": "The directive 'keep using the old dashboard' became 'we recommend continuing to use the legacy dashboard'."
+      },
+      {
+       "type": "scope_change",
+       "detail": "'Ping me if a report you need is missing' became 'reach out if any reports are missing'."
+      }
+     ],
+     "over_edited": true,
+     "comment": "Rewrites good human text into more corporate, AI-sounding prose and softens the date and the instruction."
+    },
+    {
+     "id": "q32",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the gushing opener and closer and keeps every hedge, the compliance constraint and the dates."
+    },
+    {
+     "id": "q33",
+     "would_send": false,
+     "severe_changes": [],
+     "over_edited": true,
+     "comment": "Strips the author's voice and judgment of the session into a clipped fragment ('Went to DataConf.') that reads worse than the original."
+    },
+    {
+     "id": "q34",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "added_claim",
+       "detail": "Invents metrics the author never gave: a 37% cut from 2.1s to 1.3s."
+      },
+      {
+       "type": "dropped_fact",
+       "detail": "The claim that the cache improves the experience for everyone is removed."
+      }
+     ],
+     "over_edited": true,
+     "comment": "Makes up specific numbers that are not in the author's text."
+    }
+   ]
+  },
+  {
+   "key": "pair_k1_AB",
+   "kind": "pair",
+   "model": "opus",
+   "items": [
+    {
+     "id": "p01",
+     "preferred": "tie",
+     "reason": "Both keep every number, the CI, the hedges and the conditional ship date. The only differences are small wording choices."
+    },
+    {
+     "id": "p02",
+     "preferred": "tie",
+     "reason": "The two rewrites are identical."
+    },
+    {
+     "id": "p03",
+     "preferred": "tie",
+     "reason": "Both remove the draft's unsupported causal claims, restore the open paid-search question from the notes and make the recovery conditional. The differences are minor."
+    },
+    {
+     "id": "p04",
+     "preferred": "B",
+     "reason": "The author asked for a light cleanup. B expands the shorthand while staying short and keeping every fact. A barely changes the text."
+    },
+    {
+     "id": "p05",
+     "preferred": "tie",
+     "reason": "Both keep the precision figure, CI, postpaid-only scope and vendor attribution. B leads more directly with the results, but A's opening is also fine."
+    },
+    {
+     "id": "p06",
+     "preferred": "A",
+     "reason": "A adds paragraph breaks and so reads better, as requested. B is nearly unchanged."
+    },
+    {
+     "id": "p07",
+     "preferred": "tie",
+     "reason": "The two rewrites are identical."
+    },
+    {
+     "id": "p08",
+     "preferred": "B",
+     "reason": "Both correct the draft's overclaims against the notes: not significant, desktop only, purchases not shown. B flows more confidently. A says the primary metric adds to our confidence just before saying the result is not significant, which is jarring."
+    },
+    {
+     "id": "p09",
+     "preferred": "tie",
+     "reason": "The two are essentially the same, with the same caveats and commitments kept."
+    },
+    {
+     "id": "p10",
+     "preferred": "tie",
+     "reason": "The two rewrites are identical."
+    },
+    {
+     "id": "p11",
+     "preferred": "tie",
+     "reason": "The only difference is the word 'the', which is negligible."
+    },
+    {
+     "id": "p12",
+     "preferred": "A",
+     "reason": "A keeps the scope 'for Tallow Bank's card business', which B drops. Everything else is equivalent."
+    },
+    {
+     "id": "p13",
+     "preferred": "A",
+     "reason": "Both fix $940k to $640k. A also keeps the condition from the notes ('of shipping the 14-day trial')."
+    },
+    {
+     "id": "p14",
+     "preferred": "A",
+     "reason": "Both fix the English the same way. A's paragraph breaks suit an email better, and A avoids B's repeated 'say'."
+    },
+    {
+     "id": "p15",
+     "preferred": "A",
+     "reason": "A keeps the author's view that the CTR lift is a meaningful win, which B drops. Both keep the caution about purchase conversion."
+    },
+    {
+     "id": "p16",
+     "preferred": "tie",
+     "reason": "The two rewrites are identical."
+    },
+    {
+     "id": "p17",
+     "preferred": "tie",
+     "reason": "The only difference is one comma, which is negligible."
+    },
+    {
+     "id": "p18",
+     "preferred": "tie",
+     "reason": "Both keep the numbers, the vendor attribution, the unconfirmed caveat, the scope and the commitment. The only difference is whether a short closing line is kept."
+    },
+    {
+     "id": "p19",
+     "preferred": "A",
+     "reason": "Both correct the draft's unsupported claims to match the notes. A also keeps the author's suggested fix, now properly hedged, so it stays closer to the draft's intent."
+    },
+    {
+     "id": "p20",
+     "preferred": "tie",
+     "reason": "Both are short and keep every fact. The difference in how much they polish is minor."
+    },
+    {
+     "id": "p21",
+     "preferred": "tie",
+     "reason": "Both keep every number, hedge and scope limit. Only the paragraphing differs."
+    },
+    {
+     "id": "p22",
+     "preferred": "tie",
+     "reason": "The two rewrites are identical."
+    },
+    {
+     "id": "p23",
+     "preferred": "A",
+     "reason": "Both correct the draft to match the notes. A gives the ship plan its own paragraph and states the nationwide rollout as undecided ('whether and when'), so it reads more clearly than B's dense single paragraph."
+    },
+    {
+     "id": "p24",
+     "preferred": "B",
+     "reason": "B keeps the author's hedge 'appear to' (from 'it seems'). A states the drop-off as a fact."
+    }
+   ]
+  },
+  {
+   "key": "pair_k1_BA",
+   "kind": "pair",
+   "model": "opus",
+   "items": [
+    {
+     "id": "p01",
+     "preferred": "tie",
+     "reason": "Both keep every number, the CI, the hedge and the conditional ship date. A's contractions sound less stiff, but its first sentence is a little clunky. B's first sentence is cleaner, but its sign-off is slightly stiffer."
+    },
+    {
+     "id": "p02",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p03",
+     "preferred": "A",
+     "reason": "Both remove the false causal claims and keep the unexcluded paid-search confound and the SRE attribution. A also says plainly that the two causes cannot be separated yet, which is useful for Ops."
+    },
+    {
+     "id": "p04",
+     "preferred": "A",
+     "reason": "A actually cleans it up (expands 'w/' and 'vs last wk', writes 'Friday') and stays short. B barely changes anything."
+    },
+    {
+     "id": "p05",
+     "preferred": "A",
+     "reason": "Both keep the numbers, the postpaid-only scope and the vendor attribution. A's subject line is more informative and it fixes the awkward 'data was not sufficiently available', which B carries over."
+    },
+    {
+     "id": "p06",
+     "preferred": "B",
+     "reason": "Same content, and B's paragraph breaks make the welcome note easier to read."
+    },
+    {
+     "id": "p07",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p08",
+     "preferred": "A",
+     "reason": "Both fix the overclaims (not significant, desktop only, purchases unproven). B keeps 'which adds to our confidence' right before saying the result is not significant, which reads as a contradiction. A is consistent throughout."
+    },
+    {
+     "id": "p09",
+     "preferred": "tie",
+     "reason": "Almost the same; both keep the CSAT non-significance, the unvalidated finance estimate and both commitments."
+    },
+    {
+     "id": "p10",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p11",
+     "preferred": "tie",
+     "reason": "The only change is A adding 'the' before PM, which makes no real difference."
+    },
+    {
+     "id": "p12",
+     "preferred": "B",
+     "reason": "B keeps the scope 'for Tallow Bank's card business'; A drops it. Otherwise they are equal."
+    },
+    {
+     "id": "p13",
+     "preferred": "B",
+     "reason": "Both correct $940k to $640k as in the notes. B also keeps the notes' condition that this is the impact if the 14-day trial ships."
+    },
+    {
+     "id": "p14",
+     "preferred": "B",
+     "reason": "Same corrected English. B's paragraph breaks read slightly better as an email."
+    },
+    {
+     "id": "p15",
+     "preferred": "B",
+     "reason": "B keeps the author's judgment that the CTR gain is a meaningful win, along with every caveat. A cuts that judgment."
+    },
+    {
+     "id": "p16",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p17",
+     "preferred": "tie",
+     "reason": "The only change is one comma, which makes no real difference."
+    },
+    {
+     "id": "p18",
+     "preferred": "B",
+     "reason": "Both keep the facts, the scope hedge and the vendor attribution. B also keeps a short professional offer to discuss, which A drops."
+    },
+    {
+     "id": "p19",
+     "preferred": "B",
+     "reason": "Both fix the false root-cause claim. B also keeps a properly hedged version of the author's point about fixing the reminder pipeline and spells out the data join that has not been done."
+    },
+    {
+     "id": "p20",
+     "preferred": "A",
+     "reason": "A cleans up the shorthand more ('preliminary', 'known issue', 'by ~2%') and is still a short Slack message. B barely changes it."
+    },
+    {
+     "id": "p21",
+     "preferred": "tie",
+     "reason": "Both keep every fact and hedge. They differ only in the opening phrasing and paragraph breaks."
+    },
+    {
+     "id": "p22",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p23",
+     "preferred": "B",
+     "reason": "Both correct the draft to match the notes (21%, five metros, rural not evaluated, weather unchecked, ship to five metros on Dec 1). B's two paragraphs separate the findings from the plan more clearly than A's single dense paragraph."
+    },
+    {
+     "id": "p24",
+     "preferred": "A",
+     "reason": "A keeps the author's hedge ('appear to drop off'). B drops it and states the drop-off as fact."
+    }
+   ]
+  },
+  {
+   "key": "pair_k2_AB",
+   "kind": "pair",
+   "model": "opus",
+   "items": [
+    {
+     "id": "p01",
+     "preferred": "tie",
+     "reason": "Both keep every number, the CI, the hedge, the seasonal caveat and the conditional ship date. The only differences are small wording and paragraph choices."
+    },
+    {
+     "id": "p02",
+     "preferred": "tie",
+     "reason": "The two candidates are identical."
+    },
+    {
+     "id": "p03",
+     "preferred": "tie",
+     "reason": "Both correct the draft's overclaim to match the notes: v3.8 is only the timing, paid search is not ruled out, and recovery depends on v3.8 being the cause. The wording differences are negligible."
+    },
+    {
+     "id": "p04",
+     "preferred": "tie",
+     "reason": "The only difference is 'FYI: OOO Fri' against 'FYI OOO fri', which is negligible."
+    },
+    {
+     "id": "p05",
+     "preferred": "tie",
+     "reason": "Both keep the precision, CI, postpaid-only scope and the vendor attribution with the lag caveat. A's 'That precision holds' and B's 'act early on at-risk subscribers' are small trade-offs that cancel out."
+    },
+    {
+     "id": "p06",
+     "preferred": "tie",
+     "reason": "The only differences are a semicolon against a full stop and one extra paragraph break."
+    },
+    {
+     "id": "p07",
+     "preferred": "tie",
+     "reason": "The two candidates are identical."
+    },
+    {
+     "id": "p08",
+     "preferred": "B",
+     "reason": "Both fix the facts from the notes. B also states outright that the add-to-cart result cannot be called a confirmed lift (p=0.07, CI crosses zero). A leaves the merch audience to work that out from the CI, so B is less likely to be misread."
+    },
+    {
+     "id": "p09",
+     "preferred": "A",
+     "reason": "A keeps the author's claim that the assistant improved FCR and keeps 'meaningful cost savings'. B weakens these to 'since the launch' and 'would mean cost savings', which hedges more than the author did. Both keep the CSAT caveat and the commitments."
+    },
+    {
+     "id": "p10",
+     "preferred": "tie",
+     "reason": "The two candidates are identical."
+    },
+    {
+     "id": "p11",
+     "preferred": "tie",
+     "reason": "The two candidates are identical."
+    },
+    {
+     "id": "p12",
+     "preferred": "tie",
+     "reason": "The only difference is where the backtesting clause sits in the sentence. All facts, scope limits and commitments are kept."
+    },
+    {
+     "id": "p13",
+     "preferred": "tie",
+     "reason": "Both correct $940k to $640k as the notes say. A adds the 'if shipped' condition and B makes the arm labels clearer. Both are equally good."
+    },
+    {
+     "id": "p14",
+     "preferred": "tie",
+     "reason": "Both fix the English the same way and keep the causal hedge and the Friday commitment. The differences are negligible."
+    },
+    {
+     "id": "p15",
+     "preferred": "A",
+     "reason": "A keeps the author's 'meaningful win' and 'explore'. B drops 'meaningful' and changes 'explore' to 'testing'. Both keep the caveat about purchase conversion."
+    },
+    {
+     "id": "p16",
+     "preferred": "tie",
+     "reason": "The two candidates are identical."
+    },
+    {
+     "id": "p17",
+     "preferred": "tie",
+     "reason": "The two candidates are identical."
+    },
+    {
+     "id": "p18",
+     "preferred": "A",
+     "reason": "A keeps the 'across the product catalog' scope for weighted MAPE and opens more smoothly. B drops that scope phrase and opens awkwardly with 'On the demand forecasting initiative'. Both keep the vendor attribution and the hedges."
+    },
+    {
+     "id": "p19",
+     "preferred": "tie",
+     "reason": "Both fix the draft's unverified root-cause claim, present both changes as possible explanations and note that the comparison is due next week. The framing is equally faithful."
+    },
+    {
+     "id": "p20",
+     "preferred": "A",
+     "reason": "The author asked for a polish without an essay. A expands the abbreviations lightly and keeps the format and every fact. B is unchanged."
+    },
+    {
+     "id": "p21",
+     "preferred": "tie",
+     "reason": "The only differences are paragraph breaks and 'this' against 'that'. Both keep the CI, the mechanism hedge, the Android exclusion and the inconclusive retention finding."
+    },
+    {
+     "id": "p22",
+     "preferred": "tie",
+     "reason": "The two candidates are identical."
+    },
+    {
+     "id": "p23",
+     "preferred": "B",
+     "reason": "Both fix the overclaims using the notes. B also keeps the 2.3-minute absolute reduction from the notes and reads more smoothly than A's 'on August 1 to 31 data'."
+    },
+    {
+     "id": "p24",
+     "preferred": "A",
+     "reason": "Both keep the hedges, the compliance limit, the hypothesis framing and the timeline. A also keeps the author's closing invitation for thoughts or questions, which B drops."
+    }
+   ]
+  },
+  {
+   "key": "pair_k2_BA",
+   "kind": "pair",
+   "model": "opus",
+   "items": [
+    {
+     "id": "p01",
+     "preferred": "tie",
+     "reason": "Both keep every number, the hedges ('appears', 'cannot rule out', 'hope', 'pending sign-off') and the commitment. They differ only slightly in structure."
+    },
+    {
+     "id": "p02",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p03",
+     "preferred": "tie",
+     "reason": "Both correct the draft's overclaims using the notes: they restore the unruled-out paid search cut and make recovery conditional. Wording differences are minor."
+    },
+    {
+     "id": "p04",
+     "preferred": "tie",
+     "reason": "Only difference is 'FYI: OOO Fri' capitalization, which is negligible."
+    },
+    {
+     "id": "p05",
+     "preferred": "tie",
+     "reason": "Both keep the CI, the postpaid-only scope, the vendor attribution and 'could'. Closing wording differs only cosmetically."
+    },
+    {
+     "id": "p06",
+     "preferred": "tie",
+     "reason": "Same content. A splits the semicolon and gives the Thursday offer its own line, which is a marginal readability difference."
+    },
+    {
+     "id": "p07",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p08",
+     "preferred": "A",
+     "reason": "Both correct the overclaims and narrow scope to desktop. A states plainly that the CI crossing zero means this is not a confirmed lift, which is clearer for a merch audience than B's bare CI and p-value."
+    },
+    {
+     "id": "p09",
+     "preferred": "B",
+     "reason": "B keeps the author's attribution ('has improved first-contact resolution') and 'meaningful cost savings'. A changes the claim to a temporal 'Since the launch' and weakens the savings to a conditional 'would mean', which shifts the meaning."
+    },
+    {
+     "id": "p10",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p11",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p12",
+     "preferred": "B",
+     "reason": "Same content. B leads with the backtesting context, so the long result sentence reads more cleanly than A's trailing clause after the CI parenthetical."
+    },
+    {
+     "id": "p13",
+     "preferred": "tie",
+     "reason": "Both fix $940k to $640k per the notes. A labels the arms clearly and B clarifies 'of shipping the 14-day trial'. Both are minor gains."
+    },
+    {
+     "id": "p14",
+     "preferred": "tie",
+     "reason": "Both fix the grammar equivalently and keep the hedge and the Friday commitment."
+    },
+    {
+     "id": "p15",
+     "preferred": "B",
+     "reason": "B keeps the author's 'meaningful win' judgment and 'exploring', and sets the purchase caution in its own paragraph. A drops the assessment and shifts 'explore' to 'testing'."
+    },
+    {
+     "id": "p16",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p17",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p18",
+     "preferred": "B",
+     "reason": "B keeps the scope phrase 'across the product catalog' for the weighted MAPE claim, which A drops. Otherwise both keep the vendor attribution, the unconfirmed caveat and the commitment."
+    },
+    {
+     "id": "p19",
+     "preferred": "tie",
+     "reason": "Both remove the draft's unsupported causal claims and present both candidate changes, the unverified delivery link and next week's comparison. Both are accurate and clear."
+    },
+    {
+     "id": "p20",
+     "preferred": "B",
+     "reason": "The author asked for a polish. B expands the cryptic abbreviations (definition, calendar week, history restated, preliminary) while staying short. A is unchanged."
+    },
+    {
+     "id": "p21",
+     "preferred": "tie",
+     "reason": "Both keep the CI, the iOS scope, the untested mechanism and the inconclusive retention result. Structural differences are minor."
+    },
+    {
+     "id": "p22",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p23",
+     "preferred": "tie",
+     "reason": "Both fix the draft using the notes: 21%, five metros, rural and weather caveats, Dec 1 for metros only. A keeps the 2.3-minute absolute figure. B separates the caveats more cleanly. These roughly offset."
+    },
+    {
+     "id": "p24",
+     "preferred": "tie",
+     "reason": "Both strip the gushing tone and keep every hedge and commitment. A is slightly tighter while B keeps a brief closing courtesy, so the difference is negligible."
+    }
+   ]
+  },
+  {
+   "key": "pair_k3_AB",
+   "kind": "pair",
+   "model": "opus",
+   "items": [
+    {
+     "id": "p01",
+     "preferred": "tie",
+     "reason": "Both keep every number, the CI, the seasonal hedge and the conditional ship date, and both cut the hype equally well. The only differences are framing and paragraph breaks."
+    },
+    {
+     "id": "p02",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p03",
+     "preferred": "tie",
+     "reason": "Both drop the draft's unsupported causal claims and restore the unruled-out paid-search cut and the missing channel breakdown. They differ only in a paragraph break."
+    },
+    {
+     "id": "p04",
+     "preferred": "A",
+     "reason": "A makes the small cleanup the author asked for: a semicolon that separates the backfill status from the shipped item, and 'FYI: OOO Fri'. B is unchanged. Meaning is the same in both."
+    },
+    {
+     "id": "p05",
+     "preferred": "tie",
+     "reason": "Both keep the precision, CI, postpaid-only scope and the vendor attribution with its lag caveat. A keeps the author's 'encouraging'; B links the feed to the model a little better. The difference is negligible."
+    },
+    {
+     "id": "p06",
+     "preferred": "tie",
+     "reason": "Same content and the same paragraph breaks. A's colon followed by several sentences and B's kept semicolon are equally acceptable."
+    },
+    {
+     "id": "p07",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p08",
+     "preferred": "B",
+     "reason": "Both correct the draft's overclaims: significance, desktop-only scope, purchases and the all-platform recommendation. B is better organized for the merch team and ends with a clear desktop recommendation. A is one dense paragraph and says 'adds to our confidence' about a non-significant result."
+    },
+    {
+     "id": "p09",
+     "preferred": "A",
+     "reason": "A keeps the author's link between the assistant and the FCR rise, and keeps 'meaningful cost savings'. B's 'Since ... launched' weakens that attribution, and B drops 'meaningful'. All hedges are preserved in both."
+    },
+    {
+     "id": "p10",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p11",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p12",
+     "preferred": "tie",
+     "reason": "Same content. The only difference is one paragraph split versus a semicolon."
+    },
+    {
+     "id": "p13",
+     "preferred": "A",
+     "reason": "Both fix $940k to the $640k in the notes. A also keeps the condition from the notes that the estimate applies if the 14-day trial ships."
+    },
+    {
+     "id": "p14",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p15",
+     "preferred": "A",
+     "reason": "Both keep the CTR numbers, the caution about conversion and the segment detail. A also keeps the author's judgment that this is a meaningful win, which B drops."
+    },
+    {
+     "id": "p16",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p17",
+     "preferred": "B",
+     "reason": "B adds the one correct comma ('boundary, but') that a light edit calls for. Otherwise the two are identical."
+    },
+    {
+     "id": "p18",
+     "preferred": "B",
+     "reason": "A keeps 'across the product catalog', which contradicts the next sentence ('at least the 40 highest-volume SKUs; we have not yet looked at the long tail'). B removes that contradiction and keeps every number, the vendor attribution and the commitments."
+    },
+    {
+     "id": "p19",
+     "preferred": "tie",
+     "reason": "Both remove the draft's root-cause overclaim and restore the unverified link, the intake-form change and the analysis due next week. A says the intake form has not been ruled out; B's structure is clearer. Overall they are equal."
+    },
+    {
+     "id": "p20",
+     "preferred": "A",
+     "reason": "A expands the cryptic abbreviations (def, cal wk, hist, prelim) without making the message longer in any real way, which is the polish the author asked for. B is unchanged."
+    },
+    {
+     "id": "p21",
+     "preferred": "tie",
+     "reason": "Both cut the same fluff and keep every hedge and scope limit. They differ only in the lead phrase and one paragraph split."
+    },
+    {
+     "id": "p22",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p23",
+     "preferred": "A",
+     "reason": "Both fix the draft's overclaims using the notes. A keeps the absolute 2.3-minute reduction and the 'about' on 21%. B states '21%' with no 'about' and leaves out the 2.3 minutes."
+    },
+    {
+     "id": "p24",
+     "preferred": "tie",
+     "reason": "Both keep all hedges, the compliance constraint, the design team's hypothesis and the plan for the week of 8 February. They differ only in paragraph grouping and small wording choices."
+    }
+   ]
+  },
+  {
+   "key": "pair_k3_BA",
+   "kind": "pair",
+   "model": "opus",
+   "items": [
+    {
+     "id": "p01",
+     "preferred": "tie",
+     "reason": "Both keep every number, the CI, the hedges and the conditional ship date; the only differences are paragraph grouping and the opening phrase."
+    },
+    {
+     "id": "p02",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p03",
+     "preferred": "tie",
+     "reason": "Both remove the unsupported causal claim, restore the unruled-out paid search cut and keep all figures. The only difference is A's paragraph break."
+    },
+    {
+     "id": "p04",
+     "preferred": "tie",
+     "reason": "Original kept in both; B's semicolon and capitalisation changes are negligible."
+    },
+    {
+     "id": "p05",
+     "preferred": "tie",
+     "reason": "Both strip the hype and keep the CI, the postpaid-only scope, the vendor attribution and the lag caveat. Wording differences are minor."
+    },
+    {
+     "id": "p06",
+     "preferred": "tie",
+     "reason": "Nearly identical; only punctuation choices differ."
+    },
+    {
+     "id": "p07",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p08",
+     "preferred": "A",
+     "reason": "Both add the CI and p-value, narrow to desktop and flag purchases as unproven. A reads more clearly in three short paragraphs. B's run-on paragraph keeps 'adds to our confidence', which sits oddly beside a non-significant result."
+    },
+    {
+     "id": "p09",
+     "preferred": "A",
+     "reason": "A removes the press-release claims ('has been a success', 'meaningful cost savings') and correctly makes the savings conditional ('would') because the estimate is unvalidated. B keeps some puffery."
+    },
+    {
+     "id": "p10",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p11",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p12",
+     "preferred": "tie",
+     "reason": "Same content; only paragraph splits differ."
+    },
+    {
+     "id": "p13",
+     "preferred": "B",
+     "reason": "Both fix the $940k error to $640k. B also keeps the notes' condition that the impact applies if the 14-day trial ships."
+    },
+    {
+     "id": "p14",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p15",
+     "preferred": "tie",
+     "reason": "Both keep the numbers, the no-conversion caveat and the 18-34 detail. A has cleaner structure; B keeps the author's 'meaningful win' judgment. They balance out."
+    },
+    {
+     "id": "p16",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p17",
+     "preferred": "tie",
+     "reason": "A adds one correct comma; the difference is negligible."
+    },
+    {
+     "id": "p18",
+     "preferred": "A",
+     "reason": "B keeps 'improved accuracy across the product catalog', which contradicts the later statement that only the top 40 SKUs were checked. A drops that overclaim."
+    },
+    {
+     "id": "p19",
+     "preferred": "tie",
+     "reason": "Both remove the unsupported root-cause claim and keep the vendor-dashboard attribution, the unverified join and the intake-form change. A's framing and B's explicit 'not ruled out' are equally good."
+    },
+    {
+     "id": "p20",
+     "preferred": "B",
+     "reason": "B is a light polish that spells out abbreviations without making it longer than a quick update; A is unchanged."
+    },
+    {
+     "id": "p21",
+     "preferred": "tie",
+     "reason": "Same content and hedges; only paragraphing and one contraction differ."
+    },
+    {
+     "id": "p22",
+     "preferred": "tie",
+     "reason": "Identical."
+    },
+    {
+     "id": "p23",
+     "preferred": "tie",
+     "reason": "Both fix the draft's scope, the 25% figure, the weather claim and the nationwide commitment the same way. Differences are minor."
+    },
+    {
+     "id": "p24",
+     "preferred": "tie",
+     "reason": "Both keep the hedges, the compliance attribution, the design hypothesis and the dates; they differ only in paragraph grouping."
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,196 @@
+{
+ "arms": {
+  "new": {
+   "items": [
+    {
+     "id": "ds-01-abtest",
+     "output": "*New ranking model A/B test: recommend ramping to 50%, not 100%*\n\nThe test ran 14 days across 1.2M sessions. The model looks like a real CTR win, but two open questions mean I'd stage the rollout.\n\n*What we saw*\n- CTR: +2.1% (95% CI +0.4% to +3.8%). Positive, though the interval is wide.\n- Revenue per session: +0.6%, not statistically significant (p=0.21). We can't claim a revenue effect yet.\n- By platform: mobile CTR +3.4%; desktop flat (+0.1%, CI includes 0). The gain is concentrated on mobile.\n\n*The caveat*\nThe effect was larger in week 1, so we can't rule out a novelty effect. The headline 2.1% may overstate the steady-state lift.\n\n*Recommendation*\nRamp to 50% now and re-check in 2 weeks. If the lift holds as novelty fades, we'll have the evidence to go to 100%. If the lift fades, we'll know before committing fully. Happy to walk through the platform and week-over-week cuts if useful.",
+     "notes": "One change: \"If it fades\" became \"If the lift fades\", because \"it\" could be read as the novelty effect from the sentence before. Everything else is unchanged. The draft is specific, and every number, interval and hedge matches your notes (not significant, novelty not ruled out, 50% not 100%)."
+    },
+    {
+     "id": "ds-02-churn",
+     "output": "Subject: Q3 churn: up 1.2 points, cause not yet separable\n\nHi all,\n\nMonthly churn rose from 4.1% in Q2 to 5.3% in Q3, an increase of 1.2 points (about 29% in relative terms).\n\nWe don't yet know why. Two events landed early in the quarter: the July 1 price change and the July 9 competitor launch. They are only eight days apart, and our analysis cannot separate their effects. I'd treat any claim that one of them explains the increase as premature.\n\nOne useful data point: churn among annual-plan customers was unchanged at 1.2%, so the increase is coming from customers outside annual plans.\n\nNext step: we are surveying about 200 churned users to hear directly why they left. Results are expected in mid-November, and I'll follow up then with what they tell us about price versus the competitor.\n\nUntil then, I'd suggest holding off on decisions that depend on which of the two is responsible. Happy to walk through the analysis if that would help.\n\nThanks,",
+     "notes": "Returned unchanged. No sentence has a named failure: the figures, the \"cannot separate the two\" limit and the survey timing all match your notes."
+    },
+    {
+     "id": "ds-03-dataincident",
+     "output": "*Incident summary: DAU dashboards overstated, Aug 4 to Aug 11*\n\n*What happened*\nA pipeline bug double-counted about 3.2% of events between Aug 4 and Aug 11.\n\n*Impact*\n- DAU dashboards were overstated by roughly 3% for that week. If you pulled numbers for Aug 4-11 before Aug 14 (reports, exports, slides), please refresh them.\n- The forecast model was retrained on Aug 10 using the affected data. Its impact on the forecast is still being assessed, so please treat recent forecast outputs with caution until we report back.\n- As far as we know, no other models were affected.\n\n*Timeline and status*\n- Aug 4 to Aug 11: double-counting in the pipeline\n- Aug 10: forecast model retrained on the affected data\n- Aug 12: bug fixed\n- Aug 14: backfill completed, correcting the affected week\n- Open: forecast impact assessment (in progress)\n\n*Next*\nWe'll share the forecast assessment as soon as it's done. If you see numbers for that week that don't look right, send them our way.",
+     "notes": "Returned unchanged. It is already terse and specific, and the dates, percentages and the open forecast question match your notes. The headings and the timeline are correct for an incident summary."
+    },
+    {
+     "id": "ds-04-forecast",
+     "output": "*Q4 demand forecast and recommended planning number*\n\n*Summary*\nThe Q4 demand forecast is 118k units, with an 80% interval of 104k to 131k. You asked for a single number to plan against. I recommend 125k.\n\n*Why not 118k*\n118k is the most likely outcome, but it is not a safe planning number. Last year's Q4 forecast was off by 9%, which at this volume is roughly 10k units. The largest source of uncertainty this year is holiday timing: Thanksgiving falls late, and that makes it harder to predict how holiday demand will land.\n\n*Why 125k*\n125k sits in the upper part of the interval. It covers most plausible demand outcomes without planning to the 131k extreme.\n\nThe trade-off: if demand comes in at the point forecast, we would hold about 7k more units than needed. How much that costs versus the risk of a shortfall is a judgment call, and Supply is better placed to weigh it than I am.\n\n*Next*\nI will refresh the forecast on Nov 15 and flag right away if the range or the recommended number changes.",
+     "notes": "Returned unchanged. The memo already states the recommendation and the trade-off, and the numbers are consistent (125k minus 118k is 7k). I could not check the holiday-timing claim, since there was no source to compare against."
+    },
+    {
+     "id": "ds-05-fraudmodel",
+     "output": "*Fraud model v3: September holdout results and rollout plan*\n\nv3 beats v2 on both precision and recall:\n- Precision 0.91 at recall 0.62 (v2: 0.88 at 0.55)\n\nOne regression to flag: false positive rate on new merchants is higher than v2 (2.1% vs 1.4%, about 50% higher). We don't know why yet and are investigating.\n\n*Plan*\n- Ship v3 to 10% of traffic on Monday\n- Guardrail on new-merchant FPR, so we catch this in live traffic early\n- We'll post what we find on the root cause\n\nIf you know of anything that changed for new merchants (onboarding flow, merchant mix, data availability), please tell us. It could save us some digging.\n\nThanks to Priya for the feature work on v3.",
+     "notes": "Returned unchanged. It matches your notes on the metrics, the regression, the 10% plan and the thanks to Priya, and it states the unknown cause plainly. Nothing in it reads as generated."
+    },
+    {
+     "id": "ds-06-survey",
+     "output": "*Onboarding survey: summary*\n\n*Headline*\n61% of respondents said onboarding was confusing (412 responses, 18% response rate). The top themes in open-text answers were permissions setup and data import.\n\n*How far to trust it*\nRespondents skew toward power users: 70% are weekly active, versus roughly 35% of users overall. Combined with an 18% response rate, this means the sample is not representative, so the 61% may not generalize. From this data alone we can't say whether the true figure for all users is higher or lower. Less active users are underrepresented.\n\nWhat the survey does tell us: even in a sample weighted toward engaged users, a majority found onboarding confusing, and the two themes point to specific places to look.\n\n*Recommendation*\nBefore redesigning, run about 5 follow-up interviews with new users. Focus on permissions setup and data import, and use them to check whether the survey's themes hold for people who are onboarding now.",
+     "notes": "Returned unchanged. The sampling caveat is concrete and the recommendation follows from it. I only had this text, so I did not check the claims about who responded."
+    },
+    {
+     "id": "ds-07-nullresult",
+     "output": "*Email reminder experiment: no detectable effect on 7-day retention; recommend stopping*\n\nThe test found no detectable effect of the email reminder on 7-day retention: +0.2pp (95% CI -0.5pp to +0.9pp).\n\nHow to read it: the test was powered to detect a 1pp change, and the top of the interval (+0.9pp) falls below that, so we can rule out a lift of 1pp or more. We cannot rule out a smaller effect, in either direction, within the interval. This is a result of no detectable effect, not proof of no effect.\n\n*Recommendation*\nStop the test and don't ship the reminder. Any benefit is likely under 1pp, and we have no evidence that it is positive. Pinning down a smaller effect would take a much larger sample for a payoff that is modest at best.",
+     "notes": "Returned unchanged. The \"no detectable effect, not proof of no effect\" wording is the exact distinction to keep, and rewording it would risk turning it into \"no effect\"."
+    },
+    {
+     "id": "ds-08-latency",
+     "output": "*Incident update: p95 latency spike, Oct 3*\n\n*Status*\np95 latency rose from 340ms to 910ms (about 2.7x) starting at 14:12 UTC.\n\n*What we know*\n- Onset was 14 minutes after the 13:58 UTC config deploy.\n- Traffic was also up 22% during that hour, so load is a possible contributor.\n\n*What we don't know*\n- Root cause is not confirmed. Leading hypothesis: the cache eviction policy change in the deploy. We have not ruled out the traffic increase or other contributors.\n\n*Next steps*\n- Rollback of the deploy is scheduled for 16:00 UTC.\n- I'll post here after the rollback with whether latency recovers. If it does, that supports the deploy as the cause (we'll check against traffic at that time). If it doesn't, we'll widen the investigation.",
+     "notes": "Returned unchanged. It keeps what is known apart from what is only a hypothesis, and the times and figures match your notes (13:58 plus 14 minutes is 14:12, and 910/340 is about 2.7x). The format suits an incident channel."
+    },
+    {
+     "id": "factbridge-01-unsupported-cause-en",
+     "output": "Multiple companies expanded their deployment teams.",
+     "notes": "I cut \", reflecting persistent data-integration failures\". Your source note reports only the expansion, gives no reason for it, and does not mention data-integration failures, so the clause added a cause the source doesn't support. Softening it to \"may reflect\" would still be a guess. If you have a source for the link, restore the clause with that source."
+    },
+    {
+     "id": "factbridge-02-cooccurrence-en",
+     "output": "The support backlog grew during the same quarter that three teams expanded.",
+     "notes": "I cut \", indicating the backlog caused the hiring\". Your source note says the backlog growth and the expansion happened in the same quarter and that it does not say either caused the other. The sentence now states only the timing. If you have evidence of causation, add it back with the source."
+    },
+    {
+     "id": "factbridge-04-supported-possibility-en",
+     "output": "Response times declined after the new routing policy; the incident review says the decline may be related to the policy.",
+     "notes": "Returned unchanged. It already matches your source note: the decline is stated as a fact, and the link to the policy stays at \"may be related\" and is attributed to the incident review, which reaches no causal conclusion."
+    },
+    {
+     "id": "tweet-01-obvious",
+     "output": "We're sharing a new solution that will change how you work. #buildinpublic",
+     "notes": "The original never says what the product is or what changes, so there was nothing concrete to bring forward and I did not invent anything. I cut \"ever-evolving landscape\", \"thrilled\", \"delve\", \"game-changing paradigm\", \"seamless, robust\", \"revolutionize\", \"the future looks bright\" and the rocket. I kept only #buildinpublic from the hashtags, and you can add #ai back if the product is AI-related. If you tell me what it does (one specific feature, number or example), I can write a tweet with a real hook."
+    },
+    {
+     "id": "linkedin-01-obvious",
+     "output": "I recently attended a conference that made a strong impression on me. It reminded me how much meaningful connections matter.\n\nThe keynote showed what innovation can do.",
+     "notes": "The post names no conference, speaker or takeaway, so I kept it general rather than invent details. I cut the closing \"embrace the journey\" and \"only time will tell\" lines, which carried no content. One concrete detail, such as what the keynote said or who you met, would make it much stronger."
+    },
+    {
+     "id": "memo-01-obvious",
+     "output": "We must look closely at the details of our strategy. Experts believe a culture of innovation is essential. This initiative will improve our position. We should take it one piece at a time so the approach covers everything.",
+     "notes": "\"Experts believe\" still has no named source. I kept it as an attribution rather than making it your own claim, so add the source or cut the sentence. The memo also never says what the strategy or initiative is, so those stay abstract. I cut \"as we move forward\", \"pivotal\" and \"undoubtedly\". I also replaced \"holistic approach\" with what it meant here, covering everything."
+    },
+    {
+     "id": "memo-02-subtle",
+     "output": "Our current approach has served us well, and there is room to improve it. Research suggests engagement is trending up. But we should watch for possible headwinds. A measured strategy could position us well, and it will help us capture emerging opportunities.",
+     "notes": "\"Research suggests\" has no named source, so add one if you can. I kept the attribution and its hedge. \"Headwinds\" and \"opportunities\" are unspecified in the original, and naming them would make the memo stronger. The original hedges the strategy (\"could potentially position us well\") and then says it \"will help us capture\" opportunities. I kept each as written, so pick one level of certainty."
+    },
+    {
+     "id": "overstep-05-payoff-en",
+     "output": "Merging the two staging environments reduces outages: one config to keep in sync instead of two, and we traced 3 of the last 5 incidents to drift between them.",
+     "notes": "I dropped the \"You might think... but it actually\" setup, which presumes a belief the reader may not hold, and named the subject so the claim stands alone. If there is a real objection on record that people have raised, name it and keep the contrast."
+    },
+    {
+     "id": "overstep-06-strawman-en",
+     "output": "Longer prompts often bury the key instruction, and accuracy drops. We cap retrieved context at 8 chunks and rerank before sending.",
+     "notes": "I dropped the \"You might think that stuffing every document... can never hurt and is always the optimal move\" setup. It argues against a position few people hold. The claim itself, including \"often\", and the 8-chunk cap are unchanged."
+    },
+    {
+     "id": "narrshape-04-absent-ambiguity-en",
+     "output": "The A/B test is clear: variant B lifted conversion 6%. We should roll it out to everyone next week.",
+     "notes": "Returned unchanged. Nothing in the draft is an AI tell, and I did not add hedging or a second metric, because the draft gives no competing signal to report. The memo gives no sample size, interval or run length to back \"clear\". If you have them, one line with them would carry the claim better than the word does."
+    },
+    {
+     "id": "artifact-01-status-card-en",
+     "output": "## Status card\n\nRelease v2.4.1 deploys July 31. Health checks run at `/healthz`.",
+     "notes": "I cut the closing sentence, which described the card without adding any fact. The version, date, endpoint and heading are unchanged."
+    },
+    {
+     "id": "fp-terse-04",
+     "output": "Deploy failed. Rolled back. Logs were empty. Tried again at midnight. Same error. Found it at 2am: a stale env var in the staging box. Fixed the config and it went green. Slept.",
+     "notes": "Returned unchanged. The fragments are the point, and a tweet is the right place for them. The details are specific, and the one-word ending sounds like a person."
+    },
+    {
+     "id": "fp-pro-linkedin-07",
+     "output": "Six months ago our on-call rotation was a mess. People dreaded their week, pages fired at 3am for things that could wait until morning, and nobody trusted the dashboards. We spent a quarter cleaning it up: deleted 40% of the alerts, rewrote the runbooks, and added a severity tier that actually maps to whether you should wake up. Last month we had two pages the entire rotation. The lesson for me was simple. Most alert fatigue is a design problem, not a discipline problem.",
+     "notes": "Returned unchanged. It is a first-person story with real numbers. The \"design problem, not a discipline problem\" contrast corrects a common belief, so it carries information."
+    },
+    {
+     "id": "fp-pro-memo-09",
+     "output": "Heads up on the Q3 planning timeline. Draft proposals are due to your leads by the 18th. Leads consolidate and send me the top three asks per team by the 25th. We will not be able to fund everything, so rank ruthlessly and say what breaks if a line item is cut. Final decisions go out the first week of the quarter. Questions to me directly, not the group thread.",
+     "notes": "Returned unchanged. It is direct and every sentence carries a date or an instruction."
+    },
+    {
+     "id": "fp-academic-05",
+     "output": "This document specifies the retrieval component's ranking contract. The scorer accepts a query and a candidate set, and returns an ordering. Callers must not assume stability across versions; the ordering is defined only up to the documented tie-break rule. Two properties hold. First, monotonicity: if a candidate's relevance features strictly dominate another's, its rank is at least as high. Second, determinism: given identical inputs and a fixed model hash, the output ordering is byte-identical. Violations of either property are defects, not tuning opportunities. The contract deliberately says nothing about latency, which is governed by a separate service-level objective. Downstream consumers that require a probability rather than an ordinal should call the calibration endpoint; the raw scores are not calibrated and their absolute magnitudes carry no meaning. We state these constraints because past incidents traced to consumers reading structure into the scores that the contract never promised.",
+     "notes": "Returned unchanged. This is formal specification prose, and the precision (\"strictly dominate\", \"at least as high\", \"byte-identical\") is deliberate. The \"First... Second...\" enumeration and the \"defects, not tuning opportunities\" contrast are doing real work."
+    },
+    {
+     "id": "fp-esl-03-memo",
+     "output": "To the whole team,\n\nWe have decided to move the weekly sync from Monday to Wednesday because many people have conflicts on Monday morning. Please update your calendar this week. If you cannot join at the new time, tell me and we will find another slot. Thank you for understanding.",
+     "notes": "I fixed grammar only and kept the plain, direct tone. Please check one thing: the original \"before this week\" was unclear, so I wrote \"this week\". Replace it with a date if you have a deadline. The memo also doesn't say which Wednesday the change starts or what time."
+    },
+    {
+     "id": "s2-readout",
+     "output": "The new onboarding flow raised 7-day retention by 1.2 percentage points (95% CI 0.3 to 2.1), roughly 3% in relative terms. Revenue per user also moved, but the difference was not statistically significant (p=0.21). These results suggest the flow is worth ramping to 50%.",
+     "notes": "I cut \"In a significant development for our growth strategy\", which was significance inflation, and \"meaningful uplift\", since the interval already shows the size. The interval, \"roughly\", \"relative terms\", \"not statistically significant\" and \"suggest\" are kept as written."
+    },
+    {
+     "id": "s2-scope",
+     "output": "Only 3 of the 12 regions saw roughly a 5% lift in conversion, and at least two of those had the holiday promo running at the same time. The incident review suggests the routing change may have contributed to the dip elsewhere. We hope to ship the regional fix by mid-November.",
+     "notes": "The only change is cutting the \"It is worth highlighting that\" lead-in. The scope and hedge wording (\"only\", \"roughly\", \"at least two\", \"suggests... may have contributed\", \"hope to\") is deliberate and unchanged."
+    },
+    {
+     "id": "s2-null",
+     "output": "The email reminder showed no detectable effect on 7-day retention (+0.2pp, 95% CI -0.5pp to +0.9pp). The test was powered to detect a 1pp change, so a smaller effect is not ruled out. Analysts expect the reminder to matter more for new users, which we plan to test in Q1.",
+     "notes": "I cut \"Delving into the results,\" and \"Notably,\". \"Analysts expect\" still has no named source. I kept it as an attribution and did not make it your own claim, so name the team or source if you can. \"Plan to test\" stays a plan."
+    },
+    {
+     "id": "s2-forecast",
+     "output": "Our forecasting framework projects Q4 demand at approximately 118k units (80% interval 104k-131k). Historically, our Q4 error has been about 9%. We may need to revisit the number after the Nov 15 refresh, but for now we recommend planning at 125k.",
+     "notes": "I cut \"robust\", which is praise the paragraph doesn't back. The paragraph never says why you recommend 125k rather than 118k. I did not supply a reason, so add one if readers will ask. The figures and \"may need to revisit\" are unchanged."
+    }
+   ]
+  },
+  "bare_extra": {
+   "items": [
+    {
+     "id": "s2-readout",
+     "output": "The new onboarding flow raised 7-day retention by 1.2 percentage points (95% CI 0.3 to 2.1), roughly 3% in relative terms. Revenue per user also moved, but not by a statistically significant amount (p=0.21). These results suggest the flow is worth ramping to 50%.",
+     "notes": "I cut the \"In a significant development for our growth strategy\" opener and the word \"meaningful\". Both were filler, and \"significant\" next to a p-value can be misread as statistical significance. I kept every number and the \"suggest\" hedge. One thing leadership may ask: the CI lower bound is 0.3, so the true lift could be small."
+    },
+    {
+     "id": "s2-scope",
+     "output": "Only 3 of the 12 regions saw a lift in conversion of roughly 5%, and at least two of those had the holiday promo running at the same time. The incident review suggests the routing change may have contributed to the dip elsewhere. We hope to ship the regional fix by mid-November.",
+     "notes": "This needed only a light edit. I removed \"It is worth highlighting that\" and left the rest alone. The hedges (\"roughly\", \"at least two\", \"may have contributed\", \"hope\") are doing real work, so I kept them. \"The dip elsewhere\" assumes readers know which metric and regions you mean. If the review audience may not, name them."
+    },
+    {
+     "id": "s2-null",
+     "output": "The email reminder showed no detectable effect on 7-day retention (+0.2pp, 95% CI -0.5pp to +0.9pp). The test was powered to detect a 1pp change, so a smaller effect is not ruled out. Analysts expect the reminder to matter more for new users, and we plan to test that in Q1.",
+     "notes": "I removed \"Delving into the results,\" and \"Notably,\" and left the statistics and caveats unchanged. I kept \"Analysts expect\" rather than changing it to \"we expect\", because I can't tell whether you count yourself among them. Change it if you do."
+    },
+    {
+     "id": "s2-forecast",
+     "output": "Our forecast puts Q4 demand at approximately 118k units (80% interval 104k-131k). Our Q4 error has historically been about 9%. We may need to revisit the number after the Nov 15 refresh, but for now we recommend planning at 125k.",
+     "notes": "I replaced \"Our robust forecasting framework projects\" with \"Our forecast puts\". \"Robust\" is a claim the paragraph doesn't back up. The numbers and the Nov 15 caveat are unchanged. A reader may ask why you recommend 125k when the point forecast is 118k. The recommendation sits inside the 80% interval, but the paragraph never says why it is higher. If there is a reason, such as the cost of running short, one clause would head off the question."
+    }
+   ]
+  },
+  "main_extra": {
+   "items": [
+    {
+     "id": "s2-readout",
+     "output": "The new onboarding flow raised 7-day retention by 1.2 percentage points (95% CI 0.3 to 2.1), roughly 3% in relative terms. Revenue per user also moved, but the difference was not statistically significant (p=0.21). These results suggest the flow is worth ramping to 50%.",
+     "notes": ""
+    },
+    {
+     "id": "s2-scope",
+     "output": "Only 3 of the 12 regions saw roughly a 5% lift in conversion, and at least two of those had the holiday promo running at the same time. The incident review suggests the routing change may have contributed to the dip elsewhere. We hope to ship the regional fix by mid-November.",
+     "notes": ""
+    },
+    {
+     "id": "s2-null",
+     "output": "The email reminder showed no detectable effect on 7-day retention (+0.2pp, 95% CI -0.5pp to +0.9pp). The test was powered to detect a 1pp change, so a smaller effect is not ruled out. Analysts expect the reminder to matter more for new users. We plan to test that in Q1.",
+     "notes": "Notes: \"Analysts expect...\" gives no source or reason for the expectation. I left it as written rather than invent one; add who or why if you have it."
+    },
+    {
+     "id": "s2-forecast",
+     "output": "Our forecasting framework projects Q4 demand at approximately 118k units (80% interval 104k-131k). Historically, our Q4 error has been about 9%. We may need to revisit the number after the Nov 15 refresh, but for now we recommend planning at 125k.",
+     "notes": "Notes: the paragraph doesn't say why the recommended plan (125k) sits above the 118k projection. I didn't add a reason; a leadership reader will likely ask."
+    }
+   ]
+  }
+ }
+}

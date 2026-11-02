@@ -1,0 +1,28 @@
+{
+ "items": [
+  {
+   "id": "s3-methods",
+   "subset": "s3-terms-of-art",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "In order to ensure the robustness of our findings, we leveraged heteroskedasticity-robust standard errors and also re-ran the analysis as a robust regression. Notably, four observations exhibited high leverage; removing them shifted the coefficient from 0.42 to 0.39, which remains within the original confidence interval. It is worth noting that the loss landscape was relatively flat near the optimum.",
+   "request": "Polish this methods paragraph from my analysis doc so it doesn't read AI-generated:\n\nIn order to ensure the robustness of our findings, we leveraged heteroskedasticity-robust standard errors and also re-ran the analysis as a robust regression. Notably, four observations exhibited high leverage; removing them shifted the coefficient from 0.42 to 0.39, which remains within the original confidence interval. It is worth noting that the loss landscape was relatively flat near the optimum."
+  },
+  {
+   "id": "s3-eval",
+   "subset": "s3-terms-of-art",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "Exciting news! Our comprehensive eval harness now seamlessly runs every candidate model on the frozen March holdout. Leverage scores flagged twelve rows from a single merchant; after removing them, v3 still outperformed v2 on precision (0.91 vs 0.88). The median-based metric is robust to outliers, so we kept it as the headline number going forward.",
+   "request": "Make this model-eval update sound less like ChatGPT before I post it in the ML channel:\n\nExciting news! Our comprehensive eval harness now seamlessly runs every candidate model on the frozen March holdout. Leverage scores flagged twelve rows from a single merchant; after removing them, v3 still outperformed v2 on precision (0.91 vs 0.88). The median-based metric is robust to outliers, so we kept it as the headline number going forward."
+  },
+  {
+   "id": "s3-mixed",
+   "subset": "s3-terms-of-art",
+   "with_notes": false,
+   "notes": "",
+   "source_text": "In today's data-driven landscape, our team leveraged cutting-edge techniques to deliver robust insights. We used robust standard errors clustered by store and checked high-leverage stores by hand; the price elasticity estimate (-1.3, 95% CI -1.6 to -1.0) held when the five highest-leverage stores were dropped.",
+   "request": "Polish this paragraph for the quarterly analytics review:\n\nIn today's data-driven landscape, our team leveraged cutting-edge techniques to deliver robust insights. We used robust standard errors clustered by store and checked high-leverage stores by hand; the price elasticity estimate (-1.3, 95% CI -1.6 to -1.0) held when the five highest-leverage stores were dropped."
+  }
+ ]
+}
