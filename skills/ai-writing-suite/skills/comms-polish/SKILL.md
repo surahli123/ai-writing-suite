@@ -290,6 +290,18 @@ When neither exists, use the lightest voice that fits the context:
   repo on 2026-07-13.)
 - Do not resolve a correlation into a cause, or a projection into a result, to
   make a sentence read cleaner.
+- **Keep quantitative and scope wording exact.** These are protected like
+  numbers:
+  - **Scope words:** only, all, most, every, never, first, at least, up to.
+  - **Approximators:** "roughly 60%" never becomes "60%".
+  - **Units of change:** percentage points never become percent, and relative
+    never becomes absolute.
+  - **Date precision:** a specific date stays specific.
+  - **Statistical status:** "not statistically significant" or "no detectable
+    effect" never becomes "no effect". A stated interval stays with its effect.
+  - **Attribution and intent verbs:** "suggests" never becomes "shows",
+    "expects" never becomes "will", and "we hope to" or "we plan to" never
+    becomes "we will".
 - Do not remove caveats that carry real uncertainty.
 - Do not polish away legal, medical, financial, or safety warnings.
 - Do not rewrite quoted text unless the user asks.
