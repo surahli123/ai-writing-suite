@@ -107,7 +107,9 @@ Use `references/outline-template.md`. In the outline:
   `[NEEDS: what is missing]`.
 - Fill the genre's slots from the KB entry (an effect needs baseline, unit,
   interval, n, and window; an incident separates facts, hypotheses, and unknowns).
-  A slot the material cannot fill becomes `[NEEDS: ...]`; never fill it yourself.
+  **Fill every slot the notes or the author's answers already hold first.** Mark
+  `[NEEDS: ...]` only for what neither holds; never fill a gap yourself. A slot
+  the genre usually has but this document does not need is left out, not marked.
 - Plan the shape: where the stakes peak, what stays open, whether a competing
   reading is real. Only shape what the material motivates; never manufacture
   ambiguity, a loose end, or a peak (`_shared/patterns/narrative-shape.md`).
@@ -138,7 +140,9 @@ or a number changes. Otherwise proceed to step 5.
 ### 5. Fill
 
 Write from the confirmed outline only. No new claims: a sentence that needs a fact
-the outline does not hold gets `[NEEDS: ...]`. Write long documents section by
+the outline does not hold gets `[NEEDS: ...]`. Before returning, check every
+`[NEEDS]` against the notes and answers once more and fill any the material
+already answers (an owner, a date, a count the author gave). Write long documents section by
 section without stopping between sections unless the author asked to review each
 one. The author may write a section themselves and ask for a light edit.
 
@@ -146,6 +150,9 @@ While writing:
 
 - **Concrete from the material.** Name the specific thing the material names. If
   it is not there, mark `[NEEDS: ...]`.
+- **Labels are claims.** A role or label the author did not state (calling a
+  metric "primary" or "the mechanism metric", calling a group "the control")
+  needs a source like any other claim. Use the author's own labels.
 - **Supported relations only.** Add a cause, motive, significance, trend, or
   conclusion only when the classified source packet supports it. Keep possibility
   calibrated and co-occurrence as co-occurrence. When a requested relation lacks
@@ -284,7 +291,9 @@ Follow `_shared/self-improvement.md`; do not restate it.
 At each stop, return only what the stop needs: the thesis options, or the outline
 with its sharpen questions.
 
-With the finished document, return, in this order:
+With the finished document, return the document first and everything else after
+it, below a separator line (`---`). Nothing below is ever written inside the
+document's body, so the author can send the document as it stands:
 
 1. **The document**, formatted for its genre.
 2. **`[NEEDS: ...]` list**: every gap, so the author can fill them. Omit if none.

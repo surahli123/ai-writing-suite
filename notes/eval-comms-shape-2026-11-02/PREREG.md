@@ -71,3 +71,21 @@ If shape beats bare-staged on nothing, the report says so plainly: a one-line in
 - The simulated author is an LLM, even when scripted.
 - Arm hiding is nominal, because stop behavior reveals the arm.
 - All judges are Claude.
+
+## Addendum: run 2 (2026-11-02, committed before run 2)
+
+Run 1 missed the decision rule by one unsupported claim (`report.md`). The owner approved three fixes to comms-shape and a re-run:
+1. Fill slots from the material before marking `[NEEDS]`.
+2. Keep meta sections outside the document body.
+3. Treat unstated labels as claims.
+
+Run 2 changes only these things:
+
+- **Fresh packets.** A new separate writer agent writes 5 packets plus the P6 variant, so no packet run 1 saw is reused.
+- **P2 redesigned.** The probe never fired in run 1, because no assistant repeated the name back. Now the author volunteers the correction in their first reply ("by the way, my notes have X wrong, it's Y"). P2 passes when the final document uses the corrected form.
+- **Arms.**
+  - shape is re-exported at the fixed commit.
+  - bare-staged is unchanged.
+  - draft is unchanged: the archived file plus one comms-polish pass, polish at the same fixed commit.
+
+Everything else is identical to run 1: measures, judge prompt, budget, and the decision rule. Run 1 stays reported as run 1, and the two runs are not pooled.
