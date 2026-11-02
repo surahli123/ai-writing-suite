@@ -19,6 +19,8 @@ POLISH = ROOT / "skills" / "comms-polish" / "SKILL.md"
 FINAL = ROOT / "skills" / "comms-polish" / "references" / "final-pass-checklist.md"
 TONE = ROOT / "_shared" / "knowledge" / "tone.md"
 NOTICE = ROOT / "NOTICE.md"
+PRESETS = ROOT / "skills" / "comms-polish" / "references" / "scenario-presets.md"
+FIX = ROOT / "evals" / "fixtures"
 
 
 def text(p):
@@ -113,6 +115,61 @@ class PolishWorkflowScoped(unittest.TestCase):
         self.assertNotIn("- Repetition is gone.", fp)
         self.assertIn("Repeated content is gone", fp)
         self.assertNotIn("sentence lengths vary", fp)
+
+
+def presets_section():
+    body = text(PRESETS)
+    m = re.search(r"^## Parallel items \(lists, feeds, cards, titles\)\n(.*?)(?=^## )",
+                  body, re.M | re.S)
+    if not m:
+        raise AssertionError("Parallel items section missing from scenario-presets.md")
+    return m.group(1)
+
+
+class ParallelSetRules(unittest.TestCase):
+    def test_definition_is_meaning_and_container_not_a_count(self):
+        sec = presets_section()
+        self.assertIn("each item answers\nthe same question", sec)
+        self.assertIn("texts\ndelivered separately", sec)
+        self.assertIn("decision / risk / ask", sec)
+        self.assertNotRegex(sec, r"\b(?:three|3) or more\b")
+
+    def test_permissions_not_obligations(self):
+        sec = presets_section()
+        self.assertIn("each only when it helps the reader scan", sec)
+        self.assertIn("Leave a set alone when it already scans", sec)
+        self.assertIn("the distinguishing word wins", sec)
+        self.assertIn("Never add a heading or lead-in", sec)
+        self.assertIn("In `edit` mode headings are preserved", sec)
+
+    def test_invariants(self):
+        sec = presets_section()
+        self.assertIn('"investigating" never\n  becomes "fixed"', sec)
+        self.assertIn("The actor is dropped only when the heading or lead-in states it", sec)
+        self.assertNotIn("or doesn't matter", sec)
+        self.assertIn("- Item order.", sec)
+        self.assertIn("do not swap in stronger-sentiment verbs", sec)
+
+    def test_light_edit_keeps_its_permissions(self):
+        sec = presets_section()
+        self.assertIn("`light-edit`: no list-structure changes", sec)
+        self.assertIn("Everything light-edit already allows\n  stays allowed", sec)
+        self.assertIn("We fixed the login bug", sec)
+        self.assertIn("bullet markers", sec)
+
+    def test_skill_points_to_the_section(self):
+        self.assertIn('"Parallel items"', text(POLISH))
+
+    def test_fixture_pairing(self):
+        import json
+        passes = {f["id"]: f for f in json.loads((FIX / "fixtures.json").read_text(encoding="utf-8"))["fixtures"]}
+        fails = {f["id"]: f for f in json.loads((FIX / "fixtures_fail.json").read_text(encoding="utf-8"))["fixtures"]}
+        clean = passes["lists-01-status-clean-en"]
+        self.assertEqual(clean["before"], clean["after"])
+        for fid in ("fail-lists-recast-en", "fail-lists-status-inflated-en"):
+            self.assertEqual(fails[fid]["before"], clean["before"])
+            self.assertEqual(fails[fid]["fail_dimension"], "meaning_preserved")
+        self.assertEqual(fails["fail-lists-status-inflated-en"]["fidelity_class"], "status")
 
 
 class Attribution(unittest.TestCase):

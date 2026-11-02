@@ -247,6 +247,9 @@ When neither exists, use the lightest voice that fits the context:
    voice profile; genre-normal per the preset; or a second-language construction)
    makes the flag advisory only, not an edit. An all-"no" gate is not a mandate
    either — the cluster guardrail still applies (signals, not proof).
+   For a parallel set (status list, feed, cards, titles), follow
+   `references/scenario-presets.md` → "Parallel items": one shape is correct
+   there, and status, actor, order and facts never change.
 6. Apply the shared fact-to-interpretation protocol to each bridge that adds a
    cause, motive, significance, trend, or conclusion. Preserve a supported
    relation and its certainty; use co-occurrence wording for timing alone; retain

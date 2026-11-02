@@ -28,6 +28,13 @@ Classes:
                 "further research is needed", "not necessarily"); the add-side
                 twin of `strength` (Liao et al. 2026: review-flavored prompts
                 make models add these, and AI judges reward them)
+  status        a list item's status moves up the closed ladder
+                planned < in progress < done ("Investigating" -> "Fixed").
+                Items are aligned by entity (ticket ID, then a content-word key
+                unique within the list), never by position, so a status swapped
+                between two items is caught and a faithful reorder is not. Only
+                runs when `before` has two or more list items. Items that can't
+                be aligned are reported by `status_coverage()`, never as a pass.
 """
 import re
 
@@ -53,6 +60,100 @@ _ADDED_QUAL = re.compile(
     r"|further (?:research|work|analysis|study) (?:is|would be) (?:needed|required|warranted)"
     r"|not necessarily|correlation (?:is not|does not imply) causation"
     r"|(?:by|on) (?:itself|themselves|its own|their own),? (?:this|these|it|they) (?:do|does) not)\b", re.I)
+
+
+_STATUS_LADDER = (
+    (0, "planned", re.compile(r"\b(?:planned|planning|next up|to ?do|not started|backlog|scheduled|proposed|queued|upcoming)\b", re.I)),
+    (1, "in progress", re.compile(r"\b(?:in progress|investigating|working on|ongoing|underway|in review|blocked|debugging|testing|fixing|migrating|drafting|reviewing|rolling out|mitigat(?:ing|ed))\b", re.I)),
+    (2, "done", re.compile(r"\b(?:done|fixed|resolved|shipped|completed?|merged|launched|released|closed|deployed|finished)\b", re.I)),
+)
+_LIST_ITEM = re.compile(r"^\s*(?:[-*•]|\d+[.)])\s+(.+?)\s*$", re.M)
+_TICKET = re.compile(r"\b[A-Z][A-Z0-9]+-\d+\b")
+_STOP = {"the", "and", "for", "with", "from", "into", "that", "this", "then",
+         "than", "about", "after", "before", "over", "under"}
+
+
+def _items(text):
+    return [m.group(1) for m in _LIST_ITEM.finditer(text)]
+
+
+def _status(item):
+    """(tier, label) of the earliest status word in the item, or None."""
+    best = None
+    for tier, label, rx in _STATUS_LADDER:
+        m = rx.search(item)
+        if m and (best is None or m.start() < best[0]):
+            best = (m.start(), tier, label)
+    return None if best is None else (best[1], best[2])
+
+
+def _content_key(item):
+    words = set(re.findall(r"[a-z][a-z0-9]{3,}", item.lower())) - _STOP
+    return {w for w in words if not any(rx.fullmatch(w) for _, _, rx in _STATUS_LADDER)}
+
+
+def _unique_best(keys_from, keys_to, i, skip):
+    """Index in keys_to sharing the most content words with keys_from[i], if unique."""
+    scores = [(len(keys_from[i] & k), j) for j, k in enumerate(keys_to) if j not in skip]
+    if not scores:
+        return None
+    top = max(s for s, _ in scores)
+    winners = [j for s, j in scores if s == top]
+    return winners[0] if top > 0 and len(winners) == 1 else None
+
+
+def _align(before_items, after_items):
+    """Map before index -> after index by entity, never by position.
+
+    First a ticket ID that is unique in both lists; then a content-word key,
+    accepted only when the best match is unique and mutual. Anything else stays
+    unaligned (see status_coverage)."""
+    pairs, used = {}, set()
+    b_ids = [_TICKET.findall(i) for i in before_items]
+    a_ids = [_TICKET.findall(i) for i in after_items]
+    for bi, ids in enumerate(b_ids):
+        if len(ids) == 1 and sum(ids[0] in b for b in b_ids) == 1:
+            hits = [ai for ai, a in enumerate(a_ids) if ids[0] in a]
+            if len(hits) == 1:
+                pairs[bi] = hits[0]
+                used.add(hits[0])
+    b_keys = [_content_key(i) for i in before_items]
+    a_keys = [_content_key(i) for i in after_items]
+    for bi in range(len(before_items)):
+        if bi in pairs or b_ids[bi]:
+            continue
+        ai = _unique_best(b_keys, a_keys, bi, used)
+        if ai is not None and _unique_best(a_keys, b_keys, ai, set(pairs)) == bi:
+            pairs[bi] = ai
+            used.add(ai)
+    return pairs
+
+
+def _status_violations(before, after):
+    b, a = _items(before), _items(after)
+    if len(b) < 2 or len(a) < 2:
+        return []
+    out = []
+    for bi, ai in sorted(_align(b, a).items()):
+        sb, sa = _status(b[bi]), _status(a[ai])
+        if sb and sa and sa[0] > sb[0]:
+            out.append(("status", f"'{b[bi][:40]}': {sb[1]} -> {sa[1]}"))
+    return out
+
+
+def status_coverage(before, after):
+    """`before` list items the status class could not align (never a pass).
+
+    Empty when `before` has fewer than two list items (the class does not run).
+    When `after` collapses to fewer than two items, every `before` item is
+    unaligned, so a merge that also inflates a status can't pass silently."""
+    b, a = _items(before), _items(after)
+    if len(b) < 2:
+        return []
+    if len(a) < 2:
+        return list(b)
+    pairs = _align(b, a)
+    return [item for i, item in enumerate(b) if i not in pairs]
 
 
 def _has_word(text, w):
@@ -83,4 +184,5 @@ def fidelity_violations(before, after):
     added = {m.group(0).lower() for m in _ADDED_QUAL.finditer(after)} - {m.group(0).lower() for m in _ADDED_QUAL.finditer(before)}
     for q in sorted(added):
         out.append(("added_qualification", f"added '{q}'"))
+    out.extend(_status_violations(before, after))
     return out
