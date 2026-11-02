@@ -464,10 +464,13 @@ K=2 runs per arm.
 
 ## Decisions for the owner
 
-1. Approve v2 so step 9 can start.
+**Ruled (2026-11-02):**
+- **D (praise of flagged text):** follow Codex. There is no string-overlap rule; whether praise lands on a property the report criticizes is judged in the eval. Fable proposed a sentence-level rejection instead; it is not adopted.
+- **comms-shape intake:** at most 3 questions in the first round.
+
+**Open:**
+1. Approve v2 so step 9 can start. A second review round (Codex and Fable on v2) comes first.
 2. Will you blind-label about 10 items on the existing labeling page? Both reviewers want a human anchor.
-3. On D, the reviewers disagreed: Fable wanted to reject praise of any sentence that also has a finding; Codex said that can be legitimate. v2 follows Codex: no string rule, and the double-dip is judged in the eval instead.
-4. comms-shape intake is capped at 3 questions, not 5, to match the existing harness and keep short requests light.
 
 ## Review log
 
@@ -477,7 +480,7 @@ C = Codex finding number, F = Fable finding number. "Accepted" means v2 adopts t
 |---|---|---|
 | Eval uses v1 rules as written; deviations declared | C1, F7 | Accepted |
 | Fabricated Fixes in the worked example; Fix fidelity | C2 | Accepted (rewrite plus number-word guard) |
-| Praise overlap rule | C3, F1 | String rule dropped (C3). Fable's sentence-level rejection was not adopted, see owner decision 3. |
+| Praise overlap rule | C3, F1 | String rule dropped (C3). Fable's sentence-level rejection was not adopted (owner ruling 2026-11-02). |
 | Quote grammar, ×N, distinctness, multi-line, normalization, ellipses | C4, F2, F3 | Accepted. No ellipses (C4); casefold plus apostrophe and dash normalization (F3). |
 | Parallel-set trigger | C5, F5 | Accepted. Meaning plus container, no count, existing heading only, separately delivered texts excluded. |
 | T7 checkable definition; enforcement tag | C6, F6 | Accepted |
