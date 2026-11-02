@@ -1,0 +1,2336 @@
+{
+ "judges": [
+  {
+   "perm_key": "p1",
+   "items": [
+    {
+     "id": "ds-01-abtest",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Names the 'two open questions' as revenue and novelty, which is an interpretation (flagged to author); both are supported by the notes"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Light, useful edits that keep every number and hedge; the named questions match the notes and the guess is flagged."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Only fixes the ambiguous 'it fades' to 'the lift fades'; faithful."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Same single fix as B; faithful and minimal."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "ds-02-churn",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Returned unchanged with a useful note to add a name."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Returned unchanged; the draft was already good."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Light smoothing (contractions, one merged sentence) with no change in meaning."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "A",
+      "B"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "ds-03-dataincident",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; the draft already matched the notes."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Tiny consistency edits and an active-voice rewording; meaning intact."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged, and the note explains why the hedges stay."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "A",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "ds-04-forecast",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Light flow edits that keep every number; useful flag on the vague 'most plausible outcomes'."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; the memo was already strong."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct call."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "C",
+      "A"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "ds-05-fraudmodel",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Folds the one-item bullet into the sentence and removes the doubled 'higher'; a clean improvement."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; fine, though the one-item bullet and the doubled 'higher' remain."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "'We'll post what we find' became the imperative 'Post what we find', which weakens the team's commitment and reads like an instruction"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Small wording tweaks; turning the plan bullets into imperatives slightly blurs who does what."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "ds-06-survey",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; the caveats are kept intact."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Joins 'can't say whether higher or lower' to 'less active users are underrepresented' with 'since', which makes one the stated reason for the other"
+        },
+        {
+         "type": "scope_change",
+         "detail": "'top themes' became 'top two themes' (consistent with the later 'two themes')"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Reads more smoothly and fixes the dangling sentence, but adds a small causal connective."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged, with a good rationale."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "A",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "ds-07-nullresult",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "weakened_certainty",
+         "detail": "'no evidence that it is positive' became 'no clear evidence', which implies there is some evidence; this softens the author's deliberate claim"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Mostly faithful, but changes a carefully chosen statistical claim."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "C",
+      "A"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "ds-08-latency",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; the hypothesis stays a hypothesis."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged, with the arithmetic verified."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Two trivial phrasing tweaks; meaning intact."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "A",
+      "B"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "factbridge-01-unsupported-cause-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Correctly cuts the unsupported cause."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Correctly cuts the unsupported cause; concise note."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Correctly cuts the unsupported cause."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "factbridge-02-cooccurrence-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Removes the causal claim; the note slightly misstates the source as saying neither caused the other."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Removes the causal claim, and the note describes the source accurately."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Removes the causal claim; the note slightly misstates the source as saying neither caused the other."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "factbridge-04-supported-possibility-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correctly keeps 'may be related'."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Replaces the semicolon with 'and'; the hedge is kept."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "A",
+      "B"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "tweet-01-obvious",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "added_claim",
+         "detail": "'We're launching something new' adds a launch the original never states"
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "'revolutionize' softened to 'change'"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Reads naturally, but invents a launch."
+      },
+      {
+       "label": "B",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "added_claim",
+         "detail": "'We just built' and 'Details soon' are both new claims or commitments"
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "'will revolutionize how you work' became 'should make your work easier'"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": true,
+       "comment": "The most natural tweet, but it changes and adds claims."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "weakened_certainty",
+         "detail": "'revolutionize' softened to 'change'"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "The most faithful reduction to the one real claim; a bit stiff."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "A",
+      "C"
+     ],
+     "best": "C"
+    },
+    {
+     "id": "linkedin-01-obvious",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "added_claim",
+         "detail": "The keynote became 'on innovation' and 'a highlight'; 'I'm glad I went' is new"
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "'transformative' downgraded to 'valuable'"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Warmest and most human, but it adds claims about the keynote and the ending."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Drops the 'transformative experience' sentiment"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Faithful but flat; loses the author's sense that the event mattered."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Faithful to the three real points, with 'strong impression' standing in for 'transformative'."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "C",
+      "B"
+     ],
+     "best": "C"
+    },
+    {
+     "id": "memo-01-obvious",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "strengthened_certainty",
+         "detail": "Drops 'Experts believe', so an attributed belief becomes the memo's own assertion (flagged in the note)"
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "'undoubtedly elevate' became 'will improve'"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Clean, but removing the attribution changes whose claim it is."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Drops the step-by-step / holistic approach sentence"
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "'paramount' became 'essential'; 'undoubtedly' removed"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Keeps the attribution and the core claims; somewhat stiff."
+      },
+      {
+       "label": "C",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "strengthened_certainty",
+         "detail": "Drops 'Experts believe', so the claim becomes the author's own"
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "'paramount' became 'should be a priority'"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Reads like a real memo but removes the attribution and keeps the 'as we move forward' filler."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "A",
+      "B"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "memo-02-subtle",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "'this balanced approach' shortened to 'this approach'"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Faithful filler removal with the hedges intact."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Faithful and the most natural phrasing ('trending up', 'watch for')."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Faithful, with a useful flag on the could/will inconsistency; 'trending positively' is awkward."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "A",
+      "C"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "overstep-05-payoff-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Keeps the author's objection-and-answer framing and only cuts 'actually'."
+      },
+      {
+       "label": "B",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Drops the anticipated objection that merging causes more outages"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": true,
+       "comment": "Removes a legitimate rhetorical setup from already-good writing."
+      },
+      {
+       "label": "C",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Drops the anticipated objection that merging causes more outages (the note offers to restore it)"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": true,
+       "comment": "Same cut as B, though the note offers to keep the objection if it's real."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "C",
+      "B"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "overstep-06-strawman-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Drops the 'stuffing every document' topic framing entirely"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Removes the strawman cleanly but loses the subject."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Keeps the subject and states the real claim without the strawman; the best balance."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Adds 'because', explicitly making the bury/accuracy point the reason for the 8-chunk cap (implied but not stated)"
+        },
+        {
+         "type": "dropped_fact",
+         "detail": "Drops the 'stuffing every document' framing"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Natural single sentence, but it makes the implied rationale explicit."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "C",
+      "A"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "narrshape-04-absent-ambiguity-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged, with useful gap flags."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged, with useful gap flags."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged, with useful gap flags."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "artifact-01-status-card-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Correctly cuts the self-describing sentence."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Correctly cuts the self-describing sentence."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Correctly cuts the self-describing sentence."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "fp-terse-04",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "fp-pro-linkedin-07",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "One harmless word added for clarity."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "A",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "fp-pro-memo-09",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "fp-academic-05",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct for spec prose."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "fp-esl-03-memo",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Deadline 'before this week' became 'this week' (an interpretation, flagged)"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Clean grammar fix; resolves the ambiguous deadline with a plausible reading and flags it."
+      },
+      {
+       "label": "B",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Deadline 'before this week' became 'before this week starts', which may already have passed (flagged)"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Good grammar fix, but the deadline guess could be wrong in context."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Fixes the grammar only, keeps the author's phrase, and asks about the ambiguous deadline."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "C"
+    },
+    {
+     "id": "s1-light-edit",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Only the apostrophes; correct."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Only the apostrophes; correct."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Only the apostrophes; correct."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "s1-timeline",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; fine as a log."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; fine."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Consistent capitalization and punctuation for a doc, every fact unchanged, and a useful flag on the 14:45 to 15:30 gap."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "A",
+      "B"
+     ],
+     "best": "C"
+    },
+    {
+     "id": "s1-stance",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "weakened_certainty",
+         "detail": "Drops 'hands down' from the verdict on the CUPED talk"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Faithful but slightly stiff ('renewed enthusiasm')."
+      },
+      {
+       "label": "B",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "'renewed passion for rigorous testing' became 'wanting to test more rigorously', which implies their testing was not rigorous before"
+        },
+        {
+         "type": "dropped_fact",
+         "detail": "Drops 'eye-opening' and 'recently'"
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "Drops 'hands down'"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Natural, but it shifts the stance on rigorous testing."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Drops 'eye-opening'"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Keeps the author's strong verdict and voice; reads most human."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "B",
+      "A"
+     ],
+     "best": "C"
+    },
+    {
+     "id": "s1-attribution",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "weakened_certainty",
+         "detail": "'It is therefore crucial' softened to 'We should'"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Faithful and keeps the attribution; the 'what comes next' ending is slightly vague."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Drops the 'remain well-positioned' clause (filler)"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Tight and keeps the attribution."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Drops the 'remain well-positioned' clause (filler)"
+        }
+       ],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Tight, keeps the attribution, and has a clear note."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "B",
+      "A"
+     ],
+     "best": "C"
+    },
+    {
+     "id": "s1-terse-status",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged, with a useful flag on 'by Fri'."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Unchanged; correct."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "unsupported_claims_kept": [],
+       "over_edited": false,
+       "comment": "Punctuation-only changes that add little to a terse status; useful ambiguity flags."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    }
+   ]
+  },
+  {
+   "perm_key": "p2",
+   "items": [
+    {
+     "id": "ds-01-abtest",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Changes one word, 'it' to 'the lift', which removes an ambiguous referent and touches nothing else."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Same text as A with a fuller note to the author; the fix is correct and minimal."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Names the 'two open questions' as revenue and novelty, which is an interpretation of the draft (the notes support it, and the change is flagged)."
+        }
+       ],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Makes the opening more concrete, but it guesses which two questions the author meant; the guess is flagged."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "A",
+      "B"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "ds-02-churn",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Light tightening that keeps every hedge and number, and it flags the missing sign-off name."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Returned unchanged with the numbers checked; that is correct for a draft this clean."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Returned unchanged, with a useful note to add a name after 'Thanks'."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "ds-03-dataincident",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Returned unchanged; the hedges and timeline match the notes."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Makes small consistency edits and moves one sentence to active voice; the hedges are intact."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Returned unchanged, with a correct check against the notes."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "A",
+      "C"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "ds-04-forecast",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Returned unchanged; the memo was already strong."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Returned unchanged, with the arithmetic checked."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Light flow edits keep the meaning, but merging the summary sentences weakens the clean 'I recommend 125k.' The flagged vagueness is useful."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "ds-05-fraudmodel",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Makes the plan bullets parallel verbs; the meaning is intact."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Returned unchanged; the draft was fine."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Folds the lone bullet into the sentence and merges the repeated comparison; a clean, minimal improvement."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "A",
+      "B"
+     ],
+     "best": "C"
+    },
+    {
+     "id": "ds-06-survey",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Returned unchanged; the tacked-on sentence about underrepresented users is left as it was."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Adds 'since', linking the underrepresentation of less active users to the unknown direction; the draft only implied that link."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Fixes the dangling last sentence and makes 'majority of respondents' and 'top two themes' precise without changing the substance."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Returned unchanged; acceptable."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "A",
+      "C"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "ds-07-nullresult",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Returned unchanged; the statistics are worded correctly."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Returned unchanged with sound reasoning."
+      },
+      {
+       "label": "C",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "weakened_certainty",
+         "detail": "'no evidence that it is positive' became 'no clear evidence', which implies some weak evidence of a positive effect."
+        }
+       ],
+       "over_edited": false,
+       "comment": "The contractions are fine, but 'no clear evidence' softens the author's deliberate claim."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "A",
+      "B"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "ds-08-latency",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Smooths two phrases; the hypothesis stays separate from the facts."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Returned unchanged, with the arithmetic checked."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Returned unchanged with the hedges intact."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "factbridge-01-unsupported-cause-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Removed the unsupported causal clause, which corrects the sentence to match the source note."
+        }
+       ],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Cuts the unsupported cause correctly."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Removed the unsupported causal clause, which corrects the sentence to match the source note."
+        }
+       ],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Same correct cut."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Removed the unsupported causal clause, which corrects the sentence to match the source note."
+        }
+       ],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Same correct cut, and it warns against softening the clause instead of cutting it."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "factbridge-02-cooccurrence-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Removed the causal claim, which corrects the sentence to match the source note."
+        }
+       ],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "The text is correct, but the note misstates the source as saying 'neither caused the other'."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Removed the causal claim, which corrects the sentence to match the source note."
+        }
+       ],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "The text is correct, and the note describes the source accurately."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Removed the causal claim, which corrects the sentence to match the source note."
+        }
+       ],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "The text is correct, but the note says the source 'says neither caused the other', which overstates it."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "A",
+      "C"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "factbridge-04-supported-possibility-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Swaps the semicolon for ', and' and keeps the hedge."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Returned unchanged; the sentence already matched the source."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "unsupported_claims_kept": [],
+       "comment": "Returned unchanged, with a useful warning not to upgrade it to a causal claim."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "C",
+      "A"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "tweet-01-obvious",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "weakened_certainty",
+         "detail": "'revolutionize' became 'change'."
+        },
+        {
+         "type": "dropped_fact",
+         "detail": "Dropped 'seamless, robust', the excitement, 'future looks bright', the emoji and five hashtags."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Faithful and adds nothing, but the tweet is flat; the note asks for specifics."
+      },
+      {
+       "label": "B",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "added_claim",
+         "detail": "Adds 'We just built' and the promise 'Details soon.'"
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "'will revolutionize how you work' became 'should make your work easier'."
+        }
+       ],
+       "over_edited": true,
+       "comment": "Reads the most like a person, but it invents a timeline and a promise."
+      },
+      {
+       "label": "C",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "added_claim",
+         "detail": "Adds that the team is 'launching' something."
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "'revolutionize' became 'change'."
+        }
+       ],
+       "over_edited": false,
+       "comment": "A natural tweet, but 'launching' is not in the original."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "C",
+      "A"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "linkedin-01-obvious",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "weakened_certainty",
+         "detail": "'transformative experience' became 'made a strong impression on me'."
+        },
+        {
+         "type": "dropped_fact",
+         "detail": "Dropped the closing lines, which carried no content."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Faithful but a bit stiff; it keeps the three actual points."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Dropped 'pivotal' and 'transformative' and the closing lines."
+        }
+       ],
+       "over_edited": false,
+       "comment": "A concise, faithful strip-down that adds nothing."
+      },
+      {
+       "label": "C",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "added_claim",
+         "detail": "Adds 'I'm glad I went' and calls the keynote 'a highlight'."
+        },
+        {
+         "type": "other",
+         "detail": "'keynote was a testament to the power of innovation' became 'keynote on innovation', which changes what is said about the keynote."
+        }
+       ],
+       "over_edited": true,
+       "comment": "Reads naturally but invents sentiments and changes the keynote claim."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "B",
+      "A"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "memo-01-obvious",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Removes the 'Experts believe' attribution, so the experts' view becomes the author's own (flagged)."
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "'paramount' became 'should be a priority', and 'undoubtedly' was removed."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Reads smoothly, but it moves the claim from the experts to the author."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "weakened_certainty",
+         "detail": "'undoubtedly' was removed, and 'paramount' became 'essential'."
+        },
+        {
+         "type": "dropped_fact",
+         "detail": "Dropped the closing 'step by step / holistic' sentence (flagged as empty)."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Keeps the attribution and flags the missing source, though the text is choppy."
+      },
+      {
+       "label": "C",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Removes the 'Experts believe' attribution and states it as the memo's own view."
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "'undoubtedly' was removed."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Strong flags, but the text still turns an attributed claim into the author's."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "C",
+      "B"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "memo-02-subtle",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "'this balanced approach' became 'That strategy'; the referent is slightly narrowed."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Cuts the filler and keeps the hedges; it usefully flags the clash between 'could' and 'will'."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "The tightest version, with each claim kept at its original strength."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Faithful, but 'trending in a positive direction' stays a little wordy."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "A",
+      "C"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "overstep-05-payoff-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Drops the anticipated objection (that merging causes more outages), which the argument rebuts."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Crisp, but it removes the rebuttal framing the author used on purpose; the note does flag it."
+      },
+      {
+       "label": "B",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Drops the anticipated objection the argument rebuts."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Same loss as A, and the note does not mention it."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Keeps the backed contrast and only cuts 'actually'."
+      }
+     ],
+     "reads_human_rank": [
+      "C",
+      "A",
+      "B"
+     ],
+     "best": "C"
+    },
+    {
+     "id": "overstep-06-strawman-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "States explicitly that the cap exists 'because' long prompts hurt accuracy; the draft only implied this."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Removes the strawman cleanly and spells out the reason it implied."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Turns the strawman into a direct claim at the same strength; this reads best."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Faithful but a bit abrupt without the topic sentence."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "A",
+      "C"
+     ],
+     "best": "B"
+    },
+    {
+     "id": "narrshape-04-absent-ambiguity-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Returned unchanged, with a helpful question about relative versus absolute lift."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Returned unchanged; the note mentions 'notes' the author never gave."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Returned unchanged, with useful gap flags."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "artifact-01-status-card-en",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Cuts the self-describing sentence and keeps every fact."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Same correct cut."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Same correct cut."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "fp-terse-04",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left unchanged."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left unchanged."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left unchanged."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "fp-pro-linkedin-07",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left unchanged."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Adds 'across' for grammar; a harmless micro-edit."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left unchanged."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "A",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "fp-pro-memo-09",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left unchanged."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left unchanged."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left unchanged."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "fp-academic-05",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left the precise spec prose alone."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left unchanged."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left unchanged."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "fp-esl-03-memo",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Fixes the grammar only, keeps the ambiguous 'before this week' as written, and asks the author about it."
+      },
+      {
+       "label": "B",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "Resolves 'before this week' as 'before this week starts', which may be a deadline the author did not mean (flagged)."
+        }
+       ],
+       "over_edited": false,
+       "comment": "The most natural greeting and flow, but it guesses at the deadline."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "'before this week' became 'this week', a looser reading of the deadline (flagged)."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Fixes the grammar and picks the safest reading of the deadline, which it flags."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "C",
+      "A"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "s1-light-edit",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Only adds the missing apostrophes, as asked."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Only adds the missing apostrophes, as asked."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Only adds the missing apostrophes, as asked."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "s1-timeline",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "A light formatting polish that changes no facts, plus a useful question about the gap between 14:45 and 15:30."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Unchanged, which is acceptable for a log."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Unchanged, with careful reasoning about not implying a cause."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "s1-stance",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Dropped 'eye-opening'."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Keeps the strong opinion, including 'hands down', and cuts the stock phrasing well."
+      },
+      {
+       "label": "B",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "other",
+         "detail": "'renewed passion for rigorous testing' became 'left me wanting to test more rigorously', which implies past tests were not rigorous."
+        },
+        {
+         "type": "weakened_certainty",
+         "detail": "Dropped 'hands down'."
+        },
+        {
+         "type": "dropped_fact",
+         "detail": "Dropped 'eye-opening'."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Casual and clean, but it shifts what the author says about rigor."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "weakened_certainty",
+         "detail": "Dropped 'hands down'."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Faithful, but 'it was eye-opening' still reads a bit stock."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "s1-attribution",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Dropped 'remain well-positioned for the road ahead' (filler, flagged)."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Keeps the analyst attribution and cuts the filler cleanly."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [
+        {
+         "type": "dropped_fact",
+         "detail": "Dropped the 'well-positioned' clause (flagged)."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Nearly identical to A, with a thorough note."
+      },
+      {
+       "label": "C",
+       "would_send": false,
+       "meaning_changes": [
+        {
+         "type": "weakened_certainty",
+         "detail": "'It is therefore crucial that we' became 'We should'."
+        }
+       ],
+       "over_edited": false,
+       "comment": "Keeps the attribution but softens the urgency and retains a filler-like ending."
+      }
+     ],
+     "reads_human_rank": [
+      "A",
+      "B",
+      "C"
+     ],
+     "best": "A"
+    },
+    {
+     "id": "s1-terse-status",
+     "candidates": [
+      {
+       "label": "A",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "The punctuation changes make the terse update a bit stiffer; it flags the ambiguities usefully."
+      },
+      {
+       "label": "B",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Correctly left unchanged."
+      },
+      {
+       "label": "C",
+       "would_send": true,
+       "meaning_changes": [],
+       "over_edited": false,
+       "comment": "Unchanged, with a helpful flag on what 'by Fri' means."
+      }
+     ],
+     "reads_human_rank": [
+      "B",
+      "C",
+      "A"
+     ],
+     "best": "C"
+    }
+   ]
+  }
+ ]
+}

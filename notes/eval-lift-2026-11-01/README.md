@@ -2,6 +2,19 @@
 
 **Status: ADVISORY EXPERIMENT.** This is one run, with Claude as both writer and judge. It is directional evidence, not a benchmark. It is not wired into `run_all.sh` (ruling D2).
 
+> **CORRECTION (2026-11-01, adversarial review in `review/`).** Several claims
+> below did not survive re-analysis:
+> - The "p=0.04" meaning-drift result did not replicate. Five re-judgings of
+>   byte-identical outputs gave p = 0.039 / 0.125 / 0.109 / 0.125 / 0.065. The
+>   direction is stable; significance is not.
+> - The PR #67 finding was decided by the judge rubric, not by the data.
+> - The pre-registered step gate fails identical text in 9 of 12 run pairs, so
+>   its PASS/FAIL verdicts carry no information.
+>
+> What survives: the suite ties a one-line instruction, edits less than bare
+> Sonnet, and clearly beats cursor pstack unslop. Read `review/README.md`
+> before citing any number here.
+
 ## Question
 
 On `comms-polish`-style requests, does the suite produce text the author would rather send than what a bare model or a one-line instruction produces? Does the unmerged PR #67 (fact-to-interpretation boundary) change that? How do two popular external skills compare?
