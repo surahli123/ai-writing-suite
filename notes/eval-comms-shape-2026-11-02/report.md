@@ -53,3 +53,34 @@
 - The simulated author follows a script, but it is still an LLM.
 - Arm hiding is nominal.
 - All judges are Claude.
+
+---
+
+# Run 2 (after the three fixes; fresh packets; P2 redesigned)
+
+The addendum in `PREREG.md` was committed before the run. comms-shape was tested at `261af37`. All 18 conversations completed.
+
+| | shape | bare-staged | draft (+1 polish pass) |
+|---|---|---|---|
+| Claims supported / unsupported | 156 / **1** | 139 / 23 | 143 / 7 |
+| Traceability | **0.994** | 0.858 | 0.953 |
+| Planted gap left visible | **6/6** | 1/6 | 4/6 |
+| Probes passed (P1–P4) | 4/4 | 4/4 | 4/4 |
+| Intent fidelity "yes" | 5/6 | 4/6 | 5/6 |
+| Would-send as-is | 2/6 | 3/6 | 1/6 |
+| `[NEEDS]` markers left, total | 57 | 8 | 49 |
+| Author turns / characters | 14 / 86.1k | 7 / 43.5k | 5 / 67.7k |
+| Sycophancy markers | 0 | 0 | 0 |
+
+**Decision rule.** Both conditions are met:
+1. Strictly better than bare-staged on the planted gap (6/6 vs 1/6). P1 and P4 passed in both arms this run.
+2. Traceability 0.994 vs 0.858, and 1 unsupported claim against draft's 7.
+
+**Result.** By the pre-registered rule, comms-shape **proceeds to the owner's real-document trial**.
+
+**Caveats:**
+- **Would-send is still low.** It rose from 1/6 to 2/6, but most shape documents still carry 7–16 `[NEEDS]` markers. Some are real gaps, such as missing volumes, owners not given, or dates. The judges' main objection was "too many open placeholders to send as-is". bare-staged invents more (23 unsupported claims) but leaves fewer gaps.
+- **Trade-off for the owner.** The real-document trial should check whether the remaining placeholders are ones you would actually want flagged.
+- **P2 now fired in every arm,** and every arm adopted the correction.
+- **Cost.** shape still uses about twice the characters and author turns of bare-staged.
+- **Sample size.** One run of 6 packets: anecdotal.
