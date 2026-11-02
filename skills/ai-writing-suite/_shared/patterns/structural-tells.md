@@ -85,6 +85,9 @@ every flagged word while leaving the shape untouched still reads as AI.
   Summary, Conclusion, FAQ with invented questions.
 - **Fix:** Keep the headings and lists the reader will actually use. Collapse the
   rest into prose. Use headers that tell the reader something specific.
+- **Validity condition:** the bullet-density signal does not apply to a parallel
+  set whose items carry checkable content (a status list, feed or set of metric
+  rows; see T7 for "checkable"). There the list *is* the content.
 - **Sources:** avoid-ai (excessive structure), anti-vibe (over-structured
   outlines + stock modules), blader (P14/P15 partial), aboudjem (§16).
 
@@ -101,6 +104,10 @@ every flagged word while leaving the shape untouched still reads as AI.
   has been strengthened…"
 - **Fix:** Strip the bold header and write the point directly, or convert the
   list to a prose paragraph.
+- **Validity condition:** the tell is a header that *repeats* the item's own
+  words. A consistent label from a closed set on each item of a parallel set
+  (`**Shipped:**`, `**Blocked:**`, `**Owner:**`) is structure, not a tell; keep
+  it, and never convert such a list to prose.
 - **Before:** - **User Experience:** The user experience has been improved with a
   new interface.
 - **After:** The update improves the interface, speeds up load times, and adds
@@ -113,16 +120,31 @@ every flagged word while leaving the shape untouched still reads as AI.
 
 | Severity | Enforcement |
 | --- | --- |
-| low | regex |
+| low | judge |
 
-- **Tell:** 5+ consecutive bullets, each a short (≤6-word) adjective+noun phrase
-  with no verb and nothing checkable: "Stable mining efficiency / Reliable pool
-  connectivity / Optimized RandomX performance." The tell is the *symmetry* —
-  every item the same shape and length.
-- **Fix:** Convert to prose, or rewrite items as full claims ("Failed shares
-  stayed under 1% across a 12-hour run"). Does **not** apply to genuine list
+- **Tell:** A run of short bullets with nothing a reader could verify. An item is
+  *checkable* when it carries at least one of: a specific action on a named
+  target; a named artifact, person or ticket together with what was done to it
+  or what state it is in; a number; an outcome. A noun alone is not
+  information, and an evaluative verb (optimized, improved, enhanced,
+  streamlined, unlocked, boosted) is not a specific action unless a number or an
+  outcome comes with it. Examples of the tell:
+  - "Stable mining efficiency / Reliable pool connectivity / Optimized RandomX
+    performance"
+  - "Optimize customer outcomes / Unlock enterprise value"
+  - "Fast setup / Clean design / Easy onboarding"
+- **Not the tell:** symmetry alone. A verb-first status list such as "Fixing
+  login redirect loop / Migrating billing jobs to the new queue" reports
+  specific actions on named targets; its one shape is what makes it scan.
+- **Fix:** Rewrite items as checkable claims using facts already in the source
+  ("Failed shares stayed under 1% across a 12-hour run"), or flag the missing
+  detail. Never invent the detail. Convert to prose only when the items are
+  really an argument rather than a set. Does **not** apply to genuine list
   content (changelog, parameter docs, ingredients) where bare phrases are correct.
-- **Sources:** avoid-ai (bullet-NP lists).
+- **Detector note:** the detector's `bullet-np-list` heuristic is a coarse proxy
+  that also fires on verb-first status lists. That divergence is known and is
+  not evidence of the tell.
+- **Sources:** avoid-ai (bullet-NP lists); fsdatalab (ideas only).
 
 ---
 
@@ -156,7 +178,8 @@ every flagged word while leaving the shape untouched still reads as AI.
 - **Validity condition:** the reshuffle test only indicts *argumentative* prose.
   Reference docs, FAQs, API entries, changelogs, glossaries, and deliberately
   modular documents have independent, swappable blocks by design — that is correct
-  structure, not an AI tell. Ask: is this piece building one unfolding argument,
+  structure, not an AI tell. So are parallel sets: status lists, feeds and card
+  sets whose items each answer the same question about a different subject. Ask: is this piece building one unfolding argument,
   or is it a reference whose entries are meant to stand alone?
 - **Sources:** blader (P38), avoid-ai (paragraph-reshuffle immunity).
 
@@ -220,7 +243,8 @@ every flagged word while leaving the shape untouched still reads as AI.
   short, but make it a sentence.
 - **Validity condition (advisory):** flag only what a rewrite *introduced* in a
   genre that isn't terse by convention. Status updates, Slack, incident
-  timelines, and commit messages written tersely by their author are genre-normal
+  timelines, commit messages, titles, card text, and list items written tersely
+  by their author are genre-normal
   (false-positive gate question 4). Never expand an author's terse bullets into
   prose.
 - **Sources:** cursor/plugins pstack `unslop` rule 33 (MIT, Lauren Tan); round-2

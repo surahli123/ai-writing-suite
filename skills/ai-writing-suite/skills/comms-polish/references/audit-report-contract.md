@@ -35,16 +35,59 @@ order, or tier names themselves.
    alongside real findings in the same tier.
    Every finding uses this four-part shape, **in exactly this order, once each**:
    - `**Quote:**` the exact snippet from the draft, quoted (not paraphrased).
+     One instance goes inline: `**Quote:** "…"`. Several instances of the same
+     pattern go one per indented sub-bullet under a bare `**Quote:**` line
+     (`  - "…"`).
    - `**Tell:**` the catalog id + name it matches — e.g. `S1 — Significance
      inflation` — and the id **must** be a real entry from `_shared/patterns/`.
-   - `**Why:**` one line on why it reads as AI.
+   - `**Why:**` one line on why it reads as AI. When the Quote carries more
+     than one instance, Why **starts** with `×N`, where N is the number of
+     instances counted as the tell, optionally followed by `(+M set aside:
+     <reasons>)`.
    - `**Fix:**` the corrected snippet, **shown** — quoted or in a code span —
-     never just described in prose.
+     never just described in prose. A Fix uses only material in the draft. When
+     a better sentence would need a fact the draft lacks, the Fix cuts the
+     words or shows a quoted `[NEEDS: …]`; it never invents a number, name, or
+     outcome.
 
-3. **`## What already reads well`.** One or two genuinely strong things, tied to a
-   specific passage, so the report is calibrated instead of a pile-on. Per the
-   repo's review standard, **no fake praise**: if nothing reads well yet, say so
-   plainly (e.g. `- Nothing here reads well yet — the draft is AI throughout.`).
+   **Instances and counts.**
+   - An instance is one contiguous span of the draft that shows the pattern.
+     Quote the shortest complete span, with no ellipses. The outer quote marks
+     open the snippet and close it at the last matching mark, so quotation
+     marks inside the draft stay intact. An optional location in parentheses
+     may follow, e.g. `"…" (¶2)`; the location contains no quote marks.
+   - Within one finding, each instance is a different, non-overlapping span of
+     the draft. Different findings may quote the same sentence. (The checker
+     cannot see the same span quoted by two different findings.)
+   - Quote every instance when N ≤ 5. When N > 5, quote the clearest 3–5 and
+     say in Why where the rest are.
+   - Set aside, and report as set aside rather than count, instances that are
+     evidence-answered (owner ruling R2), documented habits in a loaded voice
+     profile, or inside quotes or code.
+   - **Counts describe; they never become quotas or rewrite targets.**
+
+3. **`## What already reads well`.** One or two genuinely strong things, so the
+   report is calibrated instead of a pile-on. Assume your pull is toward
+   crediting the draft, and correct for it:
+   - Each strength is a verbatim quote from the draft plus a reason that fits
+     only that passage.
+   - Don't praise a property the report criticizes elsewhere. A sentence can
+     hold a checkable fact and a vague modifier at once; praising the fact
+     while flagging the modifier is fine.
+   - No praise for tone, effort, topic, or general structure.
+   - **No fake praise.** If nothing reads well yet, say so plainly, with no
+     verdict about who wrote it:
+     `- Nothing here reads well yet: every sentence carries a flagged pattern.`
+     A "Nothing" bullet never sits next to quoted strengths.
+
+3b. **`## Consistency and evidence gaps` — optional, report-only.** Place it
+   after `## What already reads well` and before the Coverage and score lines.
+   Each bullet gives a location and what differs: a metric reported with n and
+   an interval in one row but not its siblings, one metric under two names, or
+   a slot the genre needs that is missing. These are not AI tells, so bullets
+   carry no catalog id and no Fix, and nothing is filled in. A gap that matches
+   a catalog entry (S2, S4, S8) stays a finding with Quote / Tell / Why / Fix;
+   never report it in both places. Omit the section when it is empty.
 
 4. **Score — only when asked, always last.** When the user requested a score,
    place the 0-100 AI-tell score as the **final non-blank line of the entire

@@ -1,0 +1,296 @@
+{
+ "judges": [
+  {
+   "key": "bare_k1",
+   "kind": "abs",
+   "model": "opus",
+   "items": [
+    {
+     "id": "q01",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Cuts the hype and keeps every number, caveat, hedge ('hope to', 'cannot rule out') and the mobile-team condition."
+    },
+    {
+     "id": "q02",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Close to verbatim, with small grammar and paragraph tweaks. All facts kept."
+    },
+    {
+     "id": "q03",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which is right for text that was already clean and human."
+    },
+    {
+     "id": "q04",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "dropped_fact",
+       "detail": "The draft's commitment to roll back v3.8 disappeared without a word. The notes do not contradict a rollback, so Ops loses the action plan."
+      }
+     ],
+     "over_edited": false,
+     "comment": "It correctly fixes the causal overclaims to match the notes, but it also silently drops the rollback decision Ops needed to hear about."
+    },
+    {
+     "id": "q05",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Keeps the terse bullet format and only expands abbreviations a little. Meaning intact."
+    },
+    {
+     "id": "q06",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the filler opener and keeps the pp unit, the CI, the p-value and the hedged recommendation."
+    },
+    {
+     "id": "q07",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Strips the brochure language and keeps the precision figure, the CI, the postpaid-only scope and the vendor-feed lag caveat."
+    },
+    {
+     "id": "q08",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Light paragraphing and one small rephrase of a warm human note. Content unchanged."
+    },
+    {
+     "id": "q09",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "A light touch as asked. The load-test condition added to the Summary comes from the author's own Next steps. It does leave the 410,000 vs 401,000 per-arm inconsistency unflagged."
+    },
+    {
+     "id": "q10",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Drops only the filler opener and keeps 'only', 'roughly', 'suggests ... may have' and 'hope to'."
+    },
+    {
+     "id": "q11",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "added_claim",
+       "detail": "Swaps the author's recommendation to ship (rollout planned for next sprint) for a new stance, 'we are not recommending a rollout to all platforms', and adds 'We would like to agree next steps with the merch team'. The notes contain neither."
+      }
+     ],
+     "over_edited": false,
+     "comment": "The stats corrections match the notes, but the rewrite makes a decision the author never made by reversing the recommendation and inventing a next step."
+    },
+    {
+     "id": "q12",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the press-release tone. The numbers, the non-significance caveat, the unvalidated estimate, 'plan' and 'hope' are all kept."
+    },
+    {
+     "id": "q13",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Minor rewording and paragraph breaks. All figures and the calibration caveat kept."
+    },
+    {
+     "id": "q14",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Left unchanged, which suits an already natural sentence."
+    },
+    {
+     "id": "q15",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "A real light edit: capitalization and spacing only. The Slack shorthand is kept."
+    },
+    {
+     "id": "q16",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the breathless framing and keeps the CI, the card-not-present scope, the regulator-review timing and the target dates."
+    },
+    {
+     "id": "q17",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects $940k to the $640k in the notes and otherwise preserves the draft."
+    },
+    {
+     "id": "q18",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "number_change",
+       "detail": "'rose 1.2 percentage points' became 'rose 1.2%', which changes the unit and now clashes with 'roughly 3% in relative terms'."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Changing the unit from percentage points to percent is a substantive error."
+    },
+    {
+     "id": "q19",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Fixes the grammar and keeps the author's hedged causal reasoning and the Friday commitment."
+    },
+    {
+     "id": "q20",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Cuts the marketing fluff. CTR figures, the age-group concentration and the no-conversion-effect caveat are all kept."
+    },
+    {
+     "id": "q21",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Only adds commas and makes minor tweaks, so the content is preserved. It leaves the 17 vs 16 of 23 inconsistency unflagged."
+    },
+    {
+     "id": "q22",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "strengthened_certainty",
+       "detail": "'moved, but the difference was not statistically significant' became 'The flow had no effect on revenue per user', turning a non-significant result into a claim of no effect."
+      },
+      {
+       "type": "dropped_fact",
+       "detail": "The p=0.21 statistic is gone."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Turns absence of evidence into evidence of absence and drops the p-value."
+    },
+    {
+     "id": "q23",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "A light edit. 'To the row' became 'exactly', and the hedge on the DST cause is kept."
+    },
+    {
+     "id": "q24",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the padding and keeps the MAPE figures, the vendor attribution, the unconfirmed caveat, the top-40-SKU scope and the 30 April target. Dropping 'across the product catalog' removes a phrase that contradicted the author's own caveat."
+    },
+    {
+     "id": "q25",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects the root-cause overclaim to match the unverified status in the notes, adds the intake-form change, and keeps the comparison due next week."
+    },
+    {
+     "id": "q26",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Keeps the bullets short as requested. Expanding '1d' to '~1 day' is trivial for an effort estimate."
+    },
+    {
+     "id": "q27",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "strengthened_certainty",
+       "detail": "'suggests the routing change may have contributed' became 'shows the routing change contributed'."
+      },
+      {
+       "type": "strengthened_certainty",
+       "detail": "'We hope to ship' became 'We'll ship'."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Removes both hedges, so a tentative finding and an aspiration now read as fact and commitment."
+    },
+    {
+     "id": "q28",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Cuts the fluff, keeps the CI, the untested-mechanism hedge, the Android exclusion and the inconclusive retention caveat, and puts the caveats in tidy bullets."
+    },
+    {
+     "id": "q29",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Barely touched, which is right for already good human writing."
+    },
+    {
+     "id": "q30",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Corrects 25% to ~21%, scopes to the five metros, removes the weather and rural overclaims, and changes nationwide shipping to the five metros, all as in the notes."
+    },
+    {
+     "id": "q31",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "weakened_certainty",
+       "detail": "'won't be ready until Oct 20' became 'are expected to be ready by Oct 20'."
+      },
+      {
+       "type": "weakened_certainty",
+       "detail": "The direct instruction 'keep using the old dashboard' became 'we recommend continuing to use the legacy dashboard'."
+      }
+     ],
+     "over_edited": true,
+     "comment": "Rewrote clean human text into stiffer, more AI-sounding prose and softened a firm date and an instruction."
+    },
+    {
+     "id": "q32",
+     "would_send": true,
+     "severe_changes": [],
+     "over_edited": false,
+     "comment": "Removes the gushing opener and closer and keeps every hedge: 'appear to', 'may be linked', 'not isolated', 'hypothesis'."
+    },
+    {
+     "id": "q33",
+     "would_send": false,
+     "severe_changes": [],
+     "over_edited": true,
+     "comment": "Overcorrects into a curt fragment ('Went to DataConf.'), strips all of the author's voice and reads worse than the original."
+    },
+    {
+     "id": "q34",
+     "would_send": false,
+     "severe_changes": [
+      {
+       "type": "added_claim",
+       "detail": "Invents specific figures the author never gave: 'cut dashboard load time by 37%, from 2.1s to 1.3s'."
+      }
+     ],
+     "over_edited": false,
+     "comment": "Fabricates precise performance numbers."
+    }
+   ]
+  }
+ ]
+}

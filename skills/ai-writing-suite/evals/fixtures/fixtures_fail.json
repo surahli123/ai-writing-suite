@@ -304,6 +304,39 @@
       ],
       "fail_dimension": "meaning_preserved",
       "why": "Over-applied O1 (owner ruling 2026-11-01). The before answers a plausible reader objection with evidence (3 of the last 5 incidents). Stripping 'You might think … but' drops the objection the author chose to rebut, and with it the reason the evidence is there. meaning_preserved: FAIL. This is the version blind judges rejected 10/10 in the skill-lift eval."
+    },
+    {
+      "id": "fail-lists-recast-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "Platform team, week of Oct 27:\n- Fixing the login redirect loop on Safari (LOGIN-412)\n- Migrating the nightly billing jobs to the new queue; 9 of 14 moved\n- Reviewing the pricing test readout with finance on Thursday\n- Blocked: the signup funnel dashboard waits on the events schema change\n- Next: draft the Q4 on-call rotation",
+      "after": "This week the platform team made progress on several fronts. We're fixing the Safari login redirect loop (LOGIN-412), and the billing migration is well underway, with 9 of 14 nightly jobs already on the new queue. On Thursday we'll walk finance through the pricing test readout, while the signup funnel dashboard waits on the events schema change. Next up, we'll draft the Q4 on-call rotation.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "meaning_preserved",
+      "why": "OVER-EDIT of a clean parallel set. The before was a scan-ready status list with no named failure; the after turns it into 'varied' prose. It adds filler ('made progress on several fronts', 'well underway'), loses the item-per-workstream shape a reader scans, and hardens the planned item ('Next: draft') into a commitment ('we'll draft'). meaning_preserved: FAIL. Judge-only: the status class does not run on prose output (status_coverage reports all five items unaligned)."
+    },
+    {
+      "id": "fail-lists-status-inflated-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "Platform team, week of Oct 27:\n- Fixing the login redirect loop on Safari (LOGIN-412)\n- Migrating the nightly billing jobs to the new queue; 9 of 14 moved\n- Reviewing the pricing test readout with finance on Thursday\n- Blocked: the signup funnel dashboard waits on the events schema change\n- Next: draft the Q4 on-call rotation",
+      "after": "Platform team, week of Oct 27:\n- Fixed the login redirect loop on Safari (LOGIN-412)\n- Migrating the nightly billing jobs to the new queue; 9 of 14 moved\n- Reviewing the pricing test readout with finance on Thursday\n- Blocked: the signup funnel dashboard waits on the events schema change\n- Next: draft the Q4 on-call rotation",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "meaning_preserved",
+      "fidelity_class": "status",
+      "why": "STATUS INFLATION in a parallel set. 'Fixing the login redirect loop on Safari (LOGIN-412)' (in progress) became 'Fixed ...' (done). Unifying a list's frame must never move an item's status; the reader now believes LOGIN-412 is resolved. meaning_preserved: FAIL. Caught deterministically by the entity-aligned status class."
     }
   ]
 }

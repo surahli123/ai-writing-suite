@@ -9,7 +9,7 @@ import json
 import unittest
 from pathlib import Path
 
-from fixtures.fidelity import fidelity_violations
+from fixtures.fidelity import fidelity_violations, status_coverage
 
 HERE = Path(__file__).resolve().parent / "fixtures"
 
@@ -34,6 +34,14 @@ MUTANTS = [
     ("added_qualification", "The new model cut false positives by 30%.",
      "The new model cut false positives by 30%, but these results should be interpreted with caution.",
      "False positives fell 30% with the new model."),
+    # status: entity-aligned, so a swap between items is caught and a faithful
+    # reorder of whole items is not (Codex round-2 R1).
+    ("status", "- Investigating LOGIN-1 login redirect loop\n- Fixed CHECKOUT-2 checkout timeout",
+     "- Investigating CHECKOUT-2 checkout timeout\n- Fixed LOGIN-1 login redirect loop",
+     "- Fixed CHECKOUT-2 checkout timeout\n- Investigating LOGIN-1 login redirect loop"),
+    ("status", "- Investigating the login redirect loop\n- Planned: migrate billing jobs to the new queue",
+     "- Fixed the login redirect loop\n- Planned: migrate billing jobs to the new queue",
+     "- Investigating the login redirect loop.\n- Planned: migrate the billing jobs to the new queue."),
 ]
 
 
@@ -41,7 +49,7 @@ class FidelityMutants(unittest.TestCase):
     def test_every_class_has_a_mutant(self):
         self.assertEqual({c for c, *_ in MUTANTS},
                          {"scope", "approximator", "units", "significance", "interval", "strength",
-                          "added_qualification"})
+                          "added_qualification", "status"})
 
     def test_bad_rewrites_are_caught_for_their_class(self):
         for cls, before, bad, _ in MUTANTS:
@@ -56,6 +64,30 @@ class FidelityMutants(unittest.TestCase):
     def test_identity_is_always_clean(self):
         for _, before, _, _ in MUTANTS:
             self.assertEqual(fidelity_violations(before, before), [])
+
+
+class StatusCoverage(unittest.TestCase):
+    BEFORE = ("- Investigating the login redirect loop\n"
+              "- Planned: migrate billing jobs to the new queue\n"
+              "- Fixed the flaky checkout test")
+
+    def test_aligned_lists_have_no_coverage_gap(self):
+        self.assertEqual(status_coverage(self.BEFORE, self.BEFORE), [])
+
+    def test_collapse_to_prose_reports_every_item(self):
+        merged = "The login loop and the checkout test are fixed; the billing migration is planned."
+        self.assertEqual(fidelity_violations(self.BEFORE, merged), [])  # silent in violations...
+        self.assertEqual(len(status_coverage(self.BEFORE, merged)), 3)  # ...but never a pass
+
+    def test_unalignable_item_is_reported(self):
+        after = ("- Done: something else entirely\n"
+                 "- Planned: migrate billing jobs to the new queue\n"
+                 "- Fixed the flaky checkout test")
+        self.assertEqual(status_coverage(self.BEFORE, after),
+                         ["Investigating the login redirect loop"])
+
+    def test_running_prose_is_out_of_scope(self):
+        self.assertEqual(status_coverage("We are investigating the bug.", "We fixed the bug."), [])
 
 
 class FidelityFixtures(unittest.TestCase):

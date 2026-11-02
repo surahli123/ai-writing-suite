@@ -107,7 +107,7 @@ schemes overlap and conflict. Where a source had its own id, it is listed in
 | T4 | False concession structure | medium | regex |
 | T5 | Excessive / decorative structure | medium | judge |
 | T6 | Inline-header vertical lists | low | judge |
-| T7 | Bullet lists of bare noun phrases | low | regex |
+| T7 | Bullet lists of bare noun phrases | low | judge |
 | T8 | Numbered-list inflation | low | judge |
 | T9 | Paragraph-reshuffle immunity | medium | judge |
 | T10 | Treadmill effect (low information density) | medium | judge |
@@ -176,6 +176,8 @@ stays in the detector's tier weights (owner ruling Q1).
 | `anti-vibe` | `weijt606/anti-vibe-writing` (bilingual patterns, consultant-speak) | MIT |
 | `ai-vibe` | `donghuixin/AI-Vibe-Writing-Skills` (style-extractor / reviewer prompts) | MIT |
 | `nature` | `Yuan1z0825/nature-skills` (`nature-writing` + `nature-polishing`) | MIT |
+| `fsdatalab` | Shreya Shankar, "Five Principles for Generating Readable AI Text in Bulk" (fsdatalab.github.io, 2026-10-29) | none stated — ideas only, no text copied |
+| `tenex` | Tenex, "Stay Slop-Free: say yes to these 8 questions" playbook (tenex.co) | rights reserved — ideas only, no text copied |
 
 > The corrupted `blader` reference (P31-P43 had duplicated/run-together "Fix /
 > What's happening / Triggers / Source" blocks collapsed onto single lines) was

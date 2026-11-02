@@ -15,8 +15,9 @@ press release and not a chatbot.
 
 - **Drop the sycophancy.** "Great question!", "I'd be happy to help", "Certainly!"
   are chatbot tics. Start with the substance.
-- **Vary sentence length.** Uniformly medium sentences read as machine-generated
-  (low burstiness). Mix a short punch with a longer explanation.
+- **Let rhythm follow the content.** In running prose, a short sentence for a
+  result and a longer one for a qualified idea; don't edit toward a length
+  pattern. The items of a list or card set keep one shape.
 - **No hype inflation.** "Revolutionary," "game-changing," "seamless,"
   "robust" — claims the text can't back up. State what it actually does.
 - **Hedge only where there's real uncertainty.** Stacked hedges ("it might

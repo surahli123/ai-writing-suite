@@ -22,14 +22,20 @@ matter how good the prose reads. This layer is never traded off against style.
 - **The author's stance, attributions, and commitments survive.** Wording may
   change; who claims what, and how the author evaluates it, may not.
 - **The document agrees with itself.** Applies to multi-paragraph documents with
-  numbers, such as readouts, memos, and incident notes. Check four things:
+  numbers, such as readouts, memos, and incident notes. Check five things:
   - every number repeated across the lead, body, and tables matches;
   - shares of a whole add to about 100%;
   - a defined metric keeps one name throughout;
-  - whatever the title or lead promises, the body delivers.
+  - whatever the title or lead promises, the body delivers;
+  - parallel items that report comparable metrics (rows, cards, bullets) carry
+    the same slots (n, interval, baseline, unit), or the difference is
+    reported, and one metric or status keeps one name across them. This applies
+    only when the metrics are comparable and the slot applies to all of them.
 
-  **Report** each conflict with its locations, in notes or as a review finding.
-  Never pick a winner yourself; which number is right is the author's call. If
+  **Report** each conflict with its locations: in `Notes:` for `rewrite` and
+  `edit`, under `## Consistency and evidence gaps` for `detect` and `review`.
+  Never fill a missing slot, delete the extra one, or pick a winner; which
+  number is right is the author's call. If
   you can run Python, `python3 tools/consistency_check.py <file>` lists the
   numeric conflicts. Run it from the suite root; it is stdlib only.
 
@@ -56,7 +62,8 @@ matter how good the prose reads. This layer is never traded off against style.
   them and the author's voice uses them.
 - Stock sections (Overview, Key Features, Conclusion) are gone unless they earn
   their keep.
-- Repetition is gone.
+- Repeated content is gone. Repeated structure and terms across the items of a
+  parallel set (a status list, feed or card set) stay; they make the set scan.
 - **Portability test:** could this sentence sit unchanged in another company's
   or project's document? If so, it says nothing about this one. Make it specific
   using facts already in the source, or cut it. Never invent specifics. Adapted
@@ -96,13 +103,15 @@ For a borderline draft, score five dimensions (1–10 each) before returning.
 Adapted from the `stop-slop` rubric.
 
 - **Directness** — states things; doesn't announce it's about to state them.
-- **Rhythm** — sentence lengths vary; no monotone march of equal clauses.
+- **Rhythm** — in running prose, rhythm follows the content; no march of
+  identical moves. (Not a sentence-length target; parallel items keep one shape.)
 - **Trust** — respects the reader's intelligence; no over-explaining the obvious.
 - **Authenticity** — reads like a person chose the words, not a system.
 - **Density** — every sentence earns its place; no filler.
 
-Below 35 / 50 means it still reads generated — make another pass.
+Revisit any dimension you would rate weak. There is no total and no pass
+threshold: a numeric bar invites editing toward the number instead of the reader.
 
-> This is a *qualitative* gate, separate from the 0–100 AI-tell score in
+> This is a *qualitative* check, separate from the 0–100 AI-tell score in
 > `SKILL.md`. The 0–100 score reports density to the user; this checklist is the
 > editor's own pre-ship sweep.

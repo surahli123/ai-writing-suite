@@ -1,6 +1,6 @@
 # Attribution & Licenses
 
-AI Writing Suite is a consolidated writing-assistant skill that absorbs and extends patterns, templates, and methodologies from ten open-source projects, all MIT-licensed. This document preserves the copyright and license notice for each source.
+AI Writing Suite is a consolidated writing-assistant skill that absorbs and extends patterns, templates, and methodologies from ten open-source projects, all MIT-licensed. This document preserves the copyright and license notice for each source. It also lists material the suite references for ideas only, which is not absorbed and not covered by those licenses (see "Ideas referenced, not absorbed").
 
 ## Source Projects
 
@@ -151,6 +151,13 @@ revision: upstream `main` HEAD at the absorption timestamp was `5186579d6c0a`
 
 L7 quotes, with attribution, the definition of mannered prose from Anthropic's public documentation *Prompting Claude Fable 5.1* ("Writing density" section, retrieved 2026-11-01). It is quoted for commentary, not relicensed.
 
+### Ideas referenced, not absorbed (no text copied)
+
+These sources informed the 2026-11-02 changes (parallel-item scope, honest strengths, counted findings). Their ideas are paraphrased in the suite's own words; no text, examples, questions, or prompts were copied, and no license is claimed.
+
+- **fsdatalab** — Shreya Shankar, "Five Principles for Generating Readable AI Text in Bulk", https://fsdatalab.github.io/blog/agent-text-at-scale/ (2026-10-29). No license stated. Source tag `fsdatalab`.
+- **tenex** — Tenex, "Stay Slop-Free: say yes to these 8 questions", https://www.tenex.co/playbooks/stay-slop-free-say-yes-to-these-8-questions. Rights reserved. Source tag `tenex`.
+
 ---
 
 ## Consolidated Pattern Catalog
@@ -187,7 +194,8 @@ When redistributing or forking AI Writing Suite:
 ## No Private Material
 
 This package contains **no private prompts, local user configuration, secrets, or installed-skill internals**. All content is:
-- Derived from the seven source projects above, or
+- Derived from the MIT source projects above, or
+- Newly written in the suite's own words from ideas referenced above, or
 - Newly written for the OSS suite, or
 - Scaffolding and metadata to make the skill portable across Claude, Codex, Cursor, and RovoDev.
 
