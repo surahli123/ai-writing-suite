@@ -1,0 +1,63 @@
+{
+ "checks": [
+  {
+   "vs": "main",
+   "metric": "S severe-change rate (lower better)",
+   "mean_diff": 0.0,
+   "ci90": [
+    0.0,
+    0.0
+   ],
+   "n": 24,
+   "verdict": "NOT WORSE"
+  },
+  {
+   "vs": "main",
+   "metric": "W would-send (higher better)",
+   "mean_diff": 0.0,
+   "ci90": [
+    0.0,
+    0.0
+   ],
+   "n": 24,
+   "verdict": "NOT WORSE"
+  },
+  {
+   "vs": "bare",
+   "metric": "S severe-change rate (lower better)",
+   "mean_diff": -0.08333333333333333,
+   "ci90": [
+    -0.16666666666666666,
+    0.0
+   ],
+   "n": 24,
+   "verdict": "NOT WORSE"
+  },
+  {
+   "vs": "bare",
+   "metric": "W would-send (higher better)",
+   "mean_diff": 0.08333333333333333,
+   "ci90": [
+    0.0,
+    0.16666666666666666
+   ],
+   "n": 24,
+   "verdict": "NOT WORSE"
+  },
+  {
+   "vs": "main",
+   "metric": "pairwise",
+   "new_items": 3,
+   "main_items": 10,
+   "p_main_better": 0.046142578125,
+   "verdict": "WORSE"
+  },
+  {
+   "metric": "floor",
+   "W": 1.0,
+   "S": 0.0,
+   "verdict": "PASS"
+  }
+ ],
+ "ship": false
+}
