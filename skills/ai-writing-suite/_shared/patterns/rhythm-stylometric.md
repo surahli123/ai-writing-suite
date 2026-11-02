@@ -138,6 +138,11 @@ bias evidence above; it is a brake on *acting*, not a new tell.
    citation, a code block, a command, or a file path → never edit it.
 2. **An official term of art?** It is the field's required or standard term (a
    spec keyword, a legal/medical/financial term, an API name) → keep it verbatim.
+   Statistics and data science reuse several slop words literally: robust
+   standard errors and robust regression, high-leverage points and leverage
+   scores, a loss landscape, an eval harness. The detector masks these
+   collocations (`evals/detector/patterns.py`, `TERMS_OF_ART`); apply the same
+   reading by hand to any other literal technical use.
 3. **In the author's voice profile?** The construction appears in the loaded voice
    profile's samples or fields → it is *their* voice, not a tell.
 4. **Genre-normal here?** The scenario preset for this genre lists it under *leave
