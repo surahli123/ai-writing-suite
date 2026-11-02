@@ -347,6 +347,82 @@
       "subtle_tell": "Narrative-shape N4 (absent ambiguity): before admits exactly one reading and one action ('is clear... roll it out') with no competing signal. The 6%-lift clause (already present in before) is preserved verbatim in `after`; the `after` walks back the one-reading verdict and holds a real competing read WITHOUT inventing any new stat, source, or quote (no_fabrication-safe: the hedge is qualitative, not a fabricated refund figure) -- motivated ambiguity, not invented. Its over-correction partner -- manufacturing fake doubt on a genuinely simple update -- lives in fixtures_fail.json. Detector scores near 0 -> judge-only, ARC-level."
     },
     {
+      "id": "factbridge-01-unsupported-cause-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "source_context": "The source reports only: Multiple companies expanded their deployment teams. It gives no reason for the expansion and does not mention data-integration failures.",
+      "before": "Multiple companies expanded their deployment teams, reflecting persistent data-integration failures.",
+      "after": "Multiple companies expanded their deployment teams.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "must_preserve": [
+        "Multiple companies expanded their deployment teams"
+      ],
+      "subtle_tell": "Fact-to-interpretation boundary: the observation about team expansion is sourced, but the appended 'reflecting persistent data-integration failures' clause adds a cause/significance claim the source does not establish. The repair removes only that unsupported bridge. 'Reflecting' is a locator, not a banned word. Same before/after wording appears in the gold-FAIL partner with source_context changed to explicit causal support."
+    },
+    {
+      "id": "factbridge-02-cooccurrence-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "source_context": "The source establishes that the support backlog grew and three teams expanded during the same quarter. It does not say either event caused the other.",
+      "before": "The support backlog grew during the same quarter that three teams expanded, indicating the backlog caused the hiring.",
+      "after": "The support backlog grew during the same quarter that three teams expanded. The two changes coincided.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Fact-to-interpretation boundary: the source warrants co-occurrence only. The repair keeps both facts and uses temporal wording rather than hardening timing into cause. Its gold-FAIL partner uses the same source_context but rewrites the relation with 'because'."
+    },
+    {
+      "id": "factbridge-03-unsupported-meaning-zh",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "source_context": "来源只写明：多家公司扩大了部署团队。来源没有说明扩编原因，也没有提到数据集成问题。",
+      "before": "多家公司扩大了部署团队，表明数据集成问题长期存在。",
+      "after": "多家公司扩大了部署团队。",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "expect_refusal": true,
+      "subtle_tell": "事实到解释的边界：来源只支持团队扩编，不支持“表明数据集成问题长期存在”这一解释。表明只是定位线索，不是禁词；同一证据关系适用于中英文，CJK 仍保持 detector refusal。"
+    },
+    {
+      "id": "factbridge-04-supported-possibility-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "source_context": "The incident review reports that response times declined after the new routing policy and says the decline may be related to the policy. It does not reach a causal conclusion.",
+      "before": "Response times declined after the new routing policy; the incident review says the decline may be related to the policy.",
+      "after": "Response times declined after the new routing policy. The incident review says the decline may be related to the policy.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "subtle_tell": "Fact-to-interpretation boundary: the source supports a possibility, not a conclusion. The repair keeps the calibrated 'may be related to' wording rather than deleting the supported analysis or hardening it into causation. Its gold-FAIL partner uses the same source and before text but replaces that calibration with a causal assertion."
+    },
+    {
       "id": "artifact-01-status-card-en",
       "expected_verdict": "PASS",
       "genre": "readme",

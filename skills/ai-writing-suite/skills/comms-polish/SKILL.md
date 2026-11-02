@@ -56,6 +56,11 @@ The catalog is the rule source. The local references decide *how* to apply it:
 - `references/scenario-presets.md` — weights catalog categories per genre.
 - `references/final-pass-checklist.md` — the pre-ship sweep.
 
+For factual or analytical prose, also load
+`_shared/fact-interpretation-boundary.md`. It governs whether a fact supports an
+attached cause, motive, significance, trend, or conclusion. Catalog cues locate
+the bridge; the available source evidence decides whether it is warranted.
+
 ## Boundary
 
 This skill edits prose, not code.
@@ -178,7 +183,12 @@ When neither exists, use the lightest voice that fits the context:
    body). No match → pasted sample or inferred voice, and degrade gracefully.
 4. Mark the factual anchors that must survive unchanged — **and the modality
    anchors too**: each claim's observed-vs-inferred, possible-vs-certain, and
-   step-toward-vs-achieved status is an anchor, not free to strengthen.
+   step-toward-vs-achieved status is an anchor, not free to strengthen. Establish
+   source completeness at the same time: when an **independent source packet** is
+   supplied, classify its confirmed facts, supported interpretations, and
+   unanswered questions. When the draft is the only material, preserve every
+   substantive author interpretation and state that support was not assessed;
+   the draft is not independent proof that its own analysis is unsupported.
 5. Scan against the pattern catalog, weighted by the preset, and remove the tells
    you find:
    - throat-clearing and filler
@@ -195,21 +205,30 @@ When neither exists, use the lightest voice that fits the context:
    voice profile; genre-normal per the preset; or a second-language construction)
    makes the flag advisory only, not an edit. An all-"no" gate is not a mandate
    either — the cluster guardrail still applies (signals, not proof).
-6. Make concrete details **already in the source** more prominent — surface the
+6. Apply the shared fact-to-interpretation protocol to each bridge that adds a
+   cause, motive, significance, trend, or conclusion. Preserve a supported
+   relation and its certainty; use co-occurrence wording for timing alone; retain
+   calibrated possibility. If an independent source packet shows a substantive
+   author interpretation exceeds the evidence, preserve the position and flag
+   it through the existing output surface unless the user authorized factual
+   revision. Delete only a **redundant gloss** that carries no position or useful
+   information. In review mode, keep the exact quote and offer a fact-only repair
+   through `Quote / Tell / Why / Fix`.
+7. Make concrete details **already in the source** more prominent — surface the
    specific actor, action, example, or consequence the text already names, instead
    of leaving it buried under an abstraction. If the source has no such detail,
    **preserve the abstraction or flag the missing detail** — never invent an
    actor, action, example, number, or consequence that is not in the source
    (Safety Rules).
-7. Vary rhythm without adding fake personality. Bias word choice and cadence
+8. Vary rhythm without adding fake personality. Bias word choice and cadence
    toward the voice profile when one was loaded. Treat its `Verbatim Anchors` as
    fidelity anchors: bias the rewrite toward reproducing each tagged habit under
    `_shared/precedence-policy.md`, without copying unrelated sample content.
-8. **Re-scan your rewrite against the pattern catalog** (repeat step 5 on the *output*).
+9. **Re-scan your rewrite against the pattern catalog** (repeat step 5 on the *output*).
    Rewriting reintroduces tells — fixing one often plants another. Treat the rewrite as a
    fresh draft, scan it, and remove any tell you find before the final pass.
-9. **Run `references/final-pass-checklist.md`** before returning anything.
-10. Return the requested output and mention any claim that still needs evidence.
+10. **Run `references/final-pass-checklist.md`** before returning anything.
+11. Return the requested output and mention any claim that still needs evidence.
 
 ## Safety Rules
 
@@ -290,8 +309,9 @@ it. In short:
     profile was found and you degraded to inferred voice, append a single one-line
     note — e.g. `Note: no voice profile found — inferred voice used; run
     voice-onboard to capture yours.` This is the only voice-related addition allowed.
-  - **`Notes:` block for evidence flags (finding 9).** When step 6 preserved an
-    abstraction for lack of a source, or step 10 found a claim still needing
+  - **`Notes:` block for evidence flags (finding 9).** When step 6 found a
+    source-to-claim gap, step 7 preserved an abstraction for lack of a source, or
+    step 11 found a claim still needing
     evidence, append an optional `Notes:` block listing only those
     missing-evidence / unsupported-claim flags — nothing else. Omit the block when
     there are none. (Conversational voice-onboard offers stay outside the output

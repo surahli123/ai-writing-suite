@@ -490,11 +490,37 @@ def build_judge_prompt(fixture, rubric_template):
     focus = list(fixture["rubric_focus"])
     if "no_fabrication" not in focus:
         focus.append("no_fabrication")
+    if "source_context" in fixture:
+        source_context_section = (
+            "SOURCE CONTEXT (authority for what the evidence establishes):\n"
+            f"{fixture['source_context']}"
+        )
+        fact_interpretation_check = """FACT-INTERPRETATION CHECK (dimensions: meaning_preserved, no_fabrication)
+Judge the relation, not its cue word. Expressions such as reflecting, indicating,
+suggesting, demonstrating, meaning, thereby, and an attached -ing clause can be
+legitimate. Compare the added cause, motive, significance, trend, or conclusion
+with SOURCE CONTEXT:
+  - source states the relation -> preserve it at the source's certainty
+  - source states only co-occurrence -> temporal/correlational wording may remain,
+    but a causal rewrite fails no_fabrication
+  - source supports only possibility -> preserve calibrated uncertainty
+  - source expressly gives no support -> removing the interpretation does not fail
+    meaning_preserved
+Use EVIDENCE quotes from BEFORE or AFTER to identify the bridge or repair; SOURCE
+CONTEXT decides whether that bridge is warranted."""
+    else:
+        # Legacy fixtures predate source-aware adjudication. Do not add a
+        # standalone-source fallback: their gold labels retain the original judge
+        # semantics until they opt in with an explicit source_context field.
+        source_context_section = ""
+        fact_interpretation_check = ""
     return (rubric_template
             .replace("{genre}", fixture["genre"])
             .replace("{subtle_tell}", fixture.get("subtle_tell",
                      "obvious AI vocabulary and formatting"))
             .replace("{rubric_focus}", ", ".join(focus))
+            .replace("{source_context_section}", source_context_section)
+            .replace("{fact_interpretation_check}", fact_interpretation_check)
             .replace("{before}", fixture["before"])
             .replace("{after}", fixture["after"]))
 
