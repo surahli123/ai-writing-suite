@@ -69,7 +69,7 @@ Polish prose and detect AI tells.
 - Scenario presets (tweet, LinkedIn, README, memo, PR description, release note).
 - Final-pass checklist before publishing.
 - Voice matching (reads `_shared/voice-profile.md` to calibrate tone and style if present).
-- 0–100 AI-tell density score for before/after comparison.
+- 0–100 AI-pattern density score for before/after comparison (surface patterns only, never an authorship verdict).
 
 **Example:**
 

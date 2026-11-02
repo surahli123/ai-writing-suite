@@ -271,6 +271,23 @@
       "fail_dimension": "meaning_preserved",
       "fidelity_class": "strength",
       "why": "'suggests ... may have contributed' hardened to 'shows ... contributed', and 'We hope to ship' became the commitment 'We'll ship'. meaning_preserved: FAIL (attribution and intent strengthened)."
+    },
+    {
+      "id": "fail-addside-qualification-en",
+      "expected_verdict": "FAIL",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "Retention rose 1.2 percentage points in the four weeks after the onboarding redesign shipped, and support tickets about setup fell by a third.",
+      "after": "Retention rose 1.2 percentage points in the four weeks after the onboarding redesign shipped, and support tickets about setup fell by a third. These results do not by themselves establish that the redesign caused the change, and they should be interpreted with caution until a controlled test is run.",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "no_fabrication"
+      ],
+      "fail_dimension": "meaning_preserved",
+      "fidelity_class": "added_qualification",
+      "why": "ADD-SIDE fidelity failure (A3). The author made a plain observational statement with no causal claim. Asked to make it 'more rigorous', the rewrite bolts on defensive qualifications the author never wrote ('do not by themselves establish', 'interpreted with caution', a controlled test the author never proposed). That changes the memo's stance and adds a recommendation. If a caveat seems warranted, it belongs in notes to the author, not in their text. meaning_preserved: FAIL."
     }
   ]
 }

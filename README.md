@@ -81,13 +81,17 @@ Mode: detect
 Expected output **shape** (not exact wording):
 
 ```
-AI-tell score: 0–100 (higher = more AI-shaped)
-Top tells found:
-  1. <tell> — <why it reads AI-generated> — <concrete fix>
+Biggest problem: <the one thing a reader would react to>
+Findings (Critical / Moderate / Minor):
+  1. Quote → Tell → Why it reads as AI → Fix
   2. …
-  3. …
-Suggested rewrite: <one tightened, human-sounding version>
+What already reads well: <one specific strength>
+Coverage: <what was checked by rule, by judgment, and not at all>
+AI-tell score: NN/100 (surface patterns only, not authorship)
 ```
+
+The score summarizes how densely the text shows catalogued patterns. It never
+says who or what wrote the text; the quoted findings are the evidence.
 
 Swap `Mode: detect` for `Mode: rewrite` to get the rewrite directly, or ask
 `comms-draft` to draft a fresh page, `comms-qa` to answer from the knowledge base,

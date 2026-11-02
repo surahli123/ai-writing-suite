@@ -224,10 +224,11 @@ class DoctoredArtifacts(unittest.TestCase):
 
     def test_score_before_reads_well_section(self):
         # Move the score line above the 'reads well' section -> misplacement.
-        without = CONFORMING.replace("\n**AI-tell score:** 58/100\n", "\n")
+        line = "**AI-tell score:** 58/100 (surface patterns only, not authorship)"
+        without = CONFORMING.replace("\n" + line + "\n", "\n")
         mutated = without.replace(
             "## What already reads well",
-            "**AI-tell score:** 58/100\n\n## What already reads well")
+            line + "\n\n## What already reads well")
         self._expect_reject(mutated, "must come after")
 
     def test_out_of_range_score(self):
@@ -271,6 +272,38 @@ class DoctoredArtifacts(unittest.TestCase):
             '  **Fix:** "We built it for the whole team."\n'
             '- None.\n')
         self._expect_reject(mutated, "mixed with")
+
+    # --- Score epistemics (A4, 2026-11-01): coverage line, not-authorship, no verdicts ---
+
+    def test_score_without_not_authorship_is_rejected(self):
+        mutated = CONFORMING.replace("**AI-tell score:** 58/100 (surface patterns only, not authorship)", "**AI-tell score:** 58/100")
+        self._expect_reject(mutated, "not authorship")
+
+    def test_score_without_coverage_line_is_rejected(self):
+        start = CONFORMING.index("**Coverage:**")
+        end = CONFORMING.index("\n", start) + 1
+        mutated = CONFORMING[:start] + CONFORMING[end:]
+        self._expect_reject(mutated, "**Coverage:**")
+
+    def test_authorship_verdict_is_rejected(self):
+        mutated = CONFORMING.replace(
+            "## What already reads well",
+            "This draft was likely written by AI.\n\n## What already reads well")
+        self._expect_reject(mutated, "authorship verdict")
+
+    def test_detector_prediction_is_rejected(self):
+        mutated = CONFORMING.replace(
+            "## What already reads well",
+            "Detectors will probably catch this.\n\n## What already reads well")
+        self._expect_reject(mutated, "authorship verdict")
+
+    def test_reads_as_ai_wording_is_allowed(self):
+        # Describing how text reads is a finding, not an authorship verdict.
+        mutated = CONFORMING.replace(
+            "## What already reads well",
+            "The opener reads as AI boilerplate.\n\n## What already reads well")
+        ok, viols = check_report(mutated, CATALOG)
+        self.assertTrue(ok, viols)
 
     def test_commentary_after_score_is_rejected(self):
         # FINDING 1(d): trailing prose after the "final" score line must fail —

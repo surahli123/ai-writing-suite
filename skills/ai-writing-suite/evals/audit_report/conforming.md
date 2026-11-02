@@ -31,4 +31,6 @@
 ## What already reads well
 - "The dashboard is fast" is a plain, checkable claim — keep that register and give the rest of the draft the same concreteness.
 
-**AI-tell score:** 58/100
+**Coverage:** checked by rule: vocabulary, punctuation, structure patterns; by judgment: overstepping, narrative shape; not checked: voice profile (none loaded).
+
+**AI-tell score:** 58/100 (surface patterns only, not authorship)
