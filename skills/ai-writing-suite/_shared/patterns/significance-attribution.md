@@ -35,22 +35,31 @@ priority to fix in any professional or factual document.
 | --- | --- |
 | medium | judge |
 
-- **Tell:** Narrating the *meaning* of a mundane fact instead of trusting the
-  fact: "this represents a broader shift," "the decision symbolizes a commitment
-  to excellence," "speaks to a larger trend." Distinct from S1's "pivotal /
-  testament" framing — this is the interpretive layer telling readers what to
-  feel.
-- **Fix:** Cut the meaning sentence. State the fact; if the significance is real,
-  show it with a concrete consequence.
+- **Tell:** Attaching a cause, motive, significance, trend, or conclusion to a
+  fact without showing that the available source warrants the relation: "this
+  represents a broader shift," "the decision symbolizes a commitment to
+  excellence," "speaks to a larger trend." Distinct from S1's "pivotal /
+  testament" framing — this is an unsupported interpretive layer presented with
+  the fact's authority.
+- **Fix:** Repair the relation, not a cue word. Keep a directly supported
+  interpretation at the source's certainty. If the source establishes only
+  co-occurrence, use timing or correlation; if it supports only possibility,
+  keep that uncertainty. If it supplies no warrant, cut a redundant gloss or
+  flag the evidence gap under the active mode's authority. State the fact and,
+  where the significance is real, show the concrete consequence that warrants it.
 - **Before:** The closed factory represents the decline of American manufacturing
   and speaks to broader anxieties about post-industrial identity.
 - **After:** The factory closed in 2009. Three hundred jobs. The town's high
   school dropped football the next year.
-- **Validity condition:** flag only interpretation *substituting* for the fact.
-  When interpretation IS the document's job (an essay, an analysis, a review whose
-  reader wants the "what it means"), the meaning layer is the deliverable — keep
-  it and make it specific. Ask: is meaning-making this document's purpose, or is
-  it glossing a fact the reader could judge alone?
+- **Validity condition:** both purpose and support matter. Flag interpretation
+  that substitutes for evidence or outruns the source. When interpretation IS
+  the document's job (an essay, analysis, or review whose reader wants the "what
+  it means"), the meaning layer is the deliverable — keep supported analysis and
+  make its premises and warrant visible. A novel synthesis may remain as an
+  author hypothesis when those premises and warrant are shown; do not present it
+  as a confirmed fact. With only a standalone draft and no independent source
+  packet, preserve substantive author analysis and say support was not assessed.
+  Ask: what relation does this sentence add, and what evidence earns it?
 - **Sources:** blader (P40), avoid-ai (folded into superficial -ing), aboudjem.
 
 ---
@@ -129,11 +138,20 @@ priority to fix in any professional or factual document.
 | --- | --- |
 | medium | judge |
 
-- **Tell:** Present-participle phrases tacked on to fake depth: "…symbolizing the
-  region's commitment to progress, reflecting decades of investment, and
-  showcasing a new era." The written equivalent of nodding while saying nothing.
-- **Fix:** Delete the -ing clause. If it carried real information, promote it to
-  its own sentence with a specific source.
+- **Tell:** Present-participle phrases tacked on to fake depth or smuggle in an
+  unsupported relation: "…symbolizing the region's commitment to progress,
+  reflecting decades of investment, and showcasing a new era." The failure is
+  not the `-ing` form; it is unclear attachment, no information gain, or a cause /
+  meaning / conclusion the source does not establish.
+- **Fix:** Identify the clause's subject and the relation it adds. Delete an
+  empty or unsupported appendage. If it carries warranted information, keep it
+  or promote it to a plain sentence, preserving the source's certainty; if the
+  source gives timing only, write co-occurrence rather than cause.
+- **Validity condition:** `reflecting`, `indicating`, `suggesting`,
+  `demonstrating`, `meaning`, `thereby`, and participial clauses are not banned.
+  Keep them when the subject is clear, the relation is sourced or visibly
+  reasoned, and the clause adds useful analysis. A hedge does not rescue a guess:
+  without any warrant, `may be reflecting` still adds an unsupported relation.
 - **Sources:** blader (P3), aboudjem (§3), avoid-ai.
 
 ---

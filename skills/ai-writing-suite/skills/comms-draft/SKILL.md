@@ -69,6 +69,10 @@ never block on a missing optional input.
   relevant. Used here as a **negative checklist** — patterns to avoid *while
   writing*, not just to scrub afterward. (This file references the index only;
   comms-polish carries the per-category enumeration.)
+- **The fact-to-interpretation protocol** via
+  `_shared/fact-interpretation-boundary.md`. Use its source buckets and
+  relation-support matrix for factual or analytical prose; cue words locate a
+  possible bridge, but the supplied evidence decides what the draft may claim.
 
 ## Mixed mode (polish-plus-add)
 
@@ -119,6 +123,13 @@ load the voice profile via the canonical protocol in `_shared/voice-lookup.md`; 
 the catalog categories the genre weights hardest. Note any absent input out loud —
 never block on a missing one.
 
+Before shaping the document, **classify the source packet** into confirmed facts,
+supported interpretations, and unanswered questions using the shared
+fact-to-interpretation protocol. Preserve the source's certainty. In mixed mode,
+apply polish authority to inherited claims and draft authority to new prose: an
+existing author hypothesis may survive with an evidence note, but a new section
+must not repeat it as established fact.
+
 **"In my voice" with no matching profile (Q8).** If the user explicitly asked for
 *their own* voice and the lookup found no matching profile (empty
 resolved `<state>/voice-profiles/`, or profiles exist but none match this genre), offer
@@ -163,6 +174,12 @@ in the words as they go down.
 - **Concrete actors, actions, examples** sourced from the brief and KB — name the
   specific thing, not "a robust solution." If a concrete detail is not in the
   brief or KB, do not invent one — mark `[NEEDS: ...]` (Safety Rules).
+- **Supported relations only.** Before adding a cause, motive, significance,
+  trend, or conclusion, check its warrant in the classified source packet. State
+  a supported reason plainly; keep possibility calibrated; describe
+  co-occurrence without converting it to cause. If the requested claim depends
+  on a missing link, write `[NEEDS: causal evidence]` (or an equally specific
+  relation gap) instead of adding a plausible explanation.
 - **Varied sentence length and structure (burstiness).** Mix short and long
   sentences; vary how clauses open. Uniform sentence length is itself a tell.
 - **The catalog as a negative checklist.** As you write, avoid the tells the
@@ -199,6 +216,11 @@ every thread in a bow, pacing every beat flat, or admitting only one reading whe
 the material had more? Reshape if so — but hold the validity condition: if the
 material is genuinely simple, a tidy, single-reading draft is correct and you must
 not bolt on fake ambiguity to dodge the tell (`_shared/patterns/narrative-shape.md`).
+
+Also re-run the shared fact-to-interpretation check on the finished draft. Make
+sure new prose did not add an unsupported cause, motive, meaning, trend, or
+conclusion, and that a cue such as `reflecting`, `suggesting`, or `表明` was kept or
+removed because of its warrant—not because of the word itself.
 
 ### 6. Check the draft against the acceptance criteria
 

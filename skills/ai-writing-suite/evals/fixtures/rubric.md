@@ -14,6 +14,10 @@ expected outcome, and scores the rewrite on the dimensions below.
 
 ## Inputs the judge receives
 
+- `source_context` — optional source material that establishes which factual and
+  interpretive relations are supported. It opts a fixture into the
+  source-aware fact-interpretation check; fixtures without it retain the legacy
+  judge prompt and semantics.
 - `before` — the AI-shaped draft.
 - `after` — the candidate human rewrite (this is what's being scored).
 - `genre` — tweet / linkedin / readme / memo (sets length + tone expectations).
@@ -25,9 +29,9 @@ expected outcome, and scores the rewrite on the dimensions below.
 
 | Dimension | PASS when | FAIL when |
 | --- | --- | --- |
-| `meaning_preserved` | Every claim, fact, number, and name in `before` survives in `after` (unless the fixture asks to add specifics). | A claim was dropped or its meaning changed. |
+| `meaning_preserved` | For a source-aware fixture, every source-supported claim, fact, number, name, and warranted interpretation in `before` survives in `after` (unless the fixture asks to add specifics); an interpretation that `source_context` explicitly does not establish may be removed without meaning loss. For a legacy fixture, every claim, fact, number, and name in `before` survives in `after`. | A required claim was dropped or its meaning changed. |
 | `tells_removed` | The AI tells named in `subtle_tell` (or the obvious vocabulary tells) are gone. | A flagged tell still reads as AI. |
-| `no_fabrication` | Any new specifics in `after` are plausible *placeholders the author would fill*, not invented facts presented as real. **This is the highest-stakes dimension.** | `after` invents a number, source, or quote that `before` did not contain and presents it as fact. |
+| `no_fabrication` | For a source-aware fixture, any new specifics or relations in `after` are supported by `source_context` and `before`, or are explicit placeholders the author would fill. For a legacy fixture, any new specifics are plausible *placeholders the author would fill*, not invented facts presented as real. **This is the highest-stakes dimension.** | `after` invents a number, source, or quote that `before` did not contain and presents it as fact; source-aware fixtures also fail for an unsupported cause, motive, significance, trend, or conclusion presented as established. |
 | `voice_kept` | `after` reads like a competent human in this genre, not generic corporate rewrite. | `after` traded one robotic register for another. |
 | `specificity_added` | Where `before` was vague, `after` is concrete (only scored when in `rubric_focus`). | `after` is still vague / empty calories. |
 | `genre_fit` | Length and tone fit the genre (tweet ≤ 280 chars, readme is scannable, memo leads with the decision). | Wrong shape for the channel. |
@@ -142,6 +146,8 @@ GENRE: {genre}
 WHAT THE AI TELL WAS: {subtle_tell}
 DIMENSIONS TO WEIGH: {rubric_focus}
 
+{source_context_section}
+
 BEFORE:
 {before}
 
@@ -162,6 +168,8 @@ pair is treated as a malformed quote and the verdict is flagged unaudited.
 Then output: VERDICT: PASS|FAIL.
 Rule: no_fabrication must PASS or the whole verdict is FAIL, regardless of how
 good the prose reads.
+
+{fact_interpretation_check}
 
 OVER-STEPPING CHECK (dimension: overstepping_removed)
 A line "over-steps" when it thinks FOR the reader: presuming a belief/misconception,

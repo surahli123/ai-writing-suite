@@ -12,6 +12,13 @@ optional scoring pass is adapted from the `stop-slop` rubric (MIT).
 matter how good the prose reads. This layer is never traded off against style.
 
 - **Facts, numbers, technical claims, code, commands, and quotes are unchanged.**
+- **The fact-to-interpretation boundary still matches source support.** No edit
+  turned co-occurrence into cause, possibility into certainty, or a fact into an
+  unsupported motive, significance, trend, or conclusion. A supported relation
+  was not deleted merely because it used an `-ing` clause or a cue such as
+  `reflecting`, `meaning`, or `表明`: this is a relation check, not a word blacklist.
+  When the draft was the only source, substantive author analysis was preserved
+  and any note says support was not assessed.
 
 **L2 — Slop removal (style).**
 
