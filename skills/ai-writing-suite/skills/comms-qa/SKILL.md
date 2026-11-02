@@ -1,6 +1,6 @@
 ---
 name: comms-qa
-description: Answer a question from the knowledge base / playbook, citing the KB entry the answer came from, so the user gets the playbook's actual guidance instead of a plausible guess. The KB answer is source-locked — traced only to the matched entry's content; any optional general advice appears ONLY in a separately-labeled "Outside the playbook" section, never blended in, and the user can request strict KB-only mode to suppress it. Reads the KB index and matches the question to the single best entry (or both on a tie). Use to answer "what does the playbook say about X" questions. Not for drafting a new page - that is comms-draft. Not for polishing existing text - that is comms-polish. Never invents playbook guidance; if the KB does not cover the question, it says so.
+description: "Answer a question about writing guidance from the knowledge base or playbook, cite the entry the answer came from, and say plainly when the KB does not cover it. Use when the user asks what the playbook says, how a readout, memo, status update, or incident note should be structured, or how to handle tone, audience, or leading with the point. Any general advice beyond the KB is labeled 'Outside the playbook', and strict KB-only answers are available on request. Not for drafting (comms-draft) or polishing text (comms-polish)."
 ---
 
 # comms-qa

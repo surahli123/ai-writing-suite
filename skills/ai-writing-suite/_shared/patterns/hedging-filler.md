@@ -130,8 +130,24 @@ written feel.
   look at"). H8 ("Let's + verb") is a marked **subtype** of H7; C2
   (collaborative-framing, `communication-artifacts.md`) overlaps on the shared
   openers. If a line matches more than one, apply H7's fix.
+- **Connective openers (cluster only).** "Moreover," "Furthermore,"
+  "Additionally," "In conclusion," and "In summary," opening sentence after
+  sentence announce a link instead of making one.
+  - **Validity:** only a cluster counts: these connectives opening several
+    sentences in one passage. A single use is never a finding.
+  - **Carve-outs:** formal, legal, and academic register use these connectives
+    normally, so there the cluster is advisory only. This entry states the
+    carve-out itself because gate question 4 is preset-based and no preset
+    covers that register. Second-language writing is advisory under gate
+    question 5.
+  - **Fix:** drop the connective, use a plain one ("also", "so"), or let the
+    sentence order carry the link.
+  - **Detector note:** the detector's `transition` check also counts a single
+    use, at low weight. That divergence is known; a single use is not
+    evidence of this tell.
 - **Sources:** aboudjem (§28), avoid-ai (chatbot artifacts / "let's"
-  constructions), anti-vibe (signposting), stop-slop (meta-joiners).
+  constructions), anti-vibe (signposting), stop-slop (meta-joiners); tenex
+  (ideas only: frequency over single instances).
 
 ---
 

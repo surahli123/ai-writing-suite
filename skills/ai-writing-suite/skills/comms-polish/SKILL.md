@@ -1,6 +1,6 @@
 ---
 name: comms-polish
-description: Polish prose that sounds AI-written while preserving meaning, facts, and author voice. Modes - detect, review, rewrite, edit - plus a 0-100 AI-tell score on demand. Use for docs, emails, posts, reports, and user-facing copy. Not for code cleanup, and not for learning or extracting an author's voice - that is voice-onboard. A mixed request to polish AND add new content routes to comms-draft, which treats the existing text as immutable source, returns the fully revised document, and runs this polish final-pass itself - polishing here never adds substance.
+description: "Edit existing prose so it reads like a person wrote it, without changing facts, numbers, hedges, or the author's voice. Use when the user asks to polish, clean up, de-AI, proofread, lightly edit, or review a draft (Slack update, email, memo, readout, README, post), or asks what in it sounds AI-written. Modes are rewrite, light-edit, review, detect, and file edit, with an optional AI-pattern density score. Not for adding new sections or content (that is comms-draft), learning a voice (voice-onboard), answering playbook questions (comms-qa), or code."
 ---
 
 # comms-polish
@@ -239,7 +239,7 @@ When neither exists, use the lightest voice that fits the context:
    - promotional adjectives
    - forced three-item lists
    - "not X but Y" theatrics
-   - uniform sentence length
+   - uniform sentence length in running prose
    - chatbot artifacts
    Before editing on any tell you find here, run the **False-positive protection
    gate** in `_shared/patterns/rhythm-stylometric.md` — any "yes" (inside a quote,
@@ -247,6 +247,9 @@ When neither exists, use the lightest voice that fits the context:
    voice profile; genre-normal per the preset; or a second-language construction)
    makes the flag advisory only, not an edit. An all-"no" gate is not a mandate
    either — the cluster guardrail still applies (signals, not proof).
+   For a parallel set (status list, feed, cards, titles), follow
+   `references/scenario-presets.md` → "Parallel items": one shape is correct
+   there, and status, actor, order and facts never change.
 6. Apply the shared fact-to-interpretation protocol to each bridge that adds a
    cause, motive, significance, trend, or conclusion. Preserve a supported
    relation and its certainty; use co-occurrence wording for timing alone; retain
@@ -266,7 +269,9 @@ When neither exists, use the lightest voice that fits the context:
    **preserve the abstraction or flag the missing detail** — never invent an
    actor, action, example, number, or consequence that is not in the source
    (Safety Rules).
-8. Vary rhythm without adding fake personality. Bias word choice and cadence
+8. In running prose, let rhythm follow the content (R1); the items of a
+   parallel set keep one shape (R1 validity condition). Add no fake
+   personality. Bias word choice and cadence
    toward the voice profile when one was loaded. Treat its `Verbatim Anchors` as
    fidelity anchors: bias the rewrite toward reproducing each tagged habit under
    `_shared/precedence-policy.md`, without copying unrelated sample content.
@@ -384,12 +389,18 @@ it. In short:
     profile was found and you degraded to inferred voice, append a single one-line
     note — e.g. `Note: no voice profile found — inferred voice used; run
     voice-onboard to capture yours.` This is the only voice-related addition allowed.
-  - **`Notes:` block for evidence flags (finding 9).** When step 6 found a
-    source-to-claim gap, step 7 preserved an abstraction for lack of a source, or
-    step 11 found a claim still needing
-    evidence, append an optional `Notes:` block listing only those
-    missing-evidence / unsupported-claim flags — nothing else. Omit the block when
-    there are none. (Conversational voice-onboard offers stay outside the output
+  - **`Notes:` block (finding 9).** Append an optional `Notes:` block that holds
+    exactly four classes of item, each with its location, and nothing else:
+    - evidence flags: a source-to-claim gap (step 6), an abstraction preserved
+      for lack of a source (step 7), or a claim still needing evidence (step 11);
+    - alignment changes: what step 6 changed to match a user-supplied source,
+      and why;
+    - decision-gap flags: an author's recommendation kept as written although
+      the notes support less (owner ruling R1, claims not decisions);
+    - consistency conflicts from the final pass ("The document agrees with
+      itself").
+
+    Omit the block when there are none. (Conversational voice-onboard offers stay outside the output
     block entirely, per Voice Matching — do not fold them in here.)
 - For `detect` or `review`: follow the **Audit Report Contract** below.
 - For `edit`: summarize changed files, what improved, verification, and any preserved uncertainty.

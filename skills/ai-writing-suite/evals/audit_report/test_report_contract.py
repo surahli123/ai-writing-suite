@@ -151,15 +151,17 @@ class InputNormalization(unittest.TestCase):
 
     def test_smart_quotes_accepted(self):
         mutated = CONFORMING.replace(
-            '"represents a truly transformative leap forward"',
-            "“represents a truly transformative leap forward”")
+            '"represents a truly transformative leap forward for the team"',
+            "“represents a truly transformative leap forward for the team”")
+        self.assertNotEqual(mutated, CONFORMING, "mutation did not apply")
         ok, viols = check_report(mutated, CATALOG)
         self.assertTrue(ok, f"typographic quotes should be accepted: {_joined(viols)}")
 
     def test_guillemet_quotes_accepted(self):
         mutated = CONFORMING.replace(
-            '"represents a truly transformative leap forward"',
-            "\xabrepresents a truly transformative leap forward\xbb")
+            '"represents a truly transformative leap forward for the team"',
+            "\xabrepresents a truly transformative leap forward for the team\xbb")
+        self.assertNotEqual(mutated, CONFORMING, "mutation did not apply")
         ok, viols = check_report(mutated, CATALOG)
         self.assertTrue(ok, f"guillemet quotes should be accepted: {_joined(viols)}")
 
@@ -173,8 +175,11 @@ class InputNormalization(unittest.TestCase):
 class DoctoredArtifacts(unittest.TestCase):
     """Mutate the conforming report one way at a time; each must be rejected."""
 
-    def _expect_reject(self, mutated, needle):
-        ok, viols = check_report(mutated, CATALOG)
+    def _expect_reject(self, mutated, needle, draft=None):
+        # Guard against no-op mutations: a target string that no longer occurs
+        # in conforming.md would make the test pass vacuously.
+        self.assertNotEqual(mutated, CONFORMING, f"mutation did not apply: {needle}")
+        ok, viols = check_report(mutated, CATALOG, draft=draft)
         self.assertFalse(ok, f"mutation should be rejected: {needle}")
         self.assertTrue(any(needle in v for v in viols),
                         f"expected a violation containing {needle!r}, got: {viols}")
@@ -208,7 +213,7 @@ class DoctoredArtifacts(unittest.TestCase):
 
     def test_drop_a_fix_line(self):
         mutated = CONFORMING.replace(
-            '  **Fix:** "cuts the weekly report from three tools down to one screen"\n',
+            '  **Fix:** "[NEEDS: what the dashboard changes for the team]"\n',
             "")
         self._expect_reject(mutated, "fields must appear in order")
 
@@ -252,7 +257,7 @@ class DoctoredArtifacts(unittest.TestCase):
         # FINDING 1(b): a Fix that describes the edit instead of showing it
         # (no quotes, no fence) must fail.
         mutated = CONFORMING.replace(
-            '**Fix:** "cuts the weekly report from three tools down to one screen"',
+            '**Fix:** "[NEEDS: what the dashboard changes for the team]"',
             "**Fix:** cut the report down to one screen")
         self._expect_reject(mutated, "must show the replacement")
 
@@ -264,12 +269,12 @@ class DoctoredArtifacts(unittest.TestCase):
             '  **Tell:** F1 — Em / en dashes\n'
             '  **Why:** a parenthetical em-dash aside in the AI-favored cadence; '
             'the interruption adds nothing.\n'
-            '  **Fix:** "We built it for the whole team."\n',
+            '  **Fix:** "We built it for everyone."\n',
             '- **Quote:** "We built it — from the ground up — to empower everyone."\n'
             '  **Tell:** F1 — Em / en dashes\n'
             '  **Why:** a parenthetical em-dash aside in the AI-favored cadence; '
             'the interruption adds nothing.\n'
-            '  **Fix:** "We built it for the whole team."\n'
+            '  **Fix:** "We built it for everyone."\n'
             '- None.\n')
         self._expect_reject(mutated, "mixed with")
 
@@ -304,6 +309,32 @@ class DoctoredArtifacts(unittest.TestCase):
             "The opener reads as AI boilerplate.\n\n## What already reads well")
         ok, viols = check_report(mutated, CATALOG)
         self.assertTrue(ok, viols)
+
+    # --- contract 3b: optional consistency section (step 9C) ---------------
+    _GAPS = ("## Consistency and evidence gaps\n"
+             "- Metric cards: retention shows n and a 95% CI; revenue and "
+             "activation show neither.\n\n")
+
+    def test_consistency_section_accepted_in_position(self):
+        mutated = CONFORMING.replace("**Coverage:**", self._GAPS + "**Coverage:**", 1)
+        self.assertNotEqual(mutated, CONFORMING)
+        ok, viols = check_report(mutated, CATALOG)
+        self.assertTrue(ok, _joined(viols))
+
+    def test_consistency_section_before_strengths_is_rejected(self):
+        mutated = CONFORMING.replace("## What already reads well",
+                                     self._GAPS + "## What already reads well", 1)
+        self.assertNotEqual(mutated, CONFORMING)
+        self._expect_reject(mutated, "must come after 'What already reads well'")
+
+    def test_consistency_section_after_score_is_rejected(self):
+        mutated = CONFORMING.rstrip("\n") + "\n\n" + self._GAPS
+        self._expect_reject(mutated, "Consistency and evidence gaps")
+
+    def test_empty_consistency_section_is_rejected(self):
+        mutated = CONFORMING.replace(
+            "**Coverage:**", "## Consistency and evidence gaps\n\n**Coverage:**", 1)
+        self._expect_reject(mutated, "has no bullet")
 
     def test_commentary_after_score_is_rejected(self):
         # FINDING 1(d): trailing prose after the "final" score line must fail —

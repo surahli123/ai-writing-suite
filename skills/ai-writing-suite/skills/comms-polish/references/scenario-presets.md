@@ -253,6 +253,59 @@ In polish, a missing slot is reported in notes and never filled. Polish does not
 add content. In `comms-draft`, a missing slot becomes `[NEEDS: …]`. A company
 fork's playbook entries replace these generic ones through the same KB slot.
 
+## Parallel items (lists, feeds, cards, titles)
+
+A **parallel set** is a group of items of one kind shown together in one
+container (one list, feed, set of cards or set of rows), where each item answers
+the same question about a different subject: the status of each workstream, the
+title of each session, the result of each metric. A reader compares the items
+side by side.
+
+Not a parallel set: argument sequences (reasons, steps of an explanation, a
+decision / risk / ask trio); items that answer different questions; texts
+delivered separately (each email subject or notification is read alone);
+numbered procedures; timelines; quoted text; tables.
+
+**What `rewrite` and `edit` may do, each only when it helps the reader scan:**
+
+- Give the items one frame when mixed grammatical forms make the set harder to
+  scan. Leave a set alone when it already scans, or when a difference in form
+  carries meaning.
+- Put the word that tells an item apart first when the shared words hide it. If
+  this conflicts with one frame, the distinguishing word wins.
+- Move a prefix shared by every item into an **existing** heading or lead-in.
+  Never add a heading or lead-in (that adds content), and never do this for
+  texts delivered separately. In `edit` mode headings are preserved, so the
+  prefix may move only into an existing lead-in sentence.
+
+**What never changes:**
+
+- Status and tense follow the author. Done stays done; "investigating" never
+  becomes "fixed"; "planned" never becomes "shipped". If an item's status can't
+  be told, flag it.
+- The actor is dropped only when the heading or lead-in states it. An owner is a
+  fact. Never invent an actor, and keep blameless system-as-subject phrasing in
+  incident notes.
+- The author's status labels stay a closed set, used consistently.
+- Item order.
+- Every fact in every item. Do not drop detail to make items look uniform, and
+  do not swap in stronger-sentiment verbs ("love", "complain"): both change the
+  content.
+
+**By mode:**
+
+- `light-edit`: no list-structure changes. That means no frame unification, no
+  prefix moves, and no reordering of words inside an item to unify the frame or
+  bring the distinguishing word forward. Everything light-edit already allows
+  stays allowed: grammar, spelling, ambiguity, a mismatch with a user-supplied
+  source (including the local word-order change a grammar fix needs: "We the
+  login bug fixed" becomes "We fixed the login bug"), and consistent
+  punctuation, capitalization and bullet markers.
+- `rewrite` and `edit`: the permissions above.
+- `review` and `detect`: flag only.
+
+Ideas adapted from fsdatalab (Shankar 2026; ideas only, see `NOTICE.md`).
+
 ## Cross-scenario invariants
 
 No matter the genre, these never change (these are the bottom line, not preset

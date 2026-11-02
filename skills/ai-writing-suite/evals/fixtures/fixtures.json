@@ -517,6 +517,44 @@
       "expect_baseline": "miss",
       "detector_blind": true,
       "subtle_tell": "Owner ruling 2026-11-01 (docs/decisions-2026-11-01.md): a presumed objection ('You might think X, but') is NOT the O1 tell when X is a plausible objection a real reader could hold AND the sentence answers it with concrete evidence (here: 3 of the last 5 incidents traced to drift). The correct polish keeps it. Blind judges in the skill-lift eval rejected the stripped version 10/10. Gold-FAIL partner: fail-overstep-evidence-stripped-en."
+    },
+    {
+      "id": "lists-01-status-clean-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "Platform team, week of Oct 27:\n- Fixing the login redirect loop on Safari (LOGIN-412)\n- Migrating the nightly billing jobs to the new queue; 9 of 14 moved\n- Reviewing the pricing test readout with finance on Thursday\n- Blocked: the signup funnel dashboard waits on the events schema change\n- Next: draft the Q4 on-call rotation",
+      "after": "Platform team, week of Oct 27:\n- Fixing the login redirect loop on Safari (LOGIN-412)\n- Migrating the nightly billing jobs to the new queue; 9 of 14 moved\n- Reviewing the pricing test readout with finance on Thursday\n- Blocked: the signup funnel dashboard waits on the events schema change\n- Next: draft the Q4 on-call rotation",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "voice_kept",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "fidelity_check": true,
+      "subtle_tell": "No AI tell. A clean parallel set (comms-polish scenario-presets 'Parallel items'): verb-first status items with specific actions on named targets, one shape, a closed status vocabulary. One shape is correct here (R1/T7 validity conditions), so the correct polish returns the list unchanged. Gold-FAIL partners: fail-lists-recast-en (list turned into varied prose) and fail-lists-status-inflated-en (Fixing -> Fixed)."
+    },
+    {
+      "id": "lists-02-boast-to-checkable-en",
+      "expected_verdict": "PASS",
+      "genre": "memo",
+      "difficulty": "subtle",
+      "before": "Release 4.2 highlights:\n- Faster setup\n- Cleaner design\n- Easier onboarding\n\nWhat changed: signup now takes 3 steps instead of 7, the settings page has one column instead of three, and new accounts start with a sample project.",
+      "after": "Release 4.2:\n- Signup takes 3 steps instead of 7\n- The settings page has one column instead of three\n- New accounts start with a sample project",
+      "before_band_max": 10,
+      "after_band_max": 10,
+      "rubric_focus": [
+        "meaning_preserved",
+        "tells_removed",
+        "no_fabrication"
+      ],
+      "expect_baseline": "miss",
+      "detector_blind": true,
+      "fidelity_check": true,
+      "subtle_tell": "T7 control: the highlight bullets ('Faster setup / Cleaner design / Easier onboarding') carry nothing checkable, while the paragraph below already holds the facts. The repair rewrites each bullet as the checkable claim from the source (3 steps instead of 7; one column instead of three; a sample project) and invents nothing. Shows that T7 still bites after its reframe from symmetry to emptiness."
     }
   ]
 }

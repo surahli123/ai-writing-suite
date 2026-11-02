@@ -37,20 +37,20 @@ filler rather than a real update.
 
 - **Quote:** "represents a truly transformative leap forward"
   **Tell:** S1 — Significance inflation
-  **Why:** asserts importance the reader can't verify; no concrete change is named.
-  **Fix:** "cuts the weekly report from three tools down to one screen"
+  **Why:** asserts importance the reader can't verify; the draft names no concrete change, so the fix asks for one instead of inventing it.
+  **Fix:** "[NEEDS: what the dashboard changes for the team]"
 
 ## Moderate
 *Clear tells a careful reader notices, but that don't dominate the piece.*
 
 - **Quote:** "It's important to note that it may, in some cases, help surface insights."
   **Tell:** H2 — Excessive / stacked hedging
-  **Why:** three hedges ("may", "in some cases", "help") stack until the sentence claims nothing.
-  **Fix:** "It surfaces the three metrics the team checks every morning."
+  **Why:** three hedges ("may", "in some cases", "help") stack until the sentence claims nothing; one hedge keeps the author's real uncertainty.
+  **Fix:** "It may help surface insights."
 - **Quote:** "fast, clean, and intuitive"
   **Tell:** T1 — Rule of three
-  **Why:** a padded three-adjective list where one specific claim would land harder.
-  **Fix:** "loads in under a second"
+  **Why:** a padded three-adjective list; "fast" is the one claim a reader could check.
+  **Fix:** "The dashboard is fast."
 
 ## Minor
 *Cosmetic or low-frequency tells only a scan catches.*
@@ -58,10 +58,10 @@ filler rather than a real update.
 - **Quote:** "We built it — from the ground up — to empower everyone."
   **Tell:** F1 — Em / en dashes
   **Why:** a parenthetical em-dash aside in the AI-favored cadence; the interruption adds nothing.
-  **Fix:** "We built it for the whole team."
+  **Fix:** "We built it for everyone."
 
 ## What already reads well
-- "The dashboard is fast" is a plain, checkable claim — keep that register and give the rest of the draft the same concreteness.
+- Nothing here reads well yet: every sentence carries a flagged pattern.
 
 **Coverage:** checked by rule: vocabulary, punctuation, structure patterns; by judgment: overstepping, narrative shape; not checked: voice profile (none loaded).
 

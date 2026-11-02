@@ -15,7 +15,9 @@ paragraph of delve + leverage + robust + tapestry is a confession.
 - **Tell:** A small set of words appears 5-20x more often in post-2023 model
   output than in human prose, and tends to cluster.
 - **Fix:** Replace with the plain word. Flag by tier, not on sight, to cut
-  false positives on second-language and technical writing.
+  false positives on second-language and technical writing. Pick one
+  replacement per concept and keep it everywhere the concept recurs; the
+  alternatives in the table below are choices, not a rotation.
 - **Sources:** avoid-ai (tiered table), blader (P7), aboudjem (§7), stop-slop.
 
 **Tier 1 — replace on sight** (appears ~5-20x more in AI text):
@@ -127,7 +129,12 @@ what works · `in order to` → to · `due to the fact that` → because · `ser
   figure… the hero," or whole noun phrases: "the artist… the non-conformist
   painter… the visionary creator."
 - **Fix:** Pick the clearest term and repeat it. Humans repeat words; repetition
-  reads as precision, not poverty.
+  reads as precision, not poverty. This matters most across the items of a list
+  or a set of cards, where a reader compares items side by side.
+- **Data-science caution:** near-synonyms are often distinct terms (users vs
+  accounts vs sessions; holdout vs control; conversion vs activation). Merge two
+  names only where the draft itself shows they refer to one thing; otherwise
+  flag the ambiguity and leave the terms.
 - **Sources:** blader (P11 word-level + P31 noun-phrase), aboudjem (§11),
   avoid-ai, anti-vibe.
 

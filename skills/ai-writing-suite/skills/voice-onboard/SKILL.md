@@ -1,6 +1,6 @@
 ---
 name: voice-onboard
-description: Interview an author and distill their historical writing into reusable per-genre voice profiles that comms-polish and comms-draft read for voice matching. Ingests local files or pasted samples, extracts a 10-dimension style fingerprint with sample evidence, and writes one file per genre to the user state directory resolved by _shared/state-location.md (a blog file, a linkedin file, and so on). Use when the user says "learn my voice", "match how I write", or before a series of posts that must stay on-voice. Not for rewriting or polishing text - that is comms-polish; this skill only profiles.
+description: "Learn how an author writes from their own samples and save per-genre voice profiles that comms-polish and comms-draft use for voice matching. Use when the user says learn my voice, match how I write, make it sound like me, or before a series of posts that must stay on-voice. It interviews the author, measures a style fingerprint with sample evidence, and writes one profile per genre to the user state directory. Not for editing or drafting text (comms-polish, comms-draft)."
 ---
 
 # voice-onboard

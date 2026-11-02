@@ -45,3 +45,16 @@ This supersedes the June gold label for the evidence-answered form only.
   noise-calibrated design. If that run shows a regression, bisect to find the
   step that caused it.
 - The owner labels about 10 discriminating items to anchor the judges.
+
+## R4. Step 9 and comms-shape (2026-11-02)
+
+Recorded with the step 9 / comms-shape plan (`docs/plan-step9-and-comms-shape-2026-11-02.md`, approved at v2.3 after two Codex and three Fable review passes under `reviews/2026-11-02-*`).
+
+- **Step 9 scope:** all of A–G in the plan.
+- **Praise of flagged text:** no string-overlap rule. A sentence can carry a checkable fact and a vague modifier at once; whether a strength praises a property the report criticizes is judged in the eval, not rejected by string matching.
+- **comms-draft is archived** and replaced by one skill, `comms-shape`, with two entry points (from notes; pressure-test a draft).
+- **comms-shape intake:** at most 3 questions in the first round.
+- **Required stops after the thesis and after the outline.** These collapsed paths are within the ruling:
+  - a short piece has one combined stop on thesis and bullets;
+  - mixed mode (polish plus add) has one stop, on the addition's outline;
+  - an explicit "just draft it" has no stop.

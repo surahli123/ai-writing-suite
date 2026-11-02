@@ -35,6 +35,10 @@ personality chasing clean prose.
   as a bare rhythm device: a question dropped in purely to break monotony trips C8
   (rhetorical-question openers) in `communication-artifacts.md`. Let one sentence
   run long when the thought needs room.
+- **Validity condition:** R1 concerns running prose. The items of one parallel
+  set (a status list, feed, card set or list of titles, each item answering the
+  same question about a different subject) are not rhythm units: one shape
+  across them is correct and makes the set quick to scan.
 - **Sources:** blader (P30 + burstiness principle), avoid-ai (rhythm and
   uniformity), stop-slop (vary rhythm), aboudjem (variety in sentence length).
 
@@ -47,7 +51,11 @@ personality chasing clean prose.
 | low | judge |
 
 - **Tell:** Every paragraph 3-5 sentences and roughly the same size.
-- **Fix:** Vary deliberately. Some paragraphs one sentence. Some longer.
+- **Fix:** Like R1, this is a detection signal, never a length target. Let
+  paragraph breaks follow the content: a new paragraph where the argument
+  turns. Do not edit paragraphs toward a length pattern.
+- **Validity condition:** running prose only. The items of a parallel set
+  (see R1) are meant to be the same size.
 - **Sources:** avoid-ai (paragraph length uniformity), anti-vibe.
 
 ---
@@ -64,8 +72,9 @@ personality chasing clean prose.
   vocabulary loop.
 - **Fix:** Don't thesaurus the text. Broaden the *what*: name specific things,
   cite specific cases, replace a re-used abstract noun with the concrete instance.
-  **Calibration:** low TTR is not proof — narrow topics, technical reference, and
-  second-language writing legitimately compress vocabulary.
+  **Calibration:** low TTR is not proof — narrow topics, technical reference,
+  second-language writing, and parallel sets (a status list or feed repeats its
+  labels and verbs by design) legitimately compress vocabulary.
 - **Sources:** avoid-ai (vocabulary diversity / stylometric).
 
 ---
@@ -79,9 +88,10 @@ personality chasing clean prose.
 - **Tell:** Detectors also measure "perplexity" — how predictable each word is. AI
   text is low-perplexity (it picks the most statistically likely next word); human
   text is higher (more surprising choices).
-- **Fix:** Choose the second or third word that comes to mind, not the first. Use
-  audience-appropriate jargon or slang. Make unexpected analogies from real
-  experience. (Don't force it — surprise that reads as random is its own tell.)
+- **Fix:** R4 is a detection signal, never a rewrite target: do not edit for
+  surprise. Choose the precise word for this reader, including the field's own
+  terms, and keep one word for one concept. Manufactured surprise (a deliberately
+  unusual word or an unexpected analogy) reads as mannered prose (L7).
 - **Sources:** blader (perplexity principle).
 
 ---
