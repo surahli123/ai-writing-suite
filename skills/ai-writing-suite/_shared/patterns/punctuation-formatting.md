@@ -38,6 +38,9 @@ only count in clusters.
 - **Fix:** Strip inline bold except glossary terms and UI labels. One bolded
   phrase per major section at most. If something deserves emphasis, sentence
   structure should provide it.
+- **Validity condition:** the one-per-section rule is about inline bolding in
+  prose. One consistent bold label on each item of a parallel set (a status
+  list, feed or card set) is structure, not erratic bolding.
 - **Sources:** blader (P14 + P42), aboudjem (§15), avoid-ai (bold overuse),
   anti-vibe (decorative bolding).
 

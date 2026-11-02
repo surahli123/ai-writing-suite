@@ -239,7 +239,7 @@ When neither exists, use the lightest voice that fits the context:
    - promotional adjectives
    - forced three-item lists
    - "not X but Y" theatrics
-   - uniform sentence length
+   - uniform sentence length in running prose
    - chatbot artifacts
    Before editing on any tell you find here, run the **False-positive protection
    gate** in `_shared/patterns/rhythm-stylometric.md` — any "yes" (inside a quote,
@@ -266,7 +266,9 @@ When neither exists, use the lightest voice that fits the context:
    **preserve the abstraction or flag the missing detail** — never invent an
    actor, action, example, number, or consequence that is not in the source
    (Safety Rules).
-8. Vary rhythm without adding fake personality. Bias word choice and cadence
+8. In running prose, let rhythm follow the content (R1); the items of a
+   parallel set keep one shape (R1 validity condition). Add no fake
+   personality. Bias word choice and cadence
    toward the voice profile when one was loaded. Treat its `Verbatim Anchors` as
    fidelity anchors: bias the rewrite toward reproducing each tagged habit under
    `_shared/precedence-policy.md`, without copying unrelated sample content.

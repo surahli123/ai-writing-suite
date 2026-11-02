@@ -56,7 +56,8 @@ matter how good the prose reads. This layer is never traded off against style.
   them and the author's voice uses them.
 - Stock sections (Overview, Key Features, Conclusion) are gone unless they earn
   their keep.
-- Repetition is gone.
+- Repeated content is gone. Repeated structure and terms across the items of a
+  parallel set (a status list, feed or card set) stay; they make the set scan.
 - **Portability test:** could this sentence sit unchanged in another company's
   or project's document? If so, it says nothing about this one. Make it specific
   using facts already in the source, or cut it. Never invent specifics. Adapted
@@ -96,7 +97,8 @@ For a borderline draft, score five dimensions (1–10 each) before returning.
 Adapted from the `stop-slop` rubric.
 
 - **Directness** — states things; doesn't announce it's about to state them.
-- **Rhythm** — sentence lengths vary; no monotone march of equal clauses.
+- **Rhythm** — in running prose, rhythm follows the content; no march of
+  identical moves. (Not a sentence-length target; parallel items keep one shape.)
 - **Trust** — respects the reader's intelligence; no over-explaining the obvious.
 - **Authenticity** — reads like a person chose the words, not a system.
 - **Density** — every sentence earns its place; no filler.
