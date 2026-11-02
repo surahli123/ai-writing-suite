@@ -213,6 +213,14 @@ class ConnectivesAreClusterOnly(unittest.TestCase):
         self.assertNotIn("| H7b |", idx)
 
 
+class NoNumericThreshold(unittest.TestCase):
+    def test_scoring_pass_has_no_pass_mark(self):
+        fp = text(FINAL)
+        self.assertNotIn("35 / 50", fp)
+        self.assertNotIn("35/50", fp)
+        self.assertIn("There is no total and no pass\nthreshold", fp)
+
+
 class Attribution(unittest.TestCase):
     def test_ideas_only_sources_are_credited_without_claiming_a_license(self):
         notice = text(NOTICE)

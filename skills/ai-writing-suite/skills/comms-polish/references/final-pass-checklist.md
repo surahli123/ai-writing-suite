@@ -109,8 +109,9 @@ Adapted from the `stop-slop` rubric.
 - **Authenticity** — reads like a person chose the words, not a system.
 - **Density** — every sentence earns its place; no filler.
 
-Below 35 / 50 means it still reads generated — make another pass.
+Revisit any dimension you would rate weak. There is no total and no pass
+threshold: a numeric bar invites editing toward the number instead of the reader.
 
-> This is a *qualitative* gate, separate from the 0–100 AI-tell score in
+> This is a *qualitative* check, separate from the 0–100 AI-tell score in
 > `SKILL.md`. The 0–100 score reports density to the user; this checklist is the
 > editor's own pre-ship sweep.
