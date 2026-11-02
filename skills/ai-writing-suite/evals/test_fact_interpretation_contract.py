@@ -87,6 +87,14 @@ class SharedFactInterpretationContract(unittest.TestCase):
                          read(POLISH))
         self.assertIn("Supplying the\nsource is the authorization", read(EXAMPLES))
 
+    def test_alignment_never_rewrites_the_authors_decision(self):
+        # Owner ruling 2026-11-02 (eval v1 run 2 edge): notes that cover only
+        # desktop must not narrow the author's "ship to all platforms" call;
+        # flag it instead.
+        self.assertIn("Alignment covers claims, not the author's decisions", read(CONTRACT))
+        self.assertIn("This covers claims, not decisions.", read(POLISH))
+        self.assertIn("never rewritten to fit the notes", read(POLISH))
+
     def test_final_pass_rechecks_relation_without_a_cue_word_ban(self):
         self.assertIn("fact-to-interpretation", read(FINAL_PASS))
         self.assertIn("source support", read(FINAL_PASS))
