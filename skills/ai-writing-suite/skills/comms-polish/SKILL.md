@@ -212,6 +212,8 @@ When neither exists, use the lightest voice that fits the context:
    authorizes factual alignment. If it shows a substantive author interpretation
    exceeds the evidence, cut the unsupported bridge or restate it at the strength
    the source allows, and say what changed in `Notes:`. Never change it silently.
+   This covers claims, not decisions. The author's own recommendation or plan
+   is never rewritten to fit the notes: keep it and flag the gap in `Notes:`.
    Preserve the position and flag it instead only when the user asked you not to
    change the substance. Without a packet, delete only a **redundant gloss** that
    carries no position or useful information. In review mode, keep the exact
