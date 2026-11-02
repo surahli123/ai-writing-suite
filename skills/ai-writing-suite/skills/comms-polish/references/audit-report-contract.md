@@ -46,6 +46,15 @@ order, or tier names themselves.
    repo's review standard, **no fake praise**: if nothing reads well yet, say so
    plainly (e.g. `- Nothing here reads well yet — the draft is AI throughout.`).
 
+3b. **`## Consistency and evidence gaps` — optional, report-only.** Place it
+   after `## What already reads well` and before the Coverage and score lines.
+   Each bullet gives a location and what differs: a metric reported with n and
+   an interval in one row but not its siblings, one metric under two names, or
+   a slot the genre needs that is missing. These are not AI tells, so bullets
+   carry no catalog id and no Fix, and nothing is filled in. A gap that matches
+   a catalog entry (S2, S4, S8) stays a finding with Quote / Tell / Why / Fix;
+   never report it in both places. Omit the section when it is empty.
+
 4. **Score — only when asked, always last.** When the user requested a score,
    place the 0-100 AI-tell score as the **final non-blank line of the entire
    report** — nothing follows it, no trailing commentary or sign-off —

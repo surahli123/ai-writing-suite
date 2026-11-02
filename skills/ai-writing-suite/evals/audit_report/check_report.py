@@ -42,6 +42,7 @@ if SUITE_ROOT not in sys.path:
 from aiws.catalog import load_catalog_ids  # noqa: E402  (path set above)
 
 TIERS = ("Critical", "Moderate", "Minor")
+GAPS = "Consistency and evidence gaps"   # optional, report-only (contract 3b)
 FIELD_ORDER = ("Quote", "Tell", "Why", "Fix")
 
 # One finding's required field line: `**Quote:** ...`, `**Tell:** ...`, etc.
@@ -263,6 +264,22 @@ def check_report(text, catalog_ids):
         violations.append("missing '## What already reads well' section")
     elif not any(b.strip() for b in sections[well][1]):
         violations.append("'What already reads well' section is empty")
+
+    # 3b. Optional consistency section: after 'reads well', before the
+    #     Coverage/score lines, at least one bullet, never empty.
+    if GAPS in sections:
+        g_idx, g_body = sections[GAPS]
+        if not well or g_idx < sections[well][0]:
+            violations.append(
+                f"'{GAPS}': must come after 'What already reads well'")
+        if not any(ln.strip().startswith("- ") and ln.strip()[2:].strip()
+                   for ln in g_body):
+            violations.append(f"'{GAPS}': present but has no bullet")
+        cov = next((i for i, ln in enumerate(lines)
+                    if ln.strip().startswith("**Coverage:**")), None)
+        if cov is not None and cov < g_idx:
+            violations.append(
+                f"'{GAPS}': must come before the Coverage and score lines")
 
     # 4. Score optional; if present it must be the ONLY score line, valid
     #    0-100, come after 'reads well', and be the FINAL non-blank line of

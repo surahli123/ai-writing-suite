@@ -172,6 +172,32 @@ class ParallelSetRules(unittest.TestCase):
         self.assertEqual(fails["fail-lists-status-inflated-en"]["fidelity_class"], "status")
 
 
+CONTRACT = ROOT / "skills" / "comms-polish" / "references" / "audit-report-contract.md"
+
+
+class ConsistencyIsReportOnly(unittest.TestCase):
+    def test_final_pass_checks_parallel_slots(self):
+        fp = text(FINAL)
+        self.assertIn("Check five things", fp)
+        self.assertIn("carry\n    the same slots (n, interval, baseline, unit)", fp)
+        self.assertIn("only when the metrics are comparable", fp)
+        self.assertIn("Never fill a missing slot, delete the extra one, or pick a winner", fp)
+
+    def test_notes_block_has_exactly_four_classes(self):
+        body = text(POLISH)
+        self.assertIn("exactly four classes of item", body)
+        for cls in ("evidence flags", "alignment changes", "decision-gap flags",
+                    "consistency conflicts"):
+            self.assertIn(cls, body)
+        self.assertNotIn("missing-evidence / unsupported-claim flags — nothing else", body)
+
+    def test_review_reports_gaps_in_their_own_section(self):
+        c = text(CONTRACT)
+        self.assertIn("`## Consistency and evidence gaps` — optional, report-only", c)
+        self.assertIn("carry no catalog id and no Fix", c)
+        self.assertIn("never report it in both places", c)
+
+
 class Attribution(unittest.TestCase):
     def test_ideas_only_sources_are_credited_without_claiming_a_license(self):
         notice = text(NOTICE)

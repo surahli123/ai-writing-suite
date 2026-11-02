@@ -305,6 +305,32 @@ class DoctoredArtifacts(unittest.TestCase):
         ok, viols = check_report(mutated, CATALOG)
         self.assertTrue(ok, viols)
 
+    # --- contract 3b: optional consistency section (step 9C) ---------------
+    _GAPS = ("## Consistency and evidence gaps\n"
+             "- Metric cards: retention shows n and a 95% CI; revenue and "
+             "activation show neither.\n\n")
+
+    def test_consistency_section_accepted_in_position(self):
+        mutated = CONFORMING.replace("**Coverage:**", self._GAPS + "**Coverage:**", 1)
+        self.assertNotEqual(mutated, CONFORMING)
+        ok, viols = check_report(mutated, CATALOG)
+        self.assertTrue(ok, _joined(viols))
+
+    def test_consistency_section_before_strengths_is_rejected(self):
+        mutated = CONFORMING.replace("## What already reads well",
+                                     self._GAPS + "## What already reads well", 1)
+        self.assertNotEqual(mutated, CONFORMING)
+        self._expect_reject(mutated, "must come after 'What already reads well'")
+
+    def test_consistency_section_after_score_is_rejected(self):
+        mutated = CONFORMING.rstrip("\n") + "\n\n" + self._GAPS
+        self._expect_reject(mutated, "Consistency and evidence gaps")
+
+    def test_empty_consistency_section_is_rejected(self):
+        mutated = CONFORMING.replace(
+            "**Coverage:**", "## Consistency and evidence gaps\n\n**Coverage:**", 1)
+        self._expect_reject(mutated, "has no bullet")
+
     def test_commentary_after_score_is_rejected(self):
         # FINDING 1(d): trailing prose after the "final" score line must fail —
         # score checked as "final non-blank line", not merely "occurs after

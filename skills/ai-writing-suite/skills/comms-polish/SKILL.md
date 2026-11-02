@@ -389,12 +389,18 @@ it. In short:
     profile was found and you degraded to inferred voice, append a single one-line
     note — e.g. `Note: no voice profile found — inferred voice used; run
     voice-onboard to capture yours.` This is the only voice-related addition allowed.
-  - **`Notes:` block for evidence flags (finding 9).** When step 6 found a
-    source-to-claim gap, step 7 preserved an abstraction for lack of a source, or
-    step 11 found a claim still needing
-    evidence, append an optional `Notes:` block listing only those
-    missing-evidence / unsupported-claim flags — nothing else. Omit the block when
-    there are none. (Conversational voice-onboard offers stay outside the output
+  - **`Notes:` block (finding 9).** Append an optional `Notes:` block that holds
+    exactly four classes of item, each with its location, and nothing else:
+    - evidence flags: a source-to-claim gap (step 6), an abstraction preserved
+      for lack of a source (step 7), or a claim still needing evidence (step 11);
+    - alignment changes: what step 6 changed to match a user-supplied source,
+      and why;
+    - decision-gap flags: an author's recommendation kept as written although
+      the notes support less (owner ruling R1, claims not decisions);
+    - consistency conflicts from the final pass ("The document agrees with
+      itself").
+
+    Omit the block when there are none. (Conversational voice-onboard offers stay outside the output
     block entirely, per Voice Matching — do not fold them in here.)
 - For `detect` or `review`: follow the **Audit Report Contract** below.
 - For `edit`: summarize changed files, what improved, verification, and any preserved uncertainty.
