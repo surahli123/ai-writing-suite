@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-11-02
+
+Steps 0–10 of the 2026-11-01 improvement plan (PRs #68–#79): edit restraint and a light-edit mode, fidelity classes, DS terms of art, score epistemics, a consistency check, DS genre KB entries, catalog updates, intent-first descriptions, parallel-list and honest-review rules (step 9), and comms-shape replacing comms-draft (step 10). Details below.
+
 ### Changed — comms-draft replaced by comms-shape (step 10, owner ruling R4)
 - **Upgrade note.** `comms-draft` is archived at the repo root
   (`archive/comms-draft/SKILL.archived.md`, outside the packaged tree). Its job
